@@ -8,14 +8,27 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State private var stackPath: [NavigationModel] = []
+    
+    @EnvironmentObject var auth: Authentication
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        ZStack {
+            Color("Background").ignoresSafeArea()
+            
+            NavigationStack(path: $stackPath) {
+                if let user = auth.user {
+                    VStack {
+                        Text("Welcome \(user.name)")
+                        
+                        Button("Sign Out") {
+                            auth.signout()
+                        }.buttonStyle(.bordered)
+                    }
+                }
+            }
         }
-        .padding()
     }
 }
 

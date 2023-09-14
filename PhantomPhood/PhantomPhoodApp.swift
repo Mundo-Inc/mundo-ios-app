@@ -9,9 +9,22 @@ import SwiftUI
 
 @main
 struct PhantomPhoodApp: App {
+   @StateObject var auth = Authentication()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+
+            Group {
+                if auth.isSignedIn {
+                    if let _ = auth.user {
+                        ContentView()
+                    } else {
+                        ProgressView()
+                    }
+                } else {
+                    WelcomeView()
+                }
+            }.environmentObject(auth)
         }
     }
 }

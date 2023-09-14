@@ -1,0 +1,154 @@
+//
+//  Authentication.swift
+//  PhantomPhood
+//
+//  Created by Kia Abdi on 12.09.2023.
+//
+
+import Foundation
+//import Combine
+
+enum Role: String, Codable {
+    case user
+    case admin
+}
+
+struct CurrentUserData: Codable {
+    let _id, name, username: String
+    let profileImage, bio: String?
+    let email: Email
+    let level, rank, xp, remainingXp, coins, reviewsCount, followersCount, followingCount: Int
+    let role: Role
+    
+    struct Email: Codable {
+        let address: String
+        let verified: Bool
+    }
+}
+
+@MainActor
+class Authentication: ObservableObject {
+    
+    // MARK: - API Manager
+    
+    private let apiManager = APIManager()
+    
+    // MARK: - Internal Structs
+    
+    struct SignUpData: Codable {
+        let userId: String
+        let token: String
+    }
+    
+    typealias SignInData = SignUpData
+    
+    // MARK: - Properties
+    
+    @Published private(set) var user: CurrentUserData? = nil
+    @Published private(set) var isSignedIn: Bool = false
+    
+    @Published private(set) var userId: String? = nil
+    
+    var token: String? {
+        // get jwt token from Keychain
+        let tk = KeychainHelper.getData(for: .userToken)
+        return tk
+    }
+    
+    // MARK: - INIT
+    
+    init() {
+        let uId = UserDefaults.standard.string(forKey: "userId")
+        if let uId, let _ = token {
+            self.userId = uId
+            self.isSignedIn = true
+        }
+        
+        Task {
+            await self.updateUserInfo()
+        }
+        
+    }
+    
+    // MARK: - Public Methods
+    
+    func signin(email: String, password: String) async throws -> (SignInData?, HTTPURLResponse) {
+        struct SignInRequestBody: Encodable {
+            let action: String
+            let email: String
+            let password: String
+        }
+        
+        let reqBody = try apiManager.createRequestBody(SignInRequestBody(action: "signin", email: email, password: password))
+        
+        let (data, response) = try await apiManager.request("/auth", method: .post, body: reqBody) as (SignInData?, HTTPURLResponse)
+        
+        self.isSignedIn = true
+        if let data {
+            self.userId = data.userId
+            let isSaved = KeychainHelper.save(data: data.token, for: .userToken)
+            if !isSaved {
+                self.signout()
+                throw CancellationError()
+            }
+            UserDefaults.standard.set(data.userId, forKey: "userId")
+        }
+        await self.updateUserInfo()
+        
+        return (data, response)
+    }
+    
+    func signup(name: String, email: String, password: String, username: String?) async throws -> (SignUpData?, HTTPURLResponse) {
+        struct SignUpRequestBody: Encodable {
+            let name: String
+            let email: String
+            let password: String
+            let username: String?
+        }
+        
+        let reqBody = try apiManager.createRequestBody(SignUpRequestBody(name: name, email: email, password: password, username: username))
+        
+        let (data, response) = try await apiManager.request("/users", method: .post, body: reqBody) as (SignUpData?, HTTPURLResponse)
+        
+        self.isSignedIn = true
+        if let data {
+            self.userId = data.userId
+            let isSaved = KeychainHelper.save(data: data.token, for: .userToken)
+            if !isSaved {
+                self.signout()
+                throw CancellationError()
+            }
+            UserDefaults.standard.set(data.userId, forKey: "userId")
+        }
+        await self.updateUserInfo()
+        
+        return (data, response)
+    }
+    
+    func signout() {
+        self.isSignedIn = false
+        let _ = KeychainHelper.deleteData(for: .userToken)
+        UserDefaults.standard.removeObject(forKey: "userId")
+        self.userId = nil
+        self.user = nil
+    }
+    
+    func updateUserInfo() async {
+        struct UserResponse: Codable {
+            let success: Bool
+            let data: CurrentUserData
+        }
+
+        if let userId, let token {
+            do {
+                let (data, response) = try await apiManager.request("/users/\(userId)", method: .get, token: token) as (UserResponse?, HTTPURLResponse)
+
+                guard let data, response.statusCode >= 200, response.statusCode < 300 else { return }
+
+                self.user = data.data
+            } catch {
+                print(error)
+            }
+        }
+    }
+}
