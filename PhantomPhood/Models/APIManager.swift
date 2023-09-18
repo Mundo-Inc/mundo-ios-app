@@ -40,8 +40,8 @@ class APIManager {
     
     // MARK: - Constants
     
-    static let baseURL = "https://phantomphood.ai/api/v1"
-//    static let baseURL = "http://localhost:3020/api/v1"
+//    static let baseURL = "https://phantomphood.ai/api/v1"
+    static let baseURL = "http://localhost:3020/api/v1"
 
     
     // MARK: - Public Methods
