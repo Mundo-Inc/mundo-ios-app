@@ -9,13 +9,15 @@ import SwiftUI
 import Lottie
 
 struct WelcomeView: View {
-    @State private var stackPath: [AuthNavigationModel] = []
+//    @State private var stackPath: [AuthNavigationModel] = []
+    
+    @EnvironmentObject var appData: AppData
     
     var body: some View {
         ZStack {
             Color("Background").ignoresSafeArea()
             
-            NavigationStack(path: $stackPath) {
+            NavigationStack(path: $appData.authNavStack) {
                 VStack {
                     Spacer()
                     
@@ -29,11 +31,12 @@ struct WelcomeView: View {
                     Spacer()
                     
                     LottieView(file: .welcome, loop: true)
-                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
+                        .frame(width: UIScreen.main.bounds.width + 10, height: UIScreen.main.bounds.width + 10)
+                        
                     
                     Spacer()
                     
-                    NavigationLink(value: AuthNavigationModel(screen: .signup)) {
+                    NavigationLink(value: AuthStack.signup) {
                         Text("Create an Account")
                             .frame(maxWidth: .infinity)
                     }
@@ -41,7 +44,7 @@ struct WelcomeView: View {
                     .controlSize(.large)
                     .padding(.horizontal)
                     
-                    NavigationLink(value: AuthNavigationModel(screen: .signin)) {
+                    NavigationLink(value: AuthStack.signin) {
                         Text("I already have an account")
                             .frame(maxWidth: .infinity)
                     }
@@ -52,8 +55,8 @@ struct WelcomeView: View {
                 }
                 .toolbar(.hidden, for: .automatic)
                 .navigationTitle("Welcome")
-                .navigationDestination(for: AuthNavigationModel.self) { navModel in
-                    switch navModel.screen {
+                .navigationDestination(for: AuthStack.self) { link in
+                    switch link {
                     case .signup:
                         SignUpView()
                     case .signin:

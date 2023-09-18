@@ -6,3 +6,17 @@
 //
 
 import Foundation
+
+enum AuthStack: Hashable {
+    case signin
+    case signup
+    
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case .signin:
+            hasher.combine("signin")
+        case .signup:
+            hasher.combine("signup")
+        }
+    }
+}

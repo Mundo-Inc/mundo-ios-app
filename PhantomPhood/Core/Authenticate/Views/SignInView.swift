@@ -97,6 +97,7 @@ struct SignInView: View {
                 TextField("Email", text: $vm.email)
                     .withFilledStyle()
                     .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled(true)
                     .keyboardType(.emailAddress)
                     .textContentType(UITextContentType.emailAddress)
                     .focused($focusedField, equals: .email)
@@ -118,7 +119,7 @@ struct SignInView: View {
                 
                 SecureField("Password", text: $vm.password)
                     .withFilledStyle()
-                    .textContentType(UITextContentType.newPassword)
+                    .textContentType(UITextContentType.password)
                     .focused($focusedField, equals: .password)
                 
                 Button("Recover my password") {

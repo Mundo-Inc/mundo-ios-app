@@ -8,25 +8,37 @@
 import SwiftUI
 
 struct ContentView: View {
-    
-    @State private var stackPath: [NavigationModel] = []
-    
-    @EnvironmentObject var auth: Authentication
+    @EnvironmentObject private var appData: AppData
     
     var body: some View {
         ZStack {
             Color("Background").ignoresSafeArea()
             
-            NavigationStack(path: $stackPath) {
-                if let user = auth.user {
-                    VStack {
-                        Text("Welcome \(user.name)")
-                        
-                        Button("Sign Out") {
-                            auth.signout()
-                        }.buttonStyle(.bordered)
+            TabView(selection: $appData.activeTab) {
+                HomeView()
+                    .tabItem {
+                        Image(systemName: Tab.home.icon)
                     }
-                }
+                    .tag(Tab.home)
+                
+                MapView()
+                    .tabItem {
+                        Image(systemName: Tab.map.icon)
+                    }
+                    .tag(Tab.map)
+                
+                
+                LeaderboardView()
+                    .tabItem {
+                        Image(systemName: Tab.leaderboard.icon)
+                    }
+                    .tag(Tab.leaderboard)
+                
+                MyProfile()
+                    .tabItem {
+                        Image(systemName: Tab.myProfile.icon)
+                    }
+                    .tag(Tab.myProfile)
             }
         }
     }
@@ -35,5 +47,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environmentObject(AppData())
     }
 }

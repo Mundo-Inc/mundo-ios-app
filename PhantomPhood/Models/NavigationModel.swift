@@ -11,10 +11,7 @@ enum AppScreens {
     case feed
 }
 
-enum AuthScreens {
-    case signin
-    case signup
-}
+
 
 struct NavigationModel: Hashable {
     let screen: AppScreens

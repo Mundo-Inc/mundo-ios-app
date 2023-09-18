@@ -54,7 +54,7 @@ class APIManager {
         token: String? = nil
     ) async throws -> (data: T?, response: HTTPURLResponse) {
         
-        var components = URLComponents(string: "\(APIManager.baseURL)/\(endpoint)")
+        var components = URLComponents(string: "\(APIManager.baseURL)\(endpoint)")
         
         // Handle query parameters
         if let queryParams = queryParams {
@@ -114,7 +114,7 @@ class APIManager {
         token: String? = nil
     ) async throws -> HTTPURLResponse {
         
-        var components = URLComponents(string: "\(APIManager.baseURL)/\(endpoint)")
+        var components = URLComponents(string: "\(APIManager.baseURL)\(endpoint)")
         
         // Handle query parameters
         if let queryParams = queryParams {

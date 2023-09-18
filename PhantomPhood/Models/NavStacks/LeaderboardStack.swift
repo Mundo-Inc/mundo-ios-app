@@ -6,3 +6,15 @@
 //
 
 import Foundation
+
+enum LeaderboardStack: Hashable {
+    case userProfile(id: String)
+
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case .userProfile(let id):
+            hasher.combine("userProfile")
+            hasher.combine(id)
+        }
+    }
+}
