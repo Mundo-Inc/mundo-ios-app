@@ -13,8 +13,6 @@ struct EditProfileView: View {
     @Environment(\.dismiss) var dismiss
     
     @StateObject var vm = EditProfileViewModel()
-        
-    let test: String? = "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg"
     
     var body: some View {
         VStack {
@@ -24,14 +22,29 @@ struct EditProfileView: View {
                 } label: {
                     Image(systemName: "chevron.backward")
                 }
+                .disabled(vm.isSubmitting)
                 
                 Spacer()
                 
                 Button {
-                    dismiss()
+                    Task {
+                        do {
+                            try await vm.save()
+                            dismiss()
+                        } catch {
+                            print(error)
+                        }
+                    }
                 } label: {
-                    Text("Save")
+                    HStack(spacing: 5) {
+                        if vm.isSubmitting {
+                            ProgressView()
+                        }
+                        Text("Save")
+                    }.animation(.none, value: vm.isSubmitting)
                 }
+                .disabled(vm.isSubmitting)
+                
             }.padding(.horizontal)
             
             Divider()
@@ -46,11 +59,12 @@ struct EditProfileView: View {
                     Spacer()
                     VStack {
                         switch vm.imageState {
-                        case .success(let image):
+                        case .success(let (image, _, _)):
                             self.profileImage(image: image)
                                 .overlay {
                                     ZStack {
                                         Color.black.opacity(0.5)
+                                            .clipShape(RoundedRectangle(cornerRadius: 15))
                                         PhotosPicker(
                                             selection: $vm.imageSelection,
                                             matching: .images,
@@ -74,6 +88,7 @@ struct EditProfileView: View {
                                             .overlay {
                                                 ZStack {
                                                     Color.black.opacity(0.5)
+                                                        .clipShape(RoundedRectangle(cornerRadius: 15))
                                                     PhotosPicker(
                                                         selection: $vm.imageSelection,
                                                         matching: .images,
@@ -229,6 +244,22 @@ struct EditProfileView: View {
                         
                         VStack {
                             TextField("Username", text: $vm.username)
+                                .keyboardType(.default)
+                                .autocorrectionDisabled(true)
+                                .overlay(
+                                    HStack {
+                                        if vm.username.count > 0 {
+                                            if vm.isLoading {
+                                                ProgressView()
+                                            } else {
+                                                vm.isUsernameValid ?
+                                                Image(systemName: "checkmark.circle.fill").foregroundColor(.green) :
+                                                Image(systemName: "xmark.circle.fill").foregroundColor(.red)
+                                            }
+                                        }
+                                    },
+                                    alignment: .trailing
+                                )
                             Divider()
                         }
                     }

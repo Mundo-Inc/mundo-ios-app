@@ -21,11 +21,15 @@ struct ContentView: View {
                     }
                     .tag(Tab.home)
                 
-                MapView()
-                    .tabItem {
-                        Image(systemName: Tab.map.icon)
-                    }
-                    .tag(Tab.map)
+                if #available(iOS 17.0, *) {
+                    MapView()
+                        .tabItem {
+                            Image(systemName: Tab.map.icon)
+                        }
+                        .tag(Tab.map)
+                } else {
+                    RoundedRectangle(cornerRadius: 25.0)
+                }
                 
                 
                 LeaderboardView()

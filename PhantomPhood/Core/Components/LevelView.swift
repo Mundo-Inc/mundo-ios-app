@@ -18,7 +18,7 @@ enum Level: String, CaseIterable {
     case NoLevel = "NoLevel"
     
     static func convert(level: Int) -> Self {
-        if level > 0 && level < self.allCases.count - 1 {
+        if level > 0 && level < self.allCases.count {
             return self.allCases[level - 1]
         } else {
             return self.NoLevel
@@ -29,8 +29,9 @@ enum Level: String, CaseIterable {
 struct LevelView: View {
     let level: Level
     
-    var body: some View {
+    var body: Image {
         Image(level.rawValue, bundle: Bundle(path: "Levels"))
+            .resizable()
     }
 }
 

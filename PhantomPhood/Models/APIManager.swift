@@ -38,6 +38,11 @@ class APIManager {
         case unknown
     }
     
+    enum ContentType {
+        case applicationJson
+        case multipartFormData(boundary: String)
+    }
+    
     // MARK: - Constants
     
 //    static let baseURL = "https://phantomphood.ai/api/v1"
@@ -46,12 +51,13 @@ class APIManager {
     
     // MARK: - Public Methods
     
-    func request<T: Codable>(
+    func request<T: Decodable>(
         _ endpoint: String,
         method: HTTPMethod = .get,
         body: Data? = nil,
         queryParams: [String: String]? = nil,
-        token: String? = nil
+        token: String? = nil,
+        contentType: ContentType? = .applicationJson
     ) async throws -> (data: T?, response: HTTPURLResponse) {
         
         var components = URLComponents(string: "\(APIManager.baseURL)\(endpoint)")
@@ -68,7 +74,14 @@ class APIManager {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        switch contentType {
+        case .applicationJson:
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        case .multipartFormData(let boundary):
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        case nil:
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
         
         if let authToken = token {
             request.addValue(authToken, forHTTPHeaderField: "Authorization")
@@ -105,13 +118,14 @@ class APIManager {
             throw APIError.decodingError(error)
         }
     }
-    
+        
     func requestNoContent(
         _ endpoint: String,
         method: HTTPMethod = .get,
         body: Data? = nil,
         queryParams: [String: String]? = nil,
-        token: String? = nil
+        token: String? = nil,
+        contentType: ContentType? = .applicationJson
     ) async throws -> HTTPURLResponse {
         
         var components = URLComponents(string: "\(APIManager.baseURL)\(endpoint)")
@@ -128,7 +142,14 @@ class APIManager {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        switch contentType {
+        case .applicationJson:
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        case .multipartFormData(let boundary):
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        case nil:
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
         
         if let authToken = token {
             request.addValue(authToken, forHTTPHeaderField: "Authorization")

@@ -9,8 +9,9 @@ import SwiftUI
 
 @main
 struct PhantomPhoodApp: App {
-    @StateObject private var auth = Authentication()
+    @ObservedObject private var auth = Authentication.shared
     @StateObject private var appData: AppData = AppData()
+    @AppStorage("theme") var theme: String = ""
     
     private func getKeyValue(_ key: String, string: String) -> String? {
         let components = string.components(separatedBy: "/")
@@ -20,6 +21,11 @@ struct PhantomPhoodApp: App {
             }
         }
         return nil
+    }
+    
+    init() {
+        URLCache.shared.memoryCapacity = 50_000_000 // ~50 MB memory space
+        URLCache.shared.diskCapacity = 1_000_000_000 // ~1GB disk cache space
     }
     
     var body: some Scene {
@@ -36,6 +42,7 @@ struct PhantomPhoodApp: App {
                     WelcomeView()
                 }
             }
+            .preferredColorScheme(theme == "" ? .none : theme == "dark" ? .dark : .light)
             .environmentObject(auth)
             .environmentObject(appData)
             .onOpenURL { url in
@@ -55,7 +62,7 @@ struct PhantomPhoodApp: App {
                         // return if tab is not specified
                         return
                     }
-                    
+                    // phph://tab=myProfile/nav=settings
                     if component.contains("nav") {
                         let navRawValue = component.replacingOccurrences(of: "nav=", with: "").lowercased()
                             
@@ -111,6 +118,8 @@ struct PhantomPhoodApp: App {
                                 if let id = getKeyValue("id", string: string) {
                                     appData.myProfileNavStack.append(.place(id: id.lowercased()))
                                 }
+                            case "settings":
+                                appData.myProfileNavStack.append(.settings)
                             default:
                                 break
                             }

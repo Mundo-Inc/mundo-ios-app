@@ -16,7 +16,7 @@ struct MyProfile: View {
             ScrollView {
                 VStack {
                     HStack(spacing: 12) {
-                        if let profileImage = auth.user?.profileImage {
+                        if let profileImage = auth.user?.profileImage, profileImage.count > 0 {
                             AsyncImage(url: URL(string: profileImage)) { phase in
                                 if let image = phase.image {
                                     image
@@ -79,10 +79,24 @@ struct MyProfile: View {
                         }
                         
                         VStack {
-                            Text(auth.user?.name ?? "Test User")
-                                .font(.title2)
-                                .bold()
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            if let user = auth.user {
+                                if user.verified {
+                                    HStack {
+                                        Text(user.name)
+                                            .font(.title2)
+                                            .bold()
+                                        Image(systemName: "checkmark.seal")
+                                            .foregroundStyle(.blue)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    
+                                } else {
+                                    Text(auth.user?.name ?? "Test User")
+                                        .font(.title2)
+                                        .bold()
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            }
                             
                             Text("@\(auth.user?.username ?? "testUsername")")
                                 .font(.footnote)
@@ -189,8 +203,9 @@ struct MyProfile: View {
                 EditProfileView()
             })
             .refreshable {
-                // Refresh
-                print("Hey")
+                Task {
+                    await auth.updateUserInfo()
+                }
             }
             .frame(maxHeight: .infinity)
             .background(

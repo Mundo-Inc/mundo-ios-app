@@ -13,12 +13,27 @@ enum Role: String, Codable {
     case admin
 }
 
-struct CurrentUserData: Codable {
+struct CurrentUserCoreData: Codable {
     let _id, name, username: String
     let profileImage, bio: String?
     let email: Email
+    let level, xp, coins: Int
+    let role: Role
+    let verified: Bool
+    
+    struct Email: Codable {
+        let address: String
+        let verified: Bool
+    }
+}
+
+struct CurrentUserFullData: Codable {
+    let _id, name, username: String
+    var profileImage, bio: String?
+    let email: Email
     let level, rank, xp, remainingXp, coins, reviewsCount, followersCount, followingCount: Int
     let role: Role
+    let verified: Bool
     
     struct Email: Codable {
         let address: String
@@ -28,6 +43,8 @@ struct CurrentUserData: Codable {
 
 @MainActor
 class Authentication: ObservableObject {
+    
+    static let shared = Authentication()
     
     // MARK: - API Manager
     
@@ -44,7 +61,7 @@ class Authentication: ObservableObject {
     
     // MARK: - Properties
     
-    @Published private(set) var user: CurrentUserData? = nil
+    @Published private(set) var user: CurrentUserFullData? = nil
     @Published private(set) var isSignedIn: Bool = false
     
     @Published private(set) var userId: String? = nil
@@ -136,7 +153,7 @@ class Authentication: ObservableObject {
     func updateUserInfo() async {
         struct UserResponse: Codable {
             let success: Bool
-            let data: CurrentUserData
+            let data: CurrentUserFullData
         }
 
         if let userId, let token {
@@ -145,7 +162,11 @@ class Authentication: ObservableObject {
 
                 guard let data, response.statusCode >= 200, response.statusCode < 300 else { return }
 
+                
                 self.user = data.data
+                if data.data.profileImage?.count == 0 {
+                    self.user?.profileImage = nil
+                }
             } catch {
                 print(error)
             }
