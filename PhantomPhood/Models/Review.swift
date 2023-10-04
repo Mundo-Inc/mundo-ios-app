@@ -7,23 +7,6 @@
 
 import Foundation
 
-/*
- scores: 1,
- content: 1,
- images: 1,
- videos: 1,
- tags: 1,
- language: 1,
- createdAt: 1,
- updatedAt: 1,
- userActivityId: 1,
- writer: { $arrayElemAt: ["$writer", 0] },
- reactions: {
-   $arrayElemAt: ["$reactions", 0],
- },
- comments: 1,
- */
-
 struct ReviewScores: Decodable {
     let overall: Double?
     let drinkQuality: Double?
@@ -33,7 +16,12 @@ struct ReviewScores: Decodable {
     let value: Double?
 }
 
-struct Review: Identifiable, Decodable {
+struct PlaceReview: Identifiable, Decodable {
+    struct ReviewReaction: Decodable {
+        let total: [Reaction]
+        let user: [UserReaction]
+    }
+    
     let _id: String
     let scores: ReviewScores
     let content: String
@@ -47,12 +35,13 @@ struct Review: Identifiable, Decodable {
     let userActivityId: String?
     let writer: User
     let comments: [Comment]
-    let reactions: [Reaction]
+    let reactions: ReviewReaction
     
     var id: String {
         self._id
     }
 }
+
 
 struct FeedReview: Identifiable, Decodable {
     let _id: String

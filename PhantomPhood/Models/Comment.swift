@@ -26,4 +26,3 @@ struct Comment: Decodable, Identifiable {
         self._id
     }
 }
-

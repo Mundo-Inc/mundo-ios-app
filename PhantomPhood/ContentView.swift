@@ -11,39 +11,51 @@ struct ContentView: View {
     @EnvironmentObject private var appData: AppData
     
     var body: some View {
-        ZStack {
-            Color("Background").ignoresSafeArea()
-            
-            TabView(selection: $appData.activeTab) {
-                HomeView()
-                    .tabItem {
+        TabView(selection: $appData.activeTab) {
+            HomeView()
+                .tabItem {
+                    Label {
+                        Text("Home")
+                    } icon: {
                         Image(systemName: Tab.home.icon)
                     }
-                    .tag(Tab.home)
-                
-                if #available(iOS 17.0, *) {
-                    MapView()
-                        .tabItem {
+                }
+                .tag(Tab.home)
+            
+            if #available(iOS 17.0, *) {
+                MapView()
+                    .tabItem {
+                        Label {
+                            Text("Explore")
+                        } icon: {
                             Image(systemName: Tab.map.icon)
                         }
-                        .tag(Tab.map)
-                } else {
-                    RoundedRectangle(cornerRadius: 25.0)
-                }
-                
-                
-                LeaderboardView()
-                    .tabItem {
+                    }
+                    .tag(Tab.map)
+            } else {
+                RoundedRectangle(cornerRadius: 25.0)
+            }
+            
+            
+            LeaderboardView()
+                .tabItem {
+                    Label {
+                        Text("Leaderboard")
+                    } icon: {
                         Image(systemName: Tab.leaderboard.icon)
                     }
-                    .tag(Tab.leaderboard)
-                
-                MyProfile()
-                    .tabItem {
+                }
+                .tag(Tab.leaderboard)
+            
+            MyProfile()
+                .tabItem {
+                    Label {
+                        Text("Profile")
+                    } icon: {
                         Image(systemName: Tab.myProfile.icon)
                     }
-                    .tag(Tab.myProfile)
-            }
+                }
+                .tag(Tab.myProfile)
         }
     }
 }

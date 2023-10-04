@@ -14,7 +14,7 @@ struct ProfileStats: View {
         VStack(spacing: 30) {
             VStack {
                 Text("Social")
-                    .font(.headline)
+                    .font(.custom(style: .headline))
                     .bold()
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -54,34 +54,35 @@ struct ProfileStats: View {
                         
             VStack {
                 Text("Level & Rankings")
-                    .font(.headline)
+                    .font(.custom(style: .headline))
                     .bold()
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                HStack(spacing: 20) {
+                HStack(spacing: 10) {
                     LevelView(level: .convert(level: auth.user?.level ?? 0))
+                        .frame(width: 80, height: 80)
                     
                     VStack {
                         Text("To next level")
-                            .font(.headline)
+                            .font(.custom(style: .body))
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        ProgressView(value: 0.4)
+                        ProgressView(value: auth.user == nil ? 0 : Double(auth.user!.xp) / Double(auth.user!.xp + auth.user!.remainingXp))
                             .foregroundStyle(.secondary)
                             .progressViewStyle(.linear)
                             
                         
                         HStack(spacing: 0) {
-                            Text("1340")
-                                .font(.headline)
+                            Text("\(auth.user?.xp ?? 1000)")
                                 .foregroundStyle(Color.accentColor)
-                            Text("/1400")
-                                .font(.headline)
+                            Text("/\(auth.user == nil ? 3000 : auth.user!.xp + auth.user!.remainingXp)")
                                 .foregroundStyle(.secondary)
-                                
-                        }.frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .redacted(reason: auth.user == nil ? .placeholder : [])
+                        .font(.custom(style: .body))
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         
                     }
                     .padding(.trailing)
@@ -89,18 +90,18 @@ struct ProfileStats: View {
                     
                     VStack {
                         Text("Rank")
-                            .font(.title3)
                             .foregroundStyle(.tertiary)
-                            .bold()
-                        Text("#2")
-                            .font(.title3)
+                        Text("\(auth.user?.rank ?? 10)")
                             .foregroundStyle(.secondary)
-                            .bold()
+                            .redacted(reason: auth.user == nil ? .placeholder : [])
                     }
+                    .font(.custom(style: .title3))
+                    .bold()
                     
                     
-                }.padding(.trailing, 8)
-                .padding()
+                }
+                .padding(.trailing, 8)
+                .padding(.all, 8)
                 .frame(maxWidth: .infinity)
                 .background(Color.themePrimary)
                 .clipShape(.rect(cornerRadius: 15))
@@ -109,7 +110,7 @@ struct ProfileStats: View {
             
             VStack {
                 Text("Activities")
-                    .font(.headline)
+                    .font(.custom(style: .headline))
                     .bold()
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)

@@ -17,3 +17,15 @@ struct Checkin: Identifiable, Decodable {
         self._id
     }
 }
+
+struct FeedCheckin: Identifiable, Decodable {
+    let _id: String
+    let createdAt: String
+    let user: User
+    let place: BriefPlace
+    let totalCheckins: Int
+    
+    var id: String {
+        self._id
+    }
+}

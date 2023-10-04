@@ -36,7 +36,7 @@ struct PhantomPhoodApp: App {
                     if let _ = auth.user {
                         ContentView()
                     } else {
-                        ProgressView()
+                        FirstLoadingView()
                     }
                 } else {
                     WelcomeView()

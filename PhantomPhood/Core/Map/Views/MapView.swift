@@ -28,28 +28,28 @@ struct MapView: View {
                         "Diller Civic Center Playground",
                         coordinate: CLLocationCoordinate2D(latitude: 41.7128, longitude: -74.0060)
                     ) {
-                        MapMarker(type: .restaurant)
+                        PlaceMapMarker(type: .restaurant)
                     }
                     
                     Annotation(
                         "GWAf fawg",
                         coordinate: CLLocationCoordinate2D(latitude: 41.7128, longitude: -74.0260)
                     ) {
-                        MapMarker(type: .cafe)
+                        PlaceMapMarker(type: .cafe)
                     }
                     
                     Annotation(
                         "Test 41 afwf",
                         coordinate: CLLocationCoordinate2D(latitude: 41.7218, longitude: -74.0060)
                     ) {
-                        MapMarker(type: .bar)
+                        PlaceMapMarker(type: .bar)
                     }
                     
                     Annotation(
                         "Test 41 afwf",
                         coordinate: CLLocationCoordinate2D(latitude: 41.7138, longitude: -74.0180)
                     ) {
-                        MapMarker(type: .cluster(count: 24))
+                        PlaceMapMarker(type: .cluster(count: 24))
                     }
                 }
                 .mapControlVisibility(.visible)

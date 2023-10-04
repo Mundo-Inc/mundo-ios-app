@@ -13,7 +13,7 @@ enum Role: String, Codable {
     case admin
 }
 
-struct CurrentUserCoreData: Codable {
+struct CurrentUserCoreData: Codable, Identifiable {
     let _id, name, username: String
     let profileImage, bio: String?
     let email: Email
@@ -24,6 +24,10 @@ struct CurrentUserCoreData: Codable {
     struct Email: Codable {
         let address: String
         let verified: Bool
+    }
+    
+    var id: String {
+        self._id
     }
 }
 
@@ -38,6 +42,10 @@ struct CurrentUserFullData: Codable {
     struct Email: Codable {
         let address: String
         let verified: Bool
+    }
+    
+    var id: String {
+        self._id
     }
 }
 
@@ -67,6 +75,9 @@ class Authentication: ObservableObject {
     @Published private(set) var userId: String? = nil
     
     var token: String? {
+        #if DEBUG
+        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDVjOGIyMjIxMzQ2NDNjMDIwODYwYTUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2OTY0MzM0ODksImV4cCI6MTY5OTAyNTQ4OX0.ahj_xQc5F1hoigPj9t8yVGOaFIQY5HeIeGKe-53gKU0"
+        #endif
         // get jwt token from Keychain
         let tk = KeychainHelper.getData(for: .userToken)
         return tk

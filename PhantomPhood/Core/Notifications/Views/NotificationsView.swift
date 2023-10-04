@@ -8,13 +8,129 @@
 import SwiftUI
 
 struct NotificationsView: View {
+    @StateObject var vm = NotificationsViewModel()
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack {
+            Color.themeBG.ignoresSafeArea()
+            
+            List {
+                ForEach(vm.notifications) { notification in
+                    notificationItem(notification)
+                        .onAppear {
+                            if !vm.isLoading && !vm.notifications.isEmpty && vm.hasMore {
+                                Task {
+                                    await vm.loadMore(currentItem: notification)
+                                }
+                            }
+                        }
+                }
+            }
+            .refreshable {
+                if !vm.isLoading {
+                    await vm.getNotifications(.refresh)
+                }
+            }
+            .listStyle(.inset)
+            .navigationTitle("Notifications")
+            .toolbar(content: {
+                ToolbarItem {
+                    if vm.isLoading {
+                        ProgressView()
+                            .transition(.opacity)
+                    }
+                }
+            })
+        }
+    }
+    
+    func notificationItem(_ data: Notification) -> some View {
+        HStack {
+            ZStack {
+                NavigationLink(value: HomeStack.userProfile(id: data.user.id)) {
+                    EmptyView()
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                if let profileImage = data.user.profileImage, let url = URL(string: profileImage) {
+                    AsyncImageLoader(url) {
+                        Circle()
+                            .foregroundStyle(Color.themePrimary)
+                            .overlay {
+                                ProgressView()
+                            }
+                    } errorView: {
+                        Circle()
+                            .foregroundStyle(Color.themePrimary)
+                            .overlay {
+                                Image(systemName: "exclamationmark.icloud")
+                            }
+                    }
+                    .clipShape(Circle())
+                } else {
+                    Image(systemName: "person.circle.fill")
+                        .resizable()
+                }
+                
+            }
+            .frame(width: 44, height: 44)
+            
+            VStack {
+                Group {
+                    switch data.type {
+                    case .reaction:
+                        Text(data.user.name)
+                            .bold()
+                        Text(data.content)
+                    case .comment:
+                        Text(data.user.name)
+                            .bold()
+                        +
+                        Text(" Commented on your activity.")
+                        
+                        Text(data.content)
+                    case .follow:
+                        Text(data.user.name)
+                            .bold()
+                        Text(data.content)
+                    case .comment_mention:
+                        Text(data.user.name)
+                            .bold()
+                        +
+                        Text(" Mentioned you in a comment.")
+                        
+                        Text(data.content)
+                    case .review_mention:
+                        Text(data.user.name)
+                            .bold()
+                        +
+                        Text(" Mentioned you in a review.")
+                        
+                        Text(data.content)
+                    case .xp:
+                        Text(data.user.name)
+                            .bold()
+                        Text("Got \(data.content) XP")
+                    case .level_up:
+                        Text(data.user.name)
+                            .bold()
+                        Text("Leveled Up")
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .font(.custom(style: .caption))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            Text(DateFormatter.getPassedTime(from: data.createdAt))
+                .font(.custom(style: .caption))
+                .foregroundStyle(.secondary)
+        }
     }
 }
 
-struct NotificationsView_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview {
+    NavigationStack {
         NotificationsView()
     }
 }

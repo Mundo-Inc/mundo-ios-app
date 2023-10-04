@@ -8,63 +8,86 @@
 import SwiftUI
 
 struct FeedView: View {
-    @Environment(\.isSearching)
-    private var isSearching: Bool
+    @Environment(\.isSearching) private var isSearching: Bool
     
     @StateObject var vm = FeedViewModel()
     
     @Binding var searchText: String
     
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 50) {
-                ForEach(vm.feedItems) { item in
-                    switch item.activityType {
-                    case .levelUp:
-                        FeedLevelUpView(data: item)
-                    case .following:
-                        FeedFollowingView(data: item)
-                    case .newReview:
-                        FeedReviewView(data: item)
-                    default:
-                        Text(item.activityType.rawValue)
-                        EmptyView()
-                    }
-                }
-                if vm.isLoading {
-                    ProgressView()
-                }
-                Color.clear
-                    .frame(width: 0, height: 0, alignment: .bottom)
-                    .onAppear {
-                        print("Attempt to load")
-                        if !vm.isLoading {
-                            print("Loading More Feed")
-                            Task {
-                                await vm.getFeed()
+        ZStack {
+            Color.themeBG.ignoresSafeArea()
+            
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    ForEach(vm.feedItems) { item in
+                        Group {
+                            switch item.activityType {
+                            case .levelUp:
+                                FeedLevelUpView(data: item)
+                            case .following:
+                                FeedFollowingView(data: item)
+                            case .newReview:
+                                FeedReviewView(data: item)
+                            case .newCheckin:
+                                FeedCheckinView(data: item)
+                            default:
+                                Text(item.activityType.rawValue)
                             }
                         }
+                        .padding(.horizontal)
+                        .onAppear {
+                            if !vm.isLoading {
+                                Task {
+                                    await vm.loadMore(currentItem: item)
+                                }
+                            }
+                        }
+                        
+                        Divider()
                     }
-            }.padding(.horizontal)
+                }
+            }
+            .scrollIndicators(.hidden)
+            .navigationTitle("Home")
+            .toolbar(content: {
+                ToolbarItem(placement: .topBarLeading) {
+                    if vm.isLoading {
+                        ProgressView()
+                    }
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink(value: HomeStack.notifications) {
+                        Image(systemName: "bell")
+                    }
+                }
+            })
+            .navigationBarTitleDisplayMode(.inline)
+            .refreshable {
+                Task {
+                    if !vm.isLoading {
+                        await vm.getFeed(.refresh)
+                    }
+                }
+            }
+            .overlay {
+                if isSearching && !searchText.isEmpty {
+                    ScrollView {
+                        VStack {
+                            Text("Searching for \(searchText)")
+                            
+                            RoundedRectangle(cornerRadius: 15)
+                                .frame(height: 50)
+                            RoundedRectangle(cornerRadius: 15)
+                                .frame(height: 50)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .background(.thinMaterial)
+                }
+            }
         }
-        .navigationTitle("Home")
-        .navigationBarTitleDisplayMode(.inline)
-//        .overlay {
-//            if isSearching && !searchText.isEmpty {
-//                ScrollView {
-//                    VStack {
-//                        Text("Searching for \(searchText)")
-//                        
-//                        RoundedRectangle(cornerRadius: 15)
-//                            .frame(height: 50)
-//                        RoundedRectangle(cornerRadius: 15)
-//                            .frame(height: 50)
-//                    }
-//                }
-//                .padding(.horizontal)
-//                .background(.thinMaterial)
-//            }
-//        }
     }
 }
 

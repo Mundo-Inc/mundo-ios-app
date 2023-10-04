@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FeedLevelUpView: View {
     let data: FeedItem
-    @StateObject var vm = FeedItemViewModel()
+    @State var showComments = false
     
     var body: some View {
         FeedItemTemplate(user: data.user, comments: data.comments) {
@@ -141,7 +141,7 @@ struct FeedLevelUpView: View {
                 }
                 
                 Button {
-                    vm.showComments = true
+                    showComments = true
                 } label: {
                     Image(systemName: "bubble")
                         .font(.system(size: 20))
@@ -152,73 +152,71 @@ struct FeedLevelUpView: View {
             }
             .foregroundStyle(.primary)
         }
-        .sheet(isPresented: $vm.showComments, content: {
-            CommentsView(commentsLoading: $vm.commentsLoading, comments: $vm.comments, commentContent: $vm.commentContent, FeedItemId: data.id) {
-                await vm.getComments(id: data.id)
-            }
+        .sheet(isPresented: $showComments, content: {
+            CommentsView(activityId: data.id)
         })
     }
 }
 
-fileprivate let dummyJSON = """
-{
-  "id": "64de246354e42fd88a38fd89",
-  "user": {
-    "_id": "645c8b222134643c020860a5",
-    "name": "Kia",
-    "username": "TheKia",
-    "bio": "Passionate tech lover. foodie",
-    "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
-    "level": 3,
-    "verified": true,
-    "xp": 532,
-    "coins": 199
-  },
-  "activityType": "LEVEL_UP",
-  "resourceType": "User",
-  "resource": {
-    "_id": "645c8b222134643c020860a5",
-    "name": "Kia",
-    "username": "TheKia",
-    "bio": "Passionate tech lover. foodie",
-    "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
-    "level": 3,
-    "verified": true,
-    "xp": 532,
-    "coins": 199
-  },
-  "privacyType": "PUBLIC",
-  "createdAt": "2023-08-17T13:45:07.422Z",
-  "updatedAt": "2023-08-17T13:45:07.422Z",
-  "score": 469.5168030777778,
-  "weight": 1,
-  "reactions": {
-    "total": [
-      {
-        "count": 1,
-        "type": "emoji",
-        "reaction": "👍"
-      }
-    ],
-    "user": [
-      {
-        "_id": "64de248e54e42fd88a38ff73",
-        "type": "emoji",
-        "reaction": "👍",
-        "createdAt": "2023-08-17T13:45:50.666Z"
-      }
-    ]
-  },
-  "comments": []
-}
-"""
-
-fileprivate let dummyFeedItem = decodeFeedItem(from: dummyJSON)
-
 #Preview {
-    ScrollView {
+    let dummyJSON = """
+    {
+      "id": "64de246354e42fd88a38fd89",
+      "user": {
+        "_id": "645c8b222134643c020860a5",
+        "name": "Kia",
+        "username": "TheKia",
+        "bio": "Passionate tech lover. foodie",
+        "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
+        "level": 3,
+        "verified": true,
+        "xp": 532,
+        "coins": 199
+      },
+      "activityType": "LEVEL_UP",
+      "resourceType": "User",
+      "resource": {
+        "_id": "645c8b222134643c020860a5",
+        "name": "Kia",
+        "username": "TheKia",
+        "bio": "Passionate tech lover. foodie",
+        "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
+        "level": 3,
+        "verified": true,
+        "xp": 532,
+        "coins": 199
+      },
+      "privacyType": "PUBLIC",
+      "createdAt": "2023-08-17T13:45:07.422Z",
+      "updatedAt": "2023-08-17T13:45:07.422Z",
+      "score": 469.5168030777778,
+      "weight": 1,
+      "reactions": {
+        "total": [
+          {
+            "count": 1,
+            "type": "emoji",
+            "reaction": "👍"
+          }
+        ],
+        "user": [
+          {
+            "_id": "64de248e54e42fd88a38ff73",
+            "type": "emoji",
+            "reaction": "👍",
+            "createdAt": "2023-08-17T13:45:50.666Z"
+          }
+        ]
+      },
+      "comments": []
+    }
+    """
+    let dummyFeedItem = decodeFeedItem(from: dummyJSON)
+    
+    return ScrollView {
         if let d = dummyFeedItem {
             FeedLevelUpView(data: d)
         }
     }
+    .padding(.horizontal)
 }

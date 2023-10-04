@@ -61,6 +61,54 @@ struct Media: Identifiable, Decodable {
 }
 
 struct Place: Identifiable, Decodable {
+    struct GoogleResults: Decodable {
+        struct GoogleReviews: Decodable {
+            let author_name: String
+            let language: String
+            let original_language: String
+            let profile_photo_url: String?
+            let rating: Int
+            let relative_time_description: String
+            let text: String
+            let time: Int
+            let translated: Bool
+        }
+        
+        let rating: Double
+        let reviewCount: Int
+        let reviews: [GoogleReviews]
+        let thumbnail: String?
+    }
+    
+    struct YelpResults: Decodable {
+        struct YelpReviews: Identifiable, Decodable {
+            struct YelpUser: Identifiable, Decodable {
+                let id: String
+                let profile_url: String
+                let image_url: String?
+                let name: String
+            }
+            
+            let id: String
+            let url: String
+            let text: String
+            let rating: Int
+            let time_created: String
+            let user: YelpUser
+        }
+        
+        let rating: Double
+        let reviewCount: Int
+        let reviews: [YelpReviews]
+        let thumbnail: String?
+    }
+
+    
+    struct ThirdPartyResults: Decodable {
+        let google: GoogleResults?
+        let yelp: YelpResults?
+    }
+    
     let _id: String
     let name: String
     let otherNames: [String]
@@ -75,7 +123,9 @@ struct Place: Identifiable, Decodable {
     let reviewCount: Int
     
     // -
-    let reviews: [Review]
+    let reviews: [PlaceReview]
+    let thirdParty: ThirdPartyResults
+    let media: [Media]
     
     var id: String {
         self._id

@@ -22,7 +22,6 @@ class FeedDataManager {
         }
         
         let (data, _) = try await apiManager.request("/feeds?page=\(page)", method: .get, token: token) as (FeedResponse?, HTTPURLResponse)
-        
         if let data = data {
             return data.result
         } else {

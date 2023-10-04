@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum MarkerType {
+enum PlaceMarkerType {
     case restaurant
     case bar
     case cafe
@@ -27,8 +27,8 @@ enum MarkerType {
     }
 }
 //cup.and.saucer
-struct MapMarker: View {
-    let type: MarkerType
+struct PlaceMapMarker: View {
+    let type: PlaceMarkerType
     
     var body: some View {
         ZStack {
@@ -65,5 +65,5 @@ struct MapMarker: View {
 }
 
 #Preview {
-    MapMarker(type: .cluster(count: 20))
+    PlaceMapMarker(type: .cluster(count: 20))
 }

@@ -27,15 +27,19 @@ fileprivate struct LineArchShape: Shape {
 }
 
 fileprivate struct LineArchView: View {
+    let isActive: Bool
+    
     var body: some View {
         LineArchShape()
-            .stroke(Color.themeBorder, lineWidth: 2)
+            .stroke(isActive ? Color.accentColor : Color.themeBorder, lineWidth: 2)
+            .animation(.easeInOut, value: isActive)
     }
 }
 
 // MARK: - Comment View
 fileprivate struct CommentView: View {
     let comment: Comment
+    let isActive: Bool
     
     var body: some View {
         HStack {
@@ -43,7 +47,7 @@ fileprivate struct CommentView: View {
                 Spacer()
                     .frame(width: 2)
                     .overlay(alignment: .topLeading) {
-                        LineArchView()
+                        LineArchView(isActive: isActive)
                             .frame(width: 22, height: 75)
                     }
                     .offset(x: 1, y: -50)
@@ -73,10 +77,12 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
     let content: () -> Content
     let footer: () -> Footer
     let user: User
+    let isActive: Bool
     
     init(
         user: User,
         comments: [Comment] = [],
+        isActive: Bool = false,
         @ViewBuilder header: @escaping () -> Header,
         @ViewBuilder content: @escaping () -> Content,
         @ViewBuilder footer: @escaping () -> Footer = { EmptyView() }
@@ -86,6 +92,7 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
         self.footer = footer
         self.comments = comments
         self.user = user
+        self.isActive = isActive
     }
     
     var body: some View {
@@ -95,35 +102,27 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                 VStack {
                     NavigationLink(value: HomeStack.userProfile(id: user.id)) {
                         if let profileImage = user.profileImage, let url = URL(string: profileImage) {
-                            AsyncImage(url: url) { phase in
-                                Group {
-                                    if let image = phase.image {
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 44, height: 44)
-                                            .clipShape(Circle())
-                                    } else if phase.error != nil {
-                                        Circle()
-                                            .frame(width: 44, height: 44)
-                                            .foregroundStyle(Color.themePrimary)
-                                            .overlay {
-                                                Image(systemName: "exclamationmark.icloud")
-                                            }
-                                    } else {
-                                        Circle()
-                                            .frame(width: 44, height: 44)
-                                            .foregroundStyle(Color.themePrimary)
-                                            .overlay {
-                                                ProgressView()
-                                            }
+                            AsyncImageLoader(url) {
+                                Circle()
+                                    .frame(width: 44, height: 44)
+                                    .foregroundStyle(Color.themePrimary)
+                                    .overlay {
+                                        ProgressView()
                                     }
-                                }
-                                .overlay(alignment: .top) {
-                                    LevelView(level: .convert(level: user.level))
-                                        .frame(width: 36, height: 36)
-                                        .offset(y: 28)
-                                }
+                            } errorView: {
+                                Circle()
+                                    .frame(width: 44, height: 44)
+                                    .foregroundStyle(Color.themePrimary)
+                                    .overlay {
+                                        Image(systemName: "exclamationmark.icloud")
+                                    }
+                            }
+                            .frame(width: 44, height: 44)
+                            .clipShape(Circle())
+                            .overlay(alignment: .top) {
+                                LevelView(level: .convert(level: user.level))
+                                    .frame(width: 36, height: 36)
+                                    .offset(y: 28)
                             }
                         } else {
                             Image(systemName: "person.circle.fill")
@@ -153,7 +152,8 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                 VStack {
                     Spacer()
                         .frame(width: 2)
-                        .background(Color.themeBorder)
+                        .background(isActive ? Color.accentColor : Color.themeBorder)
+                        .animation(.easeInOut, value: isActive)
                 }
                 .frame(width: 44)
                 .frame(maxHeight: .infinity)
@@ -166,7 +166,7 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
             }
             
             ForEach(comments) { comment in
-                CommentView(comment: comment)
+                CommentView(comment: comment, isActive: isActive)
             }
                         
             HStack {
@@ -180,13 +180,54 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                 .padding(.top)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-        }.frame(maxWidth: .infinity)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
 let dateFormatter = ISO8601DateFormatter()
 #Preview {
     ScrollView {
+        FeedItemTemplate(
+            user: User(
+                _id: "TEST_USER_ID",
+                name: "Dwayne",
+                username: "DwayneTheRock",
+                bio: "This is test bio",
+                coins: 40,
+                xp: 2400,
+                level: 7,
+                verified: true,
+                profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            ),
+            comments: [
+                Comment(
+                    _id: "TEST_COMMENT_ID_1",
+                    content: "This is the comment body let's see what happens if this exceeds two lines",
+                    createdAt: "2023-09-19T20:06:45.214Z",
+                    updatedAt: "2023-09-19T20:06:45.214Z",
+                    author: User(
+                        _id: "TEST_USER_ID",
+                        name: "Dwayne",
+                        username: "DwayneTheRock",
+                        bio: "This is test bio",
+                        coins: 40,
+                        xp: 2400,
+                        level: 7,
+                        verified: true,
+                        profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                    ),
+                    likes: 4,
+                    liked: true,
+                    mentions: []
+                )
+            ]
+        ) {
+            Text("Header")
+        } content: {
+            Text("Content")
+        }
+        
         FeedItemTemplate(
             user: User(
                 _id: "TEST_USER_ID",

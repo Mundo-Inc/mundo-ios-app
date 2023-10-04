@@ -2,17 +2,19 @@
 //  CommentsView.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 25.09.2023.
+//  Created by Kia Abdi on 10/4/23.
 //
 
 import SwiftUI
 
 struct CommentsView: View {
-    @Binding var commentsLoading: Bool
-    @Binding var comments: [Comment]
-    @Binding var commentContent: String
-    var FeedItemId: String
-    var getComments: () async -> ()
+    let activityId: String
+    @StateObject var vm: CommentsViewModel
+    
+    init(activityId: String) {
+        self.activityId = activityId
+        self._vm = StateObject(wrappedValue: CommentsViewModel(activityId: activityId))
+    }
     
     var body: some View {
         VStack {
@@ -26,10 +28,10 @@ struct CommentsView: View {
             Divider()
             
             ScrollView {
-                if commentsLoading {
+                if vm.isLoading {
                     ProgressView()
                 } else {
-                    if comments.isEmpty {
+                    if vm.comments.isEmpty {
                         VStack {
                             Text("No Comments yet")
                                 .font(.title2)
@@ -41,7 +43,7 @@ struct CommentsView: View {
                         .padding(.top, 50)
                     }
                 }
-                ForEach(comments) { comment in
+                ForEach(vm.comments) { comment in
                     VStack {
                         HStack {
                             NavigationLink(value: HomeStack.userProfile(id: comment.author.id)) {
@@ -118,12 +120,15 @@ struct CommentsView: View {
                     .padding(.horizontal)
                 }
             }
+            .refreshable {
+                await vm.getComments()
+            }
             
             Spacer()
             
             Divider()
             
-            TextField("Add a comment", text: $commentContent, axis: .vertical)
+            TextField("Add a comment", text: $vm.commentContent, axis: .vertical)
                 .lineLimit(1...4)
                 .padding(.all, 8)
                 .padding(.trailing, 35)
@@ -145,17 +150,14 @@ struct CommentsView: View {
         .padding(.top)
         .onAppear {
             Task {
-                if comments.isEmpty {
-                    await getComments()
+                if vm.comments.isEmpty {
+                    await vm.getComments()
                 }
             }
         }
-        
     }
 }
 
 #Preview {
-    CommentsView(commentsLoading: .constant(false), comments: .constant([]), commentContent: .constant(""), FeedItemId: "TEST_FEED_ITEM_ID") {
-        print("Get Comments")
-    }
+    CommentsView(activityId: "64fbece384a7dd7a79f86af1")
 }

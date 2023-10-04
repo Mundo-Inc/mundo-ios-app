@@ -1,0 +1,206 @@
+//
+//  PlaceReviewView.swift
+//  PhantomPhood
+//
+//  Created by Kia Abdi on 10/3/23.
+//
+
+import SwiftUI
+
+struct PlaceReviewView: View {
+    let review: PlaceReview
+    let place: Place
+    @State var comments: [Comment]
+    @State var showMedia: Bool
+    @State var showComments: Bool
+        
+    init(review: PlaceReview, place: Place) {
+        self.review = review
+        self.place = place
+        self.comments = review.comments
+        self.showMedia = false
+        self.showComments = false
+    }
+    
+    var body: some View {
+        FeedItemTemplate(user: review.writer, comments: review.comments, isActive: showMedia || showComments) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(review.writer.name)
+                        .font(.custom(style: .body))
+                        .fontWeight(.bold)
+                    Spacer()
+                    Text(DateFormatter.getPassedTime(from: review.createdAt, suffix: " ago"))
+                        .font(.custom(style: .caption))
+                        .foregroundStyle(.secondary)
+                }.frame(maxWidth: .infinity)
+                
+                HStack {
+                    Text("Reviewed")
+                        .font(.custom(style: .caption))
+                        .fontWeight(.medium)
+                        .foregroundStyle(.black)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(Color("Reviewed"))
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+
+                    Text(place.name)
+                        .font(.custom(style: .body))
+                        .fontWeight(.bold)
+                }
+            }
+            .padding(.bottom)
+        } content: {
+            VStack {
+                if !review.images.isEmpty || !review.videos.isEmpty {
+                    ZStack {
+                        GeometryReader(content: { geometry in
+                            TabView {
+                                if !review.videos.isEmpty {
+                                    ForEach(review.videos) { video in
+                                        ReviewVideoView(url: video.src, mute: true)
+                                            .frame(height: 300)
+                                            .frame(maxWidth: UIScreen.main.bounds.width)
+                                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                                            .overlay(alignment: .topTrailing) {
+                                                Image(systemName: "video")
+                                                    .padding(.top, 8)
+                                                    .padding(.trailing, 5)
+                                            }
+                                    }
+                                }
+                                if !review.images.isEmpty {
+                                    ForEach(review.images) { image in
+                                        if let url = URL(string: image.src) {
+                                            AsyncImageLoader(url)
+                                                .frame(height: 300)
+                                                .frame(maxWidth: UIScreen.main.bounds.width)
+                                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                                                .overlay(alignment: .topTrailing) {
+                                                    Image(systemName: "photo")
+                                                        .padding(.top, 8)
+                                                        .padding(.trailing, 5)
+                                                }
+                                        }
+                                    }
+                                }
+                            }
+                            .tabViewStyle(.page)
+                            .onTapGesture {
+                                showMedia = true
+                            }
+                        })
+                    }
+                    .frame(minHeight: 300)
+                }
+                
+                Text(review.content)
+                    .font(.custom(style: .body))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.leading)
+            }
+        } footer: {
+            if review.userActivityId != nil {
+                HStack {
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "face.dashed")
+                            .font(.system(size: 20))
+                            .overlay(alignment: .topTrailing) {
+                                Color.themeBG
+                                    .frame(width: 12, height: 12)
+                                    .overlay {
+                                        Image(systemName: "plus")
+                                            .font(.system(size: 12))
+                                    }
+                                    .offset(x: 4, y: -4)
+                            }
+                        
+                    }
+                    
+                    Button {
+                        showComments = true
+                    } label: {
+                        Image(systemName: "bubble")
+                            .font(.system(size: 20))
+                    }
+                    .padding(.leading, 5)
+                    
+                    Spacer()
+                }
+                .foregroundStyle(.primary)
+            }
+        }
+        .if(review.userActivityId != nil, transform: { view in
+            view
+                .sheet(isPresented: $showComments, content: {
+                    if let userActivityId = review.userActivityId {
+                        CommentsView(activityId: userActivityId)
+                    }
+                })
+                .fullScreenCover(isPresented: $showMedia, content: {
+                    MediaView(showMedia: $showMedia, review: review)
+                })
+        })
+    }
+}
+    
+fileprivate struct MediaView: View {
+    @Binding var showMedia: Bool
+    let review: PlaceReview
+    @State var offset: CGSize = .zero
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Button {
+                    showMedia = false
+                } label: {
+                    Image(systemName: "xmark")
+                }
+            }
+            .padding()
+            
+            Spacer()
+            
+            if showMedia {
+                VStack {
+                    if !review.images.isEmpty || !review.videos.isEmpty {
+                        TabView {
+                            if !review.videos.isEmpty {
+                                ForEach(review.videos) { video in
+                                    ReviewVideoView(url: video.src)
+                                        .frame(maxWidth: UIScreen.main.bounds.size.width, maxHeight: UIScreen.main.bounds.size.height)
+                                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                                }
+                            }
+                            if !review.images.isEmpty {
+                                ForEach(review.images) { image in
+                                    if let url = URL(string: image.src) {
+                                        AsyncImageLoader(url)
+                                            .frame(maxWidth: UIScreen.main.bounds.size.width, maxHeight: UIScreen.main.bounds.size.height)
+                                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                                    }
+                                }
+                            }
+                        }
+                        .tabViewStyle(.page)
+                    }
+                }
+                .frame(maxHeight: .infinity)
+            }
+        }
+    }
+}
+
+
+#Preview {
+    ScrollView {
+        PlaceReviewView(review: PlaceReview(_id: "650bc9579baae711358b230f", scores: ReviewScores(overall: 4, drinkQuality: 4, foodQuality: nil, atmosphere: 4, service: 4, value: nil), content: "The bar is connected to Foreign Cinema, a famous restaurant right next door. You can order food there too.\n\nCocktail menu and drinks are up to par.", images: [Media(_id: "650bc9579baae711358b2300", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/f4ac18ac6dcbab332fbad134daecaef1.jpg", caption: nil, type: .image), Media(_id: "650bc9579baae711358b2304", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/6eaba08269af8e32939b41532da92234.jpg", caption: nil, type: .image)], videos: [Media(_id: "646eb444891c082d77a02e3b", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/6fbc43dcd6d58df1fbc41df26aac0277.mp4", caption: nil, type: .video)], tags: ["gourmet_cuisine", "craft_beers", "innovative_cocktails", "delicious_desserts", "excellent_service"], recommend: true, language: "en", createdAt: "2023-09-21T04:40:55.129+00:00", updatedAt: "2023-09-21T04:40:57.442+00:00", userActivityId: "650bc9579baae711358b2319", writer: User(_id: "64b5a0bad66d45323e935bda", name: "Ross Ahya", username: "RossAhya", bio: "", coins: 49, xp: 127, level: 2, verified: false, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/profile.jpg"), comments: [Comment(_id: "650d0a189baae711358b3cd4", content: "These look deliciousss", createdAt: "2023-09-22T03:29:28.386+00:00", updatedAt: "2023-09-22T03:29:28.386+00:00", author: User(_id: "645e7f843abeb74ee6248ced", name: "Nabeel", username: "naboohoo", bio: "Im all about the GAINZ 🔥 thats why i eat 🍔", coins: 1503, xp: 2207, level: 7, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/profile.jpg"), likes: 0, liked: false, mentions: [])], reactions: PlaceReview.ReviewReaction(total: [], user: [])), place: Place(_id: "645c1d1ab41f8e12a0d166bc", name: "Eleven Madison Park", otherNames: [], description: "Eleven Madison Park embodies an urbane sophistication serving Chef Daniel Humm's modern, sophisticated French cuisine that emphasizes purity, simplicity and seasonal flavors and ingredients.  Daniel's delicate and precise cooking style is experienced through a constantly evolving menu. The restaurant's dramatically high ceilings and magnificent art deco dining room offer guests lush views of historic Madison Square Park and the Flatiron building. In addition to the main dining room, guests may also enjoy wine, beer, and cocktails, as well as an extensive bar menu in the restaurant's bar and Flatiron Lounge.\n\nIn November 2008, Eleven Madison Park was designated Grand Chef Relais & Châteaux, joining the ranks of one of the world's most exclusive associations of hotels and gourmet restaurants. In 2009, Eleven Madison Park received a Four Star Review from The New York Times. The restaurant was also awarded one Michelin star.", location: PlaceLocation(geoLocation: PlaceLocation.GeoLocation(lng: 40.7416907417333, lat: -73.9872074872255), address: "11 Madison Ave", city: "New York", state: "NY", country: "US", zip: "10010"), thumbnail: "https://s3-media1.fl.yelpcdn.com/bphoto/s_H7gm_Hwmz--O6bo1iU-A/o.jpg", phone: "+12128890905", website: "http://www.elevenmadisonpark.com/menus/", categories: ["newamerican", "french", "cocktailbars"], priceRange: 4, scores: PlaceScores(overall: 3.808333333333333, drinkQuality: 4.363636363636363, foodQuality: 3.9342105263157894, atmosphere: 4.205882352941177, service: 4.196428571428571, value: 2.4025974025974026, phantom: 76.41102086767721), reviewCount: 120, reviews: [], thirdParty: Place.ThirdPartyResults(google: nil, yelp: nil), media: []))
+    }
+    .padding(.horizontal)
+
+}

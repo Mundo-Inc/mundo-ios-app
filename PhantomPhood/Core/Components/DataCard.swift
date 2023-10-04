@@ -32,25 +32,26 @@ struct DataCard: View {
             Spacer()
             
             VStack(alignment: .leading) {
-                if let v = value as? String {
-                    Text(v)
-                        .font(.headline)
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                } else if let v = value as? Int {
-                    Text(String(v))
-                        .font(.headline)
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                } else {
-                    ProgressView()
+                Group {
+                    if let v = value as? String {
+                        Text(v)
+                    } else if let v = value as? Int {
+                        Text(String(v))
+                    } else {
+                        Text("Value")
+                    }
                 }
+                .font(.custom(style: .headline))
+                .frame(maxWidth: .infinity, maxHeight: 18, alignment: .leading)
+                .redacted(reason: value == nil ? .placeholder : [])
+                
                 Text(title)
-                    .font(.caption)
+                    .font(.custom(style: .caption))
                     .foregroundStyle(Color.secondary)
-                    .bold()
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                    
             }
+            .bold()
         }
         .padding(.leading, 8)
         .padding()
@@ -69,6 +70,6 @@ struct DataCard: View {
         iconColor: LinearGradient(colors: [Color.white, Color.white], startPoint: .top, endPoint: .bottom),
         iconBackground: LinearGradient(colors: [Color.blue, Color.accentColor], startPoint: .topLeading, endPoint: .bottomTrailing),
         title: "Data",
-        value: "100"
+        value: nil
     )
 }

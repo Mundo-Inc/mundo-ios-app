@@ -16,86 +16,61 @@ struct MyProfile: View {
             ScrollView {
                 VStack {
                     HStack(spacing: 12) {
-                        if let profileImage = auth.user?.profileImage, profileImage.count > 0 {
-                            AsyncImage(url: URL(string: profileImage)) { phase in
-                                if let image = phase.image {
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 82, height: 82)
-                                        .clipShape(
-                                            .rect(
-                                                topLeadingRadius: 15,
-                                                bottomLeadingRadius: 15,
-                                                bottomTrailingRadius: 15,
-                                                topTrailingRadius: 15
-                                            )
-                                        )
-                                } else if phase.error != nil {
-                                    VStack(spacing: 0) {
-                                        Image(systemName: "exclamationmark.icloud")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .foregroundStyle(.red)
-                                            .frame(width: 50, height: 50)
-                                        Text("Error")
-                                            .font(.caption)
+                        if let profileImage = auth.user?.profileImage, let imageURL = URL(string: profileImage) {
+                            AsyncImageLoader(imageURL) {
+                                RoundedRectangle(cornerRadius: 15)
+                                    .foregroundStyle(.tertiary)
+                                    .overlay {
+                                        ProgressView()
                                     }
-                                    .frame(width: 82, height: 82)
-                                    .background(Color.themeBG)
-                                    .clipShape(
-                                        .rect(
-                                            topLeadingRadius: 15,
-                                            bottomLeadingRadius: 15,
-                                            bottomTrailingRadius: 15,
-                                            topTrailingRadius: 15
-                                        )
-                                    )
-                                } else {
-                                    RoundedRectangle(cornerRadius: 15)
-                                        .frame(width: 82, height: 82)
-                                        .foregroundStyle(.tertiary)
-                                        .overlay {
-                                            ProgressView()
-                                        }
+                            } errorView: {
+                                VStack(spacing: 0) {
+                                    Image(systemName: "exclamationmark.icloud")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundStyle(.red)
+                                        .frame(width: 50, height: 50)
+                                    Text("Error")
+                                        .font(.caption)
                                 }
+                                .background(Color.themeBG)
                             }
+                            .frame(width: 82, height: 82)
+                            .clipShape(.rect(cornerRadius: 15))
                         } else {
                             // No Image
-                            Image(systemName: "person.crop.circle")
-                                .resizable()
-                                .foregroundStyle(Color.secondary)
-                                .frame(width: 50, height: 50)
-                                .frame(width: 82, height: 82)
-                                .background(Color.themeBG)
-                                .clipShape(
-                                    .rect(
-                                        topLeadingRadius: 15,
-                                        bottomLeadingRadius: 15,
-                                        bottomTrailingRadius: 15,
-                                        topTrailingRadius: 15
-                                    )
-                                )
+                            if auth.user == nil {
+                                RoundedRectangle(cornerRadius: 15)
+                                    .foregroundStyle(.tertiary)
+                                    .frame(width: 82, height: 82)
+                            } else {
+                                Image(systemName: "person.crop.circle")
+                                    .resizable()
+                                    .foregroundStyle(Color.secondary)
+                                    .frame(width: 50, height: 50)
+                                    .frame(width: 82, height: 82)
+                                    .background(Color.themeBG)
+                                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                            }
+                            
                         }
                         
                         VStack {
-                            if let user = auth.user {
-                                if user.verified {
-                                    HStack {
-                                        Text(user.name)
-                                            .font(.title2)
-                                            .bold()
-                                        Image(systemName: "checkmark.seal")
-                                            .foregroundStyle(.blue)
-                                    }
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    
-                                } else {
-                                    Text(auth.user?.name ?? "Test User")
+                            if (auth.user != nil && auth.user!.verified) {
+                                HStack {
+                                    Text(auth.user?.name ?? "User Name")
                                         .font(.title2)
                                         .bold()
-                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    Image(systemName: "checkmark.seal")
+                                        .foregroundStyle(.blue)
                                 }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                            } else {
+                                Text(auth.user?.name ?? "User Name")
+                                    .font(.title2)
+                                    .bold()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             
                             Text("@\(auth.user?.username ?? "testUsername")")
@@ -112,13 +87,14 @@ struct MyProfile: View {
                             }
                             .buttonStyle(BorderedButtonStyle())
                             .controlSize(.small)
-                            
-                        }.frame(maxWidth: .infinity)
+                        }
+                        .frame(maxWidth: .infinity)
                     }
+                    .redacted(reason: auth.user == nil ? .placeholder : [])
                     .padding(.horizontal)
                     .padding(.bottom)
 
-                    if let bio = auth.user?.bio {
+                    if let bio = auth.user?.bio, bio.count > 0 {
                         Text(bio)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .font(.footnote)
@@ -149,7 +125,8 @@ struct MyProfile: View {
                                 Divider()
                             }
                         }
-                    }.padding(.bottom)
+                    }
+                    .padding(.bottom)
                 }
                 .frame(maxWidth: .infinity)
                 .background {
@@ -170,23 +147,21 @@ struct MyProfile: View {
                             ProfileStats()
                                 
                         case .achievements:
-                            VStack(spacing: 100) {
-                                 
-                                ForEach(0..<10, id: \.self) { item in
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .frame(height: 50)
-                                }
-                                
+                            VStack {
+                                Text("No Achievements yet")
+                                    .font(.custom(style: .headline))
+                                Text("Comming Soon")
+                                    .font(.custom(style: .caption))
+                                    .foregroundStyle(.secondary)
                             }
                             .frame(maxWidth: .infinity)
                         case .activity:
-                            VStack(spacing: 80) {
-                                 
-                                ForEach(0..<10, id: \.self) { item in
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .frame(height: 50)
-                                }
-                                
+                            VStack {
+                                Text("No Activity yet")
+                                    .font(.custom(style: .headline))
+                                Text("Comming Soon")
+                                    .font(.custom(style: .caption))
+                                    .foregroundStyle(.secondary)
                             }
                             .frame(maxWidth: .infinity)
                         }
@@ -203,9 +178,7 @@ struct MyProfile: View {
                 EditProfileView()
             })
             .refreshable {
-                Task {
-                    await auth.updateUserInfo()
-                }
+                await auth.updateUserInfo()
             }
             .frame(maxHeight: .infinity)
             .background(

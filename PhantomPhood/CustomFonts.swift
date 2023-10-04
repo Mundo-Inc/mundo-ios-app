@@ -60,14 +60,17 @@ enum CustomFonts: String {
 }
 
 enum CustomFontStyles: CGFloat {
-    case extraLargeTitle = 36
-    case extraLargeTitle2, title = 28
-    case largeTitle = 34
-    case title2 = 22
-    case title3 = 20
-    case headline, body = 16
-    case subheadline, callout = 15
-    case footnote = 13
-    case caption = 12
-    case caption2 = 11
+    case extraLargeTitle = 32 // 36
+    case extraLargeTitle2 = 26 // 28
+    case title = 27 // 28
+    case largeTitle = 30 // 34
+    case title2 = 20 // 22
+    case title3 = 18 // 20
+    case headline = 16 // 16
+    case body = 15 // 16
+    case subheadline = 14 // 15
+    case callout = 13 // 15
+    case footnote = 12.5 // 13
+    case caption = 12 // 12
+    case caption2 = 11 // 11
 }

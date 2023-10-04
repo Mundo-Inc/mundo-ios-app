@@ -29,7 +29,7 @@ enum FeedItemResourceType: String, Decodable {
 enum FeedItemResource: Decodable {
     case place(CompactPlace)
     case review(FeedReview)
-    case checkin(Checkin)
+    case checkin(FeedCheckin)
     case user(User)
 //    case reaction
 //    case achievement
@@ -82,7 +82,7 @@ struct FeedItem: Identifiable, Decodable {
             let value = try container.decode(FeedReview.self, forKey: .resource)
             resource = .review(value)
         case .checkin:
-            let value = try container.decode(Checkin.self, forKey: .resource)
+            let value = try container.decode(FeedCheckin.self, forKey: .resource)
             resource = .checkin(value)
         case .user:
             let value = try container.decode(User.self, forKey: .resource)
