@@ -6,26 +6,37 @@
 //
 
 import Foundation
+import Combine
 
 @MainActor
 class CommentsViewModel: ObservableObject {
-    let activityId: String
-    
-    init(activityId: String) {
-        self.activityId = activityId
-    }
-    
     let apiManager = APIManager()
     let auth: Authentication = Authentication.shared
+    
+    @Published var currentActivityId: String? = nil
     
     @Published var showComments = false
     @Published var commentContent = ""
     @Published var comments: [Comment] = []
     @Published var isLoading = false
+    
+    private var cancellables: Set<AnyCancellable> = []
+    
+    init() {
+        $showComments
+            .sink { newValue in
+                if !newValue {
+                    self.comments.removeAll()
+                    self.commentsPage = 1
+                    self.currentActivityId = nil
+                }
+            }
+            .store(in: &cancellables)
+    }
 
     var commentsPage = 1
 
-    func getComments() async {
+    func getComments(activityId: String) async {
         if isLoading { return }
         struct CommentsResponse: Decodable {
             let success: Bool
@@ -46,5 +57,13 @@ class CommentsViewModel: ObservableObject {
             print(error)
         }
         isLoading = false
+    }
+    
+    func showComments(activityId: String) {
+        currentActivityId = activityId
+        showComments = true
+        Task {
+            await getComments(activityId: activityId)
+        }
     }
 }

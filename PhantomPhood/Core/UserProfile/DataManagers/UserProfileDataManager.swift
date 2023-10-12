@@ -29,4 +29,40 @@ class UserProfileDataManager {
         
         return data.data
     }
+    
+    func follow(id: String) async throws {
+        struct FollowResponse: Decodable {
+            let success: Bool
+            let data: FollowData
+            
+            struct FollowData: Decodable {
+                let user: String
+                let target: String
+            }
+        }
+        
+        guard let token = await auth.token else {
+            fatalError("No token")
+        }
+        
+        let _ = try await apiManager.request("/users/\(id)/connections", method: .post, token: token) as (FollowResponse?, HTTPURLResponse)
+    }
+    
+    func unfollow(id: String) async throws {
+        struct FollowResponse: Decodable {
+            let success: Bool
+            let data: FollowData
+            
+            struct FollowData: Decodable {
+                let user: String
+                let target: String
+            }
+        }
+        
+        guard let token = await auth.token else {
+            fatalError("No token")
+        }
+        
+        let _ = try await apiManager.requestNoContent("/users/\(id)/connections", method: .delete, token: token)
+    }
 }

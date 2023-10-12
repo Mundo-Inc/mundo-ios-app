@@ -17,11 +17,6 @@ struct ReviewScores: Decodable {
 }
 
 struct PlaceReview: Identifiable, Decodable {
-    struct ReviewReaction: Decodable {
-        let total: [Reaction]
-        let user: [UserReaction]
-    }
-    
     let _id: String
     let scores: ReviewScores
     let content: String
@@ -35,7 +30,7 @@ struct PlaceReview: Identifiable, Decodable {
     let userActivityId: String?
     let writer: User
     let comments: [Comment]
-    let reactions: ReviewReaction
+    let reactions: ReactionsObject
     
     var id: String {
         self._id

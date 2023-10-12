@@ -9,10 +9,22 @@ import SwiftUI
 
 struct FeedFollowingView: View {
     let data: FeedItem
-    @State var showComments = false
+    @ObservedObject var commentsViewModel: CommentsViewModel
+    
+    @StateObject var reactionsViewModel: ReactionsViewModel
+    @State var reactions: ReactionsObject
+    
+    init(data: FeedItem, commentsViewModel: CommentsViewModel) {
+        self.data = data
+        self._commentsViewModel = ObservedObject(wrappedValue: commentsViewModel)
+        self._reactionsViewModel = StateObject(wrappedValue: ReactionsViewModel(activityId: data.id))
+        self._reactions = State(wrappedValue: data.reactions)
+    }
+    
+    @StateObject var selectReactionsViewModel = SelectReactionsViewModel.shared
     
     var body: some View {
-        FeedItemTemplate(user: data.user, comments: data.comments) {
+        FeedItemTemplate(user: data.user, comments: data.comments, isActive: commentsViewModel.currentActivityId == data.id) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(data.user.name)
@@ -118,9 +130,13 @@ struct FeedFollowingView: View {
                     EmptyView()
                 }
         } footer: {
-            HStack {
+            WrappingHStack(horizontalSpacing: 4, verticalSpacing: 6) {
                 Button {
-                    
+                    selectReactionsViewModel.select { reaction in
+                        Task {
+                            await selectReaction(reaction: reaction)
+                        }
+                    }
                 } label: {
                     Image(systemName: "face.dashed")
                         .font(.system(size: 20))
@@ -137,20 +153,71 @@ struct FeedFollowingView: View {
                 }
                 
                 Button {
-                    showComments = true
+                    commentsViewModel.showComments(activityId: data.id)
                 } label: {
                     Image(systemName: "bubble")
                         .font(.system(size: 20))
                 }
-                .padding(.leading, 5)
+                .padding(.horizontal, 5)
                 
-                Spacer()
+                ForEach(reactions.total) { reaction in
+                    if let selectedIndex = reactions.user.firstIndex(where: { $0.reaction == reaction.reaction }) {
+                        ReactionLabel(reaction: reaction, isSelected: true) { _ in
+                            Task {
+                                try await reactionsViewModel.removeReaction(id: String(reactions.user[selectedIndex].id))
+                                reactions.total = reactions.total.compactMap({ item in
+                                    if item.reaction == reactions.user[selectedIndex].reaction {
+                                        if item.count - 1 == 0 {
+                                            return nil
+                                        }
+                                        return Reaction(reaction: item.reaction, type: item.type, count: item.count - 1)
+                                    }
+                                    return item
+                                })
+                                reactions.user.remove(at: selectedIndex)
+                            }
+                        }
+                    } else {
+                        ReactionLabel(reaction: reaction, isSelected: false) { _ in
+                            Task {
+                                let newReaction = try await reactionsViewModel.addReaction(type: reaction.type, reaction: reaction.reaction)
+                                reactions.user.append(UserReaction(_id: newReaction.id, reaction: newReaction.reaction, type: newReaction.type, createdAt: newReaction.createdAt))
+                                if reactions.total.contains(where: { $0.reaction == newReaction.reaction }) {
+                                    reactions.total = reactions.total.map({ item in
+                                        if item.reaction == newReaction.reaction {
+                                            return Reaction(reaction: item.reaction, type: item.type, count: item.count + 1)
+                                        }
+                                        return item
+                                    })
+                                } else {
+                                    reactions.total.append(Reaction(reaction: newReaction.reaction, type: newReaction.type, count: 1))
+                                }
+                            }
+                        }
+                    }
+                }
             }
             .foregroundStyle(.primary)
         }
-        .sheet(isPresented: $showComments, content: {
-            CommentsView(activityId: data.id)
-        })
+    }
+    
+    func selectReaction(reaction: NewReaction) async {
+        do {
+            let newReaction = try await reactionsViewModel.addReaction(type: reaction.type, reaction: reaction.reaction)
+            reactions.user.append(UserReaction(_id: newReaction.id, reaction: newReaction.reaction, type: newReaction.type, createdAt: newReaction.createdAt))
+            if reactions.total.contains(where: { $0.reaction == newReaction.reaction }) {
+                reactions.total = reactions.total.map({ item in
+                    if item.reaction == newReaction.reaction {
+                        return Reaction(reaction: item.reaction, type: item.type, count: item.count + 1)
+                    }
+                    return item
+                })
+            } else {
+                reactions.total.append(Reaction(reaction: newReaction.reaction, type: newReaction.type, count: 1))
+            }
+        } catch {
+            print("Error")
+        }
     }
 }
 
@@ -199,7 +266,7 @@ struct FeedFollowingView: View {
     
     return ScrollView {
         if let d = dummyFeedItem {
-            FeedFollowingView(data: d)
+            FeedFollowingView(data: d, commentsViewModel: CommentsViewModel())
         }
     }
 }

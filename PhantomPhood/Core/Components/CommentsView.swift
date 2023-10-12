@@ -8,14 +8,8 @@
 import SwiftUI
 
 struct CommentsView: View {
-    let activityId: String
-    @StateObject var vm: CommentsViewModel
-    
-    init(activityId: String) {
-        self.activityId = activityId
-        self._vm = StateObject(wrappedValue: CommentsViewModel(activityId: activityId))
-    }
-    
+    @ObservedObject var vm: CommentsViewModel
+        
     var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 3)
@@ -120,9 +114,10 @@ struct CommentsView: View {
                     .padding(.horizontal)
                 }
             }
-            .refreshable {
-                await vm.getComments()
-            }
+            // TODO: - here
+//            .refreshable {
+//                await vm.getComments()
+//            }
             
             Spacer()
             
@@ -148,16 +143,9 @@ struct CommentsView: View {
             
         }
         .padding(.top)
-        .onAppear {
-            Task {
-                if vm.comments.isEmpty {
-                    await vm.getComments()
-                }
-            }
-        }
     }
 }
 
 #Preview {
-    CommentsView(activityId: "64fbece384a7dd7a79f86af1")
+    CommentsView(vm: CommentsViewModel())
 }

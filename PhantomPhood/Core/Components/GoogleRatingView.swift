@@ -44,7 +44,7 @@ struct GoogleRatingView: View {
                                 ZStack(alignment: .leading) {
                                     Rectangle()
                                         .foregroundStyle(.yellow)
-                                        .frame(width: ((rating ?? 0) / 5) * geometry.size.width)
+                                        .frame(width: ((rating != nil && rating! > 0 ? rating! : 0) / 5) * geometry.size.width)
                                 }
                             })
                             .mask(starsView)

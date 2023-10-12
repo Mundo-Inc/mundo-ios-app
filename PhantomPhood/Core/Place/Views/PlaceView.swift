@@ -9,12 +9,14 @@ import SwiftUI
 
 struct PlaceView: View {
     let id: String
+    let action: PlaceAction?
     
     @StateObject private var vm: PlaceViewModel
     
-    init(id: String) {
+    init(id: String, action: PlaceAction? = nil) {
         self.id = id
-        self._vm = StateObject(wrappedValue: PlaceViewModel(id: id))
+        self.action = action
+        self._vm = StateObject(wrappedValue: PlaceViewModel(id: id, action: action))
     }
     
     @State var isCollapsed = true
@@ -27,48 +29,75 @@ struct PlaceView: View {
             Color.themeBG.ignoresSafeArea()
             
             ScrollView {
-                Rectangle()
-                    .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width - 100 : UIScreen.main.bounds.size.width + 100)
-                    .frame(maxWidth: .infinity)
-                    .foregroundStyle(Color.themePrimary)
-                    .overlay {
-                        if let place = vm.place {
-                            if !place.media.isEmpty {
-                                TabView {
-                                    ForEach(place.media) { media in
-                                        switch media.type {
-                                        case .image:
-                                            if let url = URL(string: media.src) {
-                                                AsyncImageLoader(url)
-                                                    .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width - 100 : UIScreen.main.bounds.size.width + 100)
-                                                    .frame(maxWidth: UIScreen.main.bounds.size.width)
+                ZStack {
+                    Rectangle()
+                        .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width : UIScreen.main.bounds.size.width + 150)
+                        .frame(maxWidth: .infinity)
+                        .foregroundStyle(Color.themePrimary)
+                    
+                    if let place = vm.place {
+                        if !place.media.isEmpty {
+                            TabView {
+                                ForEach(place.media) { media in
+                                    switch media.type {
+                                    case .image:
+                                        if let url = URL(string: media.src) {
+                                            CacheAsyncImage(url: url) { phase in
+                                                switch phase {
+                                                case .empty:
+                                                    RoundedRectangle(cornerRadius: 12)
+                                                        .foregroundStyle(Color.themePrimary)
+                                                case .success(let image):
+                                                    image
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fill)
+                                                default:
+                                                    Label(
+                                                        title: { Text("Unable to load the image") },
+                                                        icon: { Image(systemName: "xmark.icloud") }
+                                                    )
+                                                    .foregroundStyle(.red)
+                                                }
                                             }
-                                        case .video:
-                                            ReviewVideoView(url: media.src)
-                                                .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width - 100 : UIScreen.main.bounds.size.width + 100)
-                                                .frame(maxWidth: UIScreen.main.bounds.size.width)
+                                            .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width : UIScreen.main.bounds.size.width + 150)
+                                            .frame(maxWidth: UIScreen.main.bounds.size.width)
+                                            .contentShape(Rectangle())
                                         }
-                                        
+                                    case .video:
+                                        ReviewVideoView(url: media.src)
+                                            .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width : UIScreen.main.bounds.size.width + 150)
+                                            .frame(maxWidth: UIScreen.main.bounds.size.width)
                                     }
+                                    
                                 }
-                                .onTapGesture {
-                                    withAnimation {
-                                        isHeaderCollapsed.toggle()
-                                    }
+                            }
+                            .onTapGesture {
+                                withAnimation {
+                                    isHeaderCollapsed.toggle()
                                 }
-                                .tabViewStyle(.page)
-                            } else {
-                                if let thumbnail = place.thumbnail, let thumbnailURL = URL(string: thumbnail) {
-                                    AsyncImageLoader(thumbnailURL) {
-                                        ProgressView()
-                                    } errorView: {
-                                        Label(
-                                            title: { Text("Unable to load the image") },
-                                            icon: { Image(systemName: "xmark.icloud") }
-                                        )
-                                        .foregroundStyle(.red)
+                            }
+                            .tabViewStyle(.page)
+                        } else {
+                            if let thumbnail = place.thumbnail, let thumbnailURL = URL(string: thumbnail) {
+                                ZStack {
+                                    CacheAsyncImage(url: thumbnailURL) { phase in
+                                        switch phase {
+                                        case .empty:
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .foregroundStyle(Color.themePrimary)
+                                        case .success(let image):
+                                            image
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                        default:
+                                            Label(
+                                                title: { Text("Unable to load the image") },
+                                                icon: { Image(systemName: "xmark.icloud") }
+                                            )
+                                            .foregroundStyle(.red)
+                                        }
                                     }
-                                    .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width - 100 : UIScreen.main.bounds.size.width + 100)
+                                    .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width : UIScreen.main.bounds.size.width + 150)
                                     .frame(maxWidth: UIScreen.main.bounds.size.width)
                                     .clipped()
                                     .onTapGesture {
@@ -76,74 +105,91 @@ struct PlaceView: View {
                                             isHeaderCollapsed.toggle()
                                         }
                                     }
-                                } else {
-                                    Label(
-                                        title: { Text("No thumbnail available") },
-                                        icon: { Image(systemName: "photo") }
-                                    )
+                                    .contentShape(Rectangle())
                                 }
+                            } else {
+                                Label(
+                                    title: { Text("No thumbnail available") },
+                                    icon: { Image(systemName: "photo") }
+                                )
                             }
-                        } else {
-                            ProgressView()
                         }
+                    } else {
+                        ProgressView()
                     }
-                    .overlay(alignment: .bottomLeading) {
-                        RoundedRectangle(cornerRadius: 15)
-                            .frame(width: 86, height: 86)
-                            .foregroundStyle(Color.themeBG)
-                            .overlay {
-                                if let place = vm.place {
-                                    if let thumbnail = place.thumbnail, let thumbnailURL = URL(string: thumbnail) {
-                                        AsyncImageLoader(thumbnailURL) {
+                    
+                    RoundedRectangle(cornerRadius: 15)
+                        .frame(width: 86, height: 86)
+                        .foregroundStyle(Color.themeBG)
+                        .overlay {
+                            if let place = vm.place {
+                                if let thumbnail = place.thumbnail, let thumbnailURL = URL(string: thumbnail) {
+                                    CacheAsyncImage(url: thumbnailURL) { phase in
+                                        switch phase {
+                                        case .empty:
                                             RoundedRectangle(cornerRadius: 12)
                                                 .foregroundStyle(Color.themePrimary)
-                                        } errorView: {
+                                        case .success(let image):
+                                            image
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 80, height: 80)
+                                                .clipShape(.rect(cornerRadius: 12))
+                                        default:
                                             Label(
                                                 title: { Text("Unable to load the image") },
                                                 icon: { Image(systemName: "xmark.icloud") }
                                             )
                                             .foregroundStyle(.red)
                                         }
-                                        .frame(width: 80, height: 80)
-                                        .clipShape(.rect(cornerRadius: 12))
                                     }
                                 } else {
                                     RoundedRectangle(cornerRadius: 12)
                                         .frame(width: 80, height: 80)
                                         .foregroundStyle(Color.themePrimary)
+                                        .overlay {
+                                            Image(systemName: "photo")
+                                                .foregroundStyle(.tertiary)
+                                        }
                                 }
+                            } else {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .frame(width: 80, height: 80)
+                                    .foregroundStyle(Color.themePrimary)
                             }
-                            .padding(.leading)
-                            .padding(.leading)
-                            .offset(y: 30)
-                    }
-                    .overlay(alignment: .bottomTrailing) {
-                        Button {
-                            
-                        } label: {
-                            Label {
-                                Text("Add to list")
-                                    .font(.custom(style: .subheadline))
-                                    .foregroundStyle(Color.white)
-                            } icon: {
-                                Image(systemName: "star.square.on.square.fill")
-                                    .foregroundStyle(Color.white)
-                            }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
                         }
-                        .background(Color.accentColor)
-                        .clipShape(.rect(cornerRadius: 5))
-                        .padding(.all, 2)
-                        .background(Color.themeBG)
-                        .clipShape(.rect(cornerRadius: 6))
-                        .foregroundStyle(.primary)
-                        .frame(height: 40)
-                        .padding(.trailing)
-                        .offset(y: 20)
-                        .redacted(reason: vm.place == nil ? .placeholder : [])
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                        .padding(.leading)
+                        .padding(.leading)
+                        .offset(y: 30)
+                    
+                    Button {
+                        
+                    } label: {
+                        Label {
+                            Text("Add to list")
+                                .font(.custom(style: .subheadline))
+                                .foregroundStyle(Color.white)
+                        } icon: {
+                            Image(systemName: "star.square.on.square.fill")
+                                .foregroundStyle(Color.white)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
                     }
-                
+                    .background(Color.accentColor)
+                    .clipShape(.rect(cornerRadius: 5))
+                    .padding(.all, 2)
+                    .background(Color.themeBG)
+                    .clipShape(.rect(cornerRadius: 6))
+                    .foregroundStyle(.primary)
+                    .frame(height: 40)
+                    .padding(.trailing)
+                    .offset(y: 20)
+                    .redacted(reason: vm.place == nil ? .placeholder : [])
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                }
+                                
                 Spacer()
                     .frame(height: 40)
                 
@@ -221,19 +267,23 @@ struct PlaceView: View {
                     switch vm.activeTab {
                     case .overview:
                         PlaceOverviewView(vm: vm)
-                            .transition(.move(edge: .leading))
+                            .transition(.slide)
                     case .reviews:
                         PlaceReviewsView(placeId: id, vm: vm)
-                            .transition(.opacity)
+                            .transition(.slide)
                     case .media:
-                        Text("Media")
-                            .transition(.move(edge: .trailing))
+                        PlaceMediaView(placeId: id, vm: vm)
+                            .transition(.slide)
                     }
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.bottom)
             }
-//            .ignoresSafeArea(edges: .top)
+            .ignoresSafeArea(edges: .top)
+        }
+        .toolbarBackground(.hidden, for: .automatic)
+        .fullScreenCover(isPresented: $vm.showAddReview) {
+            AddReviewView(placeVM: vm)
         }
     }
 }

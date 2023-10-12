@@ -75,9 +75,6 @@ class Authentication: ObservableObject {
     @Published private(set) var userId: String? = nil
     
     var token: String? {
-        #if DEBUG
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDVjOGIyMjIxMzQ2NDNjMDIwODYwYTUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2OTY0MzM0ODksImV4cCI6MTY5OTAyNTQ4OX0.ahj_xQc5F1hoigPj9t8yVGOaFIQY5HeIeGKe-53gKU0"
-        #endif
         // get jwt token from Keychain
         let tk = KeychainHelper.getData(for: .userToken)
         return tk
@@ -178,9 +175,34 @@ class Authentication: ObservableObject {
                 if data.data.profileImage?.count == 0 {
                     self.user?.profileImage = nil
                 }
+                
+                await setDeviceToken()
             } catch {
                 print(error)
             }
+        }
+    }
+    
+    func setDeviceToken() async {
+        let deviceToken = UserDefaults.standard.string(forKey: "deviceToken")
+        
+        guard let token, let user, let deviceToken, !deviceToken.isEmpty else {
+            return
+        }
+        
+        struct RequestBody: Encodable {
+            let action = "deviceToken"
+            let platform = "ios"
+            let token: String
+        }
+        
+        do {
+            let body = try apiManager.createRequestBody(RequestBody(token: deviceToken))
+            
+            let _ = try await apiManager.requestNoContent("/users/\(user.id)/settings", method: .put, body: body, token: token)
+            UserDefaults.standard.removeObject(forKey: "deviceToken")
+        } catch {
+            print(error)
         }
     }
 }

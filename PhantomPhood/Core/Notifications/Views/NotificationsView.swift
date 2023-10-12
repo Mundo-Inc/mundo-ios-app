@@ -53,19 +53,27 @@ struct NotificationsView: View {
                 .buttonStyle(PlainButtonStyle())
                 
                 if let profileImage = data.user.profileImage, let url = URL(string: profileImage) {
-                    AsyncImageLoader(url) {
-                        Circle()
-                            .foregroundStyle(Color.themePrimary)
-                            .overlay {
-                                ProgressView()
-                            }
-                    } errorView: {
-                        Circle()
-                            .foregroundStyle(Color.themePrimary)
-                            .overlay {
-                                Image(systemName: "exclamationmark.icloud")
-                            }
+                    CacheAsyncImage(url: url) { phase in
+                        switch phase {
+                        case .empty:
+                            Circle()
+                                .foregroundStyle(Color.themePrimary)
+                                .overlay {
+                                    ProgressView()
+                                }
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        default:
+                            Circle()
+                                .foregroundStyle(Color.themePrimary)
+                                .overlay {
+                                    Image(systemName: "exclamationmark.icloud")
+                                }
+                        }
                     }
+                    .contentShape(Circle())
                     .clipShape(Circle())
                 } else {
                     Image(systemName: "person.circle.fill")

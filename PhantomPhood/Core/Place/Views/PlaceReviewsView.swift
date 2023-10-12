@@ -17,6 +17,9 @@ struct PlaceReviewsView: View {
         self._placeReviewsViewModel = StateObject(wrappedValue: PlaceReviewsViewModel(placeId: placeId))
     }
     
+    @StateObject var commentsViewModel = CommentsViewModel()
+    @StateObject var mediasViewModel = MediasViewModel()
+    
     var body: some View {
         VStack(alignment: .leading) {
             VStack {
@@ -24,81 +27,67 @@ struct PlaceReviewsView: View {
                     .font(.custom(style: .headline))
                     .bold()
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
                 
-                VStack {
+                Grid {
                     if let drinkQuality = vm.place?.scores.drinkQuality {
-                        HStack {
+                        GridRow {
                             Text("Drink Quality")
                                 .foregroundStyle(.secondary)
-                                .frame(width: 100, alignment: .leading)
+                                .gridColumnAlignment(.leading)
                             
                             PlaceScoreRange(score: drinkQuality)
                             
-                            HStack(spacing: 0) {
-                                Text(String(format: "%.1f", drinkQuality))
-                                Text("/5")
-                                    .foregroundStyle(.tertiary)
-                            }
+                            Text(String(format: "%.1f", drinkQuality))
+                                .gridColumnAlignment(.trailing)
                         }
                     }
                     if let foodQuality = vm.place?.scores.foodQuality {
-                        HStack {
+                        GridRow {
                             Text("Food Quality")
                                 .foregroundStyle(.secondary)
-                                .frame(width: 100, alignment: .leading)
+                                .gridColumnAlignment(.leading)
                             
                             PlaceScoreRange(score: foodQuality)
                             
-                            HStack(spacing: 0) {
-                                Text(String(format: "%.1f", foodQuality))
-                                Text("/5")
-                                    .foregroundStyle(.tertiary)
-                            }
+                            Text(String(format: "%.1f", foodQuality))
+                                .gridColumnAlignment(.trailing)
                         }
                     }
                     if let atmosphere = vm.place?.scores.atmosphere {
-                        HStack {
+                        GridRow {
                             Text("Atmosphere")
                                 .foregroundStyle(.secondary)
-                                .frame(width: 100, alignment: .leading)
+                                .gridColumnAlignment(.leading)
                             
                             PlaceScoreRange(score: atmosphere)
                             
-                            HStack(spacing: 0) {
-                                Text(String(format: "%.1f", atmosphere))
-                                Text("/5")
-                                    .foregroundStyle(.tertiary)
-                            }
+                            Text(String(format: "%.1f", atmosphere))
+                                .gridColumnAlignment(.trailing)
                         }
                     }
                     if let service = vm.place?.scores.service {
-                        HStack {
+                        GridRow {
                             Text("Service")
                                 .foregroundStyle(.secondary)
-                                .frame(width: 100, alignment: .leading)
+                                .gridColumnAlignment(.leading)
                             
                             PlaceScoreRange(score: service)
                             
-                            HStack(spacing: 0) {
-                                Text(String(format: "%.1f", service))
-                                Text("/5")
-                                    .foregroundStyle(.tertiary)
-                            }
+                            Text(String(format: "%.1f", service))
+                                .gridColumnAlignment(.trailing)
                         }
                     }
                     if let value = vm.place?.scores.value {
-                        HStack {
+                        GridRow {
                             Text("Value")
                                 .foregroundStyle(.secondary)
-                                .frame(width: 100, alignment: .leading)
+                                .gridColumnAlignment(.leading)
                             
                             PlaceScoreRange(score: value)
                             
-                            HStack(spacing: 0) {
-                                Text(String(format: "%.1f", value))
-                                Text("/5")
-                                    .foregroundStyle(.tertiary)
-                            }
+                            Text(String(format: "%.1f", value))
+                                .gridColumnAlignment(.trailing)
                         }
                     }
                 }
@@ -106,6 +95,8 @@ struct PlaceReviewsView: View {
                 .fontWeight(.medium)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity)
+                .padding(.horizontal)
+                
                 
                 VStack {
                     HStack {
@@ -117,24 +108,48 @@ struct PlaceReviewsView: View {
                             Text("100")
                                 .redacted(reason: .placeholder)
                         }
+                        
+                        Spacer()
+                        
+                        Button {
+                            vm.showAddReview = true
+                        } label: {
+                            Label(
+                                title: { Text("Add Review") },
+                                icon: { Image(systemName: "text.bubble.rtl") }
+                            )
+                        }
+                        .disabled(vm.showAddReview)
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
                     }
                     .font(.custom(style: .headline))
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                    
+                    Divider()
                     
                     if let place = vm.place, !place.reviews.isEmpty {
                         ForEach(place.reviews) { review in
-                            PlaceReviewView(review: review, place: place)
+                            PlaceReviewView(review: review, place: place, commentsViewModel: commentsViewModel, mediasViewModel: mediasViewModel)
+                                .padding(.horizontal)
+                            
+                            Divider()
                         }
                     }
                 }
                 .padding(.top)
             }
         }
-        .padding(.horizontal)
+        .sheet(isPresented: $commentsViewModel.showComments, content: {
+            CommentsView(vm: commentsViewModel)
+        })
+        .fullScreenCover(isPresented: $mediasViewModel.show, content: {
+            MediasView(vm: mediasViewModel)
+        })
     }
 }
 
 #Preview {
     PlaceReviewsView(placeId: "645c1d1ab41f8e12a0d166bc", vm: PlaceViewModel(id: "645c1d1ab41f8e12a0d166bc"))
-        .padding(.horizontal)
 }

@@ -16,40 +16,22 @@ struct MapView: View {
     var body: some View {
         NavigationStack(path: $appData.mapNavStack) {
             ZStack {
-                Map()
                 Map(position: $vm.position) {
-                    Marker(coordinate: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060)) {
-                        Label("San Francisco City Hall", systemImage: "car")
-                    }
-                    .tint(Color.accentColor)
-                    
-                    
-                    Annotation(
-                        "Diller Civic Center Playground",
-                        coordinate: CLLocationCoordinate2D(latitude: 41.7128, longitude: -74.0060)
-                    ) {
-                        PlaceMapMarker(type: .restaurant)
+                    ForEach(vm.places) { place in
+                        Annotation(
+                            "Diller Civic Center Playground",
+                            coordinate: CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longitude)
+                        ) {
+                            MapPlaceMarker(place: place)
+                        }
+
                     }
                     
-                    Annotation(
-                        "GWAf fawg",
-                        coordinate: CLLocationCoordinate2D(latitude: 41.7128, longitude: -74.0260)
-                    ) {
-                        PlaceMapMarker(type: .cafe)
-                    }
-                    
-                    Annotation(
-                        "Test 41 afwf",
-                        coordinate: CLLocationCoordinate2D(latitude: 41.7218, longitude: -74.0060)
-                    ) {
-                        PlaceMapMarker(type: .bar)
-                    }
-                    
-                    Annotation(
-                        "Test 41 afwf",
-                        coordinate: CLLocationCoordinate2D(latitude: 41.7138, longitude: -74.0180)
-                    ) {
-                        PlaceMapMarker(type: .cluster(count: 24))
+                    UserAnnotation()
+                }
+                .onMapCameraChange { context in
+                    Task {
+                        await vm.fetchRegionPlaces(region: context.region)
                     }
                 }
                 .mapControlVisibility(.visible)
@@ -57,6 +39,13 @@ struct MapView: View {
                     MapUserLocationButton()
                 }
             }
+            .toolbar(content: {
+                ToolbarItem(placement: .topBarLeading) {
+                    if vm.isLoading {
+                        ProgressView()
+                    }
+                }
+            })
             .navigationTitle("Map")
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: MapStack.self) { link in

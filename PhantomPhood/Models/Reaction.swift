@@ -12,10 +12,14 @@ enum ReactionType: String, Decodable {
     case special = "special"
 }
 
-struct Reaction: Decodable {
+struct Reaction: Decodable, Identifiable {
     let reaction: String
     let type: ReactionType
     let count: Int
+
+    var id: String {
+        reaction + String(count) + type.rawValue
+    }
 }
 
 struct UserReaction: Identifiable, Decodable {

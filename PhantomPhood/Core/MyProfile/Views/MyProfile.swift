@@ -17,25 +17,32 @@ struct MyProfile: View {
                 VStack {
                     HStack(spacing: 12) {
                         if let profileImage = auth.user?.profileImage, let imageURL = URL(string: profileImage) {
-                            AsyncImageLoader(imageURL) {
-                                RoundedRectangle(cornerRadius: 15)
-                                    .foregroundStyle(.tertiary)
-                                    .overlay {
-                                        ProgressView()
-                                    }
-                            } errorView: {
-                                VStack(spacing: 0) {
-                                    Image(systemName: "exclamationmark.icloud")
+                            CacheAsyncImage(url: imageURL) { phase in
+                                switch phase {
+                                case .empty:
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .foregroundStyle(.tertiary)
+                                        .overlay {
+                                            ProgressView()
+                                        }
+                                case .success(let image):
+                                    image
                                         .resizable()
-                                        .scaledToFit()
-                                        .foregroundStyle(.red)
-                                        .frame(width: 50, height: 50)
-                                    Text("Error")
-                                        .font(.caption)
+                                        .aspectRatio(contentMode: .fill)
+                                default:
+                                    VStack(spacing: 0) {
+                                        Image(systemName: "exclamationmark.icloud")
+                                            .font(.system(size: 50))
+                                            .foregroundStyle(.red)
+                                            .frame(width: 50, height: 50)
+                                        Text("Error")
+                                            .font(.custom(style: .caption))
+                                    }
+                                    .background(Color.themeBG)
                                 }
-                                .background(Color.themeBG)
                             }
                             .frame(width: 82, height: 82)
+                            .contentShape(Rectangle())
                             .clipShape(.rect(cornerRadius: 15))
                         } else {
                             // No Image
@@ -44,10 +51,9 @@ struct MyProfile: View {
                                     .foregroundStyle(.tertiary)
                                     .frame(width: 82, height: 82)
                             } else {
-                                Image(systemName: "person.crop.circle")
-                                    .resizable()
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 50))
                                     .foregroundStyle(Color.secondary)
-                                    .frame(width: 50, height: 50)
                                     .frame(width: 82, height: 82)
                                     .background(Color.themeBG)
                                     .clipShape(RoundedRectangle(cornerRadius: 15))

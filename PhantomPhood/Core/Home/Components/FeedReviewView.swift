@@ -9,11 +9,45 @@ import SwiftUI
 
 struct FeedReviewView: View {
     let data: FeedItem
-    @State var showComments = false
-    @State var showMedia = false
+    @ObservedObject var commentsViewModel: CommentsViewModel
+    @ObservedObject var mediasViewModel: MediasViewModel
+    
+    @StateObject var reactionsViewModel: ReactionsViewModel
+    @State var reactions: ReactionsObject
+    
+    init(data: FeedItem, commentsViewModel: CommentsViewModel, mediasViewModel: MediasViewModel) {
+        self.data = data
+        self._commentsViewModel = ObservedObject(wrappedValue: commentsViewModel)
+        self._mediasViewModel = ObservedObject(wrappedValue: mediasViewModel)
+        self._reactionsViewModel = StateObject(wrappedValue: ReactionsViewModel(activityId: data.id))
+        self._reactions = State(wrappedValue: data.reactions)
+    }
+    
+    @StateObject var selectReactionsViewModel = SelectReactionsViewModel.shared
+
+    func showMedia() {
+        switch data.resource {
+        case .review(let feedReview):
+            mediasViewModel.show(medias: feedReview.videos + feedReview.images)
+        default:
+            return
+        }
+    }
+    
+    var starsView: some View {
+        HStack(spacing: 0) {
+            Image(systemName: "star.fill")
+            Image(systemName: "star.fill")
+            Image(systemName: "star.fill")
+            Image(systemName: "star.fill")
+            Image(systemName: "star.fill")
+        }
+        .font(.system(size: 14))
+        .foregroundStyle(Color.themeBorder)
+    }
     
     var body: some View {
-        FeedItemTemplate(user: data.user, comments: data.comments, isActive: showMedia || showComments) {
+        FeedItemTemplate(user: data.user, comments: data.comments, isActive: commentsViewModel.currentActivityId == data.id) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(data.user.name)
@@ -36,9 +70,13 @@ struct FeedReviewView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 5))
 
                     if let place = data.place {
-                        Text(place.name)
-                            .font(.custom(style: .body))
-                            .fontWeight(.bold)
+                        NavigationLink(value: HomeStack.place(id: place.id)) {
+                            Text(place.name)
+                                .font(.custom(style: .body))
+                                .bold()
+                                .lineLimit(1)
+                        }
+                        .foregroundStyle(.primary)
                     }
                 }
             }.padding(.bottom)
@@ -66,15 +104,39 @@ struct FeedReviewView: View {
                                         if !review.images.isEmpty {
                                             ForEach(review.images) { image in
                                                 if let url = URL(string: image.src) {
-                                                    AsyncImageLoader(url)
-                                                        .frame(height: 300)
-                                                        .frame(maxWidth: UIScreen.main.bounds.width)
-                                                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                                                        .overlay(alignment: .topTrailing) {
-                                                            Image(systemName: "photo")
-                                                                .padding(.top, 8)
-                                                                .padding(.trailing, 5)
+                                                    CacheAsyncImage(url: url) { phase in
+                                                        switch phase {
+                                                        case .empty:
+                                                            RoundedRectangle(cornerRadius: 15)
+                                                                .foregroundStyle(Color.themePrimary)
+                                                                .overlay {
+                                                                    ProgressView()
+                                                                }
+                                                        case .success(let image):
+                                                            image
+                                                                .resizable()
+                                                                .aspectRatio(contentMode: .fill)
+                                                        default:
+                                                            VStack(spacing: 0) {
+                                                                Image(systemName: "exclamationmark.icloud")
+                                                                    .font(.system(size: 50))
+                                                                    .foregroundStyle(.red)
+                                                                    .frame(width: 50, height: 50)
+                                                                Text("Error")
+                                                                    .font(.custom(style: .caption))
+                                                            }
+                                                            .background(Color.themeBG)
                                                         }
+                                                    }
+                                                    .frame(height: 300)
+                                                    .frame(maxWidth: UIScreen.main.bounds.width)
+                                                    .contentShape(Rectangle())
+                                                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                                                    .overlay(alignment: .topTrailing) {
+                                                        Image(systemName: "photo")
+                                                            .padding(.top, 8)
+                                                            .padding(.trailing, 5)
+                                                    }
                                                 }
                                             }
                                         }
@@ -83,9 +145,35 @@ struct FeedReviewView: View {
                                 })
                             }
                             .onTapGesture {
-                                showMedia = true
+                                showMedia()
                             }
                             .frame(minHeight: 300)
+                        }
+                        
+                        if let overallScore = review.scores.overall {
+                            HStack {
+                                Text("Rated")
+                                    .font(.custom(style: .headline))
+                                    .foregroundStyle(.secondary)
+                                
+                                Text(String(format: "%.1f", overallScore))
+                                    .font(.custom(style: .headline))
+                                    .foregroundStyle(.primary)
+                                
+                                starsView
+                                    .overlay {
+                                        GeometryReader(content: { geometry in
+                                            ZStack(alignment: .leading) {
+                                                Rectangle()
+                                                    .foregroundStyle(.yellow)
+                                                    .frame(width: (overallScore / 5) * geometry.size.width)
+                                            }
+                                        })
+                                        .mask(starsView)
+                                    }
+                                
+                                Spacer()
+                            }
                         }
                         
                         Text(review.content)
@@ -93,14 +181,29 @@ struct FeedReviewView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .multilineTextAlignment(.leading)
                         
+                        if let tags = review.tags, !tags.isEmpty {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack {
+                                    ForEach(tags, id: \.self) { tag in
+                                        Text("#" + tag)
+                                    }
+                                }
+                            }
+                            .font(.custom(style: .body))
+                            .foregroundStyle(.secondary)
+                        }
                     }
                 default:
                     EmptyView()
                 }
         } footer: {
-            HStack {
+            WrappingHStack(horizontalSpacing: 4, verticalSpacing: 6) {
                 Button {
-                    
+                    selectReactionsViewModel.select { reaction in
+                        Task {
+                            await selectReaction(reaction: reaction)
+                        }
+                    }
                 } label: {
                     Image(systemName: "face.dashed")
                         .font(.system(size: 20))
@@ -117,86 +220,71 @@ struct FeedReviewView: View {
                 }
                 
                 Button {
-                    showComments = true
+                    commentsViewModel.showComments(activityId: data.id)
                 } label: {
                     Image(systemName: "bubble")
                         .font(.system(size: 20))
                 }
-                .padding(.leading, 5)
+                .padding(.horizontal, 5)
                 
-                Spacer()
-            }
-            .foregroundStyle(.primary)
-            
-//            if showComments {
-//                Text("Show Comments")
-//            }
-//            if showMedia {
-//                Text("Show Media")
-//            }
-        }
-        .sheet(isPresented: $showComments, content: {
-            CommentsView(activityId: data.id)
-        })
-        .fullScreenCover(isPresented: $showMedia, content: {
-            MediaView(showMedia: $showMedia, resource: data.resource)
-        })
-    }
-}
-
-fileprivate struct MediaView: View {
-    @Binding var showMedia: Bool
-    let resource: FeedItemResource
-    @State var offset: CGSize = .zero
-    
-    var body: some View {
-        VStack {
-            HStack {
-                Spacer()
-                Button {
-                    showMedia = false
-                } label: {
-                    Image(systemName: "xmark")
-                }
-            }
-            .padding()
-            
-            Spacer()
-            
-            if showMedia {
-                switch resource {
-                case .review(let review):
-                    VStack {
-                        if !review.images.isEmpty || !review.videos.isEmpty {
-                            TabView {
-                                if !review.videos.isEmpty {
-                                    ForEach(review.videos) { video in
-                                        ReviewVideoView(url: video.src)
-                                            .frame(maxWidth: UIScreen.main.bounds.size.width, maxHeight: UIScreen.main.bounds.size.height)
-                                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                                    }
-                                }
-                                if !review.images.isEmpty {
-                                    ForEach(review.images) { image in
-                                        if let url = URL(string: image.src) {
-                                            AsyncImageLoader(url)
-                                                .frame(maxWidth: UIScreen.main.bounds.size.width, maxHeight: UIScreen.main.bounds.size.height)
-                                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                ForEach(reactions.total) { reaction in
+                    if let selectedIndex = reactions.user.firstIndex(where: { $0.reaction == reaction.reaction }) {
+                        ReactionLabel(reaction: reaction, isSelected: true) { _ in
+                            Task {
+                                try await reactionsViewModel.removeReaction(id: String(reactions.user[selectedIndex].id))
+                                reactions.total = reactions.total.compactMap({ item in
+                                    if item.reaction == reactions.user[selectedIndex].reaction {
+                                        if item.count - 1 == 0 {
+                                            return nil
                                         }
+                                        return Reaction(reaction: item.reaction, type: item.type, count: item.count - 1)
                                     }
+                                    return item
+                                })
+                                reactions.user.remove(at: selectedIndex)
+                            }
+                        }
+                    } else {
+                        ReactionLabel(reaction: reaction, isSelected: false) { _ in
+                            Task {
+                                let newReaction = try await reactionsViewModel.addReaction(type: reaction.type, reaction: reaction.reaction)
+                                reactions.user.append(UserReaction(_id: newReaction.id, reaction: newReaction.reaction, type: newReaction.type, createdAt: newReaction.createdAt))
+                                if reactions.total.contains(where: { $0.reaction == newReaction.reaction }) {
+                                    reactions.total = reactions.total.map({ item in
+                                        if item.reaction == newReaction.reaction {
+                                            return Reaction(reaction: item.reaction, type: item.type, count: item.count + 1)
+                                        }
+                                        return item
+                                    })
+                                } else {
+                                    reactions.total.append(Reaction(reaction: newReaction.reaction, type: newReaction.type, count: 1))
                                 }
                             }
-                            .tabViewStyle(.page)
                         }
                     }
-                    .frame(maxHeight: .infinity)
-                default:
-                    EmptyView()
                 }
-                
             }
+            .foregroundStyle(.primary)
         }
-        
+    }
+    
+    func selectReaction(reaction: NewReaction) async {
+        do {
+            let newReaction = try await reactionsViewModel.addReaction(type: reaction.type, reaction: reaction.reaction)
+            reactions.user.append(UserReaction(_id: newReaction.id, reaction: newReaction.reaction, type: newReaction.type, createdAt: newReaction.createdAt))
+            if reactions.total.contains(where: { $0.reaction == newReaction.reaction }) {
+                reactions.total = reactions.total.map({ item in
+                    if item.reaction == newReaction.reaction {
+                        return Reaction(reaction: item.reaction, type: item.type, count: item.count + 1)
+                    }
+                    return item
+                })
+            } else {
+                reactions.total.append(Reaction(reaction: newReaction.reaction, type: newReaction.type, count: 1))
+            }
+        } catch {
+            print("Error")
+        }
     }
 }
 
@@ -394,7 +482,7 @@ fileprivate struct MediaView: View {
     
     return ScrollView {
         if let d = dummyFeedItem {
-            FeedReviewView(data: d)
+            FeedReviewView(data: d, commentsViewModel: CommentsViewModel(), mediasViewModel: MediasViewModel())
         }
     }
     .padding(.horizontal)

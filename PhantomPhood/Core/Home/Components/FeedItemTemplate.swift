@@ -102,22 +102,30 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                 VStack {
                     NavigationLink(value: HomeStack.userProfile(id: user.id)) {
                         if let profileImage = user.profileImage, let url = URL(string: profileImage) {
-                            AsyncImageLoader(url) {
-                                Circle()
-                                    .frame(width: 44, height: 44)
-                                    .foregroundStyle(Color.themePrimary)
-                                    .overlay {
-                                        ProgressView()
-                                    }
-                            } errorView: {
-                                Circle()
-                                    .frame(width: 44, height: 44)
-                                    .foregroundStyle(Color.themePrimary)
-                                    .overlay {
-                                        Image(systemName: "exclamationmark.icloud")
-                                    }
+                            CacheAsyncImage(url: url) { phase in
+                                switch phase {
+                                case .empty:
+                                    Circle()
+                                        .frame(width: 44, height: 44)
+                                        .foregroundStyle(Color.themePrimary)
+                                        .overlay {
+                                            ProgressView()
+                                        }
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                default:
+                                    Circle()
+                                        .frame(width: 44, height: 44)
+                                        .foregroundStyle(Color.themePrimary)
+                                        .overlay {
+                                            Image(systemName: "exclamationmark.icloud")
+                                        }
+                                }
                             }
                             .frame(width: 44, height: 44)
+                            .contentShape(Circle())
                             .clipShape(Circle())
                             .overlay(alignment: .top) {
                                 LevelView(level: .convert(level: user.level))
@@ -125,9 +133,12 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                                     .offset(y: 28)
                             }
                         } else {
-                            Image(systemName: "person.circle.fill")
-                                .resizable()
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 30))
                                 .frame(width: 44, height: 44)
+                                .foregroundStyle(.secondary)
+                                .background(Color.themePrimary)
+                                .clipShape(Circle())
                                 .overlay(alignment: .top) {
                                     LevelView(level: .convert(level: user.level))
                                         .frame(width: 36, height: 36)
@@ -135,6 +146,7 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                                 }
                         }
                     }
+                    .foregroundStyle(.secondary)
                     
                     
                     Spacer()
@@ -185,7 +197,6 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
     }
 }
 
-let dateFormatter = ISO8601DateFormatter()
 #Preview {
     ScrollView {
         FeedItemTemplate(
@@ -198,7 +209,7 @@ let dateFormatter = ISO8601DateFormatter()
                 xp: 2400,
                 level: 7,
                 verified: true,
-                profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                profileImage: ""
             ),
             comments: [
                 Comment(

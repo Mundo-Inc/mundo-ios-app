@@ -30,25 +30,32 @@ struct UserProfileView: View {
             VStack {
                 HStack(spacing: 12) {
                     if let profileImage = vm.user?.profileImage, let imageURL = URL(string: profileImage) {
-                        AsyncImageLoader(imageURL) {
-                            RoundedRectangle(cornerRadius: 15)
-                                .foregroundStyle(.tertiary)
-                                .overlay {
-                                    ProgressView()
-                                }
-                        } errorView: {
-                            VStack(spacing: 0) {
-                                Image(systemName: "exclamationmark.icloud")
+                        CacheAsyncImage(url: imageURL) { phase in
+                            switch phase {
+                            case .empty:
+                                RoundedRectangle(cornerRadius: 15)
+                                    .foregroundStyle(.tertiary)
+                                    .overlay {
+                                        ProgressView()
+                                    }
+                            case .success(let image):
+                                image
                                     .resizable()
-                                    .scaledToFit()
-                                    .foregroundStyle(.red)
-                                    .frame(width: 50, height: 50)
-                                Text("Error")
-                                    .font(.caption)
+                                    .aspectRatio(contentMode: .fill)
+                            default:
+                                VStack(spacing: 0) {
+                                    Image(systemName: "exclamationmark.icloud")
+                                        .font(.system(size: 50))
+                                        .foregroundStyle(.red)
+                                        .frame(width: 50, height: 50)
+                                    Text("Error")
+                                        .font(.custom(style: .caption))
+                                }
+                                .background(Color.themeBG)
                             }
-                            .background(Color.themeBG)
                         }
                         .frame(width: 82, height: 82)
+                        .contentShape(Rectangle())
                         .clipShape(.rect(cornerRadius: 15))
                     } else {
                         // No Image
@@ -57,10 +64,9 @@ struct UserProfileView: View {
                                 .foregroundStyle(.tertiary)
                                 .frame(width: 82, height: 82)
                         } else {
-                            Image(systemName: "person.crop.circle")
-                                .resizable()
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 50))
                                 .foregroundStyle(Color.secondary)
-                                .frame(width: 50, height: 50)
                                 .frame(width: 82, height: 82)
                                 .background(Color.themeBG)
                                 .clipShape(.rect(cornerRadius: 15))
@@ -90,14 +96,37 @@ struct UserProfileView: View {
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Button {
-                            
-                        } label: {
-                            Text(vm.user != nil && vm.user!.isFollowing ? "Unfollow" : "Follow")
-                                .frame(maxWidth: .infinity)
-                            
+                        Group {
+                            if let isFollowing = vm.isFollowing {
+                                if isFollowing {
+                                    Button {
+                                        Task {
+                                            await vm.unfollow()
+                                        }
+                                    } label: {
+                                        Text("Unfollow")
+                                            .frame(maxWidth: .infinity)
+                                    }
+                                    .buttonStyle(BorderedButtonStyle())
+                                } else {
+                                    Button {
+                                        Task {
+                                            await vm.follow()
+                                        }
+                                    } label: {
+                                        Text("Follow")
+                                            .frame(maxWidth: .infinity)
+                                    }
+                                    .buttonStyle(BorderedProminentButtonStyle())
+                                }
+                            } else {
+                                Button {} label: {
+                                    Text("Loading")
+                                        .frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(BorderedButtonStyle())
+                            }
                         }
-                        .buttonStyle(BorderedButtonStyle())
                         .controlSize(.small)
                         
                     }

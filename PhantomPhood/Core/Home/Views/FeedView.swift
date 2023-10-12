@@ -9,11 +9,14 @@ import SwiftUI
 
 struct FeedView: View {
     @Environment(\.isSearching) private var isSearching: Bool
+    @Environment(\.dismissSearch) var dismissSearch
+    @EnvironmentObject private var appData: AppData
+    @ObservedObject var searchViewModel = SearchViewModel.shared
     
+    @StateObject var commentsViewModel = CommentsViewModel()
+    @StateObject var mediasViewModel = MediasViewModel()
     @StateObject var vm = FeedViewModel()
-    
-    @Binding var searchText: String
-    
+        
     var body: some View {
         ZStack {
             Color.themeBG.ignoresSafeArea()
@@ -24,13 +27,13 @@ struct FeedView: View {
                         Group {
                             switch item.activityType {
                             case .levelUp:
-                                FeedLevelUpView(data: item)
+                                FeedLevelUpView(data: item, commentsViewModel: commentsViewModel)
                             case .following:
-                                FeedFollowingView(data: item)
+                                FeedFollowingView(data: item, commentsViewModel: commentsViewModel)
                             case .newReview:
-                                FeedReviewView(data: item)
+                                FeedReviewView(data: item, commentsViewModel: commentsViewModel, mediasViewModel: mediasViewModel)
                             case .newCheckin:
-                                FeedCheckinView(data: item)
+                                FeedCheckinView(data: item, commentsViewModel: commentsViewModel)
                             default:
                                 Text(item.activityType.rawValue)
                             }
@@ -58,6 +61,21 @@ struct FeedView: View {
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        searchViewModel.showSearch = true
+                    } label: {
+                        Image(systemName: "magnifyingglass")
+                    }
+                    .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
+                        searchViewModel.tokens.removeAll()
+                        searchViewModel.text = ""
+                        dismissSearch()
+                    }) {
+                        SearchView(path: $appData.homeNavStack)
+                    }
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink(value: HomeStack.notifications) {
                         Image(systemName: "bell")
                     }
@@ -72,27 +90,23 @@ struct FeedView: View {
                 }
             }
             .overlay {
-                if isSearching && !searchText.isEmpty {
-                    ScrollView {
-                        VStack {
-                            Text("Searching for \(searchText)")
-                            
-                            RoundedRectangle(cornerRadius: 15)
-                                .frame(height: 50)
-                            RoundedRectangle(cornerRadius: 15)
-                                .frame(height: 50)
-                        }
-                    }
-                    .padding(.horizontal)
-                    .background(.thinMaterial)
+                if isSearching {
+                    
                 }
             }
         }
+        .sheet(isPresented: $commentsViewModel.showComments, content: {
+            CommentsView(vm: commentsViewModel)
+        })
+        .fullScreenCover(isPresented: $mediasViewModel.show, content: {
+            MediasView(vm: mediasViewModel)
+        })
     }
 }
 
 #Preview {
     NavigationStack {
-        FeedView(searchText: .constant("Test"))
+        FeedView()
+            .environmentObject(AppData())
     }
 }

@@ -10,6 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject private var appData: AppData
     
+    @StateObject var selectReactionsViewModel = SelectReactionsViewModel.shared
+    
     var body: some View {
         TabView(selection: $appData.activeTab) {
             HomeView()
@@ -57,6 +59,9 @@ struct ContentView: View {
                 }
                 .tag(Tab.myProfile)
         }
+        .sheet(isPresented: $selectReactionsViewModel.isPresented, content: {
+            SelectReactionsView()
+        })
     }
 }
 

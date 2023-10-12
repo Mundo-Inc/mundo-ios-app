@@ -21,19 +21,26 @@ struct LeaderboardView: View {
                 ScrollView {
                     HStack(spacing: 10) {
                         if let user = auth.user, let profileImage = URL(string: user.profileImage ?? "") {
-                            AsyncImageLoader(profileImage) {
-                                Rectangle()
-                                    .foregroundStyle(.tertiary)
-                            } errorView: {
-                                Rectangle()
-                                    .overlay {
-                                        Image(systemName: "exclamationmark.icloud")
-                                            .foregroundStyle(.red)
-                                    }
+                            CacheAsyncImage(url: profileImage) { phase in
+                                switch phase {
+                                case .empty:
+                                    Rectangle()
+                                        .foregroundStyle(.tertiary)
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                default:
+                                    Rectangle()
+                                        .overlay {
+                                            Image(systemName: "exclamationmark.icloud")
+                                                .foregroundStyle(.red)
+                                        }
+                                }
                             }
                             .frame(width: 64, height: 64)
+                            .contentShape(RoundedRectangle(cornerRadius: 15))
                             .clipShape(.rect(cornerRadius: 15))
-                            
                         } else {
                             RoundedRectangle(cornerRadius: 15)
                                 .frame(width: 64, height: 64)
@@ -86,21 +93,29 @@ struct LeaderboardView: View {
                                         .frame(minWidth: 40)
                                     
                                     if let profileImage = vm.list[index].profileImage, let profileImageURL = URL(string: profileImage) {
-                                        AsyncImageLoader(profileImageURL) {
-                                            Circle()
-                                                .foregroundStyle(Color.themePrimary)
-                                                .overlay {
-                                                    ProgressView()
-                                                }
-                                        } errorView: {
-                                            Circle()
-                                                .foregroundStyle(Color.themePrimary)
-                                                .overlay {
-                                                    Image(systemName: "exclamationmark.icloud")
-                                                        .foregroundStyle(.red)
-                                                }
+                                        CacheAsyncImage(url: profileImageURL) { phase in
+                                            switch phase {
+                                            case .empty:
+                                                Circle()
+                                                    .foregroundStyle(Color.themePrimary)
+                                                    .overlay {
+                                                        ProgressView()
+                                                    }
+                                            case .success(let image):
+                                                image
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fill)
+                                            default:
+                                                Circle()
+                                                    .foregroundStyle(Color.themePrimary)
+                                                    .overlay {
+                                                        Image(systemName: "exclamationmark.icloud")
+                                                            .foregroundStyle(.red)
+                                                    }
+                                            }
                                         }
                                         .frame(width: 36, height: 36)
+                                        .contentShape(Circle())
                                         .clipShape(Circle())
                                     } else {
                                         Circle()

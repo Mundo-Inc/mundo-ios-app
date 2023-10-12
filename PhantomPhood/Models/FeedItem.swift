@@ -40,7 +40,7 @@ enum PrivacyType: String, Decodable {
     case PRIVATE = "PRIVATE"
 }
 
-struct FeedReactions: Decodable {
+struct ReactionsObject: Decodable {
     var total: [Reaction]
     var user: [UserReaction]
 }
@@ -57,7 +57,7 @@ struct FeedItem: Identifiable, Decodable {
     let updatedAt: String
     let score: Double
     let weight: Int
-    let reactions: FeedReactions
+    let reactions: ReactionsObject
     let comments: [Comment]
     
     
@@ -94,7 +94,7 @@ struct FeedItem: Identifiable, Decodable {
         updatedAt = try container.decode(String.self, forKey: .updatedAt)
         score = try container.decode(Double.self, forKey: .score)
         weight = try container.decode(Int.self, forKey: .weight)
-        reactions = try container.decode(FeedReactions.self, forKey: .reactions)
+        reactions = try container.decode(ReactionsObject.self, forKey: .reactions)
         comments = try container.decode([Comment].self, forKey: .comments)
     }
 }

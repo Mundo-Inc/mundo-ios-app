@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 /*
  _id: true,
@@ -60,11 +61,25 @@ struct Media: Identifiable, Decodable {
     }
 }
 
+struct MediaWithUser: Identifiable, Decodable {
+    let _id: String
+    let src: String
+    let caption: String?
+    let type: MediaType
+    let user: User?
+    // TODO: When we remove third party media we can change this to not-optional
+    
+    var id: String {
+        self._id
+    }
+}
+
+
 struct Place: Identifiable, Decodable {
     struct GoogleResults: Decodable {
         struct GoogleReviews: Decodable {
             let author_name: String
-            let language: String
+            let language: String?
             let original_language: String
             let profile_photo_url: String?
             let rating: Int
@@ -76,7 +91,7 @@ struct Place: Identifiable, Decodable {
         
         let rating: Double
         let reviewCount: Int
-        let reviews: [GoogleReviews]
+        let reviews: [GoogleReviews]?
         let thumbnail: String?
     }
     
@@ -99,7 +114,7 @@ struct Place: Identifiable, Decodable {
         
         let rating: Double
         let reviewCount: Int
-        let reviews: [YelpReviews]
+        let reviews: [YelpReviews]?
         let thumbnail: String?
     }
 
@@ -135,7 +150,7 @@ struct Place: Identifiable, Decodable {
 struct CompactPlace: Identifiable, Decodable {
     let _id: String
     let name: String
-    let otherNames: [String]
+    let amenity: String?
     let description: String?
     let location: PlaceLocation
     let thumbnail: String?
@@ -160,5 +175,98 @@ struct BriefPlace: Identifiable, Decodable {
     
     var id: String {
         self._id
+    }
+}
+
+
+struct RegionPlace: Identifiable, Decodable {
+    let _id: String
+    let name: String
+    let amenity: PlaceAmenity?
+    let longitude: Double
+    let latitude: Double
+    let overallScore: Double?
+    let phantomScore: Double?
+    
+    var id: String {
+        self._id
+    }
+}
+
+enum PlaceAmenity: String, Decodable {
+    case bar = "bar"
+    case pub = "pub"
+    case nightclub = "nightclub"
+    case cafe = "cafe"
+    case biergarten = "biergarten"
+    case restaurant = "restaurant"
+    case fast_food = "fast_food"
+    case canteen = "canteen"
+    case ice_cream = "ice_cream"
+    case cafeteria = "cafeteria"
+    case unknown
+    
+    var color: Color {
+        switch self {
+        case .bar:
+            return Color(red: 1, green: 0.3, blue: 0.3)
+        case .pub:
+            return Color(red: 0.64, green: 0.16, blue: 0.16)
+        case .nightclub:
+            return Color(red: 0.4, green: 0.1, blue: 0.8)
+        case .cafe:
+            return Color(red: 0.44, green: 0.23, blue: 0)
+        case .biergarten:
+            return Color(red: 0.2, green: 0.6, blue: 0.2)
+        case .restaurant:
+            return Color(red: 1, green: 0.63, blue: 0.21)
+        case .fast_food:
+            return Color(red: 1, green: 0.9, blue: 0)
+        case .canteen:
+            return Color(red: 0.6, green: 0.6, blue: 0.6)
+        case .ice_cream:
+            return Color(red: 1, green: 1, blue: 0.8)
+        case .cafeteria:
+            return Color(red: 0.8, green: 0.5, blue: 0.3)
+        case .unknown:
+            return Color.black
+        }
+    }
+    
+    var image: String {
+        switch self {
+        case .bar:
+            "wineglass.fill"
+        case .pub:
+            "mug.fill"
+        case .nightclub:
+            "figure.socialdance"
+        case .cafe:
+            "cup.and.saucer.fill"
+        case .biergarten:
+            "mug.fill"
+        case .restaurant:
+            "fork.knife.circle.fill"
+        case .fast_food:
+            "fork.knife"
+        case .canteen:
+            "chair.fill"
+        case .ice_cream:
+            "cone.fill"
+        case .cafeteria:
+            "cup.and.saucer.fill"
+        case .unknown:
+            "pin"
+        }
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let value = try? container.decode(String.self)
+        if let value = value, let amenity = PlaceAmenity(rawValue: value) {
+            self = amenity
+        } else {
+            self = .unknown
+        }
     }
 }

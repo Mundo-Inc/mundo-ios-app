@@ -44,7 +44,9 @@ struct EditProfileView: View {
                                 ProgressView()
                             }
                             Text("Save")
-                        }.animation(.none, value: vm.isSubmitting)
+                                .font(.custom(style: .headline))
+                        }
+                        .animation(.none, value: vm.isSubmitting)
                     }
                     .disabled(vm.isSubmitting)
                     
