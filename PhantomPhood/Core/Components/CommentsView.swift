@@ -133,10 +133,14 @@ struct CommentsView: View {
                 }
                 .overlay(alignment: .bottomTrailing) {
                     Button {
-                        
+                        Task {
+                            await vm.submitComment()
+                        }
                     } label: {
                         Text("Post")
                     }
+                    .opacity(vm.isSubmitting ? 0.6 : 1)
+                    .disabled(vm.isSubmitting)
                     .padding(.all, 9)
                 }.padding(.horizontal)
                 .padding(.vertical, 5)

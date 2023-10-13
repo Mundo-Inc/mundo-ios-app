@@ -10,8 +10,9 @@ import Combine
 
 @MainActor
 class CommentsViewModel: ObservableObject {
-    let apiManager = APIManager()
-    let auth: Authentication = Authentication.shared
+    private let apiManager = APIManager()
+    private let auth: Authentication = Authentication.shared
+    private let toastViewModel = ToastViewModel.shared
     
     @Published var currentActivityId: String? = nil
     
@@ -19,6 +20,7 @@ class CommentsViewModel: ObservableObject {
     @Published var commentContent = ""
     @Published var comments: [Comment] = []
     @Published var isLoading = false
+    @Published var isSubmitting = false
     
     private var cancellables: Set<AnyCancellable> = []
     
@@ -66,4 +68,43 @@ class CommentsViewModel: ObservableObject {
             await getComments(activityId: activityId)
         }
     }
+    
+    func submitComment() async {
+        guard
+            let activityID = self.currentActivityId,
+            let token = auth.token,
+            !activityID.isEmpty && self.showComments && !self.isSubmitting
+        else { return }
+        
+        
+        struct RequestBody: Encodable {
+            let content: String
+            let activity: String
+        }
+        struct ResponseData: Decodable {
+            let success: Bool
+            let data: Comment
+        }
+        
+        self.isSubmitting = true
+        do {
+            let body = try apiManager.createRequestBody(RequestBody(content: commentContent, activity: activityID))
+            let (data, _) = try await apiManager.request("/comments", method: .post, body: body, token: token) as (ResponseData?, HTTPURLResponse)
+            commentContent = ""
+            if let data {
+                self.comments.insert(data.data, at: 0)
+                toastViewModel.toast(.init(type: .success, title: "Success", message: "Comment Added"))
+            } else {
+                toastViewModel.toast(.init(type: .error, title: "Error", message: "We couldn't add your comment"))
+            }
+        } catch {
+            toastViewModel.toast(.init(type: .error, title: "Error", message: "Something went wrong"))
+        }
+        self.isSubmitting = false
+    }
+    
+    // TODO: Add like/dislike comment
+//    func likeComment(commentID: String) async {
+//
+//    }
 }
