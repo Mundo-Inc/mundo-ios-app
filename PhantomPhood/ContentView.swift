@@ -24,19 +24,15 @@ struct ContentView: View {
                 }
                 .tag(Tab.home)
             
-            if #available(iOS 17.0, *) {
-                MapView()
-                    .tabItem {
-                        Label {
-                            Text("Explore")
-                        } icon: {
-                            Image(systemName: Tab.map.icon)
-                        }
+            MapView()
+                .tabItem {
+                    Label {
+                        Text("Explore")
+                    } icon: {
+                        Image(systemName: Tab.map.icon)
                     }
-                    .tag(Tab.map)
-            } else {
-                RoundedRectangle(cornerRadius: 25.0)
-            }
+                }
+                .tag(Tab.map)
             
             
             LeaderboardView()

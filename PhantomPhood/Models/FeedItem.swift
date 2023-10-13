@@ -65,6 +65,24 @@ struct FeedItem: Identifiable, Decodable {
         case id, user, place, activityType, resourceType, resource, privacyType, createdAt, updatedAt, score, weight, reactions, comments
     }
     
+    // By Values
+    init(id: String, user: User, place: CompactPlace?, activityType: FeedItemActivityType, resourceType: FeedItemResourceType, resource: FeedItemResource, privacyType: PrivacyType, createdAt: String, updatedAt: String, score: Double, weight: Int, reactions: ReactionsObject, comments: [Comment]) {
+        self.id = id
+        self.user = user
+        self.place = place
+        self.activityType = activityType
+        self.resourceType = resourceType
+        self.resource = resource
+        self.privacyType = privacyType
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.score = score
+        self.weight = weight
+        self.reactions = reactions
+        self.comments = comments
+    }
+    
+    // From Decoder
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         

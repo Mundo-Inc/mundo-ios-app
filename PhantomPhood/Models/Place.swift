@@ -126,6 +126,7 @@ struct Place: Identifiable, Decodable {
     
     let _id: String
     let name: String
+    let amenity: PlaceAmenity?
     let otherNames: [String]
     let description: String?
     let location: PlaceLocation
@@ -150,7 +151,7 @@ struct Place: Identifiable, Decodable {
 struct CompactPlace: Identifiable, Decodable {
     let _id: String
     let name: String
-    let amenity: String?
+    let amenity: PlaceAmenity?
     let description: String?
     let location: PlaceLocation
     let thumbnail: String?

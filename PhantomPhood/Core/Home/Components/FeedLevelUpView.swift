@@ -225,65 +225,65 @@ struct FeedLevelUpView: View {
     }
 }
 
-#Preview {
-    let dummyJSON = """
-    {
-      "id": "64de246354e42fd88a38fd89",
-      "user": {
-        "_id": "645c8b222134643c020860a5",
-        "name": "Kia",
-        "username": "TheKia",
-        "bio": "Passionate tech lover. foodie",
-        "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
-        "level": 3,
-        "verified": true,
-        "xp": 532,
-        "coins": 199
-      },
-      "activityType": "LEVEL_UP",
-      "resourceType": "User",
-      "resource": {
-        "_id": "645c8b222134643c020860a5",
-        "name": "Kia",
-        "username": "TheKia",
-        "bio": "Passionate tech lover. foodie",
-        "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
-        "level": 3,
-        "verified": true,
-        "xp": 532,
-        "coins": 199
-      },
-      "privacyType": "PUBLIC",
-      "createdAt": "2023-08-17T13:45:07.422Z",
-      "updatedAt": "2023-08-17T13:45:07.422Z",
-      "score": 469.5168030777778,
-      "weight": 1,
-      "reactions": {
-        "total": [
-          {
-            "count": 1,
-            "type": "emoji",
-            "reaction": "👍"
-          }
-        ],
-        "user": [
-          {
-            "_id": "64de248e54e42fd88a38ff73",
-            "type": "emoji",
-            "reaction": "👍",
-            "createdAt": "2023-08-17T13:45:50.666Z"
-          }
-        ]
-      },
-      "comments": []
-    }
-    """
-    let dummyFeedItem = decodeFeedItem(from: dummyJSON)
-    
-    return ScrollView {
-        if let d = dummyFeedItem {
-            FeedLevelUpView(data: d, commentsViewModel: CommentsViewModel())
-        }
-    }
-    .padding(.horizontal)
-}
+//#Preview {
+//    let dummyJSON = """
+//    {
+//      "id": "64de246354e42fd88a38fd89",
+//      "user": {
+//        "_id": "645c8b222134643c020860a5",
+//        "name": "Kia",
+//        "username": "TheKia",
+//        "bio": "Passionate tech lover. foodie",
+//        "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
+//        "level": 3,
+//        "verified": true,
+//        "xp": 532,
+//        "coins": 199
+//      },
+//      "activityType": "LEVEL_UP",
+//      "resourceType": "User",
+//      "resource": {
+//        "_id": "645c8b222134643c020860a5",
+//        "name": "Kia",
+//        "username": "TheKia",
+//        "bio": "Passionate tech lover. foodie",
+//        "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
+//        "level": 3,
+//        "verified": true,
+//        "xp": 532,
+//        "coins": 199
+//      },
+//      "privacyType": "PUBLIC",
+//      "createdAt": "2023-08-17T13:45:07.422Z",
+//      "updatedAt": "2023-08-17T13:45:07.422Z",
+//      "score": 469.5168030777778,
+//      "weight": 1,
+//      "reactions": {
+//        "total": [
+//          {
+//            "count": 1,
+//            "type": "emoji",
+//            "reaction": "👍"
+//          }
+//        ],
+//        "user": [
+//          {
+//            "_id": "64de248e54e42fd88a38ff73",
+//            "type": "emoji",
+//            "reaction": "👍",
+//            "createdAt": "2023-08-17T13:45:50.666Z"
+//          }
+//        ]
+//      },
+//      "comments": []
+//    }
+//    """
+//    let dummyFeedItem = decodeFeedItem(from: dummyJSON)
+//    
+//    return ScrollView {
+//        if let d = dummyFeedItem {
+//            FeedLevelUpView(data: d, commentsViewModel: CommentsViewModel())
+//        }
+//    }
+//    .padding(.horizontal)
+//}

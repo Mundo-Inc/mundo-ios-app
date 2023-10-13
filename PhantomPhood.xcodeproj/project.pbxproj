@@ -61,6 +61,8 @@
 		0B997B6A2AC7377C00579C9C /* UserProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B692AC7377C00579C9C /* UserProfileViewModel.swift */; };
 		0B997B6E2AC7381700579C9C /* UserProfileDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B6D2AC7381700579C9C /* UserProfileDataManager.swift */; };
 		0B997B702AC74BFA00579C9C /* UserProfileStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B6F2AC74BFA00579C9C /* UserProfileStats.swift */; };
+		0BA388932AD96D7100C74880 /* MapView17.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA388922AD96D7100C74880 /* MapView17.swift */; };
+		0BA388952AD974A100C74880 /* MapView16.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA388942AD974A100C74880 /* MapView16.swift */; };
 		0BAE47302ACC68FD001FBDAF /* YelpRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */; };
 		0BAE47322ACC91DF001FBDAF /* PlaceReviewsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAE47312ACC91DF001FBDAF /* PlaceReviewsView.swift */; };
 		0BAE47342ACC93B8001FBDAF /* PlaceScoreRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAE47332ACC93B8001FBDAF /* PlaceScoreRange.swift */; };
@@ -185,6 +187,8 @@
 		0B997B692AC7377C00579C9C /* UserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewModel.swift; sourceTree = "<group>"; };
 		0B997B6D2AC7381700579C9C /* UserProfileDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileDataManager.swift; sourceTree = "<group>"; };
 		0B997B6F2AC74BFA00579C9C /* UserProfileStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileStats.swift; sourceTree = "<group>"; };
+		0BA388922AD96D7100C74880 /* MapView17.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView17.swift; sourceTree = "<group>"; };
+		0BA388942AD974A100C74880 /* MapView16.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView16.swift; sourceTree = "<group>"; };
 		0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpRatingView.swift; sourceTree = "<group>"; };
 		0BAE47312ACC91DF001FBDAF /* PlaceReviewsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceReviewsView.swift; sourceTree = "<group>"; };
 		0BAE47332ACC93B8001FBDAF /* PlaceScoreRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceScoreRange.swift; sourceTree = "<group>"; };
@@ -704,6 +708,8 @@
 			isa = PBXGroup;
 			children = (
 				0BF5B4AD2AB375D500DEC403 /* MapView.swift */,
+				0BA388922AD96D7100C74880 /* MapView17.swift */,
+				0BA388942AD974A100C74880 /* MapView16.swift */,
 				0BF0A7862AD874520058BAE9 /* MapPlaceMarker.swift */,
 			);
 			path = Views;
@@ -859,6 +865,7 @@
 				0B64C4CD2AB4CCA1009F0D43 /* DataCard.swift in Sources */,
 				0B01836A2AB3C179008E887F /* UserProfileView.swift in Sources */,
 				0BC84A6B2AD071EE00D723AA /* SelectReactionsView.swift in Sources */,
+				0BA388952AD974A100C74880 /* MapView16.swift in Sources */,
 				0B0E6D282ABB242700EC62EE /* Comment.swift in Sources */,
 				0B51A8D42ACEC58400DA38DC /* MediasViewModel.swift in Sources */,
 				0B4681512AC61D49009C5EF9 /* FeedCheckinView.swift in Sources */,
@@ -935,6 +942,7 @@
 				0BDBD3CC2ACB5FCD003B8D2D /* GoogleRatingView.swift in Sources */,
 				0B0183702AB3DE8A008E887F /* AuthStack.swift in Sources */,
 				0BDBD3CA2ACB32B7003B8D2D /* PhantomScoreView.swift in Sources */,
+				0BA388932AD96D7100C74880 /* MapView17.swift in Sources */,
 				0B0E6D342ABB872F00EC62EE /* Reaction.swift in Sources */,
 				0BF5B4A42AB34DD300DEC403 /* ColorExtensions.swift in Sources */,
 				0BB37E9A2ABA0CD6009E1272 /* MapViewModel.swift in Sources */,
@@ -1088,7 +1096,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.20.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1124,7 +1132,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.20.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

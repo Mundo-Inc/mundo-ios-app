@@ -111,16 +111,7 @@ fileprivate struct PlaceCard: View {
                     .overlay {
                         Group {
                             if let amenity = place.amenity {
-                                switch amenity {
-                                case "restaurant", "fast_food":
-                                    Image(systemName: "fork.knife")
-                                case "cafe":
-                                    Image(systemName: "cup.and.saucer")
-                                case "bar":
-                                    Image(systemName: "wineglass")
-                                default:
-                                    Image(systemName: "mappin.circle")
-                                }
+                                Image(systemName: amenity.image)
                             } else {
                                 Image(systemName: "mappin.circle")
                             }

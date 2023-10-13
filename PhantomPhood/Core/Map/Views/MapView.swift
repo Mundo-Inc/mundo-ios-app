@@ -8,7 +8,6 @@
 import SwiftUI
 import MapKit
 
-@available(iOS 17.0, *)
 struct MapView: View {
     @EnvironmentObject private var appData: AppData
     @StateObject private var vm = MapViewModel()
@@ -16,27 +15,10 @@ struct MapView: View {
     var body: some View {
         NavigationStack(path: $appData.mapNavStack) {
             ZStack {
-                Map(position: $vm.position) {
-                    ForEach(vm.places) { place in
-                        Annotation(
-                            "Diller Civic Center Playground",
-                            coordinate: CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longitude)
-                        ) {
-                            MapPlaceMarker(place: place)
-                        }
-
-                    }
-                    
-                    UserAnnotation()
-                }
-                .onMapCameraChange { context in
-                    Task {
-                        await vm.fetchRegionPlaces(region: context.region)
-                    }
-                }
-                .mapControlVisibility(.visible)
-                .mapControls {
-                    MapUserLocationButton()
+                if #available(iOS 17.0, *) {
+                    MapView17(vm: vm)
+                } else {
+                    MapView16(vm: vm)
                 }
             }
             .toolbar(content: {
@@ -62,9 +44,7 @@ struct MapView: View {
 
 struct MapView_Previews: PreviewProvider {
     static var previews: some View {
-        if #available(iOS 17.0, *) {
-            MapView()
-                .environmentObject(AppData())
-        }
+        MapView()
+            .environmentObject(AppData())
     }
 }

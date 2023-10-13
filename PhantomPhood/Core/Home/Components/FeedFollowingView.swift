@@ -221,52 +221,52 @@ struct FeedFollowingView: View {
     }
 }
 
-#Preview {
-    let dummyJSON = """
-    {
-    "id": "64e8b4ba442f0060b9d9e8d0",
-    "user": {
-      "_id": "645e7f843abeb74ee6248ced",
-      "name": "Nabeel",
-      "username": "naboohoo",
-      "bio": "Im all about the GAINZ 🔥 thats why i eat 🍔",
-      "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/profile.jpg",
-      "level": 6,
-      "verified": true,
-      "coins": 767,
-      "xp": 1752
-    },
-    "activityType": "FOLLOWING",
-    "resourceType": "User",
-    "resource": {
-      "_id": "645c8b222134643c020860a5",
-      "name": "Kia",
-      "username": "TheKia",
-      "bio": "Passionate tech lover. foodie",
-      "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
-      "level": 3,
-      "verified": true,
-      "xp": 532,
-      "coins": 199
-    },
-    "privacyType": "PUBLIC",
-    "createdAt": "2023-08-25T14:03:38.126Z",
-    "updatedAt": "2023-08-25T14:03:38.126Z",
-    "score": 325.45501932777785,
-    "weight": 1,
-    "reactions": {
-      "total": [],
-      "user": []
-    },
-    "comments": []
-    }
-    """
-
-    let dummyFeedItem = decodeFeedItem(from: dummyJSON)
-    
-    return ScrollView {
-        if let d = dummyFeedItem {
-            FeedFollowingView(data: d, commentsViewModel: CommentsViewModel())
-        }
-    }
-}
+//#Preview {
+//    let dummyJSON = """
+//    {
+//    "id": "64e8b4ba442f0060b9d9e8d0",
+//    "user": {
+//      "_id": "645e7f843abeb74ee6248ced",
+//      "name": "Nabeel",
+//      "username": "naboohoo",
+//      "bio": "Im all about the GAINZ 🔥 thats why i eat 🍔",
+//      "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/profile.jpg",
+//      "level": 6,
+//      "verified": true,
+//      "coins": 767,
+//      "xp": 1752
+//    },
+//    "activityType": "FOLLOWING",
+//    "resourceType": "User",
+//    "resource": {
+//      "_id": "645c8b222134643c020860a5",
+//      "name": "Kia",
+//      "username": "TheKia",
+//      "bio": "Passionate tech lover. foodie",
+//      "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
+//      "level": 3,
+//      "verified": true,
+//      "xp": 532,
+//      "coins": 199
+//    },
+//    "privacyType": "PUBLIC",
+//    "createdAt": "2023-08-25T14:03:38.126Z",
+//    "updatedAt": "2023-08-25T14:03:38.126Z",
+//    "score": 325.45501932777785,
+//    "weight": 1,
+//    "reactions": {
+//      "total": [],
+//      "user": []
+//    },
+//    "comments": []
+//    }
+//    """
+//
+//    let dummyFeedItem = decodeFeedItem(from: dummyJSON)
+//    
+//    return ScrollView {
+//        if let d = dummyFeedItem {
+//            FeedFollowingView(data: d, commentsViewModel: CommentsViewModel())
+//        }
+//    }
+//}

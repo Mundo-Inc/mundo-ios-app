@@ -125,7 +125,7 @@ struct PhantomPhoodApp: App {
                         // return if tab is not specified
                         return
                     }
-                    // phph://tab=myProfile/nav=settings
+                    // phantom://tab=myProfile/nav=settings
                     if component.contains("nav") {
                         let navRawValue = component.replacingOccurrences(of: "nav=", with: "").lowercased()
                             

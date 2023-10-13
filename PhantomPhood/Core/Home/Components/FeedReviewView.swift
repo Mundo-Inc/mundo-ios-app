@@ -289,201 +289,57 @@ struct FeedReviewView: View {
 }
 
 #Preview {
-    let dummyJSON = """
-    {
-      "id": "64d2aa872c509f60b7690386",
-      "user": {
-        "_id": "64d29e412c509f60b768f240",
-        "name": "Kia",
-        "username": "TheKia",
-        "bio": "Test",
-        "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
-        "xp": 57,
-        "level": 3,
-        "verified": true,
-        "coins": 9
-      },
-      "place": {
-        "_id": "64d2a0c62c509f60b768f572",
-        "name": "Lavender",
-        "otherNames": [],
-        "description": "",
-        "thumbnail": "",
-        "location": {
-          "geoLocation": {
-            "lng": 51.56185809999999,
-            "lat": 32.8669179
-          },
-          "address": "VH86+QPQ, Shahin Shahr, Isfahan Province, Iran",
-          "city": "Shahin Shahr",
-          "state": "Isfahan Province",
-          "country": "Iran"
-        },
-        "reviewCount": 1,
-        "scores": {
-          "overall": 5,
-          "drinkQuality": 3,
-          "foodQuality": 4,
-          "atmosphere": 5,
-          "service": 4,
-          "value": null
-        },
-        "phone": null,
-        "categories": ["restaurant"]
-      },
-      "activityType": "NEW_REVIEW",
-      "resourceType": "Review",
-      "resource": {
-        "_id": "64d2aa872c509f60b769037e",
-        "scores": {
-          "overall": 5,
-          "drinkQuality": 3,
-          "foodQuality": 4,
-          "atmosphere": 5,
-          "service": 4
-        },
-        "content": "Cute vibe \\nCozy atmosphere \\nDelicious pancakes \\nCool music \\nHighly recommended ",
-        "images": [
-          {
-            "_id": "64d2aa872c509f60b7690379",
-            "src": "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg",
-            "caption": null,
-            "type": "image"
-          }
-        ],
-        "videos": [
-          {
-            "_id": "64d2aa782c509f60b7690376",
-            "src": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/2a667b01b413fd08fd00a60b2f5ba3e1.mp4",
-            "caption": null,
-            "type": "video"
-          }
-        ],
-        "tags": ["cozy_atmosphere", "trendy_spot", "brunch_spot"],
-        "createdAt": "2023-08-08T20:50:15.905Z",
-        "updatedAt": "2023-08-08T20:50:17.297Z",
-        "userActivityId": "64d2aa872c509f60b7690386",
-        "place": {
-          "_id": "64d2a0c62c509f60b768f572",
-          "name": "Lavender",
-          "otherNames": [],
-          "description": "",
-          "thumbnail": "",
-          "location": {
-            "geoLocation": {
-              "lng": 51.56185809999999,
-              "lat": 32.8669179
-            },
-            "address": "VH86+QPQ, Shahin Shahr, Isfahan Province, Iran",
-            "city": "Shahin Shahr",
-            "state": "Isfahan Province",
-            "country": "Iran"
-          },
-          "reviewCount": 1,
-          "scores": {
-            "overall": 5,
-            "drinkQuality": 3,
-            "foodQuality": 4,
-            "atmosphere": 5,
-            "service": 4,
-            "value": null
-          },
-          "phone": null,
-          "categories": ["restaurant"]
-        },
-        "writer": {
-          "_id": "64d29e412c509f60b768f240",
-          "name": "Soli",
-          "username": "solimkr2001",
-          "bio": "PharmD stu\\nInfluencer \\nAlways on a diet",
-          "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/64d29e412c509f60b768f240/profile.jpg",
-          "xp": 57,
-          "level": 1,
-          "verified": true,
-          "coins": 9
-        },
-        "reactions": {
-          "total": [
-            {
-              "count": 1,
-              "type": "emoji",
-              "reaction": "🥰"
-            },
-            {
-              "count": 1,
-              "type": "emoji",
-              "reaction": "❤️"
-            },
-            {
-              "count": 1,
-              "type": "emoji",
-              "reaction": "👍"
-            }
-          ]
-        }
-      },
-      "privacyType": "PUBLIC",
-      "createdAt": "2023-08-08T20:50:15.916Z",
-      "updatedAt": "2023-08-08T20:50:15.916Z",
-      "score": 574.8699489214853,
-      "weight": 1,
-      "reactions": {
-        "total": [
-          {
-            "count": 1,
-            "type": "emoji",
-            "reaction": "👍"
-          },
-          {
-            "count": 1,
-            "type": "emoji",
-            "reaction": "❤️"
-          },
-          {
-            "count": 1,
-            "type": "emoji",
-            "reaction": "🥰"
-          }
-        ],
-        "user": [
-          {
-            "_id": "64d35ef61eff94afe959dd9e",
-            "type": "emoji",
-            "reaction": "❤️",
-            "createdAt": "2023-08-09T09:40:06.866Z"
-          }
-        ]
-      },
-      "comments": [
-        {
-          "_id": "64d4ee982c9a8ed008970ec3",
-          "content": "Hey @nabeel check this out",
-          "createdAt": "2023-08-10T14:05:12.743Z",
-          "updatedAt": "2023-08-10T14:05:12.743Z",
-          "author": {
-            "_id": "645c8b222134643c020860a5",
-            "name": "Kia",
-            "username": "TheKia",
-            "bio": "Passionate tech lover. foodie",
-            "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
-            "level": 3,
-            "verified": true,
-            "xp": 532,
-            "coins": 199
-          },
-          "likes": 0,
-          "liked": false
-        }
-      ]
-    }
-    """
-
-    let dummyFeedItem = decodeFeedItem(from: dummyJSON)
-    
-    return ScrollView {
-        if let d = dummyFeedItem {
-            FeedReviewView(data: d, commentsViewModel: CommentsViewModel(), mediasViewModel: MediasViewModel())
-        }
+    ScrollView {
+        FeedReviewView(
+            data: FeedItem(
+                id: "64d2aa872c509f60b7690386",
+                user: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, xp: 57, level: 3, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg"),
+                place: CompactPlace(
+                    _id: "64d2a0c62c509f60b768f572",
+                    name: "Lavender",
+                    amenity: .restaurant,
+                    description: "",
+                    location: PlaceLocation(geoLocation: .init(lng: 51.56185809999999, lat: 32.8669179), address: "VH86+QPQ, Shahin Shahr, Isfahan Province, Iran", city: "Shahin Shahr", state: "Isfahan Province", country: "Iran", zip: nil),
+                    thumbnail: nil,
+                    phone: nil,
+                    website: nil,
+                    categories: ["restaurant"],
+                    priceRange: 2,
+                    scores: PlaceScores(overall: 5, drinkQuality: 3, foodQuality: 4, atmosphere: 5, service: 4, value: nil, phantom: 82),
+                    reviewCount: 1
+                ),
+                activityType: .newReview,
+                resourceType: .review,
+                resource: .review(FeedReview(
+                    _id: "64d2aa872c509f60b769037e",
+                    scores: ReviewScores(overall: 5, drinkQuality: 3, foodQuality: 4, atmosphere: 5, service: 4, value: nil),
+                    content: "Cute vibe \\nCozy atmosphere \\nDelicious pancakes \\nCool music \\nHighly recommended ",
+                    images: [Media(_id: "64d2aa872c509f60b7690379", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image)],
+                    videos: [Media(_id: "64d2aa782c509f60b7690376", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/2a667b01b413fd08fd00a60b2f5ba3e1.mp4", caption: "", type: .video)],
+                    tags: [],
+                    recommend: true,
+                    language: "en",
+                    createdAt: "2023-08-08T20:50:15.905Z",
+                    updatedAt: "2023-08-08T20:50:17.297Z",
+                    userActivityId: "64d2aa872c509f60b7690386",
+                    writer: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, xp: 57, level: 3, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg")
+                )),
+                privacyType: .PUBLIC,
+                createdAt: "2023-08-08T20:50:15.916Z",
+                updatedAt: "2023-08-08T20:50:15.916Z",
+                score: 574.8699489214853,
+                weight: 1,
+                reactions: ReactionsObject(
+                    total: [Reaction(reaction: "❤️", type: .emoji, count: 2), Reaction(reaction: "👍", type: .emoji, count: 1), Reaction(reaction: "🥰", type: .emoji, count: 1)],
+                    user: [UserReaction(_id: "64d35ef61eff94afe959dd9e", reaction: "❤️", type: .emoji, createdAt: "2023-08-09T09:40:06.866Z")]
+                ),
+                comments: [
+                    Comment(_id: "64d4ee982c9a8ed008970ec3", content: "Hey @nabeel check this out", createdAt: "2023-08-10T14:05:12.743Z", updatedAt: "2023-08-10T14:05:12.743Z", author: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, xp: 57, level: 3, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg"), likes: 2, liked: true, mentions: [])
+                ]
+            ),
+            commentsViewModel: CommentsViewModel(),
+            mediasViewModel: MediasViewModel()
+        )
     }
     .padding(.horizontal)
 }
