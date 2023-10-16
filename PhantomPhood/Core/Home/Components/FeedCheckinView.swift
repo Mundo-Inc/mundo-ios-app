@@ -68,11 +68,11 @@ struct FeedCheckinView: View {
                                         HStack {
                                             if let phantomScore = place.scores.phantom {
                                                 Text("👻 \(String(format: "%.0f", phantomScore))")
-                                                    .font(.custom(style: .subheadline))
                                                     .bold()
                                                     .foregroundStyle(Color.accentColor)
                                             } else {
                                                 Text("TBD")
+                                                    .foregroundStyle(.secondary)
                                             }
                                             
                                             if place.scores.phantom != nil && place.priceRange != nil {
@@ -83,6 +83,7 @@ struct FeedCheckinView: View {
                                                 Text(String(repeating: "$", count: priceRange))
                                             }
                                         }
+                                        .font(.custom(style: .subheadline))
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                     }
                                     .frame(maxWidth: .infinity)

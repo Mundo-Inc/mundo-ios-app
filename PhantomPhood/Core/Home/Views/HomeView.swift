@@ -23,7 +23,7 @@ struct HomeView: View {
                 FeedView()
                 
                 Button {
-                    showActions.toggle()
+                    showActions = true
                 } label: {
                     Circle()
                         .foregroundStyle(Color.accentColor)
@@ -33,7 +33,11 @@ struct HomeView: View {
                                 .font(.system(size: 28))
                                 .foregroundStyle(.white)
                         }
-
+                        .rotationEffect(showActions ? .degrees(135) : .zero)
+                        .scaleEffect(showActions ? 2 : 1)
+                        .opacity(showActions ? 0 : 1)
+                        .offset(y: showActions ? 50 : 0)
+                        .animation(.bouncy, value: showActions)
                         .padding(.trailing)
                         .padding(.bottom)
                 }
@@ -59,10 +63,12 @@ struct HomeView: View {
                 Spacer()
                 
                 Button {
-                    searchViewModel.showSearch = true
+                    showActions = false
                     searchViewModel.scope = .places
                     searchViewModel.tokens = [.checkin]
-                    showActions = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        searchViewModel.showSearch = true
+                    }
                 } label: {
                     HStack {
                         Image(systemName: "checkmark.diamond")
@@ -84,10 +90,12 @@ struct HomeView: View {
                 .foregroundStyle(.primary)
                 
                 Button {
-                    searchViewModel.showSearch = true
                     searchViewModel.scope = .places
                     searchViewModel.tokens = [.addReview]
                     showActions = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        searchViewModel.showSearch = true
+                    }
                 } label: {
                     HStack {
                         Image(systemName: "star.bubble")

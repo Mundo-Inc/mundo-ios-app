@@ -64,7 +64,7 @@ struct PlaceView: View {
                                             .contentShape(Rectangle())
                                         }
                                     case .video:
-                                        ReviewVideoView(url: media.src)
+                                        ReviewVideoView(url: media.src, mute: true)
                                             .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width : UIScreen.main.bounds.size.width + 150)
                                             .frame(maxWidth: UIScreen.main.bounds.size.width)
                                     }

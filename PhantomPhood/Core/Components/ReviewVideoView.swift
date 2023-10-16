@@ -9,18 +9,27 @@ import SwiftUI
 import AVKit
 
 struct ReviewVideoView: View {
-    let url: String
+    let url: URL?
     let mute: Bool
     @State private var player = AVPlayer()
     
     init(url: String, mute: Bool = false) {
+        if let theURL = URL(string: url) {
+            self.url = theURL
+        } else {
+            self.url = nil
+        }
+        self.mute = mute
+    }
+    
+    init(url: URL, mute: Bool = false) {
         self.url = url
         self.mute = mute
     }
         
     var body: some View {
-        if let theURL = URL(string: url) {
-            PlayerViewController(url: theURL, mute: mute)
+        if let url {
+            PlayerViewController(url: url, mute: mute)
         }
     }
 }
