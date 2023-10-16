@@ -52,14 +52,10 @@ struct FeedCheckinView: View {
                         VStack {
                             NavigationLink(value: HomeStack.place(id: place.id)) {
                                 HStack {
-                                    RoundedRectangle(cornerRadius: 5)
-                                        .stroke()
+                                    Image(systemName: "checkmark.diamond.fill")
+                                        .font(.system(size: 36))
                                         .frame(width: 40, height: 40)
-                                        .overlay {
-                                            Image(systemName: "checkmark.rectangle.stack")
-                                                .font(.system(size: 20))
-                                        }
-                                        .foregroundStyle(.green)
+                                        .foregroundStyle(LinearGradient(colors: [Color.green, Color.accentColor], startPoint: .topLeading, endPoint: .trailing))
                                     
                                     VStack {
                                         Text(place.name)
@@ -134,7 +130,7 @@ struct FeedCheckinView: View {
                     Button {
                         commentsViewModel.showComments(activityId: data.id)
                     } label: {
-                        Image(systemName: "bubble")
+                        Image(systemName: "bubble.left")
                             .font(.system(size: 20))
                     }
                     .padding(.horizontal, 5)

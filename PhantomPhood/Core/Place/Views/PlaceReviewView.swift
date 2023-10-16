@@ -204,7 +204,7 @@ struct PlaceReviewView: View {
                     Button {
                         commentsViewModel.showComments(activityId: userActivityId)
                     } label: {
-                        Image(systemName: "bubble")
+                        Image(systemName: "bubble.left")
                             .font(.system(size: 20))
                     }
                     .padding(.horizontal, 5)

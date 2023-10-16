@@ -299,46 +299,47 @@ struct AddReviewView: View {
                         
                         ScrollView(.horizontal) {
                             HStack {
-                                ForEach(vm.selectedMedia.indices, id: \.self) { index in
-                                    Group {
-                                        switch vm.selectedMedia[index] {
-                                        case .empty:
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .foregroundStyle(Color.themePrimary)
-                                                .overlay {
-                                                    Text("Empty")
-                                                }
-                                        case .imageSuccess(let image):
-                                            image
+                                ForEach(vm.mediaItemsState) { item in
+                                    switch item.state {
+                                    case .successImage(let image):
+                                        if item.isCompressed {
+                                            Text("Compressed")
+                                            Image(uiImage: image)
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
-                                        case .videoSuccess(let movie):
-                                            TestVideoView(url: movie.url, mute: true)
+                                                .frame(width: 100, height: 140)
+                                                .clipShape(.rect(cornerRadius: 10))
+                                        } else {
+                                            Image(uiImage: image)
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 100, height: 140)
+                                                .clipShape(.rect(cornerRadius: 10))
                                                 .onAppear {
-                                                    Task {
-                                                        do {
-                                                            let data = try Data(contentsOf: movie.url)
-                                                        } catch {
-                                                            print("Error")
-                                                        }
-                                                    }
-                                                }
-                                        case .failure:
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .foregroundStyle(Color.themePrimary)
-                                                .overlay {
-                                                    Text("Error")
-                                                }
-                                        case .loading:
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .foregroundStyle(Color.themePrimary)
-                                                .overlay {
-                                                    Text("Loading")
+                                                    vm.compress(item: item)
                                                 }
                                         }
+                                        
+                                    case .successMovie(let movie):
+                                        VStack {
+                                            if item.isCompressed {
+                                                VideoPlayer(player: AVPlayer(url: movie.url))
+                                                    .frame(width: 100, height: 100)
+                                                    .clipShape(.rect(cornerRadius: 10))
+                                            } else {
+                                                VideoPlayer(player: AVPlayer(url: movie.url))
+                                                    .frame(width: 100, height: 100)
+                                                    .clipShape(.rect(cornerRadius: 10))
+                                                    .onAppear {
+                                                        vm.compress(item: item)
+                                                    }
+                                            }
+                                        }
+                                    case .loading:
+                                        ProgressView()
+                                    default:
+                                        Text("Error ")
                                     }
-                                    .frame(width: 150, height: 150)
-                                    .clipShape(.rect(cornerRadius: 10))
                                 }
                             }
                             .font(.custom(style: .subheadline))
@@ -346,12 +347,12 @@ struct AddReviewView: View {
                         }
                         
                         PhotosPicker(
-                            selection: $vm.selectedItems,
+                            selection: $vm.mediaSelection,
                             matching: .any(of: [.images, .videos]),
                             photoLibrary: .shared()
                         ) {
                             Label {
-                                Text(vm.selectedMedia.isEmpty ? "Add Images/Videos" : "Edit Images/Videos")
+                                Text(vm.mediaSelection.isEmpty ? "Add Images/Videos" : "Edit Images/Videos")
                             } icon: {
                                 Image(systemName: "photo.on.rectangle.fill")
                             }
@@ -431,21 +432,5 @@ struct AddReviewView: View {
 #Preview {
     NavigationStack {
         AddReviewView(placeVM: PlaceViewModel(id: "645c1d1ab41f8e12a0d166bc"))
-    }
-}
-
-
-struct TestVideoView: View {
-    let url: URL
-    let mute: Bool
-    @State private var player = AVPlayer()
-    
-    init(url: URL, mute: Bool = false) {
-        self.url = url
-        self.mute = mute
-    }
-        
-    var body: some View {
-        PlayerViewController(url: url, mute: mute)
     }
 }

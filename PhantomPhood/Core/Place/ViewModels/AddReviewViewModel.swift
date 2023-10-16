@@ -37,21 +37,18 @@ class AddReviewViewModel: ObservableObject {
         overallScore != nil || foodQuality != nil || drinkQuality != nil || service != nil || atmosphere != nil
     }
     
-    @Published var selectedItems: [PhotosPickerItem] = [] {
+    @Published var mediaItemsState: [MediaItem] = []
+    @Published var mediaSelection: [PhotosPickerItem] = [] {
         didSet {
-            selectedMedia.removeAll()
-            for item in selectedItems {
-                if item.supportedContentTypes.contains(.jpeg) {
-                    loadTransferable(from: item, type: .image)
-                } else if item.supportedContentTypes.contains(.png) {
-                    loadTransferable(from: item, type: .png)
-                } else {
-                    loadTransferable(from: item, type: .video)
-                }
+            mediaItemsState.removeAll()
+            
+            for item in mediaSelection {
+                let id = UUID().uuidString
+                let progress = loadTransferable(from: item, id: id)
+                self.mediaItemsState.append(.init(id: id, state: .loading(progress: progress), isCompressed: false))
             }
         }
     }
-    @Published var selectedMedia: [MediaState] = []
     
     enum MediaState {
         case empty
@@ -67,67 +64,130 @@ class AddReviewViewModel: ObservableObject {
         case video
     }
     
-    private func loadTransferable(from selectionItem: PhotosPickerItem, type: MediaType) -> Progress {
-        switch type {
-        case .image:
-            return selectionItem.loadTransferable(type: Image.self) { result in
+    func loadTransferable(from pickerItem: PhotosPickerItem, id: String) -> Progress {
+        let videoTypes: [UTType] = [.mpeg4Movie, .movie, .video, .quickTimeMovie, .appleProtectedMPEG4Video, .avi, .mpeg, .mpeg2Video]
+        
+        if pickerItem.supportedContentTypes.contains(where: { item in
+            return videoTypes.contains(item)
+        }) {
+            return pickerItem.loadTransferable(type: Movie.self) { result in
                 DispatchQueue.main.async {
                     switch result {
-                    case .success(let theMedia):
-                        if let theMedia {
-                            self.selectedMedia.append(.imageSuccess(theMedia))
-                        } else {
-                            selectionItem.loadTransferable(type: Data.self) { res in
-                                switch res {
-                                case .success(let mediaData):
-                                    if let mediaData, let image = UIImage(data: mediaData) {
-                                        self.selectedMedia.append(.imageSuccess(Image(uiImage: image)))
-                                    }
-                                case .failure(let error):
-                                    self.selectedMedia.append(.failure(error))
-                                }
-                                
+                    case .success(let data?):
+                        print("Success Video")
+                        self.mediaItemsState = self.mediaItemsState.map({ item in
+                            if item.id == id {
+                                return item.newState(state: .successMovie(data: data), isCompressed: false)
                             }
-                        }
+                            return item
+                        })
+                    case .success(nil):
+                        break
+    //                    self.mediaItemsState.removeAll { item in
+    //                        item.id == id
+    //                    }
                     case .failure(let error):
-                        self.selectedMedia.append(.failure(error))
+                        self.mediaItemsState = self.mediaItemsState.map({ item in
+                            if item.id == id {
+                                return item.newState(state: .failure(error: error), isCompressed: false)
+                            }
+                            return item
+                        })
                     }
                 }
             }
-        case .png:
-            return selectionItem.loadTransferable(type: Data.self) { result in
+        } else {
+            return pickerItem.loadTransferable(type: Data.self) { result in
                 DispatchQueue.main.async {
                     switch result {
-                    case .success(let mediaData):
-                        if let mediaData, let image = UIImage(data: mediaData) {
-                            self.selectedMedia.append(.imageSuccess(Image(uiImage: image)))
-                        } else {
-                            self.selectedMedia.append(.empty)
-                        }
+                    case .success(let data?):
+                        print("Success Image")
+                        self.mediaItemsState = self.mediaItemsState.map({ item in
+                            if item.id == id {
+                                if let uiImage = UIImage(data: data) {
+                                    return item.newState(state: .successImage(data: uiImage), isCompressed: false)
+                                }
+                            }
+                            return item
+                        })
+                    case .success(nil):
+                        break
+    //                    self.mediaItemsState.removeAll { item in
+    //                        item.id == id
+    //                    }
                     case .failure(let error):
-                        self.selectedMedia.append(.failure(error))
-                    }
-                }
-            }
-        case .video:
-            return selectionItem.loadTransferable(type: Movie.self) { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let theMedia):
-                        if let theMedia {
-                            self.selectedMedia.append(.videoSuccess(theMedia))
-                        } else {
-                            self.selectedMedia.append(.empty)
-                        }
-                    case .failure(let error):
-                        self.selectedMedia.append(.failure(error))
+                        self.mediaItemsState = self.mediaItemsState.map({ item in
+                            if item.id == id {
+                                return item.newState(state: .failure(error: error), isCompressed: false)
+                            }
+                            return item
+                        })
                     }
                 }
             }
         }
-        
     }
+    
+    
+    func compress(item: MediaItem) {
+        switch item.state {
+        case .successImage(let uiImage):
+            let data = uiImage.jpegData(compressionQuality: 0.6)
+            if let data, let theImage = UIImage(data: data) {
+                self.mediaItemsState = self.mediaItemsState.map({ i in
+                    if item.id == i.id {
+                        return item.newState(state: .successImage(data: theImage), isCompressed: true)
+                    } else {
+                        return i
+                    }
+                })
+            }
+        case .successMovie(let movie):
+            let asset = AVAsset(url: movie.url)
+            let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetMediumQuality)
+            
+            let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let compressedVideoURL = documentsPath.appendingPathComponent("compressedVideo.mp4")
+            
+            if FileManager.default.fileExists(atPath: compressedVideoURL.path) {
+                try? FileManager.default.removeItem(at: compressedVideoURL)
+            }
+            
+            exportSession?.outputURL = compressedVideoURL
+            exportSession?.outputFileType = AVFileType.mp4
+            exportSession?.shouldOptimizeForNetworkUse = true
+            exportSession?.exportAsynchronously {
+                DispatchQueue.main.async {
+                    self.mediaItemsState = self.mediaItemsState.map({ i in
+                        if item.id == i.id {
+                            return item.newState(state: .successMovie(data: Movie(url: compressedVideoURL)), isCompressed: true)
+                        }
+                        return i
+                    })
+                }
+                print("Completed Compression")
+            }
+        default: break
+        }
+    }
+}
 
+
+struct MediaItem: Identifiable {
+    let id: String
+    var state: MediaItemState
+    var isCompressed: Bool
+    
+    func newState(state newState: MediaItemState, isCompressed: Bool) -> MediaItem {
+        return MediaItem(id: self.id, state: newState, isCompressed: isCompressed)
+    }
+}
+enum MediaItemState {
+    case empty
+    case successImage(data: UIImage)
+    case successMovie(data: Movie)
+    case loading(progress: Progress)
+    case failure(error: Error)
 }
 
 
@@ -146,9 +206,7 @@ struct Movie: Transferable {
             }
             
             try FileManager.default.copyItem(at: receivedData.file, to: copy)
-            
             return .init(url: copy)
         }
     }
 }
-

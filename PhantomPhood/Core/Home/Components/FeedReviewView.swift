@@ -222,7 +222,7 @@ struct FeedReviewView: View {
                 Button {
                     commentsViewModel.showComments(activityId: data.id)
                 } label: {
-                    Image(systemName: "bubble")
+                    Image(systemName: "bubble.left")
                         .font(.system(size: 20))
                 }
                 .padding(.horizontal, 5)
