@@ -22,6 +22,8 @@ class PlaceViewModel: ObservableObject {
     private let dataManager = PlaceDataManager()
     private let toastViewModel = ToastViewModel.shared
     
+    @Published var showActions: Bool = false
+    
     @Published private(set) var isLoading = false
     @Published private(set) var place: Place?
     @Published private(set) var error: String?

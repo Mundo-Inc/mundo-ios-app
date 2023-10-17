@@ -25,7 +25,7 @@ struct PlaceView: View {
     let descriptionPadding = 150
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottomTrailing) {
             Color.themeBG.ignoresSafeArea()
             
             ScrollView {
@@ -280,10 +280,94 @@ struct PlaceView: View {
                 .padding(.bottom)
             }
             .ignoresSafeArea(edges: .top)
+            
+            Button {
+                vm.showActions = true
+            } label: {
+                Circle()
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: 52, height: 52)
+                    .overlay {
+                        Image(systemName: "plus")
+                            .font(.system(size: 28))
+                            .foregroundStyle(.white)
+                    }
+                    .rotationEffect(vm.showActions ? .degrees(135) : .zero)
+                    .scaleEffect(vm.showActions ? 2 : 1)
+                    .opacity(vm.showActions ? 0 : 1)
+                    .offset(y: vm.showActions ? 50 : 0)
+                    .animation(.bouncy, value: vm.showActions)
+                    .padding(.trailing)
+                    .padding(.bottom)
+            }
         }
         .toolbarBackground(.hidden, for: .automatic)
         .fullScreenCover(isPresented: $vm.showAddReview) {
             AddReviewView(placeVM: vm)
+        }
+        .sheet(isPresented: $vm.showActions) {
+            VStack {
+                RoundedRectangle(cornerRadius: 3)
+                    .frame(width: 30, height: 3)
+                    .padding(.top)
+                    .foregroundStyle(.tertiary)
+                
+                Spacer()
+                
+                Button {
+                    Task {
+                        await vm.checkin()
+                    }
+                    vm.showActions = false
+                } label: {
+                    HStack {
+                        Image(systemName: "checkmark.diamond")
+                            .font(.system(size: 32))
+                        
+                        VStack {
+                            Text("Check-in")
+                                .font(.custom(style: .headline))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("Check in to here")
+                                .font(.custom(style: .caption))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                    .padding()
+                    .background(Color.themePrimary)
+                    .clipShape(.rect(cornerRadius: 15))
+                }
+                .foregroundStyle(.primary)
+                
+                Button {
+                    vm.showActions = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        vm.showAddReview = true
+                    }
+                } label: {
+                    HStack {
+                        Image(systemName: "star.bubble")
+                            .font(.system(size: 32))
+                        
+                        VStack {
+                            Text("Review")
+                                .font(.custom(style: .headline))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("Add a review to to this place")
+                                .font(.custom(style: .caption))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                    .padding()
+                    .background(Color.themePrimary)
+                    .clipShape(.rect(cornerRadius: 15))
+                }
+                .foregroundStyle(.primary)
+                
+                Spacer()
+            }
+            .padding(.horizontal)
+            .presentationDetents([.height(250)])
         }
     }
 }
