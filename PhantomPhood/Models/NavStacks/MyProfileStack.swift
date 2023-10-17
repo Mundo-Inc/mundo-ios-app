@@ -10,7 +10,7 @@ import Foundation
 enum MyProfileStack: Hashable {
     case settings
     case userProfile(id: String)
-    case place(id: String)
+    case place(id: String, action: PlaceAction? = nil)
     
     
     func hash(into hasher: inout Hasher) {
@@ -20,9 +20,10 @@ enum MyProfileStack: Hashable {
         case .userProfile(let id):
             hasher.combine("userProfile")
             hasher.combine(id)
-        case .place(let id):
+        case .place(let id, let action):
             hasher.combine("place")
             hasher.combine(id)
+            hasher.combine(action)
         }
     }
 }

@@ -207,8 +207,8 @@ struct MyProfile: View {
                 switch link {
                 case .settings:
                     SettingsView()
-                case .place(let id):
-                    PlaceView(id: id)
+                case .place(let id, let action):
+                    PlaceView(id: id, action: action)
                 case .userProfile(let id):
                     UserProfileView(id: id)
                 }

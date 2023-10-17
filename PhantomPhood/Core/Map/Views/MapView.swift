@@ -11,6 +11,17 @@ import MapKit
 struct MapView: View {
     @EnvironmentObject private var appData: AppData
     @StateObject private var vm = MapViewModel()
+    @Environment(\.dismissSearch) var dismissSearch
+    
+    @StateObject var searchViewModel = SearchViewModel()
+    
+    func showPlace(place: CompactPlace) {
+        
+    }
+    
+    func showUser(user: User) {
+        
+    }
     
     var body: some View {
         NavigationStack(path: $appData.mapNavStack) {
@@ -27,18 +38,38 @@ struct MapView: View {
                         ProgressView()
                     }
                 }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        searchViewModel.showSearch = true
+                    } label: {
+                        Image(systemName: "magnifyingglass")
+                    }
+                    .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
+                        searchViewModel.tokens.removeAll()
+                        searchViewModel.text = ""
+                        dismissSearch()
+                    }) {
+                        SearchView(vm: searchViewModel) { place in
+                            appData.mapNavStack.append(MapStack.place(id: place.id, action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
+                        } onUserSelect: { user in
+                            appData.mapNavStack.append(MapStack.userProfile(id: user.id))
+                        }
+                    }
+                }
             })
-            .navigationTitle("Map")
+            .navigationTitle("Explore")
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: MapStack.self) { link in
                 switch link {
-                case .place(let id):
-                    PlaceView(id: id)
+                case .place(let id, let action):
+                    PlaceView(id: id, action: action)
                 case .userProfile(let id):
                     UserProfileView(id: id)
                 }
             }
         }
+        .environmentObject(searchViewModel)
     }
 }
 

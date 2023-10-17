@@ -8,14 +8,6 @@
 import Foundation
 import Combine
 
-//enum PlaceTypes: String, Identifiable, CaseIterable {
-//    case restaurant
-//    case cafe
-//    case bar
-//    
-//    var id: Self { self }
-//}
-
 enum SearchScopes: String, CaseIterable, Identifiable {
     case places = "Places"
     case users = "Users"
@@ -34,15 +26,38 @@ enum SearchTokens: String, Identifiable {
     }
 }
 
+enum SearchPlaceRegion {
+    case nearMe
+    case global
+    
+    var title: String {
+        switch self {
+        case .nearMe:
+            "Near Me"
+        case .global:
+            "Global"
+        }
+    }
+    
+    var icon: String {
+        switch self {
+        case .nearMe:
+            "location.fill"
+        case .global:
+            "globe"
+        }
+    }
+//    case region: (CLLocationCoordinate2D)
+}
+
 @MainActor
 class SearchViewModel: ObservableObject {
-    static let shared = SearchViewModel()
-    
     private let apiManager = APIManager()
     private let auth = Authentication.shared
     private let locationManager = LocationManager.shared
     
     @Published var showSearch = false
+    @Published var searchPlaceRegion: SearchPlaceRegion = .global
     @Published var text = ""
     @Published var scope: SearchScopes = .places
     @Published var tokens: [SearchTokens] = []
@@ -55,6 +70,10 @@ class SearchViewModel: ObservableObject {
     private var cancellable = [AnyCancellable]()
     
     init() {
+        if locationManager.location != nil {
+            self.searchPlaceRegion = .nearMe
+        }
+        
         $text
             .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
             .sink { value in
@@ -72,6 +91,18 @@ class SearchViewModel: ObservableObject {
                 self.search(self.text)
             }
             .store(in: &cancellable)
+        
+        $searchPlaceRegion
+            .sink { region in
+                if region == .nearMe {
+                    self.search(self.text)
+                } else {
+                    if !self.text.isEmpty {
+                        self.search(self.text)
+                    }
+                }
+            }
+            .store(in: &cancellable)
     }
     
     func search(_ value: String) {
@@ -82,7 +113,7 @@ class SearchViewModel: ObservableObject {
                 do {
                     var locationQuery = ""
                     if let location = locationManager.location {
-                        locationQuery += "&lat=\(location.coordinate.latitude)&lng=\(location.coordinate.longitude)&radius=2000"
+                        locationQuery += "&lat=\(location.coordinate.latitude)&lng=\(location.coordinate.longitude)&radius=\(self.searchPlaceRegion == .global ? "global" : String(2000))"
                     }
                     let (data, _) = try await self.apiManager.request("/places?limit=8\(value.isEmpty ? "" : "&q=\(value)")\(locationQuery)", token: self.auth.token) as (PlaceSearchResponse?, HTTPURLResponse)
                     if let data {

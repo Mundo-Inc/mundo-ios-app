@@ -10,10 +10,23 @@ import SwiftUI
 struct SearchView: View {
     @Environment(\.dismissSearch) var dismissSearch
     @Environment(\.isSearching) var isSearching
-    @ObservedObject var searchViewModel = SearchViewModel.shared
+    @ObservedObject var locationManager = LocationManager.shared
     
-    @Binding var path: [HomeStack]
+    @ObservedObject var searchViewModel: SearchViewModel
     
+    var isLocationAvailable: Bool {
+        locationManager.location != nil
+    }
+    
+    var onPlaceSelect: ((CompactPlace) -> Void)? = nil
+    var onUserSelect: ((User) -> Void)? = nil
+    
+    init(vm: SearchViewModel, onPlaceSelect: ((CompactPlace) -> Void)? = nil, onUserSelect: ((User) -> Void)? = nil) {
+        self._searchViewModel = ObservedObject(wrappedValue: vm)
+        self.onPlaceSelect = onPlaceSelect
+        self.onUserSelect = onUserSelect
+    }
+        
     func closeSearch() {
         dismissSearch()
         searchViewModel.showSearch = false
@@ -23,45 +36,131 @@ struct SearchView: View {
     
     var body: some View {
         NavigationStack {
-            TabView(selection: $searchViewModel.scope) {
-                ScrollView {
-                    VStack {
-                        Label {
-                            Text("Near you")
-                        } icon: {
-                            Image(systemName: "location.fill")
-                        }
-                        .padding(.vertical)
-                        
-                        
-                        ForEach(searchViewModel.placeSearchResults) { place in
-                            PlaceCard(place: place, path: $path, closeSearch: closeSearch)
+            ZStack {
+                if let onPlaceSelect, let onUserSelect {
+                    TabView(selection: $searchViewModel.scope) {
+                        VStack {
+                            HStack {
+                                Text("Region")
+                                
+                                Spacer()
+                                
+                                Button {
+                                    withAnimation {
+                                        switch searchViewModel.searchPlaceRegion {
+                                        case .nearMe:
+                                            searchViewModel.searchPlaceRegion = .global
+                                        case .global:
+                                            searchViewModel.searchPlaceRegion = .nearMe
+                                        }
+                                    }
+                                } label: {
+                                    Label {
+                                        Text(searchViewModel.searchPlaceRegion.title)
+                                    } icon: {
+                                        Image(systemName: searchViewModel.searchPlaceRegion.icon)
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
+                            .font(.custom(style: .body))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 6)
+                            .background(Color.themePrimary.opacity(0.5))
+                            .clipShape(.rect(cornerRadius: 4))
+                            .padding(.horizontal)
+                            
                             Divider()
+                            
+                            ScrollView {
+                                VStack {
+                                    ForEach(searchViewModel.placeSearchResults) { place in
+                                        PlaceCard(searchViewModel: searchViewModel, place: place, closeSearch: closeSearch, onSelect: onPlaceSelect)
+                                        Divider()
+                                    }
+                                    if searchViewModel.isLoading {
+                                        ProgressView()
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                            .scrollDismissesKeyboard(.interactively)
                         }
-                        if searchViewModel.isLoading {
-                            ProgressView()
+                        
+                        .tag(SearchScopes.places)
+                        
+                        if !searchViewModel.tokens.contains(.checkin) && !searchViewModel.tokens.contains(.checkin) {
+                            ScrollView {
+                                VStack {
+                                    ForEach(searchViewModel.userSearchResults) { user in
+                                        UserCard(user: user, closeSearch: closeSearch, onSelect: onUserSelect)
+                                        Divider()
+                                    }
+                                    if searchViewModel.isLoading {
+                                        ProgressView()
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                            .scrollDismissesKeyboard(.interactively)
+                            .tag(SearchScopes.users)
                         }
                     }
-                    .padding(.horizontal)
-                }
-                .scrollDismissesKeyboard(.interactively)
-                .tag(SearchScopes.places)
-                
-                if !searchViewModel.tokens.contains(.checkin) && !searchViewModel.tokens.contains(.checkin) {
-                    ScrollView {
-                        VStack {
-                            ForEach(searchViewModel.userSearchResults) { user in
-                                UserCard(user: user, path: $path, closeSearch: closeSearch)
-                                Divider()
+                } else if let onPlaceSelect {
+                    VStack {
+                        HStack {
+                            Text("Region")
+                            
+                            Spacer()
+                            
+                            Label {
+                                Text(isLocationAvailable ? "Near you" : "Global")
+                            } icon: {
+                                Image(systemName: isLocationAvailable ? "location.fill" : "globe")
                             }
-                            if searchViewModel.isLoading {
-                                ProgressView()
-                            }
+                            .foregroundStyle(.secondary)
                         }
                         .padding(.horizontal)
+                        .font(.custom(style: .body))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
+                        .background(Color.themePrimary.opacity(0.5))
+                        .clipShape(.rect(cornerRadius: 4))
+                        .padding(.horizontal)
+                        
+                        Divider()
+                        
+                        ScrollView {
+                            VStack {
+                                ForEach(searchViewModel.placeSearchResults) { place in
+                                    PlaceCard(searchViewModel: searchViewModel, place: place, closeSearch: closeSearch, onSelect: onPlaceSelect)
+                                    Divider()
+                                }
+                                if searchViewModel.isLoading {
+                                    ProgressView()
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                        .scrollDismissesKeyboard(.interactively)
                     }
-                    .scrollDismissesKeyboard(.interactively)
-                    .tag(SearchScopes.users)
+                } else if let onUserSelect {
+                    if !searchViewModel.tokens.contains(.checkin) && !searchViewModel.tokens.contains(.checkin) {
+                        ScrollView {
+                            VStack {
+                                ForEach(searchViewModel.userSearchResults) { user in
+                                    UserCard(user: user, closeSearch: closeSearch, onSelect: onUserSelect)
+                                    Divider()
+                                }
+                                if searchViewModel.isLoading {
+                                    ProgressView()
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                        .scrollDismissesKeyboard(.interactively)
+                        .tag(SearchScopes.users)
+                    }
                 }
             }
             .searchable(text: $searchViewModel.text, tokens: $searchViewModel.tokens, placement: .navigationBarDrawer(displayMode: .always), token: { token in
@@ -71,10 +170,12 @@ struct SearchView: View {
                 }
             })
             .searchScopes($searchViewModel.scope, activation: .onSearchPresentation, {
-                if !searchViewModel.tokens.contains(.checkin) && !searchViewModel.tokens.contains(.checkin) {
-                    ForEach(SearchScopes.allCases) { scope in
-                        Text(scope.rawValue)
-                            .tag(scope)
+                if onPlaceSelect != nil && onUserSelect != nil {
+                    if !searchViewModel.tokens.contains(.checkin) && !searchViewModel.tokens.contains(.checkin) {
+                        ForEach(SearchScopes.allCases) { scope in
+                            Text(scope.rawValue)
+                                .tag(scope)
+                        }
                     }
                 }
             })
@@ -92,16 +193,16 @@ struct SearchView: View {
 }
 
 fileprivate struct PlaceCard: View {
+    @ObservedObject var searchViewModel: SearchViewModel
+
     let place: CompactPlace
-    @Binding var path: [HomeStack]
     
     let closeSearch: () -> Void
-    
-    @ObservedObject var searchViewModel = SearchViewModel.shared
-    
+    let onSelect: (CompactPlace) -> Void
+        
     var body: some View {
         Button {
-            path.append(HomeStack.place(id: place.id, action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
+            self.onSelect(place)
             closeSearch()
         } label: {
             HStack {
@@ -144,13 +245,13 @@ fileprivate struct PlaceCard: View {
 
 fileprivate struct UserCard: View {
     let user: User
-    @Binding var path: [HomeStack]
     
     let closeSearch: () -> Void
+    let onSelect: (User) -> Void
     
     var body: some View {
         Button {
-            path.append(HomeStack.userProfile(id: user.id))
+            self.onSelect(user)
             closeSearch()
         } label: {
             HStack {
@@ -202,5 +303,9 @@ fileprivate struct UserCard: View {
 
 
 #Preview {
-    SearchView(path: .constant([]))
+    SearchView(vm: SearchViewModel()) { place in
+        print("Place")
+    } onUserSelect: { user in
+        print("User")
+    }
 }

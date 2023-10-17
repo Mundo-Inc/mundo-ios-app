@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct FeedView: View {
-    @Environment(\.isSearching) private var isSearching: Bool
     @Environment(\.dismissSearch) var dismissSearch
     @EnvironmentObject private var appData: AppData
-    @ObservedObject var searchViewModel = SearchViewModel.shared
+    @EnvironmentObject var searchViewModel: SearchViewModel
     
     @StateObject var commentsViewModel = CommentsViewModel()
     @StateObject var mediasViewModel = MediasViewModel()
@@ -20,6 +19,17 @@ struct FeedView: View {
     var body: some View {
         ZStack {
             Color.themeBG.ignoresSafeArea()
+                .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
+                    searchViewModel.tokens.removeAll()
+                    searchViewModel.text = ""
+                    dismissSearch()
+                }) {
+                    SearchView(vm: searchViewModel) { place in
+                        appData.homeNavStack.append(HomeStack.place(id: place.id, action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
+                    } onUserSelect: { user in
+                        appData.homeNavStack.append(HomeStack.userProfile(id: user.id))
+                    }
+                }
             
             ScrollView {
                 LazyVStack(spacing: 20) {
@@ -60,20 +70,24 @@ struct FeedView: View {
                     }
                 }
                 
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        searchViewModel.showSearch = true
-                    } label: {
-                        Image(systemName: "magnifyingglass")
-                    }
-                    .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
-                        searchViewModel.tokens.removeAll()
-                        searchViewModel.text = ""
-                        dismissSearch()
-                    }) {
-                        SearchView(path: $appData.homeNavStack)
-                    }
-                }
+//                ToolbarItem(placement: .topBarTrailing) {
+//                    Button {
+//                        searchViewModel.showSearch = true
+//                    } label: {
+//                        Image(systemName: "magnifyingglass")
+//                    }
+//                    .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
+//                        searchViewModel.tokens.removeAll()
+//                        searchViewModel.text = ""
+//                        dismissSearch()
+//                    }) {
+//                        SearchView { place in
+//                            appData.homeNavStack.append(HomeStack.place(id: place.id, action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
+//                        } onUserSelect: { user in
+//                            appData.homeNavStack.append(HomeStack.userProfile(id: user.id))
+//                        }
+//                    }
+//                }
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink(value: HomeStack.notifications) {
@@ -87,11 +101,6 @@ struct FeedView: View {
                     if !vm.isLoading {
                         await vm.getFeed(.refresh)
                     }
-                }
-            }
-            .overlay {
-                if isSearching {
-                    
                 }
             }
         }

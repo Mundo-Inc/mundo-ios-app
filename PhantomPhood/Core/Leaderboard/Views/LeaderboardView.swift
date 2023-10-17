@@ -18,7 +18,7 @@ struct LeaderboardView: View {
             ZStack {
                 Color.themeBG.ignoresSafeArea()
                 
-                ScrollView {
+                VStack {
                     HStack(spacing: 10) {
                         if let user = auth.user, let profileImage = URL(string: user.profileImage ?? "") {
                             CacheAsyncImage(url: profileImage) { phase in
@@ -83,74 +83,81 @@ struct LeaderboardView: View {
                     
                     Divider()
                     
-                    LazyVStack {
-                        ForEach(vm.list.indices, id: \.self) { index in
-                            NavigationLink(value: LeaderboardStack.userProfile(id: vm.list[index].id)) {
-                                HStack {
-                                    Text("#\(index + 1)")
-                                        .font(.custom(style: .headline))
-                                        .foregroundStyle(.secondary)
-                                        .frame(minWidth: 40)
-                                    
-                                    if let profileImage = vm.list[index].profileImage, let profileImageURL = URL(string: profileImage) {
-                                        CacheAsyncImage(url: profileImageURL) { phase in
-                                            switch phase {
-                                            case .empty:
-                                                Circle()
-                                                    .foregroundStyle(Color.themePrimary)
-                                                    .overlay {
-                                                        ProgressView()
-                                                    }
-                                            case .success(let image):
-                                                image
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fill)
-                                            default:
-                                                Circle()
-                                                    .foregroundStyle(Color.themePrimary)
-                                                    .overlay {
-                                                        Image(systemName: "exclamationmark.icloud")
-                                                            .foregroundStyle(.red)
-                                                    }
+                    ScrollView {
+                        LazyVStack {
+                            ForEach(vm.list.indices, id: \.self) { index in
+                                NavigationLink(value: LeaderboardStack.userProfile(id: vm.list[index].id)) {
+                                    HStack {
+                                        Text("#\(index + 1)")
+                                            .font(.custom(style: .headline))
+                                            .foregroundStyle(.secondary)
+                                            .frame(minWidth: 40)
+                                        
+                                        if let profileImage = vm.list[index].profileImage, let profileImageURL = URL(string: profileImage) {
+                                            CacheAsyncImage(url: profileImageURL) { phase in
+                                                switch phase {
+                                                case .empty:
+                                                    Circle()
+                                                        .foregroundStyle(Color.themePrimary)
+                                                        .overlay {
+                                                            ProgressView()
+                                                        }
+                                                case .success(let image):
+                                                    image
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fill)
+                                                default:
+                                                    Circle()
+                                                        .foregroundStyle(Color.themePrimary)
+                                                        .overlay {
+                                                            Image(systemName: "exclamationmark.icloud")
+                                                                .foregroundStyle(.red)
+                                                        }
+                                                }
                                             }
-                                        }
-                                        .frame(width: 36, height: 36)
-                                        .contentShape(Circle())
-                                        .clipShape(Circle())
-                                    } else {
-                                        Circle()
-                                            .foregroundStyle(Color.themePrimary)
                                             .frame(width: 36, height: 36)
-                                            .overlay {
-                                                Image(systemName: "person.crop.circle")
-                                                    .foregroundStyle(.secondary)
-                                            }
+                                            .contentShape(Circle())
+                                            .clipShape(Circle())
+                                        } else {
+                                            Circle()
+                                                .foregroundStyle(Color.themePrimary)
+                                                .frame(width: 36, height: 36)
+                                                .overlay {
+                                                    Image(systemName: "person.crop.circle")
+                                                        .foregroundStyle(.secondary)
+                                                }
+                                        }
+                                        
+                                        LevelView(level: .convert(level: vm.list[index].level))
+                                            .frame(width: 36, height: 36)
+                                        
+                                        Text(vm.list[index].name)
+                                            .font(.custom(style: .subheadline))
+                                            .bold()
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        
+                                        Text("\(vm.list[index].xp)")
+                                            .font(.custom(style: .caption))
+                                            .foregroundStyle(.secondary)
                                     }
-                                    
-                                    LevelView(level: .convert(level: vm.list[index].level))
-                                        .frame(width: 36, height: 36)
-                                    
-                                    Text(vm.list[index].name)
-                                        .font(.custom(style: .subheadline))
-                                        .bold()
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    
-                                    Text("\(vm.list[index].xp)")
-                                        .font(.custom(style: .caption))
-                                        .foregroundStyle(.secondary)
-                                }
-                                .padding(.horizontal)
-                                .onAppear {
-                                    if !vm.isLoading {
-                                        Task {
-                                            await vm.loadMore(currentItem: vm.list[index])
+                                    .padding(.horizontal)
+                                    .onAppear {
+                                        if !vm.isLoading {
+                                            Task {
+                                                await vm.loadMore(currentItem: vm.list[index])
+                                            }
                                         }
                                     }
                                 }
+                                .foregroundStyle(auth.user?.id == vm.list[index].id ? Color.accentColor : Color.primary)
+                                
+                                Divider()
                             }
-                            .foregroundStyle(auth.user?.id == vm.list[index].id ? Color.accentColor : Color.primary)
-                            
-                            Divider()
+                        }
+                    }
+                    .refreshable {
+                        Task {
+                            await vm.fetchList(.refresh)
                         }
                     }
                 }

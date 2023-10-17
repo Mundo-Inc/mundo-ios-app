@@ -39,10 +39,7 @@ struct MapView17: View {
     }
 }
 
+@available(iOS 17.0, *)
 #Preview {
-    if #available(iOS 17.0, *) {
-        return MapView17(vm: MapViewModel())
-    } else {
-        return Text("Only iOS 17 and above")
-    }
+    MapView17(vm: MapViewModel())
 }

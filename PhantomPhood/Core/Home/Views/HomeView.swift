@@ -12,10 +12,9 @@ struct HomeView: View {
     @EnvironmentObject private var appData: AppData
     @EnvironmentObject var locationManager: LocationManager
                     
-    @ObservedObject var searchViewModel = SearchViewModel.shared
+    @StateObject var searchViewModel = SearchViewModel()
     
     @State var showActions: Bool = false
-    @State var isSearching = false
     
     var body: some View {
         NavigationStack(path: $appData.homeNavStack) {
@@ -53,6 +52,7 @@ struct HomeView: View {
                 }
             }
         }
+        .environmentObject(searchViewModel)
         .sheet(isPresented: $showActions) {
             VStack {
                 RoundedRectangle(cornerRadius: 3)
@@ -67,6 +67,7 @@ struct HomeView: View {
                     searchViewModel.scope = .places
                     searchViewModel.tokens = [.checkin]
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        print("nowww")
                         searchViewModel.showSearch = true
                     }
                 } label: {
