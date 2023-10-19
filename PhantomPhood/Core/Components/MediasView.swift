@@ -16,19 +16,7 @@ struct MediasView: View {
     }
     
     var body: some View {
-        VStack {
-            HStack {
-                Spacer()
-                Button {
-                    vm.show = false
-                } label: {
-                    Image(systemName: "xmark")
-                }
-            }
-            .padding()
-            
-            Spacer()
-            
+        ZStack(alignment: .top) {
             if !vm.medias.isEmpty {
                 VStack {
                     TabView {
@@ -72,7 +60,21 @@ struct MediasView: View {
                 .scaleEffect(scale)
                 .offset(y: offset.height)
                 .frame(maxHeight: .infinity)
-            }            
+                .ignoresSafeArea()
+            } else {
+                Text("Empty")
+            }
+            
+            Button {
+                vm.show = false
+            } label: {
+                Label(
+                    title: { Text("Drag Down to Dismiss") },
+                    icon: { Image(systemName: "chevron.down") }
+                )
+                .padding(.top)
+            }
+            .foregroundStyle(.secondary)
         }
         .gesture(
             DragGesture()
@@ -94,5 +96,12 @@ struct MediasView: View {
 }
 
 #Preview {
-    MediasView(vm: MediasViewModel())
+    @ObservedObject var vm = MediasViewModel()
+    return MediasView(vm: vm)
+        .onAppear {
+            vm.show(medias: [
+                .init(_id: "Test1", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/af9ddd441be2d1d48450e96aaaed0658.jpg", caption: nil, type: .image),
+                .init(_id: "Test2", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/2a667b01b413fd08fd00a60b2f5ba3e1.mp4", caption: nil, type: .video)
+            ])
+        }
 }
