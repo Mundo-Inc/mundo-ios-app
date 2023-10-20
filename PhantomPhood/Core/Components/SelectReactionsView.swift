@@ -18,6 +18,33 @@ struct NewReaction: Identifiable {
 private let emojiList: [NewReaction] = [
     NewReaction(reaction: "👍", type: .emoji),
     NewReaction(reaction: "❤️", type: .emoji),
+    NewReaction(reaction: "😍", type: .emoji),
+    NewReaction(reaction: "🤣", type: .emoji),
+    NewReaction(reaction: "😛", type: .emoji),
+    NewReaction(reaction: "💅", type: .emoji),
+    NewReaction(reaction: "🫡", type: .emoji),
+    NewReaction(reaction: "💦", type: .emoji),
+    NewReaction(reaction: "😮", type: .emoji),
+    NewReaction(reaction: "✈️", type: .emoji),
+    NewReaction(reaction: "🏡", type: .emoji),
+    NewReaction(reaction: "👀", type: .emoji),
+    NewReaction(reaction: "🤙", type: .emoji),
+    NewReaction(reaction: "🧐", type: .emoji),
+    NewReaction(reaction: "🥺", type: .emoji),
+    NewReaction(reaction: "🤖", type: .emoji),
+    NewReaction(reaction: "🧠", type: .emoji),
+    NewReaction(reaction: "🙏🏻", type: .emoji),
+    NewReaction(reaction: "💵", type: .emoji),
+    NewReaction(reaction: "💄", type: .emoji),
+    NewReaction(reaction: "🫦", type: .emoji),
+    NewReaction(reaction: "👋🏻", type: .emoji),
+    NewReaction(reaction: "🥲", type: .emoji),
+    NewReaction(reaction: "💰", type: .emoji),
+    NewReaction(reaction: "💸", type: .emoji),
+    NewReaction(reaction: "💩", type: .emoji),
+    NewReaction(reaction: "😬", type: .emoji),
+    NewReaction(reaction: "😎", type: .emoji),
+    NewReaction(reaction: "🚀", type: .emoji),
     NewReaction(reaction: "🥰", type: .emoji),
     NewReaction(reaction: "🤩", type: .emoji),
     NewReaction(reaction: "🎉", type: .emoji),
@@ -76,16 +103,19 @@ struct SelectReactionsView: View {
             
             TabView(selection: $selectedTab) {
                 ScrollView {
-                    WrappingHStack(horizontalSpacing: 30, verticalSpacing: 30) {
+                    LazyVGrid(columns: [
+                        GridItem(.adaptive(minimum: 36, maximum: 42)),
+                    ], spacing: 16, content: {
                         ForEach(emojiList) { emoji in
                             Button {
                                 vm.onSelect?(emoji)
                                 vm.isPresented = false
                             } label: {
                                 Text(emoji.reaction)
+                                    .font(.system(size: 26))
                             }
                         }
-                    }
+                    })
                     .padding()
                 }
                 .tag(Tab.emoji)
@@ -93,6 +123,7 @@ struct SelectReactionsView: View {
                 ScrollView {
                     Text("No Special reactions available")
                         .font(.custom(style: .subheadline))
+                        .foregroundStyle(.secondary)
                         .padding()
                 }
                 .onTapGesture {
