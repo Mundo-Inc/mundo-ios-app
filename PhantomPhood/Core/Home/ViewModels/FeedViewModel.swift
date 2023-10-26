@@ -49,6 +49,9 @@ class FeedViewModel: ObservableObject {
                 self.feedItems.append(contentsOf: data)
             }
             self.isLoading = false
+            if self.feedItems.isEmpty && data.isEmpty {
+                await getNabeel()
+            }
             page += 1
         } catch {
             print(error)

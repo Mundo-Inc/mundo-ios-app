@@ -141,7 +141,7 @@ struct SignUpView: View {
                                     
                                     Spacer()
                                     
-                                    Image("Ghost")
+                                    Image(.ghost)
                                 }.padding(.bottom)
                                 
                                 TextField("Email", text: $vm.email)
@@ -183,7 +183,7 @@ struct SignUpView: View {
                                 Spacer()
                                 
                                 VStack(alignment: .leading) {
-                                    Image("Thinking")
+                                    Image(.thinking)
                                     Text("What's your name")
                                         .font(.title2)
                                         .fontWeight(.semibold)
@@ -215,7 +215,7 @@ struct SignUpView: View {
                                 Spacer()
                                 
                                 VStack(alignment: .leading) {
-                                    Image("Cool")
+                                    Image(.cool)
                                     Text("Choose a username")
                                         .font(.title2)
                                         .fontWeight(.semibold)
@@ -268,7 +268,7 @@ struct SignUpView: View {
                                 Spacer()
                                 
                                 VStack(alignment: .leading) {
-                                    Image("Lock")
+                                    Image(.lock)
                                     Text("Choose a password")
                                         .font(.title2)
                                         .fontWeight(.semibold)
@@ -299,7 +299,7 @@ struct SignUpView: View {
                                 Spacer()
                                 
                                 VStack(alignment: .leading) {
-                                    Image("Lock")
+                                    Image(.handshake)
                                     Text("Last Step")
                                         .font(.title2)
                                         .fontWeight(.semibold)
