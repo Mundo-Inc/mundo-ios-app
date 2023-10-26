@@ -105,13 +105,13 @@ struct FeedLevelUpView: View {
                             Spacer()
                             
                             ZStack {
-                                LevelView(level: .convert(level: user.level - 1))
+                                LevelView(level: .convert(level: user.progress.level - 1))
                                     .frame(width: 36, height: 36)
                                     .offset(y: -15)
                                     .opacity(0.5)
                                     
 
-                                LevelView(level: .convert(level: user.level))
+                                LevelView(level: .convert(level: user.progress.level))
                                     .frame(width: 50, height: 50)
                                     .offset(y: 10)
                                     .shadow(radius: 10)

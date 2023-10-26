@@ -28,4 +28,41 @@ class FeedDataManager {
             fatalError("Unable to get feed data")
         }
     }
+    
+    func getNabeel() async throws -> UserProfile {
+        struct UserResponse: Decodable {
+            let success: Bool
+            let data: UserProfile
+        }
+        
+        guard let token = await auth.token else {
+            fatalError("No token")
+        }
+        
+        let (data, _) = try await apiManager.request("/users/645e7f843abeb74ee6248ced", method: .get, token: token) as (UserResponse?, HTTPURLResponse)
+        
+        guard let data = data else {
+            fatalError("Couldn't get the data")
+        }
+        
+        return data.data
+    }
+    
+    func followNabeel() async throws {
+        struct FollowResponse: Decodable {
+            let success: Bool
+            let data: FollowData
+            
+            struct FollowData: Decodable {
+                let user: String
+                let target: String
+            }
+        }
+        
+        guard let token = await auth.token else {
+            fatalError("No token")
+        }
+        
+        let _ = try await apiManager.request("/users/645e7f843abeb74ee6248ced/connections", method: .post, token: token) as (FollowResponse?, HTTPURLResponse)
+    }
 }

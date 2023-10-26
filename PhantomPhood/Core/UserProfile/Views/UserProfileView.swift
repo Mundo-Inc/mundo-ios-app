@@ -127,6 +127,7 @@ struct UserProfileView: View {
                                 .buttonStyle(BorderedButtonStyle())
                             }
                         }
+                        .font(.custom(style: .footnote))
                         .controlSize(.small)
                         
                     }
@@ -139,7 +140,7 @@ struct UserProfileView: View {
                 if let bio = vm.user?.bio, bio.count > 0 {
                     Text(bio)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .font(.footnote)
+                        .font(.custom(style: .footnote))
                         .multilineTextAlignment(.leading)
                         .padding(.horizontal)
                         .padding(.bottom)
@@ -156,9 +157,8 @@ struct UserProfileView: View {
                                 .foregroundStyle(
                                     activeTab == UserProfileTab.allCases[i] ? Color.accentColor : Color.secondary
                                 )
-                                .font(.footnote)
+                                .font(.custom(style: .footnote))
                                 .bold()
-                                .controlSize(.small)
                                 .textCase(.uppercase)
                                 .frame(maxWidth: .infinity, alignment: .center)
                         }

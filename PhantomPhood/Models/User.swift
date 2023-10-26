@@ -13,10 +13,9 @@ struct User: Identifiable, Decodable {
     let username: String
     let bio: String
     let coins: Int
-    let xp: Int
-    let level: Int
     let verified: Bool
     let profileImage: String?
+    let progress: UserProgress
     
     var id: String {
         self._id
@@ -29,9 +28,7 @@ struct UserProfile: Identifiable, Decodable {
     let username: String
     let bio: String
     let coins: Int
-    let xp: Int
     let remainingXp: Int
-    let level: Int
     let verified: Bool
     let profileImage: String?
     let isFollower: Bool
@@ -40,8 +37,19 @@ struct UserProfile: Identifiable, Decodable {
     let followingCount: Int
     let reviewsCount: Int
     let rank: Int
+    let progress: UserProgress
     
     var id: String {
         self._id
     }
+}
+
+struct UserProgress: Codable {
+    let xp: Int
+    let level: Int
+    let achievements: [UserAchievments]
+}
+
+struct UserAchievments: Codable {
+    let type: String
 }

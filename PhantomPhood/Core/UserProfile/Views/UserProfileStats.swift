@@ -60,7 +60,7 @@ struct UserProfileStats: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack(spacing: 10) {
-                    LevelView(level: .convert(level: user?.level ?? 0))
+                    LevelView(level: .convert(level: user?.progress.level ?? 0))
                         .frame(width: 80, height: 80)
                     
                     VStack {
@@ -69,15 +69,15 @@ struct UserProfileStats: View {
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        ProgressView(value: user == nil ? 0 : Double(user!.xp) / Double(user!.xp + user!.remainingXp))
+                        ProgressView(value: user == nil ? 0 : Double(user!.progress.xp) / Double(user!.progress.xp + user!.remainingXp))
                             .foregroundStyle(.secondary)
                             .progressViewStyle(.linear)
                             
                         
                         HStack(spacing: 0) {
-                            Text("\(user?.xp ?? 1000)")
+                            Text("\(user?.progress.xp ?? 1000)")
                                 .foregroundStyle(Color.accentColor)
-                            Text("/\(user == nil ? 3000 : user!.xp + user!.remainingXp)")
+                            Text("/\(user == nil ? 3000 : user!.progress.xp + user!.remainingXp)")
                                 .foregroundStyle(.secondary)
                         }
                         .redacted(reason: user == nil ? .placeholder : [])

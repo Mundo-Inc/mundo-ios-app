@@ -57,12 +57,12 @@ struct LeaderboardView: View {
                                 .font(.custom(style: .headline))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            ProgressView(value: auth.user == nil ? 0 : Double(auth.user!.xp) / Double(auth.user!.xp + auth.user!.remainingXp))
+                            ProgressView(value: auth.user == nil ? 0 : Double(auth.user!.progress.xp) / Double(auth.user!.progress.xp + auth.user!.remainingXp))
                                 .foregroundStyle(.secondary)
                                 .progressViewStyle(.linear)
                             
                             HStack {
-                                Text("\(auth.user?.xp ?? 100) XP")
+                                Text("\(auth.user?.progress.xp ?? 100) XP")
                                     .font(.custom(style: .body))
                                     .foregroundStyle(.secondary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -75,7 +75,7 @@ struct LeaderboardView: View {
                         .redacted(reason: auth.user == nil ? .placeholder : [])
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        LevelView(level: .convert(level: auth.user != nil ? auth.user!.level : 0))
+                        LevelView(level: .convert(level: auth.user != nil ? auth.user!.progress.level : 0))
                             .frame(width: 64, height: 64)
                         
                     }
@@ -128,7 +128,7 @@ struct LeaderboardView: View {
                                                 }
                                         }
                                         
-                                        LevelView(level: .convert(level: vm.list[index].level))
+                                        LevelView(level: .convert(level: vm.list[index].progress.level))
                                             .frame(width: 36, height: 36)
                                         
                                         Text(vm.list[index].name)
@@ -136,7 +136,7 @@ struct LeaderboardView: View {
                                             .bold()
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                         
-                                        Text("\(vm.list[index].xp)")
+                                        Text("\(vm.list[index].progress.xp)")
                                             .font(.custom(style: .caption))
                                             .foregroundStyle(.secondary)
                                     }

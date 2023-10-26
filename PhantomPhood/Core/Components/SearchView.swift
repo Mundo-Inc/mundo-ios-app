@@ -292,7 +292,7 @@ fileprivate struct UserCard: View {
                     
                 }
                 
-                LevelView(level: .convert(level: user.level))
+                LevelView(level: .convert(level: user.progress.level))
                     .frame(width: 28, height: 28)
 
             }

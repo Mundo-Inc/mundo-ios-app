@@ -67,7 +67,6 @@ struct HomeView: View {
                     searchViewModel.scope = .places
                     searchViewModel.tokens = [.checkin]
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        print("nowww")
                         searchViewModel.showSearch = true
                     }
                 } label: {

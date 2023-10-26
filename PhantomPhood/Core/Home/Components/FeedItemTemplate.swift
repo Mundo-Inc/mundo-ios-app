@@ -128,7 +128,7 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                             .contentShape(Circle())
                             .clipShape(Circle())
                             .overlay(alignment: .top) {
-                                LevelView(level: .convert(level: user.level))
+                                LevelView(level: .convert(level: user.progress.level))
                                     .frame(width: 36, height: 36)
                                     .offset(y: 28)
                             }
@@ -140,7 +140,7 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                                 .background(Color.themePrimary)
                                 .clipShape(Circle())
                                 .overlay(alignment: .top) {
-                                    LevelView(level: .convert(level: user.level))
+                                    LevelView(level: .convert(level: user.progress.level))
                                         .frame(width: 36, height: 36)
                                         .offset(y: 28)
                                 }
@@ -206,10 +206,9 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                 username: "DwayneTheRock",
                 bio: "This is test bio",
                 coins: 40,
-                xp: 2400,
-                level: 7,
                 verified: true,
-                profileImage: ""
+                profileImage: "",
+                progress: .init(xp: 2400, level: 7, achievements: [])
             ),
             comments: [
                 Comment(
@@ -223,10 +222,9 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                         username: "DwayneTheRock",
                         bio: "This is test bio",
                         coins: 40,
-                        xp: 2400,
-                        level: 7,
                         verified: true,
-                        profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                        profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                        progress: .init(xp: 2400, level: 7, achievements: [])
                     ),
                     likes: 4,
                     liked: true,
@@ -246,10 +244,9 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                 username: "DwayneTheRock",
                 bio: "This is test bio",
                 coins: 40,
-                xp: 2400,
-                level: 7,
                 verified: true,
-                profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                progress: .init(xp: 2400, level: 7, achievements: [])
             ),
             comments: [
                 Comment(
@@ -263,10 +260,9 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                         username: "DwayneTheRock",
                         bio: "This is test bio",
                         coins: 40,
-                        xp: 2400,
-                        level: 7,
                         verified: true,
-                        profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                        profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                        progress: .init(xp: 2400, level: 7, achievements: [])
                     ),
                     likes: 4,
                     liked: true,

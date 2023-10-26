@@ -44,6 +44,8 @@ class SignUpViewModel: ObservableObject {
     
     @Published var isLoading = false
     
+    @Published var eula = false
+    
     @Published var email: String = ""
     @Published var isValidEmail: Bool = false
     @Published var name: String = ""
@@ -281,15 +283,47 @@ struct SignUpView: View {
                                 
                                 SecureField("Password", text: $vm.password)
                                     .font(.title2)
-                                    .textContentType(UITextContentType.newPassword)
+                                    .textContentType(.password)
                                     .focused($focusedField, equals: .password)
-                                
+                                                                
                                 Spacer()
                             }
                             .onAppear {
                                 if vm.password.count < 5 {
                                     focusedField = .password
                                 }
+                            }
+                            
+                        case 4:
+                            VStack {
+                                Spacer()
+                                
+                                VStack(alignment: .leading) {
+                                    Image("Lock")
+                                    Text("Last Step")
+                                        .font(.title2)
+                                        .fontWeight(.semibold)
+                                        .padding(.bottom)
+                                    Text("One tiny hurdle before the fun begins! Let's leap over the legal bit.")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                        .multilineTextAlignment(.leading)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.bottom)
+                                
+                                Toggle(isOn: $vm.eula) {
+                                    VStack(alignment: .leading) {
+                                        Text("I have read and agree to the")
+                                        Link("End User License Agreement", destination: URL(string: "https://phantomphood.ai/eula")!)
+                                        HStack {
+                                            Text("and")
+                                            Link("Privacy Policy", destination: URL(string: "https://phantomphood.ai/privacy-policy")!)
+                                        }
+                                    }
+                                }
+                                
+                                Spacer()
                             }
                             
                         default:
@@ -336,12 +370,20 @@ struct SignUpView: View {
                             if !vm.isUsernameValid {
                                 proceed = false
                             }
+                        case 3:
+                            if vm.password.count < 5 {
+                                proceed = false
+                            }
+                        case 4:
+                            if !vm.eula {
+                                proceed = false
+                            }
                         default:
                             proceed = true
                         }
                         
                         if (proceed) {
-                            if vm.step == 3 {
+                            if vm.step == 4 {
                                 // sign up
                                 Task {
                                     withAnimation {
@@ -375,7 +417,7 @@ struct SignUpView: View {
                                 ProgressView()
                                     .controlSize(.regular)
                             }
-                            Text(vm.step == 3 ? "Sign Up" : "Next")
+                            Text(vm.step == 4 ? "Sign Up" : "Next")
                         }.frame(maxWidth: .infinity)
                         
                     }
@@ -386,7 +428,8 @@ struct SignUpView: View {
                         (
                             vm.step == 0 ? (vm.email.count == 0 || !vm.isValidEmail) :
                                 vm.step == 2 ? !vm.isUsernameValid :
-                                vm.step == 3 ? vm.password.count < 5 : false
+                                vm.step == 3 ? vm.password.count < 5 :
+                                vm.step == 4 ? !vm.eula : false
                         )
                         
                     )
@@ -409,8 +452,7 @@ struct SignUpView: View {
 }
 
 
-struct LoginScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        SignUpView()
-    }
+#Preview {
+    SignUpView()
+        .environmentObject(Authentication())
 }

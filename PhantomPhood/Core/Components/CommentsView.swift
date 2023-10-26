@@ -67,7 +67,7 @@ struct CommentsView: View {
                                             }
                                         }
                                         .overlay(alignment: .top) {
-                                            LevelView(level: .convert(level: comment.author.level))
+                                            LevelView(level: .convert(level: comment.author.progress.level))
                                                 .frame(width: 36, height: 36)
                                                 .offset(y: 28)
                                         }
@@ -77,7 +77,7 @@ struct CommentsView: View {
                                         .resizable()
                                         .frame(width: 44, height: 44)
                                         .overlay(alignment: .top) {
-                                            LevelView(level: .convert(level: comment.author.level))
+                                            LevelView(level: .convert(level: comment.author.progress.level))
                                                 .frame(width: 36, height: 36)
                                                 .offset(y: 28)
                                         }

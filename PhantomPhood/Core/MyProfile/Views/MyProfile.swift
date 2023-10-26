@@ -65,7 +65,7 @@ struct MyProfile: View {
                             if (auth.user != nil && auth.user!.verified) {
                                 HStack {
                                     Text(auth.user?.name ?? "User Name")
-                                        .font(.title2)
+                                        .font(.custom(style: .title2))
                                         .bold()
                                     Image(systemName: "checkmark.seal")
                                         .foregroundStyle(.blue)
@@ -74,13 +74,13 @@ struct MyProfile: View {
                                 
                             } else {
                                 Text(auth.user?.name ?? "User Name")
-                                    .font(.title2)
+                                    .font(.custom(style: .title2))
                                     .bold()
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             
                             Text("@\(auth.user?.username ?? "testUsername")")
-                                .font(.footnote)
+                                .font(.custom(style: .footnote))
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
@@ -88,6 +88,7 @@ struct MyProfile: View {
                                 appData.showEditProfile.toggle()
                             } label: {
                                 Text("Edit Profile")
+                                    .font(.custom(style: .footnote))
                                     .frame(maxWidth: .infinity)
                                     
                             }
@@ -103,7 +104,7 @@ struct MyProfile: View {
                     if let bio = auth.user?.bio, bio.count > 0 {
                         Text(bio)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.footnote)
+                            .font(.custom(style: .footnote))
                             .multilineTextAlignment(.leading)
                             .padding(.horizontal)
                             .padding(.bottom)
@@ -120,9 +121,8 @@ struct MyProfile: View {
                                     .foregroundStyle(
                                         appData.myProfileActiveTab == MyProfileActiveTab.allCases[i] ? Color.accentColor : Color.secondary
                                     )
-                                    .font(.footnote)
+                                    .font(.custom(style: .footnote))
                                     .bold()
-                                    .controlSize(.small)
                                     .textCase(.uppercase)
                                     .frame(maxWidth: .infinity, alignment: .center)
                             }

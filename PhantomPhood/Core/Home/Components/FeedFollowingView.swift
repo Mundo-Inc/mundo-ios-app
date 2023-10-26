@@ -110,7 +110,7 @@ struct FeedFollowingView: View {
                             
                             Spacer()
                             
-                            LevelView(level: .convert(level: user.level))
+                            LevelView(level: .convert(level: user.progress.level))
                                 .frame(width: 50, height: 50)
                         }
                         .frame(maxWidth: .infinity)

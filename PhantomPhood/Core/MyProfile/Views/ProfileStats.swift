@@ -60,7 +60,7 @@ struct ProfileStats: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack(spacing: 10) {
-                    LevelView(level: .convert(level: auth.user?.level ?? 0))
+                    LevelView(level: .convert(level: auth.user?.progress.level ?? 0))
                         .frame(width: 80, height: 80)
                     
                     VStack {
@@ -69,15 +69,15 @@ struct ProfileStats: View {
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        ProgressView(value: auth.user == nil ? 0 : Double(auth.user!.xp) / Double(auth.user!.xp + auth.user!.remainingXp))
+                        ProgressView(value: auth.user == nil ? 0 : Double(auth.user!.progress.xp) / Double(auth.user!.progress.xp + auth.user!.remainingXp))
                             .foregroundStyle(.secondary)
                             .progressViewStyle(.linear)
                             
                         
                         HStack(spacing: 0) {
-                            Text("\(auth.user?.xp ?? 1000)")
+                            Text("\(auth.user?.progress.xp ?? 1000)")
                                 .foregroundStyle(Color.accentColor)
-                            Text("/\(auth.user == nil ? 3000 : auth.user!.xp + auth.user!.remainingXp)")
+                            Text("/\(auth.user == nil ? 3000 : auth.user!.progress.xp + auth.user!.remainingXp)")
                                 .foregroundStyle(.secondary)
                         }
                         .redacted(reason: auth.user == nil ? .placeholder : [])

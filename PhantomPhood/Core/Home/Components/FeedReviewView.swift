@@ -14,6 +14,7 @@ struct FeedReviewView: View {
     
     @StateObject var reactionsViewModel: ReactionsViewModel
     @State var reactions: ReactionsObject
+    @State var showActions = false
     
     init(data: FeedItem, commentsViewModel: CommentsViewModel, mediasViewModel: MediasViewModel) {
         self.data = data
@@ -77,6 +78,21 @@ struct FeedReviewView: View {
                                 .lineLimit(1)
                         }
                         .foregroundStyle(.primary)
+                    }
+                    
+                    Spacer()
+                    Button {
+                        showActions = true
+                    } label: {
+                        Text("...")
+                    }
+                    .confirmationDialog("Actions", isPresented: $showActions) {
+                        Button("Report", role: .destructive) {
+                            // Handle reporting
+                        }
+                        Button("Cancel", role: .cancel) {
+                            showActions = false
+                        }
                     }
                 }
             }.padding(.bottom)
@@ -266,6 +282,7 @@ struct FeedReviewView: View {
             }
             .foregroundStyle(.primary)
         }
+        
     }
     
     func selectReaction(reaction: NewReaction) async {
@@ -293,7 +310,7 @@ struct FeedReviewView: View {
         FeedReviewView(
             data: FeedItem(
                 id: "64d2aa872c509f60b7690386",
-                user: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, xp: 57, level: 3, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg"),
+                user: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: [])),
                 place: CompactPlace(
                     _id: "64d2a0c62c509f60b768f572",
                     name: "Lavender",
@@ -313,7 +330,7 @@ struct FeedReviewView: View {
                 resource: .review(FeedReview(
                     _id: "64d2aa872c509f60b769037e",
                     scores: ReviewScores(overall: 5, drinkQuality: 3, foodQuality: 4, atmosphere: 5, service: 4, value: nil),
-                    content: "Cute vibe \\nCozy atmosphere \\nDelicious pancakes \\nCool music \\nHighly recommended ",
+                    content: "Cute vibe \nCozy atmosphere \nDelicious pancakes \nCool music \nHighly recommended ",
                     images: [Media(_id: "64d2aa872c509f60b7690379", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image)],
                     videos: [Media(_id: "64d2aa782c509f60b7690376", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/2a667b01b413fd08fd00a60b2f5ba3e1.mp4", caption: "", type: .video)],
                     tags: [],
@@ -322,7 +339,7 @@ struct FeedReviewView: View {
                     createdAt: "2023-08-08T20:50:15.905Z",
                     updatedAt: "2023-08-08T20:50:17.297Z",
                     userActivityId: "64d2aa872c509f60b7690386",
-                    writer: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, xp: 57, level: 3, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg")
+                    writer: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: []))
                 )),
                 privacyType: .PUBLIC,
                 createdAt: "2023-08-08T20:50:15.916Z",
@@ -334,7 +351,7 @@ struct FeedReviewView: View {
                     user: [UserReaction(_id: "64d35ef61eff94afe959dd9e", reaction: "❤️", type: .emoji, createdAt: "2023-08-09T09:40:06.866Z")]
                 ),
                 comments: [
-                    Comment(_id: "64d4ee982c9a8ed008970ec3", content: "Hey @nabeel check this out", createdAt: "2023-08-10T14:05:12.743Z", updatedAt: "2023-08-10T14:05:12.743Z", author: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, xp: 57, level: 3, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg"), likes: 2, liked: true, mentions: [])
+                    Comment(_id: "64d4ee982c9a8ed008970ec3", content: "Hey @nabeel check this out", createdAt: "2023-08-10T14:05:12.743Z", updatedAt: "2023-08-10T14:05:12.743Z", author: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: [])), likes: 2, liked: true, mentions: [])
                 ]
             ),
             commentsViewModel: CommentsViewModel(),

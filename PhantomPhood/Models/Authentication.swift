@@ -17,9 +17,10 @@ struct CurrentUserCoreData: Codable, Identifiable {
     let _id, name, username: String
     let profileImage, bio: String?
     let email: Email
-    let level, xp, coins: Int
+    let coins: Int
     let role: Role
     let verified: Bool
+    let progress: UserProgress
     
     struct Email: Codable {
         let address: String
@@ -35,9 +36,10 @@ struct CurrentUserFullData: Codable {
     let _id, name, username: String
     var profileImage, bio: String?
     let email: Email
-    let level, rank, xp, remainingXp, coins, reviewsCount, followersCount, followingCount: Int
+    let rank, remainingXp, coins, reviewsCount, followersCount, followingCount: Int
     let role: Role
     let verified: Bool
+    let progress: UserProgress
     
     struct Email: Codable {
         let address: String
