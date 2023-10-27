@@ -75,8 +75,9 @@ struct LeaderboardView: View {
                         .redacted(reason: auth.user == nil ? .placeholder : [])
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        LevelView(level: .convert(level: auth.user != nil ? auth.user!.progress.level : 0))
-                            .frame(width: 64, height: 64)
+                        LevelView(level: auth.user != nil ? auth.user!.progress.level : -1)
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 46, height: 54)
                         
                     }
                     .padding()
@@ -128,8 +129,9 @@ struct LeaderboardView: View {
                                                 }
                                         }
                                         
-                                        LevelView(level: .convert(level: vm.list[index].progress.level))
-                                            .frame(width: 36, height: 36)
+                                        LevelView(level: vm.list[index].progress.level)
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 28, height: 36)
                                         
                                         Text(vm.list[index].name)
                                             .font(.custom(style: .subheadline))

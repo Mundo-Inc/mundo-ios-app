@@ -21,7 +21,7 @@ struct PlaceView: View {
     
     @State var isCollapsed = true
     @State var isHeaderCollapsed = true
-    
+        
     let descriptionPadding = 150
     
     var body: some View {
@@ -31,6 +31,7 @@ struct PlaceView: View {
             ScrollView {
                 ZStack {
                     Rectangle()
+                        .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width : UIScreen.main.bounds.size.width + 150)
                         .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width : UIScreen.main.bounds.size.width + 150)
                         .frame(maxWidth: .infinity)
                         .foregroundStyle(Color.themePrimary)
@@ -168,7 +169,6 @@ struct PlaceView: View {
                     } label: {
                         Label {
                             Text("Add to list")
-                                .font(.custom(style: .subheadline))
                                 .foregroundStyle(Color.white)
                         } icon: {
                             Image(systemName: "star.square.on.square.fill")
@@ -176,7 +176,15 @@ struct PlaceView: View {
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
+                        .overlay {
+                            ZStack {
+                                Color.black.opacity(0.7)
+                                Text("Coming Soon")
+                            }
+                        }
                     }
+                    .disabled(true) // TODO:
+                    .font(.custom(style: .subheadline))
                     .background(Color.accentColor)
                     .clipShape(.rect(cornerRadius: 5))
                     .padding(.all, 2)
@@ -299,6 +307,12 @@ struct PlaceView: View {
                     .animation(.bouncy, value: vm.showActions)
                     .padding(.trailing)
                     .padding(.bottom)
+            }
+            
+            if vm.reportId != nil {
+                ReportView(id: $vm.reportId, type: .review)
+                    .transition(.move(edge: .bottom))
+                    .animation(.easeInOut, value: vm.reportId)
             }
         }
         .toolbarBackground(.hidden, for: .automatic)

@@ -60,8 +60,10 @@ struct ProfileStats: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack(spacing: 10) {
-                    LevelView(level: .convert(level: auth.user?.progress.level ?? 0))
-                        .frame(width: 80, height: 80)
+                    LevelView(level: auth.user?.progress.level ?? -1)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 60, height: 60)
+                        .padding(.all, 5)
                     
                     VStack {
                         Text("To next level")

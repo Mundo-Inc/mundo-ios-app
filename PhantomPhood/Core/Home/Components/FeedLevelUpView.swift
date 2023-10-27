@@ -105,13 +105,13 @@ struct FeedLevelUpView: View {
                             Spacer()
                             
                             ZStack {
-                                LevelView(level: .convert(level: user.progress.level - 1))
+                                LevelView(level: user.progress.level - 1)
                                     .frame(width: 36, height: 36)
                                     .offset(y: -15)
-                                    .opacity(0.5)
+                                    .opacity(0.4)
                                     
 
-                                LevelView(level: .convert(level: user.progress.level))
+                                LevelView(level: user.progress.level)
                                     .frame(width: 50, height: 50)
                                     .offset(y: 10)
                                     .shadow(radius: 10)
@@ -225,65 +225,31 @@ struct FeedLevelUpView: View {
     }
 }
 
-//#Preview {
-//    let dummyJSON = """
-//    {
-//      "id": "64de246354e42fd88a38fd89",
-//      "user": {
-//        "_id": "645c8b222134643c020860a5",
-//        "name": "Kia",
-//        "username": "TheKia",
-//        "bio": "Passionate tech lover. foodie",
-//        "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
-//        "level": 3,
-//        "verified": true,
-//        "xp": 532,
-//        "coins": 199
-//      },
-//      "activityType": "LEVEL_UP",
-//      "resourceType": "User",
-//      "resource": {
-//        "_id": "645c8b222134643c020860a5",
-//        "name": "Kia",
-//        "username": "TheKia",
-//        "bio": "Passionate tech lover. foodie",
-//        "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
-//        "level": 3,
-//        "verified": true,
-//        "xp": 532,
-//        "coins": 199
-//      },
-//      "privacyType": "PUBLIC",
-//      "createdAt": "2023-08-17T13:45:07.422Z",
-//      "updatedAt": "2023-08-17T13:45:07.422Z",
-//      "score": 469.5168030777778,
-//      "weight": 1,
-//      "reactions": {
-//        "total": [
-//          {
-//            "count": 1,
-//            "type": "emoji",
-//            "reaction": "👍"
-//          }
-//        ],
-//        "user": [
-//          {
-//            "_id": "64de248e54e42fd88a38ff73",
-//            "type": "emoji",
-//            "reaction": "👍",
-//            "createdAt": "2023-08-17T13:45:50.666Z"
-//          }
-//        ]
-//      },
-//      "comments": []
-//    }
-//    """
-//    let dummyFeedItem = decodeFeedItem(from: dummyJSON)
-//    
-//    return ScrollView {
-//        if let d = dummyFeedItem {
-//            FeedLevelUpView(data: d, commentsViewModel: CommentsViewModel())
-//        }
-//    }
-//    .padding(.horizontal)
-//}
+
+#Preview {
+    ScrollView {
+        FeedLevelUpView(
+            data: FeedItem(
+                id: "64d2aa872c509f60b7690386",
+                user: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: [])),
+                place: nil,
+                activityType: .levelUp,
+                resourceType: .user,
+                resource: .user(User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: []))),
+                privacyType: .PUBLIC,
+                createdAt: "2023-08-08T20:50:15.916Z",
+                updatedAt: "2023-08-08T20:50:15.916Z",
+                score: 574.8699489214853,
+                weight: 1,
+                reactions: ReactionsObject(
+                    total: [Reaction(reaction: "❤️", type: .emoji, count: 2), Reaction(reaction: "👍", type: .emoji, count: 1), Reaction(reaction: "🥰", type: .emoji, count: 1)],
+                    user: [UserReaction(_id: "64d35ef61eff94afe959dd9e", reaction: "❤️", type: .emoji, createdAt: "2023-08-09T09:40:06.866Z")]
+                ),
+                comments: [
+                    Comment(_id: "64d4ee982c9a8ed008970ec3", content: "Hey @nabeel check this out", createdAt: "2023-08-10T14:05:12.743Z", updatedAt: "2023-08-10T14:05:12.743Z", author: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: [])), likes: 2, liked: true, mentions: [])
+                ]
+            ),
+            commentsViewModel: CommentsViewModel()
+        )
+    }
+}

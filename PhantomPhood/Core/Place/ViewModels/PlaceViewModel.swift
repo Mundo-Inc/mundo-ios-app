@@ -33,6 +33,9 @@ class PlaceViewModel: ObservableObject {
     @Published var activeTab: PlaceTab = .overview
     @Published var prevActiveTab: PlaceTab = .overview
     
+    @Published var reportId: String? = nil
+
+    
     init(id: String, action: PlaceAction? = nil) {
         self.id = id
         self.action = action

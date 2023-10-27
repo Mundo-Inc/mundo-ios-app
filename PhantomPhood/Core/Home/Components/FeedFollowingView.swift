@@ -108,10 +108,10 @@ struct FeedFollowingView: View {
                                 .fontWeight(.bold)
                                 .foregroundStyle(.primary)
                             
-                            Spacer()
-                            
-                            LevelView(level: .convert(level: user.progress.level))
-                                .frame(width: 50, height: 50)
+//                            Spacer()
+//                            
+//                            LevelView(level: user.progress.level)
+//                                .frame(width: 50, height: 50)
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -221,52 +221,30 @@ struct FeedFollowingView: View {
     }
 }
 
-//#Preview {
-//    let dummyJSON = """
-//    {
-//    "id": "64e8b4ba442f0060b9d9e8d0",
-//    "user": {
-//      "_id": "645e7f843abeb74ee6248ced",
-//      "name": "Nabeel",
-//      "username": "naboohoo",
-//      "bio": "Im all about the GAINZ 🔥 thats why i eat 🍔",
-//      "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/profile.jpg",
-//      "level": 6,
-//      "verified": true,
-//      "coins": 767,
-//      "xp": 1752
-//    },
-//    "activityType": "FOLLOWING",
-//    "resourceType": "User",
-//    "resource": {
-//      "_id": "645c8b222134643c020860a5",
-//      "name": "Kia",
-//      "username": "TheKia",
-//      "bio": "Passionate tech lover. foodie",
-//      "profileImage": "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg",
-//      "level": 3,
-//      "verified": true,
-//      "xp": 532,
-//      "coins": 199
-//    },
-//    "privacyType": "PUBLIC",
-//    "createdAt": "2023-08-25T14:03:38.126Z",
-//    "updatedAt": "2023-08-25T14:03:38.126Z",
-//    "score": 325.45501932777785,
-//    "weight": 1,
-//    "reactions": {
-//      "total": [],
-//      "user": []
-//    },
-//    "comments": []
-//    }
-//    """
-//
-//    let dummyFeedItem = decodeFeedItem(from: dummyJSON)
-//    
-//    return ScrollView {
-//        if let d = dummyFeedItem {
-//            FeedFollowingView(data: d, commentsViewModel: CommentsViewModel())
-//        }
-//    }
-//}
+#Preview {
+    ScrollView {
+        FeedFollowingView(
+            data: FeedItem(
+                id: "64d2aa872c509f60b7690386",
+                user: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: [])),
+                place: nil,
+                activityType: .following,
+                resourceType: .user,
+                resource: .user(User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: []))),
+                privacyType: .PUBLIC,
+                createdAt: "2023-08-08T20:50:15.916Z",
+                updatedAt: "2023-08-08T20:50:15.916Z",
+                score: 574.8699489214853,
+                weight: 1,
+                reactions: ReactionsObject(
+                    total: [Reaction(reaction: "❤️", type: .emoji, count: 2), Reaction(reaction: "👍", type: .emoji, count: 1), Reaction(reaction: "🥰", type: .emoji, count: 1)],
+                    user: [UserReaction(_id: "64d35ef61eff94afe959dd9e", reaction: "❤️", type: .emoji, createdAt: "2023-08-09T09:40:06.866Z")]
+                ),
+                comments: [
+                    Comment(_id: "64d4ee982c9a8ed008970ec3", content: "Hey @nabeel check this out", createdAt: "2023-08-10T14:05:12.743Z", updatedAt: "2023-08-10T14:05:12.743Z", author: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: [])), likes: 2, liked: true, mentions: [])
+                ]
+            ),
+            commentsViewModel: CommentsViewModel()
+        )
+    }
+}

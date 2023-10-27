@@ -131,7 +131,7 @@ struct PlaceReviewsView: View {
                     
                     if let place = vm.place, !place.reviews.isEmpty {
                         ForEach(place.reviews) { review in
-                            PlaceReviewView(review: review, place: place, commentsViewModel: commentsViewModel, mediasViewModel: mediasViewModel)
+                            PlaceReviewView(review: review, place: place, commentsViewModel: commentsViewModel, mediasViewModel: mediasViewModel, reportId: $vm.reportId)
                                 .padding(.horizontal)
                             
                             Divider()

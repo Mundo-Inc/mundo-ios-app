@@ -16,12 +16,15 @@ struct FeedReviewView: View {
     @State var reactions: ReactionsObject
     @State var showActions = false
     
-    init(data: FeedItem, commentsViewModel: CommentsViewModel, mediasViewModel: MediasViewModel) {
+    @Binding var reportId: String?
+    
+    init(data: FeedItem, commentsViewModel: CommentsViewModel, mediasViewModel: MediasViewModel, reportId: Binding<String?>) {
         self.data = data
         self._commentsViewModel = ObservedObject(wrappedValue: commentsViewModel)
         self._mediasViewModel = ObservedObject(wrappedValue: mediasViewModel)
         self._reactionsViewModel = StateObject(wrappedValue: ReactionsViewModel(activityId: data.id))
         self._reactions = State(wrappedValue: data.reactions)
+        self._reportId = reportId
     }
     
     @StateObject var selectReactionsViewModel = SelectReactionsViewModel.shared
@@ -69,7 +72,7 @@ struct FeedReviewView: View {
                         .padding(.vertical, 4)
                         .background(Color("Reviewed"))
                         .clipShape(RoundedRectangle(cornerRadius: 5))
-
+                    
                     if let place = data.place {
                         NavigationLink(value: HomeStack.place(id: place.id)) {
                             Text(place.name)
@@ -81,22 +84,30 @@ struct FeedReviewView: View {
                     }
                     
                     Spacer()
+                    
                     Button {
                         showActions = true
                     } label: {
                         Text("...")
                     }
-                    .confirmationDialog("Actions", isPresented: $showActions) {
-                        Button("Report", role: .destructive) {
-                            // Handle reporting
-                        }
-                        Button("Cancel", role: .cancel) {
-                            showActions = false
-                        }
-                    }
+                    //                        .confirmationDialog("Actions", isPresented: $showActions) {
+                    //                            Button("Report", role: .destructive) {
+                    //                                withAnimation {
+                    //                                    switch data.resource {
+                    //                                    case .review(let review):
+                    //                                        reportId = review.id
+                    //                                    default:
+                    //                                        break
+                    //                                    }
+                    //                                }
+                    //                            }
+                    //                        }
+                    
                 }
-            }.padding(.bottom)
+            }
+            .padding(.bottom)
         } content: {
+            ZStack {
                 switch data.resource {
                 case .review(let review):
                     VStack {
@@ -209,9 +220,41 @@ struct FeedReviewView: View {
                             .foregroundStyle(.secondary)
                         }
                     }
+                    
                 default:
                     EmptyView()
                 }
+                
+                if showActions {
+                    ZStack {
+                        Color.black
+                        
+                        VStack(spacing: 20) {
+                            Button("Report", role: .destructive) {
+                                withAnimation {
+                                    showActions = false
+                                    switch data.resource {
+                                    case .review(let review):
+                                        reportId = review.id
+                                    default:
+                                        break
+                                    }
+                                }
+                            }
+                            .buttonStyle(.bordered)
+                            
+                            Button("Cancel", role: .destructive) {
+                                withAnimation {
+                                    showActions = false
+                                    reportId = nil
+                                }
+                            }
+                            .buttonStyle(.bordered)
+                        }
+                    }
+                    .zIndex(100)
+                }
+            }
         } footer: {
             WrappingHStack(horizontalSpacing: 4, verticalSpacing: 6) {
                 Button {
@@ -282,8 +325,8 @@ struct FeedReviewView: View {
             }
             .foregroundStyle(.primary)
         }
-        
     }
+    
     
     func selectReaction(reaction: NewReaction) async {
         do {
@@ -303,6 +346,7 @@ struct FeedReviewView: View {
             print("Error")
         }
     }
+        
 }
 
 #Preview {
@@ -355,7 +399,7 @@ struct FeedReviewView: View {
                 ]
             ),
             commentsViewModel: CommentsViewModel(),
-            mediasViewModel: MediasViewModel()
+            mediasViewModel: MediasViewModel(), reportId: .constant(nil)
         )
     }
     .padding(.horizontal)

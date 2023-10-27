@@ -16,10 +16,12 @@ struct HomeView: View {
     
     @State var showActions: Bool = false
     
+    @State var reportId: String? = nil
+    
     var body: some View {
         NavigationStack(path: $appData.homeNavStack) {
             ZStack(alignment: .bottomTrailing) {
-                FeedView()
+                FeedView(reportId: $reportId)
                 
                 Button {
                     showActions = true
@@ -40,6 +42,13 @@ struct HomeView: View {
                         .padding(.trailing)
                         .padding(.bottom)
                 }
+                
+                if reportId != nil {
+                    ReportView(id: $reportId, type: .review)
+                        .transition(.move(edge: .bottom))
+                        .animation(.easeInOut, value: reportId)
+                }
+
             }
             .navigationDestination(for: HomeStack.self) { link in
                 switch link {

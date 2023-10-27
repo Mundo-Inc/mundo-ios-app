@@ -8,8 +8,27 @@
 import SwiftUI
 
 struct SettingsView: View {
+    let toastViewModel = ToastViewModel.shared
+    let apiManager = APIManager()
+    
     @ObservedObject private var auth = Authentication.shared
     @AppStorage("theme") var theme: String = ""
+    
+    @State var showAccountDeleteWarning = false
+    func deleteAccount() async {
+        do {
+            guard let token = auth.token, let user = auth.user else { return }
+                        
+            let _ = try await apiManager.requestNoContent("/users/\(user.id)", method: .delete, token: token)
+            
+            toastViewModel.toast(.init(type: .success, title: "Success", message: "Your account has been deleted"))
+            
+            auth.signout()
+        } catch {
+            toastViewModel.toast(.init(type: .error, title: "Something went wrong!", message: "Unable to delete your account"))
+            print(error)
+        }
+    }
     
     var body: some View {
         List {
@@ -17,28 +36,29 @@ struct SettingsView: View {
                 VStack(alignment: .leading) {
                     HStack {
                         Text("Email")
-                            .font(.body)
+                            .font(.custom(style: .body))
                         if let user = auth.user {
                             HStack(spacing: 2) {
                                 Image(systemName: user.email.verified ? "checkmark.seal" : "xmark.square")
                                     .font(.system(size: 14))
                                 Text(user.email.verified ? "Verified" : "Not Verified")
-                                    .font(.caption)
-                            }.foregroundColor(user.email.verified ? .accentColor : .secondary)
+                                    .font(.custom(style: .caption))
+                            }
+                            .foregroundColor(user.email.verified ? .accentColor : .secondary)
                         }
                     }
                     Text(auth.user?.email.address ?? "user@domain.com")
-                        .font(.callout)
+                        .font(.custom(style: .callout))
                         .foregroundStyle(.secondary)
                 }
                 
                 VStack(alignment: .leading) {
                     HStack {
                         Text("Phone Number")
-                            .font(.body)
+                            .font(.custom(style: .body))
                     }
                     Text("Not Set")
-                        .font(.callout)
+                        .font(.custom(style: .callout))
                         .foregroundStyle(.secondary)
                 }
             }
@@ -52,14 +72,35 @@ struct SettingsView: View {
             Section(header: Text("Security")) {
                     Link("Change Password", destination: URL(string: "https://phantomphood.ai/reset-password")!)
             }
+            
+            Section(header: Text("Account")) {
+                Button {
+                    showAccountDeleteWarning = true
+                } label: {
+                    Label("Delete Account", systemImage: "person.slash.fill")
+                }
+            }
+            
             Button {
                 auth.signout()
             } label: {
                 Label("Log out", systemImage: "rectangle.portrait.and.arrow.right")
             }
-        }.listStyle(.insetGrouped)
-        
+        }
+        .font(.custom(style: .body))
+        .listStyle(.insetGrouped)
         .navigationTitle("Settings")
+        .alert("Delete Account", isPresented: $showAccountDeleteWarning) {
+            Button(role: .destructive) {
+                Task {
+                    await deleteAccount()
+                }
+            } label: {
+                Text("Delete")
+            }
+        } message: {
+            Text("Are you sure you want to delete your account. This action is irreversible.")
+        }
     }
 }
 

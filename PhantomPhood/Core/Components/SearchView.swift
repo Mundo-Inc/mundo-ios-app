@@ -292,9 +292,8 @@ fileprivate struct UserCard: View {
                     
                 }
                 
-                LevelView(level: .convert(level: user.progress.level))
+                LevelView(level: user.progress.level)
                     .frame(width: 28, height: 28)
-
             }
         }
         .foregroundStyle(.primary)

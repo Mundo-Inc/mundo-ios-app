@@ -15,7 +15,9 @@ struct FeedView: View {
     @StateObject var commentsViewModel = CommentsViewModel()
     @StateObject var mediasViewModel = MediasViewModel()
     @StateObject var vm = FeedViewModel()
-        
+    
+    @Binding var reportId: String?
+    
     var body: some View {
         ZStack {
             Color.themeBG.ignoresSafeArea()
@@ -143,6 +145,17 @@ struct FeedView: View {
                     .redacted(reason: vm.nabeel == nil ? .placeholder : [])
                     
                 } else {
+                    Color.clear
+                        .frame(width: 0, height: 0)
+                        .sheet(isPresented: $commentsViewModel.showComments, content: {
+                            CommentsView(vm: commentsViewModel)
+                        })
+                    Color.clear
+                        .frame(width: 0, height: 0)
+                        .fullScreenCover(isPresented: $mediasViewModel.show, content: {
+                            MediasView(vm: mediasViewModel)
+                        })
+
                     LazyVStack(spacing: 20) {
                         ForEach(vm.feedItems) { item in
                             Group {
@@ -152,7 +165,7 @@ struct FeedView: View {
                                 case .following:
                                     FeedFollowingView(data: item, commentsViewModel: commentsViewModel)
                                 case .newReview:
-                                    FeedReviewView(data: item, commentsViewModel: commentsViewModel, mediasViewModel: mediasViewModel)
+                                    FeedReviewView(data: item, commentsViewModel: commentsViewModel, mediasViewModel: mediasViewModel, reportId: $reportId)
                                 case .newCheckin:
                                     FeedCheckinView(data: item, commentsViewModel: commentsViewModel)
                                 default:
@@ -197,18 +210,12 @@ struct FeedView: View {
                 }
             }
         }
-        .sheet(isPresented: $commentsViewModel.showComments, content: {
-            CommentsView(vm: commentsViewModel)
-        })
-        .fullScreenCover(isPresented: $mediasViewModel.show, content: {
-            MediasView(vm: mediasViewModel)
-        })
     }
 }
 
 #Preview {
     NavigationStack {
-        FeedView()
+        FeedView(reportId: .constant(nil))
             .environmentObject(AppData())
             .environmentObject(SearchViewModel())
     }

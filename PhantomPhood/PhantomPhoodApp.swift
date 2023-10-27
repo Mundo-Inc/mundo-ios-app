@@ -11,7 +11,7 @@ import UserNotifications
 @main
 struct PhantomPhoodApp: App {
     @ObservedObject private var auth = Authentication.shared
-    @StateObject private var appData: AppData = AppData()
+    @StateObject private var appData: AppData = AppData.shared
     @StateObject var locationManager = LocationManager.shared
     @AppStorage("theme") var theme: String = ""
     

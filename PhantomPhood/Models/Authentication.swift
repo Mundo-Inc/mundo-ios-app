@@ -56,6 +56,8 @@ class Authentication: ObservableObject {
     
     static let shared = Authentication()
     
+    private let appData = AppData.shared
+    
     // MARK: - API Manager
     
     private let apiManager = APIManager()
@@ -158,6 +160,7 @@ class Authentication: ObservableObject {
         UserDefaults.standard.removeObject(forKey: "userId")
         self.userId = nil
         self.user = nil
+        appData.reset()
     }
     
     func updateUserInfo() async {

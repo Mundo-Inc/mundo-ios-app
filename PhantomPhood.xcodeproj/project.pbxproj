@@ -36,6 +36,7 @@
 		0B6495562AB10F5E000E57AF /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6495552AB10F5E000E57AF /* APIManager.swift */; };
 		0B64C4C92AB4BDC6009F0D43 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B64C4C82AB4BDC6009F0D43 /* SettingsView.swift */; };
 		0B64C4CD2AB4CCA1009F0D43 /* DataCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B64C4CC2AB4CCA1009F0D43 /* DataCard.swift */; };
+		0B6839922AEC335D0082661A /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6839912AEC335D0082661A /* ReportView.swift */; };
 		0B6A47C22ABC9157000CBDA3 /* FeedDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6A47C12ABC9157000CBDA3 /* FeedDataManager.swift */; };
 		0B6A47C42ABC9806000CBDA3 /* FeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6A47C32ABC9806000CBDA3 /* FeedItem.swift */; };
 		0B6A47C62ABC998A000CBDA3 /* FeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6A47C52ABC998A000CBDA3 /* FeedViewModel.swift */; };
@@ -161,6 +162,7 @@
 		0B6495552AB10F5E000E57AF /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		0B64C4C82AB4BDC6009F0D43 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		0B64C4CC2AB4CCA1009F0D43 /* DataCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCard.swift; sourceTree = "<group>"; };
+		0B6839912AEC335D0082661A /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
 		0B6A47C12ABC9157000CBDA3 /* FeedDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedDataManager.swift; sourceTree = "<group>"; };
 		0B6A47C32ABC9806000CBDA3 /* FeedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedItem.swift; sourceTree = "<group>"; };
 		0B6A47C52ABC998A000CBDA3 /* FeedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewModel.swift; sourceTree = "<group>"; };
@@ -567,6 +569,7 @@
 			isa = PBXGroup;
 			children = (
 				0B64C4CC2AB4CCA1009F0D43 /* DataCard.swift */,
+				0B6839912AEC335D0082661A /* ReportView.swift */,
 				0B37ABF92AD6EC7A00E8D4BC /* SearchView.swift */,
 				0BC84A6A2AD071EE00D723AA /* SelectReactionsView.swift */,
 				0BC84A682AD06F8200D723AA /* WrappingHStack.swift */,
@@ -861,6 +864,7 @@
 				0BB37E9C2ABA52C7009E1272 /* Shaders.metal in Sources */,
 				0B77EA3D2AAF855500C8DF87 /* ContentView.swift in Sources */,
 				0BEE15262AB5028400DF7211 /* MyProfile.swift in Sources */,
+				0B6839922AEC335D0082661A /* ReportView.swift in Sources */,
 				0B013EF02AB78BA5003CB57F /* EditProfileView.swift in Sources */,
 				0B64C4CD2AB4CCA1009F0D43 /* DataCard.swift in Sources */,
 				0B01836A2AB3C179008E887F /* UserProfileView.swift in Sources */,
@@ -1076,7 +1080,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PhantomPhood/PhantomPhood.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"PhantomPhood/Preview Content\"";
 				DEVELOPMENT_TEAM = BNPN3KK5A7;
 				ENABLE_PREVIEWS = YES;
@@ -1101,7 +1105,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1112,7 +1116,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PhantomPhood/PhantomPhood.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"PhantomPhood/Preview Content\"";
 				DEVELOPMENT_TEAM = BNPN3KK5A7;
 				ENABLE_PREVIEWS = YES;
@@ -1137,7 +1141,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
