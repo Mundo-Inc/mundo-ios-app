@@ -255,7 +255,7 @@ fileprivate struct UserCard: View {
             closeSearch()
         } label: {
             HStack {
-                if let pImage = user.profileImage, let url = URL(string: pImage) {
+                if !user.profileImage.isEmpty, let url = URL(string: user.profileImage) {
                     CacheAsyncImage(url: url) { phase in
                         switch phase {
                         case .empty:

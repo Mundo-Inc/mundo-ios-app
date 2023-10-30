@@ -86,8 +86,8 @@ struct EditProfileView: View {
                                         }
                                     }
                             case .empty:
-                                if let profileImage = auth.user?.profileImage {
-                                    AsyncImage(url: URL(string: profileImage)) { phase in
+                                if let user = auth.user {
+                                    AsyncImage(url: URL(string: user.profileImage)) { phase in
                                         if let image = phase.image {
                                             self.profileImage(image: image)
                                                 .overlay {
@@ -184,16 +184,17 @@ struct EditProfileView: View {
                                     }
                             }
                             
-                            Text(((auth.user?.profileImage) == nil) ? "Add" : vm.isDeleting ? "Removing" : "Edit")
-                                .font(.custom(style: .caption))
-                                .foregroundStyle(Color.accentColor)
-                            
+                            if let user = auth.user {
+                                Text(user.profileImage.isEmpty ? "Add" : vm.isDeleting ? "Removing" : "Edit")
+                                    .font(.custom(style: .caption))
+                                    .foregroundStyle(Color.accentColor)
+
+                            }
                         }
                         .scaleEffect(vm.isDeleting ? 0.8 : 1)
                         .offset(x: vm.isDeleting ? 10 : 0)
                         
-                        
-                        if let _ = auth.user?.profileImage {
+                        if let user = auth.user, !user.profileImage.isEmpty {
                             Spacer()
                             
                             Button {

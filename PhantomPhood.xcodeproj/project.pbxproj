@@ -27,6 +27,7 @@
 		0B2E98802AB907340013301D /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2E987F2AB907340013301D /* UIImage.swift */; };
 		0B37ABFA2AD6EC7A00E8D4BC /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B37ABF92AD6EC7A00E8D4BC /* SearchView.swift */; };
 		0B37ABFC2AD7408E00E8D4BC /* ToastViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B37ABFB2AD7408E00E8D4BC /* ToastViewModel.swift */; };
+		0B3B32DF2AF013DD00E1E0B0 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3B32DE2AF013DD00E1E0B0 /* Binding.swift */; };
 		0B46814D2AC5EAFB009C5EF9 /* FirstLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B46814C2AC5EAFB009C5EF9 /* FirstLoadingView.swift */; };
 		0B46814F2AC5EB6B009C5EF9 /* CircleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */; };
 		0B4681512AC61D49009C5EF9 /* FeedCheckinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4681502AC61D49009C5EF9 /* FeedCheckinView.swift */; };
@@ -153,6 +154,7 @@
 		0B2E987F2AB907340013301D /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		0B37ABF92AD6EC7A00E8D4BC /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		0B37ABFB2AD7408E00E8D4BC /* ToastViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastViewModel.swift; sourceTree = "<group>"; };
+		0B3B32DE2AF013DD00E1E0B0 /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
 		0B46814C2AC5EAFB009C5EF9 /* FirstLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLoadingView.swift; sourceTree = "<group>"; };
 		0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleLabelView.swift; sourceTree = "<group>"; };
 		0B4681502AC61D49009C5EF9 /* FeedCheckinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCheckinView.swift; sourceTree = "<group>"; };
@@ -407,6 +409,7 @@
 				0BCBC18D2ACDC2FF00992D8E /* View.swift */,
 				0BF5B4A52AB353CB00DEC403 /* TextField.swift */,
 				0BF81DBF2ABDF00300B8892E /* DateFormatter.swift */,
+				0B3B32DE2AF013DD00E1E0B0 /* Binding.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -929,6 +932,7 @@
 				0B6A47C62ABC998A000CBDA3 /* FeedViewModel.swift in Sources */,
 				0BF81DC62ABE36EB00B8892E /* Fonts.swift in Sources */,
 				0BC84A692AD06F8200D723AA /* WrappingHStack.swift in Sources */,
+				0B3B32DF2AF013DD00E1E0B0 /* Binding.swift in Sources */,
 				0BCBC1922ACDF22100992D8E /* CommentsViewModel.swift in Sources */,
 				0BF0A7872AD874520058BAE9 /* MapPlaceMarker.swift in Sources */,
 				0BF5B4BC2AB37B8200DEC403 /* AppData.swift in Sources */,
@@ -1088,8 +1092,8 @@
 				INFOPLIST_FILE = PhantomPhood/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Phantom Phood";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app requires your device location to be able to function";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app requires your device location to be able to function";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app requires your device location to be able to show the nearest places to you and to personalize suggestions";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app requires your device location to be able to show the nearest places to you and to personalize suggestions";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1124,8 +1128,8 @@
 				INFOPLIST_FILE = PhantomPhood/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Phantom Phood";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app requires your device location to be able to function";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app requires your device location to be able to function";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app requires your device location to be able to show the nearest places to you and to personalize suggestions";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app requires your device location to be able to show the nearest places to you and to personalize suggestions";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

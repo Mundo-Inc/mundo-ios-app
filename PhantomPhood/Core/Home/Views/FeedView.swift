@@ -48,7 +48,7 @@ struct FeedView: View {
                         }
                     
                     HStack(spacing: 15) {
-                        if let profileImage = vm.nabeel?.profileImage, let imageURL = URL(string: profileImage) {
+                        if let nabeel = vm.nabeel, !nabeel.profileImage.isEmpty, let imageURL = URL(string: nabeel.profileImage) {
                             CacheAsyncImage(url: imageURL) { phase in
                                 switch phase {
                                 case .empty:

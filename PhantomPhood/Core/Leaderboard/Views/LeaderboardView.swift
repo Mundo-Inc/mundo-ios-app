@@ -20,7 +20,7 @@ struct LeaderboardView: View {
                 
                 VStack {
                     HStack(spacing: 10) {
-                        if let user = auth.user, let profileImage = URL(string: user.profileImage ?? "") {
+                        if let user = auth.user, let profileImage = URL(string: user.profileImage) {
                             CacheAsyncImage(url: profileImage) { phase in
                                 switch phase {
                                 case .empty:
@@ -94,7 +94,7 @@ struct LeaderboardView: View {
                                             .foregroundStyle(.secondary)
                                             .frame(minWidth: 40)
                                         
-                                        if let profileImage = vm.list[index].profileImage, let profileImageURL = URL(string: profileImage) {
+                                        if !vm.list[index].profileImage.isEmpty, let profileImageURL = URL(string: vm.list[index].profileImage) {
                                             CacheAsyncImage(url: profileImageURL) { phase in
                                                 switch phase {
                                                 case .empty:

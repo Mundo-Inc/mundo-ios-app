@@ -29,7 +29,7 @@ struct UserProfileView: View {
         ScrollView {
             VStack {
                 HStack(spacing: 12) {
-                    if let profileImage = vm.user?.profileImage, let imageURL = URL(string: profileImage) {
+                    if let user = vm.user, !user.profileImage.isEmpty, let imageURL = URL(string: user.profileImage) {
                         CacheAsyncImage(url: imageURL) { phase in
                             switch phase {
                             case .empty:

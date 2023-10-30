@@ -61,6 +61,7 @@ fileprivate struct CommentView: View {
                         .bold() +
                     Text(comment.content)
                 }
+                .lineLimit(2)
                 .font(.custom(style: .callout))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -96,12 +97,11 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
     }
     
     var body: some View {
-        
         VStack(spacing: 0) {
             HStack {
                 VStack {
                     NavigationLink(value: HomeStack.userProfile(id: user.id)) {
-                        if let profileImage = user.profileImage, let url = URL(string: profileImage) {
+                        if !user.profileImage.isEmpty, let url = URL(string: user.profileImage) {
                             CacheAsyncImage(url: url) { phase in
                                 switch phase {
                                 case .empty:

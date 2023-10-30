@@ -14,7 +14,7 @@ struct User: Identifiable, Decodable {
     let bio: String
     let coins: Int
     let verified: Bool
-    let profileImage: String?
+    let profileImage: String
     let progress: UserProgress
     
     var id: String {
@@ -30,7 +30,7 @@ struct UserProfile: Identifiable, Decodable {
     let coins: Int
     let remainingXp: Int
     let verified: Bool
-    let profileImage: String?
+    let profileImage: String
     let isFollower: Bool
     let isFollowing: Bool
     let followersCount: Int

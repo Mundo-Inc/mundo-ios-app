@@ -14,8 +14,8 @@ enum Role: String, Codable {
 }
 
 struct CurrentUserCoreData: Codable, Identifiable {
-    let _id, name, username: String
-    let profileImage, bio: String?
+    let _id, name, username, profileImage: String
+    let bio: String?
     let email: Email
     let coins: Int
     let role: Role
@@ -33,8 +33,8 @@ struct CurrentUserCoreData: Codable, Identifiable {
 }
 
 struct CurrentUserFullData: Codable {
-    let _id, name, username: String
-    var profileImage, bio: String?
+    let _id, name, username, profileImage: String
+    var bio: String?
     let email: Email
     let rank, remainingXp, coins, reviewsCount, followersCount, followingCount: Int
     let role: Role
@@ -79,6 +79,9 @@ class Authentication: ObservableObject {
     @Published private(set) var userId: String? = nil
     
     var token: String? {
+//        #if DEBUG
+//        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDVjOGIyMjIxMzQ2NDNjMDIwODYwYTUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2OTg2Nzc5ODYsImV4cCI6MTcwMTI2OTk4Nn0.XwynlrGWRHbU_rxhYrg7S8H65h7-AgStmNnEKQ2Rz14"
+//        #endif
         // get jwt token from Keychain
         let tk = KeychainHelper.getData(for: .userToken)
         return tk
@@ -171,17 +174,13 @@ class Authentication: ObservableObject {
 
         if let userId, let token {
             do {
-                let (data, response) = try await apiManager.request("/users/\(userId)", method: .get, token: token) as (UserResponse?, HTTPURLResponse)
-
-                guard let data, response.statusCode >= 200, response.statusCode < 300 else { return }
-
+                let (data, _) = try await apiManager.request("/users/\(userId)", method: .get, token: token) as (UserResponse?, HTTPURLResponse)
                 
-                self.user = data.data
-                if data.data.profileImage?.count == 0 {
-                    self.user?.profileImage = nil
+                if let data {
+                    self.user = data.data
+                    
+                    await setDeviceToken()
                 }
-                
-                await setDeviceToken()
             } catch {
                 print(error)
             }

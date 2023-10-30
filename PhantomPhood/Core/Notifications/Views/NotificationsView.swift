@@ -52,7 +52,7 @@ struct NotificationsView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 
-                if let profileImage = data.user.profileImage, let url = URL(string: profileImage) {
+                if !data.user.profileImage.isEmpty, let url = URL(string: data.user.profileImage) {
                     CacheAsyncImage(url: url) { phase in
                         switch phase {
                         case .empty:

@@ -66,7 +66,7 @@ struct FeedFollowingView: View {
                                     .frame(width: 54, height: 54)
                                     .foregroundStyle(.gray.opacity(0.8))
                                 
-                                if let profileImage = user.profileImage, let url = URL(string: profileImage) {
+                                if !user.profileImage.isEmpty, let url = URL(string: user.profileImage) {
                                     AsyncImage(url: url) { phase in
                                         Group {
                                             if let image = phase.image {

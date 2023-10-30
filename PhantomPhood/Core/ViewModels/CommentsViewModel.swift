@@ -103,8 +103,31 @@ class CommentsViewModel: ObservableObject {
         self.isSubmitting = false
     }
     
-    // TODO: Add like/dislike comment
-//    func likeComment(commentID: String) async {
-//
-//    }
+    enum LikeAction {
+        case add
+        case remove
+    }
+    func updateCommentLike(id: String, action: LikeAction) async {
+        guard let token = auth.token else { return }
+        
+        struct ResponseData: Decodable {
+            let success: Bool
+            let data: Comment
+        }
+        
+        self.isSubmitting = true
+        do {
+            let (data, _) = try await apiManager.request("/comments/\(id)/likes", method: action == .add ? .post : .delete, token: token) as (ResponseData?, HTTPURLResponse)
+            if let data {
+                self.comments = self.comments.map({ comment in
+                    return comment.id == data.data.id ? data.data : comment
+                })
+            } else {
+                toastViewModel.toast(.init(type: .error, title: "Error", message: "Something went wrong"))
+            }
+        } catch {
+            toastViewModel.toast(.init(type: .error, title: "Error", message: "Something went wrong"))
+        }
+        self.isSubmitting = false
+    }
 }

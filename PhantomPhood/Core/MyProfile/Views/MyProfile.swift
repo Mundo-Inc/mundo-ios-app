@@ -16,7 +16,7 @@ struct MyProfile: View {
             ScrollView {
                 VStack {
                     HStack(spacing: 12) {
-                        if let profileImage = auth.user?.profileImage, let imageURL = URL(string: profileImage) {
+                        if let user = auth.user, !user.profileImage.isEmpty, let imageURL = URL(string: user.profileImage) {
                             CacheAsyncImage(url: imageURL) { phase in
                                 switch phase {
                                 case .empty:

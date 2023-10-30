@@ -9,7 +9,32 @@ import SwiftUI
 
 struct CommentsView: View {
     @ObservedObject var vm: CommentsViewModel
-        
+    @ObservedObject private var appData = AppData.shared
+    @ObservedObject private var auth = Authentication.shared
+    
+    @Environment(\.dismiss) var dismiss
+    
+    func navigateToUserProfile(id: String) {
+        if let userId = auth.userId, userId == id {
+            appData.activeTab = .myProfile
+            dismiss()
+            return
+        }
+        switch appData.activeTab {
+        case .home:
+            appData.homeNavStack.append(.userProfile(id: id))
+        case .map:
+            appData.mapNavStack.append(.userProfile(id: id))
+        case .leaderboard:
+            appData.leaderboardNavStack.append(.userProfile(id: id))
+        case .myProfile:
+            appData.myProfileNavStack.append(.userProfile(id: id))
+        }
+        dismiss()
+    }
+    
+    @State var reportId: String? = nil
+            
     var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 3)
@@ -20,6 +45,111 @@ struct CommentsView: View {
                 .fontWeight(.bold)
                 .padding(.top, 5)
             Divider()
+                        
+            List(vm.comments) { comment in
+                VStack {
+                    HStack {
+                        Group {
+                            if !comment.author.profileImage.isEmpty, let url = URL(string: comment.author.profileImage) {
+                                AsyncImage(url: url) { phase in
+                                    Group {
+                                        if let image = phase.image {
+                                            image
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 44, height: 44)
+                                                .clipShape(Circle())
+                                        } else if phase.error != nil {
+                                            Circle()
+                                                .frame(width: 44, height: 44)
+                                                .foregroundStyle(Color.themePrimary)
+                                                .overlay {
+                                                    Image(systemName: "exclamationmark.icloud")
+                                                }
+                                        } else {
+                                            Circle()
+                                                .frame(width: 44, height: 44)
+                                                .foregroundStyle(Color.themePrimary)
+                                                .overlay {
+                                                    ProgressView()
+                                                }
+                                        }
+                                    }
+                                    .overlay(alignment: .top) {
+                                        LevelView(level: comment.author.progress.level)
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 24, height: 30)
+                                            .offset(y: 28)
+                                    }
+                                }
+                            } else {
+                                Image(systemName: "person.circle.fill")
+                                    .resizable()
+                                    .frame(width: 44, height: 44)
+                                    .overlay(alignment: .top) {
+                                        LevelView(level: comment.author.progress.level)
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 24, height: 30)
+                                            .offset(y: 28)
+                                    }
+                            }
+                        }
+                        .onTapGesture(perform: {
+                            navigateToUserProfile(id: comment.author.id)
+                        })
+                        
+                        HStack {
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Text(comment.author.name)
+                                        .font(.custom(style: .body))
+                                        .bold()
+                                        .foregroundStyle(.primary)
+                                    Text(DateFormatter.getPassedTime(from: comment.createdAt))
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.secondary)
+                                    Spacer()
+                                }
+                                .frame(maxWidth: .infinity)
+
+                                Text(comment.content)
+                                    .font(.custom(style: .body))
+                                    .multilineTextAlignment(.leading)
+                            }
+                            .frame(maxWidth: .infinity)
+                            
+                            VStack {
+                                Image(systemName: comment.liked ? "heart.fill" : "heart")
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(comment.liked ? Color.accentColor : Color.secondary)
+                                Text("\(comment.likes)")
+                                    .font(.custom(style: .callout))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .animation(.easeInOut, value: vm.isSubmitting)
+                            .opacity(vm.isSubmitting ? 0.6 : 1)
+                            .onTapGesture(perform: {
+                                if !vm.isSubmitting {
+                                    Task {
+                                        await vm.updateCommentLike(id: comment.id, action: comment.liked ? .remove : .add)
+                                    }
+                                }
+                            })
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
+                .swipeActions {
+                    Button {
+                        reportId = comment.id
+                    } label: {
+                        Text("Report")
+                    }
+
+                }
+            }
+            .listStyle(.plain)
+            
             
             ScrollView {
                 if vm.isLoading {
@@ -37,89 +167,10 @@ struct CommentsView: View {
                         .padding(.top, 50)
                     }
                 }
-                ForEach(vm.comments) { comment in
-                    VStack {
-                        HStack {
-                            NavigationLink(value: HomeStack.userProfile(id: comment.author.id)) {
-                                if let profileImage = comment.author.profileImage, let url = URL(string: profileImage) {
-                                    AsyncImage(url: url) { phase in
-                                        Group {
-                                            if let image = phase.image {
-                                                image
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(width: 44, height: 44)
-                                                    .clipShape(Circle())
-                                            } else if phase.error != nil {
-                                                Circle()
-                                                    .frame(width: 44, height: 44)
-                                                    .foregroundStyle(Color.themePrimary)
-                                                    .overlay {
-                                                        Image(systemName: "exclamationmark.icloud")
-                                                    }
-                                            } else {
-                                                Circle()
-                                                    .frame(width: 44, height: 44)
-                                                    .foregroundStyle(Color.themePrimary)
-                                                    .overlay {
-                                                        ProgressView()
-                                                    }
-                                            }
-                                        }
-                                        .overlay(alignment: .top) {
-                                            LevelView(level: comment.author.progress.level)
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: 24, height: 30)
-                                                .offset(y: 28)
-                                        }
-                                    }
-                                } else {
-                                    Image(systemName: "person.circle.fill")
-                                        .resizable()
-                                        .frame(width: 44, height: 44)
-                                        .overlay(alignment: .top) {
-                                            LevelView(level: comment.author.progress.level)
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: 24, height: 30)
-                                                .offset(y: 28)
-                                        }
-                                }
-                            }
-                            
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    HStack {
-                                        Text(comment.author.name)
-                                            .font(.custom(style: .body))
-                                            .bold()
-                                            .foregroundStyle(.primary)
-                                        Text(DateFormatter.getPassedTime(from: comment.createdAt))
-                                            .font(.custom(style: .caption))
-                                            .foregroundStyle(.secondary)
-                                        Spacer()
-                                    }
-                                    .frame(maxWidth: .infinity)
-
-                                    Text(comment.content)
-                                        .font(.custom(style: .body))
-                                        .multilineTextAlignment(.leading)
-                                }
-                                .frame(maxWidth: .infinity)
-                                
-                                Image(systemName: "heart")
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        Divider()
-                            .padding(.top)
-                    }
-                    .padding(.horizontal)
-                }
             }
-            // TODO: - here
-//            .refreshable {
+            .refreshable {
 //                await vm.getComments()
-//            }
+            }
             
             Spacer()
             
@@ -146,9 +197,13 @@ struct CommentsView: View {
                     .padding(.all, 9)
                 }.padding(.horizontal)
                 .padding(.vertical, 5)
+
             
         }
         .padding(.top)
+        .sheet(isPresented: Binding(optionalValue: $reportId)) {
+            ReportView(id: $reportId, type: .comment)
+        }
     }
 }
 
