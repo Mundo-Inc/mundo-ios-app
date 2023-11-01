@@ -38,7 +38,7 @@ class PlaceReviewsViewModel: ObservableObject {
         }
         
         do {
-            let (data, _) = try await apiManager.request("/places/\(placeId)/reviews?page=\(page)", token: auth.token) as (ReviewsResponse?, HTTPURLResponse)
+            let data = try await apiManager.requestData("/places/\(placeId)/reviews?page=\(page)", token: auth.token) as ReviewsResponse?
             if let data = data {
                 if page == 1 {
                     reviews = data.data

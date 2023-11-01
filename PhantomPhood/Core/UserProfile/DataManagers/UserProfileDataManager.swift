@@ -21,7 +21,7 @@ class UserProfileDataManager {
             fatalError("No token")
         }
         
-        let (data, _) = try await apiManager.request("/users/\(id)", method: .get, token: token) as (UserResponse?, HTTPURLResponse)
+        let data = try await apiManager.requestData("/users/\(id)", method: .get, token: token) as UserResponse?
         
         guard let data = data else {
             fatalError("Couldn't get the data")
@@ -45,7 +45,7 @@ class UserProfileDataManager {
             fatalError("No token")
         }
         
-        let _ = try await apiManager.request("/users/\(id)/connections", method: .post, token: token) as (FollowResponse?, HTTPURLResponse)
+        let _ = try await apiManager.requestData("/users/\(id)/connections", method: .post, token: token) as FollowResponse?
     }
     
     func unfollow(id: String) async throws {

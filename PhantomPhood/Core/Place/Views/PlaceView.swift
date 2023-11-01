@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct PlaceView: View {
     let id: String
@@ -43,26 +44,20 @@ struct PlaceView: View {
                                     switch media.type {
                                     case .image:
                                         if let url = URL(string: media.src) {
-                                            CacheAsyncImage(url: url) { phase in
-                                                switch phase {
-                                                case .empty:
+                                            KFImage.url(url)
+                                                .placeholder {
                                                     RoundedRectangle(cornerRadius: 12)
                                                         .foregroundStyle(Color.themePrimary)
-                                                case .success(let image):
-                                                    image
-                                                        .resizable()
-                                                        .aspectRatio(contentMode: .fill)
-                                                default:
-                                                    Label(
-                                                        title: { Text("Unable to load the image") },
-                                                        icon: { Image(systemName: "xmark.icloud") }
-                                                    )
-                                                    .foregroundStyle(.red)
                                                 }
-                                            }
-                                            .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width : UIScreen.main.bounds.size.width + 150)
-                                            .frame(maxWidth: UIScreen.main.bounds.size.width)
-                                            .contentShape(Rectangle())
+                                                .loadDiskFileSynchronously()
+                                                .cacheMemoryOnly()
+                                                .fade(duration: 0.25)
+                                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width : UIScreen.main.bounds.size.width + 150)
+                                                .frame(maxWidth: UIScreen.main.bounds.size.width)
+                                                .contentShape(Rectangle())
                                         }
                                     case .video:
                                         ReviewVideoView(url: media.src, mute: true)
@@ -81,32 +76,26 @@ struct PlaceView: View {
                         } else {
                             if let thumbnail = place.thumbnail, let thumbnailURL = URL(string: thumbnail) {
                                 ZStack {
-                                    CacheAsyncImage(url: thumbnailURL) { phase in
-                                        switch phase {
-                                        case .empty:
+                                    KFImage.url(thumbnailURL)
+                                        .placeholder {
                                             RoundedRectangle(cornerRadius: 12)
                                                 .foregroundStyle(Color.themePrimary)
-                                        case .success(let image):
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                        default:
-                                            Label(
-                                                title: { Text("Unable to load the image") },
-                                                icon: { Image(systemName: "xmark.icloud") }
-                                            )
-                                            .foregroundStyle(.red)
                                         }
-                                    }
-                                    .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width : UIScreen.main.bounds.size.width + 150)
-                                    .frame(maxWidth: UIScreen.main.bounds.size.width)
-                                    .clipped()
-                                    .onTapGesture {
-                                        withAnimation {
-                                            isHeaderCollapsed.toggle()
+                                        .loadDiskFileSynchronously()
+                                        .cacheMemoryOnly()
+                                        .fade(duration: 0.25)
+                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width : UIScreen.main.bounds.size.width + 150)
+                                        .frame(maxWidth: UIScreen.main.bounds.size.width)
+                                        .clipped()
+                                        .onTapGesture {
+                                            withAnimation {
+                                                isHeaderCollapsed.toggle()
+                                            }
                                         }
-                                    }
-                                    .contentShape(Rectangle())
+                                        .contentShape(Rectangle())
                                 }
                             } else {
                                 Label(
@@ -125,25 +114,19 @@ struct PlaceView: View {
                         .overlay {
                             if let place = vm.place {
                                 if let thumbnail = place.thumbnail, let thumbnailURL = URL(string: thumbnail) {
-                                    CacheAsyncImage(url: thumbnailURL) { phase in
-                                        switch phase {
-                                        case .empty:
+                                    KFImage.url(thumbnailURL)
+                                        .placeholder {
                                             RoundedRectangle(cornerRadius: 12)
                                                 .foregroundStyle(Color.themePrimary)
-                                        case .success(let image):
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 80, height: 80)
-                                                .clipShape(.rect(cornerRadius: 12))
-                                        default:
-                                            Label(
-                                                title: { Text("Unable to load the image") },
-                                                icon: { Image(systemName: "xmark.icloud") }
-                                            )
-                                            .foregroundStyle(.red)
                                         }
-                                    }
+                                        .loadDiskFileSynchronously()
+                                        .cacheMemoryOnly()
+                                        .fade(duration: 0.25)
+                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 80, height: 80)
+                                        .clipShape(.rect(cornerRadius: 12))
                                 } else {
                                     RoundedRectangle(cornerRadius: 12)
                                         .frame(width: 80, height: 80)
@@ -243,7 +226,7 @@ struct PlaceView: View {
                 
                 VStack {
                     HStack {
-                        ForEach(MyProfileActiveTab.allCases.indices, id: \.self) { i in
+                        ForEach(PlaceTab.allCases.indices, id: \.self) { i in
                             Button {
                                 vm.prevActiveTab = vm.activeTab
                                 withAnimation {

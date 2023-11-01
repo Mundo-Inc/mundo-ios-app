@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct LeaderboardView: View {
     @EnvironmentObject private var appData: AppData
@@ -21,26 +22,20 @@ struct LeaderboardView: View {
                 VStack {
                     HStack(spacing: 10) {
                         if let user = auth.user, let profileImage = URL(string: user.profileImage) {
-                            CacheAsyncImage(url: profileImage) { phase in
-                                switch phase {
-                                case .empty:
+                            KFImage.url(profileImage)
+                                .placeholder {
                                     Rectangle()
                                         .foregroundStyle(.tertiary)
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                default:
-                                    Rectangle()
-                                        .overlay {
-                                            Image(systemName: "exclamationmark.icloud")
-                                                .foregroundStyle(.red)
-                                        }
                                 }
-                            }
-                            .frame(width: 64, height: 64)
-                            .contentShape(RoundedRectangle(cornerRadius: 15))
-                            .clipShape(.rect(cornerRadius: 15))
+                                .loadDiskFileSynchronously()
+                                .cacheMemoryOnly()
+                                .fade(duration: 0.25)
+                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 64, height: 64)
+                                .contentShape(RoundedRectangle(cornerRadius: 15))
+                                .clipShape(.rect(cornerRadius: 15))
                         } else {
                             RoundedRectangle(cornerRadius: 15)
                                 .frame(width: 64, height: 64)
@@ -95,30 +90,23 @@ struct LeaderboardView: View {
                                             .frame(minWidth: 40)
                                         
                                         if !vm.list[index].profileImage.isEmpty, let profileImageURL = URL(string: vm.list[index].profileImage) {
-                                            CacheAsyncImage(url: profileImageURL) { phase in
-                                                switch phase {
-                                                case .empty:
+                                            KFImage.url(profileImageURL)
+                                                .placeholder {
                                                     Circle()
                                                         .foregroundStyle(Color.themePrimary)
                                                         .overlay {
                                                             ProgressView()
                                                         }
-                                                case .success(let image):
-                                                    image
-                                                        .resizable()
-                                                        .aspectRatio(contentMode: .fill)
-                                                default:
-                                                    Circle()
-                                                        .foregroundStyle(Color.themePrimary)
-                                                        .overlay {
-                                                            Image(systemName: "exclamationmark.icloud")
-                                                                .foregroundStyle(.red)
-                                                        }
                                                 }
-                                            }
-                                            .frame(width: 36, height: 36)
-                                            .contentShape(Circle())
-                                            .clipShape(Circle())
+                                                .loadDiskFileSynchronously()
+                                                .cacheMemoryOnly()
+                                                .fade(duration: 0.25)
+                                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 36, height: 36)
+                                                .contentShape(Circle())
+                                                .clipShape(Circle())
                                         } else {
                                             Circle()
                                                 .foregroundStyle(Color.themePrimary)
@@ -158,9 +146,7 @@ struct LeaderboardView: View {
                         }
                     }
                     .refreshable {
-                        Task {
-                            await vm.fetchList(.refresh)
-                        }
+                        await vm.fetchList(.refresh)
                     }
                 }
                 .navigationTitle("Leaderboard")

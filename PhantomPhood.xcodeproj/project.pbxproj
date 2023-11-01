@@ -23,7 +23,6 @@
 		0B0E6D302ABB814F00EC62EE /* Review.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D2F2ABB814F00EC62EE /* Review.swift */; };
 		0B0E6D322ABB816F00EC62EE /* Checkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D312ABB816F00EC62EE /* Checkin.swift */; };
 		0B0E6D342ABB872F00EC62EE /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D332ABB872F00EC62EE /* Reaction.swift */; };
-		0B2BA90A2AD199A00025FB9B /* CacheAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2BA9092AD199A00025FB9B /* CacheAsyncImage.swift */; };
 		0B2E98802AB907340013301D /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2E987F2AB907340013301D /* UIImage.swift */; };
 		0B37ABFA2AD6EC7A00E8D4BC /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B37ABF92AD6EC7A00E8D4BC /* SearchView.swift */; };
 		0B37ABFC2AD7408E00E8D4BC /* ToastViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B37ABFB2AD7408E00E8D4BC /* ToastViewModel.swift */; };
@@ -37,7 +36,11 @@
 		0B6495562AB10F5E000E57AF /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6495552AB10F5E000E57AF /* APIManager.swift */; };
 		0B64C4C92AB4BDC6009F0D43 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B64C4C82AB4BDC6009F0D43 /* SettingsView.swift */; };
 		0B64C4CD2AB4CCA1009F0D43 /* DataCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B64C4CC2AB4CCA1009F0D43 /* DataCard.swift */; };
+		0B67C8B72AF0539E002781B3 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 0B67C8B62AF0539E002781B3 /* Kingfisher */; };
 		0B6839922AEC335D0082661A /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6839912AEC335D0082661A /* ReportView.swift */; };
+		0B695D792AF131FB00C11870 /* MyConnections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B695D782AF131FB00C11870 /* MyConnections.swift */; };
+		0B695D7C2AF14E0C00C11870 /* MyConnectionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B695D7B2AF14E0C00C11870 /* MyConnectionsViewModel.swift */; };
+		0B695D7E2AF15EEE00C11870 /* ConnectionsDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B695D7D2AF15EEE00C11870 /* ConnectionsDataManager.swift */; };
 		0B6A47C22ABC9157000CBDA3 /* FeedDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6A47C12ABC9157000CBDA3 /* FeedDataManager.swift */; };
 		0B6A47C42ABC9806000CBDA3 /* FeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6A47C32ABC9806000CBDA3 /* FeedItem.swift */; };
 		0B6A47C62ABC998A000CBDA3 /* FeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6A47C52ABC998A000CBDA3 /* FeedViewModel.swift */; };
@@ -63,6 +66,8 @@
 		0B997B6A2AC7377C00579C9C /* UserProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B692AC7377C00579C9C /* UserProfileViewModel.swift */; };
 		0B997B6E2AC7381700579C9C /* UserProfileDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B6D2AC7381700579C9C /* UserProfileDataManager.swift */; };
 		0B997B702AC74BFA00579C9C /* UserProfileStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B6F2AC74BFA00579C9C /* UserProfileStats.swift */; };
+		0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA0383E2AF24C96000A2B33 /* UserConnectionsView.swift */; };
+		0BA038412AF24CE6000A2B33 /* UserConnectionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA038402AF24CE6000A2B33 /* UserConnectionsViewModel.swift */; };
 		0BA388932AD96D7100C74880 /* MapView17.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA388922AD96D7100C74880 /* MapView17.swift */; };
 		0BA388952AD974A100C74880 /* MapView16.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA388942AD974A100C74880 /* MapView16.swift */; };
 		0BAE47302ACC68FD001FBDAF /* YelpRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */; };
@@ -150,7 +155,6 @@
 		0B0E6D2F2ABB814F00EC62EE /* Review.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Review.swift; sourceTree = "<group>"; };
 		0B0E6D312ABB816F00EC62EE /* Checkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkin.swift; sourceTree = "<group>"; };
 		0B0E6D332ABB872F00EC62EE /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
-		0B2BA9092AD199A00025FB9B /* CacheAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheAsyncImage.swift; sourceTree = "<group>"; };
 		0B2E987F2AB907340013301D /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		0B37ABF92AD6EC7A00E8D4BC /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		0B37ABFB2AD7408E00E8D4BC /* ToastViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastViewModel.swift; sourceTree = "<group>"; };
@@ -165,6 +169,9 @@
 		0B64C4C82AB4BDC6009F0D43 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		0B64C4CC2AB4CCA1009F0D43 /* DataCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCard.swift; sourceTree = "<group>"; };
 		0B6839912AEC335D0082661A /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
+		0B695D782AF131FB00C11870 /* MyConnections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyConnections.swift; sourceTree = "<group>"; };
+		0B695D7B2AF14E0C00C11870 /* MyConnectionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyConnectionsViewModel.swift; sourceTree = "<group>"; };
+		0B695D7D2AF15EEE00C11870 /* ConnectionsDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionsDataManager.swift; sourceTree = "<group>"; };
 		0B6A47C12ABC9157000CBDA3 /* FeedDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedDataManager.swift; sourceTree = "<group>"; };
 		0B6A47C32ABC9806000CBDA3 /* FeedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedItem.swift; sourceTree = "<group>"; };
 		0B6A47C52ABC998A000CBDA3 /* FeedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewModel.swift; sourceTree = "<group>"; };
@@ -191,6 +198,8 @@
 		0B997B692AC7377C00579C9C /* UserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewModel.swift; sourceTree = "<group>"; };
 		0B997B6D2AC7381700579C9C /* UserProfileDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileDataManager.swift; sourceTree = "<group>"; };
 		0B997B6F2AC74BFA00579C9C /* UserProfileStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileStats.swift; sourceTree = "<group>"; };
+		0BA0383E2AF24C96000A2B33 /* UserConnectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionsView.swift; sourceTree = "<group>"; };
+		0BA038402AF24CE6000A2B33 /* UserConnectionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionsViewModel.swift; sourceTree = "<group>"; };
 		0BA388922AD96D7100C74880 /* MapView17.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView17.swift; sourceTree = "<group>"; };
 		0BA388942AD974A100C74880 /* MapView16.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView16.swift; sourceTree = "<group>"; };
 		0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpRatingView.swift; sourceTree = "<group>"; };
@@ -267,6 +276,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B67C8B72AF0539E002781B3 /* Kingfisher in Frameworks */,
 				0B77EA532AAF8CB800C8DF87 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -417,10 +427,12 @@
 		0B6495582AB1FD04000E57AF /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				0B0183542AB3BEFB008E887F /* MyProfile */,
+				0B695D762AF131DD00C11870 /* MyConnections */,
+				0BA038392AF24C47000A2B33 /* UserConnections */,
 				0BCBC1952ACDFEC700992D8E /* ViewModels */,
 				0BF5B4A72AB3757000DEC403 /* Home */,
 				0B64C4C62AB4BDB4009F0D43 /* Settings */,
-				0B0183542AB3BEFB008E887F /* MyProfile */,
 				0B0183672AB3C169008E887F /* UserProfile */,
 				0B0183612AB3C0B1008E887F /* Place */,
 				0B01835B2AB3C079008E887F /* Notifications */,
@@ -482,6 +494,32 @@
 				0B64C4C82AB4BDC6009F0D43 /* SettingsView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		0B695D762AF131DD00C11870 /* MyConnections */ = {
+			isa = PBXGroup;
+			children = (
+				0B695D7D2AF15EEE00C11870 /* ConnectionsDataManager.swift */,
+				0B695D7A2AF14DF200C11870 /* ViewModels */,
+				0B695D772AF131EC00C11870 /* Views */,
+			);
+			path = MyConnections;
+			sourceTree = "<group>";
+		};
+		0B695D772AF131EC00C11870 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0B695D782AF131FB00C11870 /* MyConnections.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0B695D7A2AF14DF200C11870 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				0B695D7B2AF14E0C00C11870 /* MyConnectionsViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		0B6E990D2AC7626300D8CE26 /* ViewModels */ = {
@@ -586,7 +624,6 @@
 				0B77EA572AAFCDBD00C8DF87 /* LottieView.swift */,
 				0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */,
 				0BE3118D2AC4842700CF9BA5 /* ReviewVideoView.swift */,
-				0B2BA9092AD199A00025FB9B /* CacheAsyncImage.swift */,
 				0B013EED2AB7559E003CB57F /* LevelView.swift */,
 			);
 			path = Components;
@@ -642,6 +679,31 @@
 				0B997B6D2AC7381700579C9C /* UserProfileDataManager.swift */,
 			);
 			path = DataManagers;
+			sourceTree = "<group>";
+		};
+		0BA038392AF24C47000A2B33 /* UserConnections */ = {
+			isa = PBXGroup;
+			children = (
+				0BA0383B2AF24C5F000A2B33 /* ViewModels */,
+				0BA0383A2AF24C50000A2B33 /* Views */,
+			);
+			path = UserConnections;
+			sourceTree = "<group>";
+		};
+		0BA0383A2AF24C50000A2B33 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0BA0383E2AF24C96000A2B33 /* UserConnectionsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0BA0383B2AF24C5F000A2B33 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				0BA038402AF24CE6000A2B33 /* UserConnectionsViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		0BB37E982ABA0CC2009E1272 /* ViewModels */ = {
@@ -776,6 +838,7 @@
 			name = PhantomPhood;
 			packageProductDependencies = (
 				0B77EA522AAF8CB800C8DF87 /* Lottie */,
+				0B67C8B62AF0539E002781B3 /* Kingfisher */,
 			);
 			productName = PhantomPhood;
 			productReference = 0B77EA372AAF855500C8DF87 /* PhantomPhood.app */;
@@ -807,6 +870,7 @@
 			mainGroup = 0B77EA2E2AAF855500C8DF87;
 			packageReferences = (
 				0B77EA512AAF8CB800C8DF87 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				0B67C8B52AF0539E002781B3 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = 0B77EA382AAF855500C8DF87 /* Products */;
 			projectDirPath = "";
@@ -884,10 +948,11 @@
 				0BF5B4B62AB37AB700DEC403 /* MapStack.swift in Sources */,
 				0B997B702AC74BFA00579C9C /* UserProfileStats.swift in Sources */,
 				0BE3118E2AC4842700CF9BA5 /* ReviewVideoView.swift in Sources */,
+				0B695D7C2AF14E0C00C11870 /* MyConnectionsViewModel.swift in Sources */,
 				0B37ABFA2AD6EC7A00E8D4BC /* SearchView.swift in Sources */,
+				0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */,
 				0BE1E17C2AD5A38A00645AA0 /* SearchViewModel.swift in Sources */,
 				0BB37E9E2ABA6D84009E1272 /* FeedView.swift in Sources */,
-				0B2BA90A2AD199A00025FB9B /* CacheAsyncImage.swift in Sources */,
 				0BAE47322ACC91DF001FBDAF /* PlaceReviewsView.swift in Sources */,
 				0B01836C2AB3C1AF008E887F /* MyProfileStack.swift in Sources */,
 				0BB805862AC203EB0074155D /* FeedReviewView.swift in Sources */,
@@ -897,6 +962,7 @@
 				0B985AE12AC9AFC200019A06 /* PlaceDataManager.swift in Sources */,
 				0BC84A6D2AD08A6D00D723AA /* SelectReactionsViewModel.swift in Sources */,
 				0B96D66C2AD2E73500612C27 /* LocationManager.swift in Sources */,
+				0BA038412AF24CE6000A2B33 /* UserConnectionsViewModel.swift in Sources */,
 				0B6495532AB0A51F000E57AF /* Validator.swift in Sources */,
 				0BC84A6F2AD0A83900D723AA /* PlaceMediaView.swift in Sources */,
 				0B997B682AC7139000579C9C /* NotificationsDataManager.swift in Sources */,
@@ -909,6 +975,7 @@
 				0B985AE32AC9AFCA00019A06 /* PlaceViewModel.swift in Sources */,
 				0B77EA3B2AAF855500C8DF87 /* PhantomPhoodApp.swift in Sources */,
 				0B77EA582AAFCDBD00C8DF87 /* LottieView.swift in Sources */,
+				0B695D792AF131FB00C11870 /* MyConnections.swift in Sources */,
 				0BE1E17E2AD5B84A00645AA0 /* Location.swift in Sources */,
 				0B0E6D302ABB814F00EC62EE /* Review.swift in Sources */,
 				0BF5B4B82AB37AFB00DEC403 /* LeaderboardStack.swift in Sources */,
@@ -939,6 +1006,7 @@
 				0B0183642AB3C0C0008E887F /* PlaceView.swift in Sources */,
 				0B46814F2AC5EB6B009C5EF9 /* CircleLabelView.swift in Sources */,
 				0B64C4C92AB4BDC6009F0D43 /* SettingsView.swift in Sources */,
+				0B695D7E2AF15EEE00C11870 /* ConnectionsDataManager.swift in Sources */,
 				0B77EA502AAF8C3B00C8DF87 /* WelcomeView.swift in Sources */,
 				0B77EA632AB08EDE00C8DF87 /* NotFoundView.swift in Sources */,
 				0BDBD3C82ACB0E8B003B8D2D /* PlaceOverviewView.swift in Sources */,
@@ -1084,7 +1152,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PhantomPhood/PhantomPhood.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PhantomPhood/Preview Content\"";
 				DEVELOPMENT_TEAM = BNPN3KK5A7;
 				ENABLE_PREVIEWS = YES;
@@ -1104,7 +1172,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.20.0;
+				MARKETING_VERSION = 0.21.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1120,7 +1188,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PhantomPhood/PhantomPhood.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PhantomPhood/Preview Content\"";
 				DEVELOPMENT_TEAM = BNPN3KK5A7;
 				ENABLE_PREVIEWS = YES;
@@ -1140,7 +1208,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.20.0;
+				MARKETING_VERSION = 0.21.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1173,6 +1241,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0B67C8B52AF0539E002781B3 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.10.0;
+			};
+		};
 		0B77EA512AAF8CB800C8DF87 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
@@ -1184,6 +1260,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0B67C8B62AF0539E002781B3 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B67C8B52AF0539E002781B3 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
 		0B77EA522AAF8CB800C8DF87 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0B77EA512AAF8CB800C8DF87 /* XCRemoteSwiftPackageReference "lottie-ios" */;

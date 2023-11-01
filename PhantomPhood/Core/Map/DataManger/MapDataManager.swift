@@ -25,10 +25,10 @@ class MapDataManager {
             fatalError("No token")
         }
         
-        let (data, _) = try await apiManager.request("/places/map?northEastLat=\(NElat)&northEastLng=\(NElng)&southWestLat=\(SWlat)&southWestLng=\(SWlng)", method: .get, token: token) as (RegionPlacesResponse?, HTTPURLResponse)
+        let data = try await apiManager.requestData("/places/map?northEastLat=\(NElat)&northEastLng=\(NElng)&southWestLat=\(SWlat)&southWestLng=\(SWlng)", method: .get, token: token) as RegionPlacesResponse?
 
         guard let data = data else {
-            fatalError("Couldn't get the data")
+            throw CancellationError()
         }
         
         return data.data.places

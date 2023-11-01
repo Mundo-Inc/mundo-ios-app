@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 enum UserProfileTab: String, Hashable, CaseIterable {
     case stats = "Stats"
     case achievements = "Acheivements"
     case activity = "Activity"
+    case checkins = "Checkins"
 }
 
 
@@ -30,33 +32,24 @@ struct UserProfileView: View {
             VStack {
                 HStack(spacing: 12) {
                     if let user = vm.user, !user.profileImage.isEmpty, let imageURL = URL(string: user.profileImage) {
-                        CacheAsyncImage(url: imageURL) { phase in
-                            switch phase {
-                            case .empty:
+                        KFImage.url(imageURL)
+                            .placeholder { progress in
                                 RoundedRectangle(cornerRadius: 15)
                                     .foregroundStyle(.tertiary)
                                     .overlay {
-                                        ProgressView()
+                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                            .progressViewStyle(LinearProgressViewStyle())
                                     }
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                            default:
-                                VStack(spacing: 0) {
-                                    Image(systemName: "exclamationmark.icloud")
-                                        .font(.system(size: 50))
-                                        .foregroundStyle(.red)
-                                        .frame(width: 50, height: 50)
-                                    Text("Error")
-                                        .font(.custom(style: .caption))
-                                }
-                                .background(Color.themeBG)
                             }
-                        }
-                        .frame(width: 82, height: 82)
-                        .contentShape(Rectangle())
-                        .clipShape(.rect(cornerRadius: 15))
+                            .loadDiskFileSynchronously()
+                            .cacheMemoryOnly()
+                            .fade(duration: 0.5)
+                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 82, height: 82)
+                            .contentShape(Rectangle())
+                            .clipShape(.rect(cornerRadius: 15))
                     } else {
                         // No Image
                         if vm.user == nil {
@@ -146,28 +139,64 @@ struct UserProfileView: View {
                         .padding(.bottom)
                 }
                 
-                HStack {
-                    ForEach(UserProfileTab.allCases.indices, id: \.self) { i in
-                        Button {
-                            withAnimation {
-                                activeTab = UserProfileTab.allCases[i]
+                ScrollView(.horizontal) {
+                    HStack {
+                        Color.clear
+                            .frame(width: 0)
+                            .padding(.leading)
+                        
+                        ForEach(UserProfileTab.allCases.indices, id: \.self) { i in
+                            Button {
+                                withAnimation {
+                                    activeTab = UserProfileTab.allCases[i]
+                                }
+                            } label: {
+                                Text(UserProfileTab.allCases[i].rawValue)
+                                    .font(.custom(style: .footnote))
+                                    .bold()
+                                    .textCase(.uppercase)
+                                    .padding(.vertical, 5)
+                                    .frame(maxWidth: .infinity, alignment: .center)
                             }
-                        } label: {
-                            Text(UserProfileTab.allCases[i].rawValue)
-                                .foregroundStyle(
-                                    activeTab == UserProfileTab.allCases[i] ? Color.accentColor : Color.secondary
-                                )
-                                .font(.custom(style: .footnote))
-                                .bold()
-                                .textCase(.uppercase)
-                                .frame(maxWidth: .infinity, alignment: .center)
+                            .foregroundStyle(
+                                activeTab == UserProfileTab.allCases[i] ? Color.accentColor : Color.secondary
+                            )
+                            .padding(i == 0 ? .trailing : i == UserProfileTab.allCases.count - 1 ? .leading : .horizontal)
+                            
+                            if i != UserProfileTab.allCases.count - 1 {
+                                Divider()
+                            }
                         }
                         
-                        if i != UserProfileTab.allCases.count - 1 {
-                            Divider()
-                        }
+                        Color.clear
+                            .frame(width: 0)
+                            .padding(.trailing)
                     }
-                }.padding(.bottom)
+                }
+                .scrollIndicators(.hidden)
+                .padding(.bottom, 10)
+//                HStack {
+//                    ForEach(UserProfileTab.allCases.indices, id: \.self) { i in
+//                        Button {
+//                            withAnimation {
+//                                activeTab = UserProfileTab.allCases[i]
+//                            }
+//                        } label: {
+//                            Text(UserProfileTab.allCases[i].rawValue)
+//                                .foregroundStyle(
+//                                    activeTab == UserProfileTab.allCases[i] ? Color.accentColor : Color.secondary
+//                                )
+//                                .font(.custom(style: .footnote))
+//                                .bold()
+//                                .textCase(.uppercase)
+//                                .frame(maxWidth: .infinity, alignment: .center)
+//                        }
+//                        
+//                        if i != UserProfileTab.allCases.count - 1 {
+//                            Divider()
+//                        }
+//                    }
+//                }.padding(.bottom)
             }
             .frame(maxWidth: .infinity)
             .background {
@@ -191,18 +220,18 @@ struct UserProfileView: View {
                         VStack {
                             Text("No Achievements yet")
                                 .font(.custom(style: .headline))
-                            Text("Comming Soon")
-                                .font(.custom(style: .caption))
-                                .foregroundStyle(.secondary)
                         }
                         .frame(maxWidth: .infinity)
                     case .activity:
                         VStack {
                             Text("No Activity yet")
                                 .font(.custom(style: .headline))
-                            Text("Comming Soon")
-                                .font(.custom(style: .caption))
-                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                    case .checkins:
+                        VStack {
+                            Text("No Checkins yet")
+                                .font(.custom(style: .headline))
                         }
                         .frame(maxWidth: .infinity)
                     }

@@ -115,20 +115,23 @@ struct PhantomPhoodApp: App {
                 let string = url.absoluteString.replacingOccurrences(of: "phantom://", with: "")
                 let components = string.components(separatedBy: "/")
                 
+                var tabSet = false
                 for component in components {
+                    print(component)
                     if component.contains("tab=") {
                         let tabRawValue = component.replacingOccurrences(of: "tab=", with: "")
                         if let requestedTab = Tab.convert(from: tabRawValue) {
                             appData.activeTab = requestedTab
+                            tabSet = true
                         }
-                    } else {
+                    } else if !tabSet {
                         // return if tab is not specified
                         return
                     }
                     // phantom://tab=myProfile/nav=settings
+                    // phantom://tab=home/nav=place/id=645c1d1ab41f8e12a0d166bc
                     if component.contains("nav") {
                         let navRawValue = component.replacingOccurrences(of: "nav=", with: "").lowercased()
-                            
                         switch appData.activeTab {
                             // Home Tab
                         case .home:
@@ -183,6 +186,10 @@ struct PhantomPhoodApp: App {
                                 }
                             case "settings":
                                 appData.myProfileNavStack.append(.settings)
+                            case "myConnections":
+                                if let tab = getKeyValue("tab", string: string)?.lowercased(), (tab == "followers" || tab == "followings") {
+                                    appData.myProfileNavStack.append(.myConnections(initTab: tab == "followers" ? .followers : .followings))
+                                }
                             default:
                                 break
                             }

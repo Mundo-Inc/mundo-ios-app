@@ -27,7 +27,7 @@ class ReactionsViewModel: ObservableObject {
         
         self.isLoading = true
         let body = try apiManager.createRequestBody(RequestBody(target: activityId, type: type.rawValue, reaction: reaction))
-        let (data, _) = try await apiManager.request("/reactions", method: .post, body: body, token: token) as (RequestResponse?, HTTPURLResponse)
+        let data = try await apiManager.requestData("/reactions", method: .post, body: body, token: token) as RequestResponse?
         self.isLoading = false
         
         if let data = data {

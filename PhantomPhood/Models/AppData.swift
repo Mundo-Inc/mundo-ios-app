@@ -30,7 +30,7 @@ class AppData: ObservableObject {
         self.leaderboardNavStack.removeAll()
         self.authNavStack.removeAll()
         
-        self.mapNavStack.removeAll()
+        self.myProfileNavStack.removeAll()
         self.myProfileActiveTab = .stats
         self.showEditProfile = false
     }

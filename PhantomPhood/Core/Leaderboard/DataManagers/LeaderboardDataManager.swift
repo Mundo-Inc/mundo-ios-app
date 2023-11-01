@@ -21,7 +21,7 @@ class LeaderboardDataManager {
             fatalError("No token provided")
         }
         
-        let (data, _) = try await apiManager.request("/users/leaderboard?page=\(page)&limit=30", method: .get, token: token) as (LeaderboardResponse?, HTTPURLResponse)
+        let data = try await apiManager.requestData("/users/leaderboard?page=\(page)&limit=30", method: .get, token: token) as LeaderboardResponse?
         
         guard let data = data else {
             fatalError("Couldn't get the data")

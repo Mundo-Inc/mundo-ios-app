@@ -46,7 +46,7 @@ class CommentsViewModel: ObservableObject {
         }
         isLoading = true
         do {
-            let (data, _) = try await apiManager.request("/feeds/\(activityId)/comments?page=\(commentsPage)", token: auth.token) as (CommentsResponse?, HTTPURLResponse)
+            let data = try await apiManager.requestData("/feeds/\(activityId)/comments?page=\(commentsPage)", token: auth.token) as CommentsResponse?
             if let data = data {
                 if commentsPage == 1 {
                     comments = data.data
@@ -89,7 +89,7 @@ class CommentsViewModel: ObservableObject {
         self.isSubmitting = true
         do {
             let body = try apiManager.createRequestBody(RequestBody(content: commentContent, activity: activityID))
-            let (data, _) = try await apiManager.request("/comments", method: .post, body: body, token: token) as (ResponseData?, HTTPURLResponse)
+            let data = try await apiManager.requestData("/comments", method: .post, body: body, token: token) as ResponseData?
             commentContent = ""
             if let data {
                 self.comments.insert(data.data, at: 0)
@@ -117,7 +117,7 @@ class CommentsViewModel: ObservableObject {
         
         self.isSubmitting = true
         do {
-            let (data, _) = try await apiManager.request("/comments/\(id)/likes", method: action == .add ? .post : .delete, token: token) as (ResponseData?, HTTPURLResponse)
+            let data = try await apiManager.requestData("/comments/\(id)/likes", method: action == .add ? .post : .delete, token: token) as ResponseData?
             if let data {
                 self.comments = self.comments.map({ comment in
                     return comment.id == data.data.id ? data.data : comment

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct FeedView: View {
     @Environment(\.dismissSearch) var dismissSearch
@@ -49,33 +50,23 @@ struct FeedView: View {
                     
                     HStack(spacing: 15) {
                         if let nabeel = vm.nabeel, !nabeel.profileImage.isEmpty, let imageURL = URL(string: nabeel.profileImage) {
-                            CacheAsyncImage(url: imageURL) { phase in
-                                switch phase {
-                                case .empty:
+                            KFImage.url(imageURL)
+                                .placeholder {
                                     RoundedRectangle(cornerRadius: 15)
                                         .foregroundStyle(.tertiary)
                                         .overlay {
                                             ProgressView()
                                         }
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                default:
-                                    VStack(spacing: 0) {
-                                        Image(systemName: "exclamationmark.icloud")
-                                            .font(.system(size: 50))
-                                            .foregroundStyle(.red)
-                                            .frame(width: 50, height: 50)
-                                        Text("Error")
-                                            .font(.custom(style: .caption))
-                                    }
-                                    .background(Color.themeBG)
                                 }
-                            }
-                            .frame(width: 100, height: 100)
-                            .contentShape(Rectangle())
-                            .clipShape(.rect(cornerRadius: 15))
+                                .loadDiskFileSynchronously()
+                                .cacheMemoryOnly()
+                                .fade(duration: 0.25)
+                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 100, height: 100)
+                                .contentShape(Rectangle())
+                                .clipShape(.rect(cornerRadius: 15))
                         } else {
                             // No Image
                             if vm.nabeel == nil {

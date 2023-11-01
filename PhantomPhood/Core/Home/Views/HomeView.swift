@@ -58,6 +58,8 @@ struct HomeView: View {
                     PlaceView(id: id, action: action)
                 case .userProfile(let id):
                     UserProfileView(id: id)
+                case .userConnections(let userId, let initTab):
+                    UserConnectionsView(userId: userId, activeTab: initTab)
                 }
             }
         }

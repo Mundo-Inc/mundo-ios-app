@@ -136,8 +136,7 @@ struct SignInView: View {
                             vm.isLoading = true
                         }
                         do {
-                            let (_, response) = try await auth.signin(email: vm.email, password: vm.password)
-                            guard response.statusCode >= 200, response.statusCode < 300 else { return }
+                            let _ = try await auth.signin(email: vm.email, password: vm.password)
                         } catch APIManager.APIError.serverError(let serverError) {
                             withAnimation {
                                 vm.error = serverError.message

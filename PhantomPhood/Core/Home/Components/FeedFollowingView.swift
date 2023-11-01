@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct FeedFollowingView: View {
     let data: FeedItem
@@ -21,7 +22,7 @@ struct FeedFollowingView: View {
         self._reactions = State(wrappedValue: data.reactions)
     }
     
-    @StateObject var selectReactionsViewModel = SelectReactionsViewModel.shared
+    @ObservedObject var selectReactionsViewModel = SelectReactionsViewModel.shared
     
     var body: some View {
         FeedItemTemplate(user: data.user, comments: data.comments, isActive: commentsViewModel.currentActivityId == data.id) {
@@ -67,37 +68,27 @@ struct FeedFollowingView: View {
                                     .foregroundStyle(.gray.opacity(0.8))
                                 
                                 if !user.profileImage.isEmpty, let url = URL(string: user.profileImage) {
-                                    AsyncImage(url: url) { phase in
-                                        Group {
-                                            if let image = phase.image {
-                                                image
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(width: 50, height: 50)
-                                                    .clipShape(Circle())
-                                            } else if phase.error != nil {
-                                                Circle()
-                                                    .frame(width: 50, height: 50)
-                                                    .foregroundStyle(Color.themePrimary)
-                                                    .overlay {
-                                                        Image(systemName: "exclamationmark.icloud")
-                                                    }
-                                            } else {
-                                                Circle()
-                                                    .frame(width: 50, height: 50)
-                                                    .foregroundStyle(Color.themePrimary)
-                                                    .overlay {
-                                                        ProgressView()
-                                                    }
-                                            }
+                                    KFImage.url(url)
+                                        .placeholder {
+                                            Circle()
+                                                .foregroundStyle(Color.themePrimary)
+                                                .overlay {
+                                                    ProgressView()
+                                                }
                                         }
-                                    }
+                                        .loadDiskFileSynchronously()
+                                        .cacheMemoryOnly()
+                                        .fade(duration: 0.25)
+                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 50, height: 50)
+                                        .clipShape(Circle())
                                 } else {
                                     Image(systemName: "person.circle.fill")
                                         .resizable()
                                         .frame(width: 50, height: 50)
                                 }
-                                
                             }
                             
                             
@@ -106,7 +97,7 @@ struct FeedFollowingView: View {
                             Text(user.name)
                                 .font(.custom(style: .subheadline))
                                 .fontWeight(.bold)
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color.white)
                             
 //                            Spacer()
 //                            

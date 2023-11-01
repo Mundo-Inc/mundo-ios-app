@@ -36,6 +36,7 @@ struct UserProfile: Identifiable, Decodable {
     let followersCount: Int
     let followingCount: Int
     let reviewsCount: Int
+    let totalCheckins: Int
     let rank: Int
     let progress: UserProgress
     
@@ -52,4 +53,14 @@ struct UserProgress: Codable {
 
 struct UserAchievments: Codable {
     let type: String
+}
+
+struct UserConnection: Identifiable, Decodable {
+    let _id: String
+    let user: User
+    let createdAt: String
+    
+    var id: String {
+        self._id
+    }
 }

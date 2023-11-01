@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct PlaceReviewView: View {
     let review: PlaceReview
@@ -102,38 +103,28 @@ struct PlaceReviewView: View {
                                 if !review.images.isEmpty {
                                     ForEach(review.images) { image in
                                         if let url = URL(string: image.src) {
-                                            CacheAsyncImage(url: url) { phase in
-                                                switch phase {
-                                                case .empty:
+                                            KFImage.url(url)
+                                                .placeholder {
                                                     RoundedRectangle(cornerRadius: 15)
                                                         .foregroundStyle(Color.themePrimary)
                                                         .overlay {
                                                             ProgressView()
                                                         }
-                                                case .success(let image):
-                                                    image
-                                                        .resizable()
-                                                        .aspectRatio(contentMode: .fill)
-                                                default:
-                                                    VStack(spacing: 0) {
-                                                        Image(systemName: "exclamationmark.icloud")
-                                                            .font(.system(size: 50))
-                                                            .foregroundStyle(.red)
-                                                            .frame(width: 50, height: 50)
-                                                        Text("Error")
-                                                            .font(.custom(style: .caption))
-                                                    }
-                                                    .background(Color.themeBG)
                                                 }
-                                            }
-                                            .frame(height: 300)
-                                            .frame(maxWidth: UIScreen.main.bounds.width)
-                                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                                            .overlay(alignment: .topTrailing) {
-                                                Image(systemName: "photo")
-                                                    .padding(.top, 8)
-                                                    .padding(.trailing, 5)
-                                            }
+                                                .loadDiskFileSynchronously()
+                                                .cacheMemoryOnly()
+                                                .fade(duration: 0.25)
+                                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(height: 300)
+                                                .frame(maxWidth: UIScreen.main.bounds.width)
+                                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                                                .overlay(alignment: .topTrailing) {
+                                                    Image(systemName: "photo")
+                                                        .padding(.top, 8)
+                                                        .padding(.trailing, 5)
+                                                }
                                         }
                                     }
                                 }

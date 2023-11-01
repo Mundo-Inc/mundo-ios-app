@@ -20,35 +20,41 @@ struct ProfileStats: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack {
-                    DataCard(
-                        icon: "person.3.fill",
-                        iconColor: LinearGradient(colors: [
-                            Color(red: 0.34, green: 0.79, blue: 0.76),
-                            Color(red: 0.43, green: 0.6, blue: 0.85)
-                        ], startPoint: .top, endPoint: .bottom),
-                        iconBackground: LinearGradient(colors: [
-                            Color(red: 0.49, green: 0.6, blue: 0.99).opacity(0.2),
-                            Color(red: 0.19, green: 1, blue: 0.76).opacity(0.2)
-                        ], startPoint: .topLeading, endPoint: .bottomTrailing),
-                        title: "Followers",
-                        value: auth.user?.followersCount
-                    )
+                    NavigationLink(value: MyProfileStack.myConnections(initTab: .followers)) {
+                        DataCard(
+                            icon: "person.3.fill",
+                            iconColor: LinearGradient(colors: [
+                                Color(red: 0.34, green: 0.79, blue: 0.76),
+                                Color(red: 0.43, green: 0.6, blue: 0.85)
+                            ], startPoint: .top, endPoint: .bottom),
+                            iconBackground: LinearGradient(colors: [
+                                Color(red: 0.49, green: 0.6, blue: 0.99).opacity(0.2),
+                                Color(red: 0.19, green: 1, blue: 0.76).opacity(0.2)
+                            ], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            title: "Followers",
+                            value: auth.user?.followersCount
+                        )
+                    }
+                    .foregroundStyle(.primary)
 
                     Spacer()
                     
-                    DataCard(
-                        icon: "person.2.fill",
-                        iconColor: LinearGradient(colors: [
-                            Color(red: 0.97, green: 0.47, blue: 0.98),
-                            Color(red: 0.77, green: 0.24, blue: 0.9)
-                        ], startPoint: .topLeading, endPoint: .bottomTrailing),
-                        iconBackground: LinearGradient(colors: [
-                            Color(red: 1, green: 0.1, blue: 0.31).opacity(0.15),
-                            Color(red: 0.83, green: 0.37, blue: 1).opacity(0.15)
-                        ], startPoint: .topLeading, endPoint: .bottomTrailing),
-                        title: "Followings",
-                        value: auth.user?.followingCount
-                    )
+                    NavigationLink(value: MyProfileStack.myConnections(initTab: .followings)) {
+                        DataCard(
+                            icon: "person.2.fill",
+                            iconColor: LinearGradient(colors: [
+                                Color(red: 0.97, green: 0.47, blue: 0.98),
+                                Color(red: 0.77, green: 0.24, blue: 0.9)
+                            ], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            iconBackground: LinearGradient(colors: [
+                                Color(red: 1, green: 0.1, blue: 0.31).opacity(0.15),
+                                Color(red: 0.83, green: 0.37, blue: 1).opacity(0.15)
+                            ], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            title: "Followings",
+                            value: auth.user?.followingCount
+                        )
+                    }
+                    .foregroundStyle(.primary)
                 }
             }
                         
@@ -146,7 +152,7 @@ struct ProfileStats: View {
                             Color(red: 1, green: 0.25, blue: 0.5).opacity(0.15)
                         ], startPoint: .topLeading, endPoint: .bottomTrailing),
                         title: "Checkins",
-                        value: "Soon"
+                        value: auth.user?.totalCheckins
                     )
                 }
             }

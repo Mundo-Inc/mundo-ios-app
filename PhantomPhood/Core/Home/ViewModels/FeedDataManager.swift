@@ -21,7 +21,7 @@ class FeedDataManager {
             fatalError("No token provided")
         }
         
-        let (data, _) = try await apiManager.request("/feeds?page=\(page)", method: .get, token: token) as (FeedResponse?, HTTPURLResponse)
+        let data = try await apiManager.requestData("/feeds?page=\(page)", method: .get, token: token) as FeedResponse?
         if let data = data {
             return data.result
         } else {
@@ -39,7 +39,7 @@ class FeedDataManager {
             fatalError("No token")
         }
         
-        let (data, _) = try await apiManager.request("/users/645e7f843abeb74ee6248ced", method: .get, token: token) as (UserResponse?, HTTPURLResponse)
+        let data = try await apiManager.requestData("/users/645e7f843abeb74ee6248ced", method: .get, token: token) as UserResponse?
         
         guard let data = data else {
             fatalError("Couldn't get the data")
@@ -60,9 +60,9 @@ class FeedDataManager {
         }
         
         guard let token = await auth.token else {
-            fatalError("No token")
+            throw CancellationError()
         }
         
-        let _ = try await apiManager.request("/users/645e7f843abeb74ee6248ced/connections", method: .post, token: token) as (FollowResponse?, HTTPURLResponse)
+        let _ = try await apiManager.requestData("/users/645e7f843abeb74ee6248ced/connections", method: .post, token: token) as FollowResponse?
     }
 }

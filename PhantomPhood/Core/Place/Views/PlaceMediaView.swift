@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct PlaceMediaView: View {
     @ObservedObject var vm: PlaceViewModel
@@ -34,33 +35,23 @@ struct PlaceMediaView: View {
                 LazyVGrid(columns: gridColumnst, content: {
                     ForEach(placeMediaViewModel.medias) {media in
                         if let url = URL(string: media.src) {
-                            CacheAsyncImage(url: url) { phase in
-                                switch phase {
-                                case .empty:
+                            KFImage.url(url)
+                                .placeholder {
                                     RoundedRectangle(cornerRadius: 15)
                                         .foregroundStyle(Color.themePrimary)
                                         .overlay {
                                             ProgressView()
                                         }
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                default:
-                                    VStack(spacing: 0) {
-                                        Image(systemName: "exclamationmark.icloud")
-                                            .font(.system(size: 50))
-                                            .foregroundStyle(.red)
-                                            .frame(width: 50, height: 50)
-                                        Text("Error")
-                                            .font(.custom(style: .caption))
-                                    }
-                                    .background(Color.themeBG)
                                 }
-                            }
-                            .frame(width: (UIScreen.main.bounds.size.width / 2) - 30, height: UIScreen.main.bounds.size.width / 2)
-                            .contentShape(Rectangle())
-                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                                .loadDiskFileSynchronously()
+                                .cacheMemoryOnly()
+                                .fade(duration: 0.25)
+                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: (UIScreen.main.bounds.size.width / 2) - 30, height: UIScreen.main.bounds.size.width / 2)
+                                .contentShape(Rectangle())
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
                         }
                     }
                     Color.clear

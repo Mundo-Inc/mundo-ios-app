@@ -167,7 +167,7 @@ class EditProfileViewModel: ObservableObject {
         if let token = auth.token, let userId = auth.userId {
             do {
                 let reqBody = try apiManager.createRequestBody(EditUserBody(name: self.name, username: self.username, bio: self.bio, removeProfileImage: self.isDeleting ? self.isDeleting : nil))
-                let _ = try await apiManager.request("/users/\(userId)", method: .put, body: reqBody, token: token) as (EditUserResponse?, HTTPURLResponse)
+                let _ = try await apiManager.requestData("/users/\(userId)", method: .put, body: reqBody, token: token) as EditUserResponse?
             } catch {
                 print(error)
             }

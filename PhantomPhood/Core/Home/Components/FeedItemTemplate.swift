@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 // TODO: Add View Model
 
@@ -102,38 +103,30 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                 VStack {
                     NavigationLink(value: HomeStack.userProfile(id: user.id)) {
                         if !user.profileImage.isEmpty, let url = URL(string: user.profileImage) {
-                            CacheAsyncImage(url: url) { phase in
-                                switch phase {
-                                case .empty:
+                            KFImage.url(url)
+                                .placeholder { _ in
                                     Circle()
-                                        .frame(width: 44, height: 44)
                                         .foregroundStyle(Color.themePrimary)
                                         .overlay {
                                             ProgressView()
                                         }
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                default:
-                                    Circle()
-                                        .frame(width: 44, height: 44)
-                                        .foregroundStyle(Color.themePrimary)
-                                        .overlay {
-                                            Image(systemName: "exclamationmark.icloud")
-                                        }
                                 }
-                            }
-                            .frame(width: 44, height: 44)
-                            .contentShape(Circle())
-                            .clipShape(Circle())
-                            .overlay(alignment: .top) {
-                                LevelView(level: user.progress.level)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 24, height: 30)
-                                    .offset(y: 28)
-                                    .shadow(radius: 10)
-                            }
+                                .loadDiskFileSynchronously()
+                                .cacheMemoryOnly()
+                                .fade(duration: 0.25)
+                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 44, height: 44)
+                                .contentShape(Circle())
+                                .clipShape(Circle())
+                                .overlay(alignment: .top) {
+                                    LevelView(level: user.progress.level)
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 24, height: 30)
+                                        .offset(y: 28)
+                                        .shadow(radius: 10)
+                                }
                         } else {
                             Image(systemName: "person.fill")
                                 .font(.system(size: 30))

@@ -21,7 +21,7 @@ class PlaceDataManager {
             fatalError("No token")
         }
         
-        let (data, _) = try await apiManager.request("/places/\(id)", method: .get, token: token) as (PlaceResponse?, HTTPURLResponse)
+        let data = try await apiManager.requestData("/places/\(id)", method: .get, token: token) as PlaceResponse?
 
         guard let data = data else {
             fatalError("Couldn't get the data")
@@ -51,6 +51,6 @@ class PlaceDataManager {
         
         let body = try apiManager.createRequestBody(RequestBody(place: id))
         
-        let _ = try await apiManager.request("/checkins", method: .post, body: body, token: token) as (CheckinResponse?, HTTPURLResponse)
+        let _ = try await apiManager.requestData("/checkins", method: .post, body: body, token: token) as CheckinResponse?
     }
 }

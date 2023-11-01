@@ -390,8 +390,7 @@ struct SignUpView: View {
                                         vm.isLoading = true
                                     }
                                     do {
-                                        let (_, response) = try await auth.signup(name: vm.name, email: vm.email, password: vm.password, username: vm.username.count > 5 ? vm.username : nil)
-                                        guard response.statusCode >= 200, response.statusCode < 300 else { return }
+                                        let _ = try await auth.signup(name: vm.name, email: vm.email, password: vm.password, username: vm.username.count > 5 ? vm.username : nil)
                                     } catch APIManager.APIError.serverError(let serverError) {
                                         withAnimation {
                                             vm.error = serverError.message

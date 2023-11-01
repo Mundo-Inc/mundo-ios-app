@@ -27,8 +27,8 @@ using namespace metal;
     float stepCircle = step(circle, -sin(secs + uv.x - uv.y));
 
     // Blue Colors
-    vector_float4 background = vector_float4(0.2, 0.6, 0.6, 1.0);
-    vector_float4 circles = vector_float4(0, 0.8, 0.8, 1.0);
+    vector_float4 background = vector_float4(0.1, 0.1, 0.1, 1.0);
+    vector_float4 circles = vector_float4(0.2, 0.2, 0.2, 1.0);
 
     return half4(mix(background, circles, stepCircle));
 }

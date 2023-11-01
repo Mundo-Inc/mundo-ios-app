@@ -1,0 +1,184 @@
+//
+//  UserConnectionsView.swift
+//  PhantomPhood
+//
+//  Created by Kia Abdi on 11/1/23.
+//
+
+import SwiftUI
+import Kingfisher
+
+struct UserConnectionsView: View {
+    let userId: String
+    @State var activeTab: UserConnectionsTab
+    
+    @StateObject var vm = UserConnectionsViewModel()
+    
+    init(userId: String, activeTab: UserConnectionsTab = .followers) {
+        self.userId = userId
+        self._activeTab = State(wrappedValue: activeTab)
+    }
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Button {
+                    withAnimation {
+                        activeTab = .followers
+                    }
+                } label: {
+                    Text("Followers")
+                        .font(.custom(style: .footnote))
+                        .bold()
+                        .textCase(.uppercase)
+                        .padding(.vertical, 5)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+                .foregroundStyle(
+                    activeTab == .followers ? Color.accentColor : Color.secondary
+                )
+                .padding(.trailing)
+                
+                Divider()
+                    .frame(maxHeight: 30)
+                
+                Button {
+                    withAnimation {
+                        activeTab = .followings
+                    }
+                } label: {
+                    Text("Followings")
+                        .font(.custom(style: .footnote))
+                        .bold()
+                        .textCase(.uppercase)
+                        .padding(.vertical, 5)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+                .foregroundStyle(
+                    activeTab == .followings ? Color.accentColor : Color.secondary
+                )
+                .padding(.leading)
+            }
+            Divider()
+            
+            List {
+                switch activeTab {
+                case .followers:
+                    if let connections = vm.followers {
+                        ForEach(connections) { connection in
+                            UserCard(connection: connection)
+                                .onAppear {
+                                    if !vm.isLoading {
+                                        Task {
+                                            await vm.loadMore(userId: userId, type: .followers, currentItem: connection)
+                                        }
+                                    }
+                                }
+                        }
+                    } else {
+                        ProgressView()
+                            .onAppear {
+                                Task {
+                                    await vm.getConnections(userId: userId, type: .followers, requestType: .refresh)
+                                }
+                            }
+                    }
+                case .followings:
+                    if let connections = vm.followings {
+                        ForEach(connections) { connection in
+                            UserCard(connection: connection)
+                                .onAppear {
+                                    if !vm.isLoading {
+                                        Task {
+                                            await vm.loadMore(userId: userId, type: .followings, currentItem: connection)
+                                        }
+                                    }
+                                }
+                        }
+                    } else {
+                        ProgressView()
+                            .onAppear {
+                                Task {
+                                    await vm.getConnections(userId: userId, type: .followings, requestType: .refresh)
+                                }
+                            }
+                    }
+                }
+            }
+            .listStyle(.plain)
+            .scrollIndicators(.hidden)
+            .refreshable {
+                await vm.getConnections(userId: userId, type: activeTab == .followers ? .followers : .followings, requestType: .refresh)
+            }
+        }
+        .navigationTitle("Connections")
+        .toolbar(content: {
+            ToolbarItem {
+                if vm.isLoading {
+                    ProgressView()
+                        .transition(.opacity)
+                        .animation(.easeInOut, value: vm.isLoading)
+                }
+            }
+        })
+    }
+}
+
+fileprivate struct UserCard: View {
+    let connection: UserConnection
+    
+    var body: some View {
+        NavigationLink(value: HomeStack.userProfile(id: connection.user.id)) {
+            HStack {
+                if !connection.user.profileImage.isEmpty, let url = URL(string: connection.user.profileImage) {
+                    KFImage.url(url)
+                        .placeholder {
+                            Circle()
+                                .foregroundStyle(Color.themePrimary)
+                                .overlay {
+                                    ProgressView()
+                                }
+                        }
+                        .loadDiskFileSynchronously()
+                        .cacheMemoryOnly()
+                        .fade(duration: 0.25)
+                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 46, height: 46)
+                        .contentShape(Circle())
+                        .clipShape(Circle())
+                } else {
+                    Circle()
+                        .foregroundStyle(Color.themePrimary)
+                        .frame(width: 46, height: 46)
+                        .overlay {
+                            Image(systemName: "person.fill")
+                                .foregroundStyle(.secondary)
+                        }
+                }
+                
+                VStack(spacing: 0) {
+                    HStack {
+                        LevelView(level: connection.user.progress.level)
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 28)
+                        
+                        Text(connection.user.name)
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    Text("@" + connection.user.username)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(.leading, 8)
+                .font(.custom(style: .body))
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+    }
+}
+#Preview {
+    UserConnectionsView(userId: "645e7f843abeb74ee6248ced")
+}

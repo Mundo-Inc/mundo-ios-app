@@ -8,6 +8,7 @@
 import SwiftUI
 import PhotosUI
 import AVKit
+import Kingfisher
 
 struct AddReviewView: View {
     @ObservedObject var placeVM: PlaceViewModel
@@ -41,27 +42,22 @@ struct AddReviewView: View {
                     
                     HStack {
                         if let thumbnail = place.thumbnail, let url = URL(string: thumbnail) {
-                            CacheAsyncImage(url: url) { phase in
-                                switch phase {
-                                case .empty:
+                            KFImage.url(url)
+                                .placeholder {
                                     RoundedRectangle(cornerRadius: 10)
                                         .overlay {
                                             ProgressView()
                                         }
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                default:
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .overlay {
-                                            Image(systemName: "photo")
-                                        }
                                 }
-                            }
-                            .frame(width: 50, height: 50)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .contentShape(RoundedRectangle(cornerRadius: 10))
+                                .loadDiskFileSynchronously()
+                                .cacheMemoryOnly()
+                                .fade(duration: 0.25)
+                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 50, height: 50)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .contentShape(RoundedRectangle(cornerRadius: 10))
                         }
                         
                         VStack {

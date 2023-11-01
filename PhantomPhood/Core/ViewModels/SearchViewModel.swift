@@ -115,7 +115,7 @@ class SearchViewModel: ObservableObject {
                     if let location = locationManager.location {
                         locationQuery += "&lat=\(location.coordinate.latitude)&lng=\(location.coordinate.longitude)&radius=\(self.searchPlaceRegion == .global ? "global" : String(2000))"
                     }
-                    let (data, _) = try await self.apiManager.request("/places?limit=8\(value.isEmpty ? "" : "&q=\(value)")\(locationQuery)", token: self.auth.token) as (PlaceSearchResponse?, HTTPURLResponse)
+                    let data = try await self.apiManager.requestData("/places?limit=8\(value.isEmpty ? "" : "&q=\(value)")\(locationQuery)", token: self.auth.token) as PlaceSearchResponse?
                     if let data {
                         self.placeSearchResults = data.places
                     }
@@ -135,7 +135,7 @@ class SearchViewModel: ObservableObject {
         } else if self.scope == .users {
             Task {
                 do {
-                    let (data, _) = try await self.apiManager.request("/users?q=\(value)", token: self.auth.token) as (UserSearchResponse?, HTTPURLResponse)
+                    let data = try await self.apiManager.requestData("/users?q=\(value)", token: self.auth.token) as UserSearchResponse?
                     if let data {
                         self.userSearchResults = data.data
                     }

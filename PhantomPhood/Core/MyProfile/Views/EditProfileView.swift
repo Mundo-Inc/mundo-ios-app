@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PhotosUI
+import Kingfisher
 
 struct EditProfileView: View {
     @EnvironmentObject var auth: Authentication
@@ -87,56 +88,52 @@ struct EditProfileView: View {
                                     }
                             case .empty:
                                 if let user = auth.user {
-                                    AsyncImage(url: URL(string: user.profileImage)) { phase in
-                                        if let image = phase.image {
-                                            self.profileImage(image: image)
-                                                .overlay {
-                                                    ZStack {
-                                                        Color.black.opacity(0.5)
-                                                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                                                        PhotosPicker(
-                                                            selection: $vm.imageSelection,
-                                                            matching: .images,
-                                                            photoLibrary: .shared()
-                                                        ) {
-                                                            if !vm.isDeleting {
-                                                                Image(systemName: "square.and.pencil")
-                                                                    .font(.system(size: 36))
-                                                                    .symbolRenderingMode(.hierarchical)
-                                                                    .foregroundStyle(.white)
-                                                            }
-                                                            
+                                    Group {
+                                        if let url = URL(string: user.profileImage) {
+                                            KFImage.url(url)
+                                                .placeholder {
+                                                    RoundedRectangle(cornerRadius: 15)
+                                                        .foregroundStyle(.tertiary)
+                                                        .overlay {
+                                                            ProgressView()
                                                         }
-                                                    }
                                                 }
-                                        } else if phase.error != nil {
-                                            VStack(spacing: 0) {
-                                                Image(systemName: "exclamationmark.icloud")
-                                                    .font(.system(size: 42))
-                                                    .symbolRenderingMode(.hierarchical)
-                                                    .foregroundStyle(.red)
-                                                Text("Error")
-                                                    .font(.custom(style: .caption))
-                                            }
-                                            .frame(width: 90, height: 90)
-                                            .background(Color.themeBG)
-                                            .clipShape(
-                                                .rect(
-                                                    topLeadingRadius: 15,
-                                                    bottomLeadingRadius: 15,
-                                                    bottomTrailingRadius: 15,
-                                                    topTrailingRadius: 15
-                                                )
-                                            )
+                                                .loadDiskFileSynchronously()
+                                                .cacheMemoryOnly()
+                                                .fade(duration: 0.25)
+                                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
                                         } else {
                                             RoundedRectangle(cornerRadius: 15)
-                                                .frame(width: 90, height: 90)
                                                 .foregroundStyle(.tertiary)
-                                                .overlay {
-                                                    ProgressView()
-                                                }
                                         }
                                     }
+                                    .frame(width: 90, height: 90)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .foregroundStyle(Color.themePrimary)
+                                    )
+                                    .overlay {
+                                        ZStack {
+                                            Color.black.opacity(0.5)
+                                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                                            PhotosPicker(
+                                                selection: $vm.imageSelection,
+                                                matching: .images,
+                                                photoLibrary: .shared()
+                                            ) {
+                                                if !vm.isDeleting {
+                                                    Image(systemName: "square.and.pencil")
+                                                        .font(.system(size: 36))
+                                                        .symbolRenderingMode(.hierarchical)
+                                                        .foregroundStyle(.white)
+                                                }
+                                                
+                                            }
+                                        }
+                                    }
+                                    .clipShape(.rect(cornerRadius: 15))
                                 } else {
                                     Color.themePrimary
                                         .frame(width: 90, height: 90)
@@ -309,20 +306,13 @@ extension EditProfileView {
     func profileImage(image: Image) -> some View {
         image
             .resizable()
-            .scaledToFill()
+            .aspectRatio(contentMode: .fill)
             .frame(width: 90, height: 90)
             .background(
                 RoundedRectangle(cornerRadius: 15)
                     .foregroundStyle(Color.themePrimary)
             )
-            .clipShape(
-                .rect(
-                    topLeadingRadius: 15,
-                    bottomLeadingRadius: 15,
-                    bottomTrailingRadius: 15,
-                    topTrailingRadius: 15
-                )
-            )
+            .clipShape(.rect(cornerRadius: 15))
             
     }
 }

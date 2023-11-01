@@ -41,7 +41,7 @@ class PlaceMediaViewModel: ObservableObject {
         }
         
         do {
-            let (data, _) = try await apiManager.request("/places/\(placeId)/media?page=\(page)", token: auth.token) as (ReviewsResponse?, HTTPURLResponse)
+            let data = try await apiManager.requestData("/places/\(placeId)/media?page=\(page)", token: auth.token) as ReviewsResponse?
             if let data = data {
                 if page == 1 {
                     medias = data.data

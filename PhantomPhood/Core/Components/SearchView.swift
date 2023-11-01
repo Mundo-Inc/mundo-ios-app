@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct SearchView: View {
     @Environment(\.dismissSearch) var dismissSearch
@@ -256,27 +257,23 @@ fileprivate struct UserCard: View {
         } label: {
             HStack {
                 if !user.profileImage.isEmpty, let url = URL(string: user.profileImage) {
-                    CacheAsyncImage(url: url) { phase in
-                        switch phase {
-                        case .empty:
+                    KFImage.url(url)
+                        .placeholder {
                             Circle()
+                                .foregroundStyle(Color.themePrimary)
                                 .overlay {
                                     ProgressView()
                                 }
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        default:
-                            Circle()
-                                .overlay {
-                                    Image(systemName: "xmark.icloud.fill")
-                                }
                         }
-                    }
-                    .contentShape(Circle())
-                    .clipShape(Circle())
-                    .frame(width: 42, height: 42)
+                        .loadDiskFileSynchronously()
+                        .cacheMemoryOnly()
+                        .fade(duration: 0.25)
+                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .contentShape(Circle())
+                        .clipShape(Circle())
+                        .frame(width: 42, height: 42)
                 }
                 
                 VStack {

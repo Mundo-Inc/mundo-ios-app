@@ -27,7 +27,7 @@ class NotificationsDataManager {
             fatalError("No token provided")
         }
         
-        let (data, _) = try await apiManager.request("/notifications?page=\(page)&limit=30", method: .get, token: token) as (FeedResponse?, HTTPURLResponse)
+        let data = try await apiManager.requestData("/notifications?page=\(page)&limit=30", method: .get, token: token) as FeedResponse?
         
         if let data = data {
             return data

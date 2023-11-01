@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct CommentsView: View {
     @ObservedObject var vm: CommentsViewModel
@@ -51,37 +52,29 @@ struct CommentsView: View {
                     HStack {
                         Group {
                             if !comment.author.profileImage.isEmpty, let url = URL(string: comment.author.profileImage) {
-                                AsyncImage(url: url) { phase in
-                                    Group {
-                                        if let image = phase.image {
-                                            image
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(width: 44, height: 44)
-                                                .clipShape(Circle())
-                                        } else if phase.error != nil {
-                                            Circle()
-                                                .frame(width: 44, height: 44)
-                                                .foregroundStyle(Color.themePrimary)
-                                                .overlay {
-                                                    Image(systemName: "exclamationmark.icloud")
-                                                }
-                                        } else {
-                                            Circle()
-                                                .frame(width: 44, height: 44)
-                                                .foregroundStyle(Color.themePrimary)
-                                                .overlay {
-                                                    ProgressView()
-                                                }
-                                        }
+                                KFImage.url(url)
+                                    .placeholder {
+                                        Circle()
+                                            .frame(width: 44, height: 44)
+                                            .foregroundStyle(Color.themePrimary)
+                                            .overlay {
+                                                ProgressView()
+                                            }
                                     }
+                                    .loadDiskFileSynchronously()
+                                    .cacheMemoryOnly()
+                                    .fade(duration: 0.25)
+                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 44, height: 44)
+                                    .clipShape(Circle())
                                     .overlay(alignment: .top) {
                                         LevelView(level: comment.author.progress.level)
                                             .aspectRatio(contentMode: .fit)
                                             .frame(width: 24, height: 30)
                                             .offset(y: 28)
                                     }
-                                }
                             } else {
                                 Image(systemName: "person.circle.fill")
                                     .resizable()

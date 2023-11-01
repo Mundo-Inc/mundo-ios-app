@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct FeedLevelUpView: View {
     let data: FeedItem
@@ -21,7 +22,9 @@ struct FeedLevelUpView: View {
         self._reactions = State(wrappedValue: data.reactions)
     }
     
-    @StateObject var selectReactionsViewModel = SelectReactionsViewModel.shared
+    @ObservedObject var selectReactionsViewModel = SelectReactionsViewModel.shared
+    
+    let startDate = Date()
     
     var body: some View {
         FeedItemTemplate(user: data.user, comments: data.comments, isActive: commentsViewModel.currentActivityId == data.id) {
@@ -62,31 +65,22 @@ struct FeedLevelUpView: View {
                                     .foregroundStyle(.gray.opacity(0.8))
                                 
                                 if !user.profileImage.isEmpty, let url = URL(string: user.profileImage) {
-                                    AsyncImage(url: url) { phase in
-                                        Group {
-                                            if let image = phase.image {
-                                                image
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(width: 50, height: 50)
-                                                    .clipShape(Circle())
-                                            } else if phase.error != nil {
-                                                Circle()
-                                                    .frame(width: 50, height: 50)
-                                                    .foregroundStyle(Color.themePrimary)
-                                                    .overlay {
-                                                        Image(systemName: "exclamationmark.icloud")
-                                                    }
-                                            } else {
-                                                Circle()
-                                                    .frame(width: 50, height: 50)
-                                                    .foregroundStyle(Color.themePrimary)
-                                                    .overlay {
-                                                        ProgressView()
-                                                    }
-                                            }
+                                    KFImage.url(url)
+                                        .placeholder {
+                                            Circle()
+                                                .foregroundStyle(Color.themePrimary)
+                                                .overlay {
+                                                    ProgressView()
+                                                }
                                         }
-                                    }
+                                        .loadDiskFileSynchronously()
+                                        .cacheMemoryOnly()
+                                        .fade(duration: 0.25)
+                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 50, height: 50)
+                                        .clipShape(Circle())
                                 } else {
                                     Image(systemName: "person.circle.fill")
                                         .resizable()
@@ -100,7 +94,7 @@ struct FeedLevelUpView: View {
                             Text(user.name)
                                 .font(.custom(style: .subheadline))
                                 .fontWeight(.bold)
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color.white)
                             
                             Spacer()
                             
@@ -120,11 +114,18 @@ struct FeedLevelUpView: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background {
-                            ZStack {
-                                Color(red: 0.14, green: 0.14, blue: 0.14)
-                                Image(.profileCardBG)
-                                    .resizable()
-                                    .scaledToFill()
+                            if #available(iOS 17.0, *) {
+                                TimelineView(.animation) { context in
+                                    Color(red: 0.14, green: 0.14, blue: 0.14)
+                                        .colorEffect(ShaderLibrary.circleLoader(.boundingRect, .float(startDate.timeIntervalSinceNow)))
+                                }
+                            } else {
+                                ZStack {
+                                    Color(red: 0.14, green: 0.14, blue: 0.14)
+                                    Image(.profileCardBG)
+                                        .resizable()
+                                        .scaledToFill()
+                                }
                             }
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 10))

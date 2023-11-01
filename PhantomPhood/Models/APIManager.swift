@@ -117,6 +117,74 @@ class APIManager {
             throw APIError.decodingError(error)
         }
     }
+    
+    func requestData<T: Decodable>(
+        _ endpoint: String,
+        method: HTTPMethod = .get,
+        body: Data? = nil,
+        queryParams: [String: String]? = nil,
+        token: String? = nil,
+        contentType: ContentType? = .applicationJson
+    ) async throws -> T? {
+        
+        var components = URLComponents(string: "\(APIManager.baseURL)\(endpoint)")
+        
+        // Handle query parameters
+        if let queryParams = queryParams {
+            components?.queryItems = queryParams.map { URLQueryItem(name: $0.key, value: $0.value) }
+        }
+        
+        guard let url = components?.url else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = method.rawValue
+        
+        switch contentType {
+        case .applicationJson:
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        case .multipartFormData(let boundary):
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        case nil:
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
+        
+        if let authToken = token {
+            request.addValue(authToken, forHTTPHeaderField: "Authorization")
+        }
+        
+        if let bodyData = body {
+            request.httpBody = bodyData
+        }
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        
+        if httpResponse.statusCode < 200 || httpResponse.statusCode >= 300 {
+            // Try decoding server error
+            if let serverError = try? JSONDecoder().decode(ServerError.self, from: data) {
+                throw APIError.serverError(serverError)
+            } else {
+                throw APIError.unknown
+            }
+        }
+        
+        // Handle 204 No Content
+        if httpResponse.statusCode == 204 {
+            return nil
+        }
+        
+        do {
+            let decodedData = try JSONDecoder().decode(T.self, from: data)
+            return decodedData
+        } catch {
+            throw APIError.decodingError(error)
+        }
+    }
         
     func requestNoContent(
         _ endpoint: String,

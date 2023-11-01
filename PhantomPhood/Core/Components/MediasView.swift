@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct MediasView: View {
     @StateObject var vm: MediasViewModel
@@ -27,30 +28,23 @@ struct MediasView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 15))
                             } else if media.type == .image {
                                 if let url = URL(string: media.src) {
-                                    CacheAsyncImage(url: url) { phase in
-                                        switch phase {
-                                        case .empty:
+                                    KFImage.url(url)
+                                        .placeholder {
                                             RoundedRectangle(cornerRadius: 15)
                                                 .foregroundStyle(Color.themePrimary)
                                                 .overlay {
                                                     ProgressView()
                                                 }
-                                        case .success(let image):
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                        default:
-                                            RoundedRectangle(cornerRadius: 15)
-                                                .foregroundStyle(Color.themePrimary)
-                                                .overlay {
-                                                    Image(systemName: "exclamationmark.icloud")
-                                                        .foregroundStyle(.red)
-                                                }
                                         }
-                                    }
-                                    .frame(maxWidth: UIScreen.main.bounds.size.width, maxHeight: UIScreen.main.bounds.size.height)
-                                    .contentShape(RoundedRectangle(cornerRadius: 15))
-                                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                                        .loadDiskFileSynchronously()
+                                        .cacheMemoryOnly()
+                                        .fade(duration: 0.25)
+                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(maxWidth: UIScreen.main.bounds.size.width, maxHeight: UIScreen.main.bounds.size.height)
+                                        .contentShape(RoundedRectangle(cornerRadius: 15))
+                                        .clipShape(RoundedRectangle(cornerRadius: 15))
                                 }
                             }
                         }

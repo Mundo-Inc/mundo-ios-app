@@ -11,6 +11,7 @@ enum MyProfileStack: Hashable {
     case settings
     case userProfile(id: String)
     case place(id: String, action: PlaceAction? = nil)
+    case myConnections(initTab: UserConnectionsTab)
     
     
     func hash(into hasher: inout Hasher) {
@@ -24,6 +25,9 @@ enum MyProfileStack: Hashable {
             hasher.combine("place")
             hasher.combine(id)
             hasher.combine(action)
+        case .myConnections(initTab: let tab):
+            hasher.combine("myConnections")
+            hasher.combine(tab)
         }
     }
 }
@@ -32,4 +36,10 @@ enum MyProfileActiveTab: String, Hashable, CaseIterable {
     case stats = "Stats"
     case achievements = "Acheivements"
     case activity = "Activity"
+    case checkins = "Checkins"
+}
+
+enum UserConnectionsTab {
+    case followers
+    case followings
 }

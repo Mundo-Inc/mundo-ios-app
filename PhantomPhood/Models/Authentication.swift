@@ -36,7 +36,7 @@ struct CurrentUserFullData: Codable {
     let _id, name, username, profileImage: String
     var bio: String?
     let email: Email
-    let rank, remainingXp, coins, reviewsCount, followersCount, followingCount: Int
+    let rank, remainingXp, coins, reviewsCount, followersCount, followingCount, totalCheckins: Int
     let role: Role
     let verified: Bool
     let progress: UserProgress
@@ -79,9 +79,6 @@ class Authentication: ObservableObject {
     @Published private(set) var userId: String? = nil
     
     var token: String? {
-//        #if DEBUG
-//        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDVjOGIyMjIxMzQ2NDNjMDIwODYwYTUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2OTg2Nzc5ODYsImV4cCI6MTcwMTI2OTk4Nn0.XwynlrGWRHbU_rxhYrg7S8H65h7-AgStmNnEKQ2Rz14"
-//        #endif
         // get jwt token from Keychain
         let tk = KeychainHelper.getData(for: .userToken)
         return tk
@@ -104,7 +101,7 @@ class Authentication: ObservableObject {
     
     // MARK: - Public Methods
     
-    func signin(email: String, password: String) async throws -> (SignInData?, HTTPURLResponse) {
+    func signin(email: String, password: String) async throws -> SignInData? {
         struct SignInRequestBody: Encodable {
             let action: String
             let email: String
@@ -113,7 +110,7 @@ class Authentication: ObservableObject {
         
         let reqBody = try apiManager.createRequestBody(SignInRequestBody(action: "signin", email: email, password: password))
         
-        let (data, response) = try await apiManager.request("/auth", method: .post, body: reqBody) as (SignInData?, HTTPURLResponse)
+        let data = try await apiManager.requestData("/auth", method: .post, body: reqBody) as SignInData?
         
         self.isSignedIn = true
         if let data {
@@ -127,10 +124,10 @@ class Authentication: ObservableObject {
         }
         await self.updateUserInfo()
         
-        return (data, response)
+        return data
     }
     
-    func signup(name: String, email: String, password: String, username: String?) async throws -> (SignUpData?, HTTPURLResponse) {
+    func signup(name: String, email: String, password: String, username: String?) async throws -> SignUpData? {
         struct SignUpRequestBody: Encodable {
             let name: String
             let email: String
@@ -140,7 +137,7 @@ class Authentication: ObservableObject {
         
         let reqBody = try apiManager.createRequestBody(SignUpRequestBody(name: name, email: email, password: password, username: username))
         
-        let (data, response) = try await apiManager.request("/users", method: .post, body: reqBody) as (SignUpData?, HTTPURLResponse)
+        let data = try await apiManager.requestData("/users", method: .post, body: reqBody) as SignUpData?
         
         self.isSignedIn = true
         if let data {
@@ -154,7 +151,7 @@ class Authentication: ObservableObject {
         }
         await self.updateUserInfo()
         
-        return (data, response)
+        return data
     }
     
     func signout() {
@@ -174,7 +171,7 @@ class Authentication: ObservableObject {
 
         if let userId, let token {
             do {
-                let (data, _) = try await apiManager.request("/users/\(userId)", method: .get, token: token) as (UserResponse?, HTTPURLResponse)
+                let data = try await apiManager.requestData("/users/\(userId)", method: .get, token: token) as UserResponse?
                 
                 if let data {
                     self.user = data.data

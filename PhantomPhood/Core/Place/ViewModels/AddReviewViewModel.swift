@@ -151,7 +151,7 @@ class AddReviewViewModel: ObservableObject {
                         do {
                             if let data = d.jpegData(compressionQuality: 0.8) {
                                 let (formData, boundary) = uploadFormDataBody(file: UploadFile(name: media.id + ".jpg", data: data, type: .image), useCase: .placeReview)
-                                let (resData, _) = try await apiManager.request("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary)) as (APIResponse?, HTTPURLResponse)
+                                let resData = try await apiManager.requestData("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary)) as APIResponse?
                                 if let resData {
                                     self.imageUploads.append(.init(uploadId: resData.data.id, caption: ""))
                                 }
@@ -166,7 +166,7 @@ class AddReviewViewModel: ObservableObject {
                             let data = try Data(contentsOf: movie.url)
                             
                             let (formData, boundary) = uploadFormDataBody(file: UploadFile(name: media.id + ".mp4", data: data, type: .video), useCase: .placeReview)
-                            let (resData, _) = try await apiManager.request("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary)) as (APIResponse?, HTTPURLResponse)
+                            let resData = try await apiManager.requestData("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary)) as APIResponse?
                             
                             if let resData {
                                 self.videoUploads.append(.init(uploadId: resData.data.id, caption: ""))
