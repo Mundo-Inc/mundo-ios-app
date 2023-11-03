@@ -10,6 +10,7 @@ import Foundation
 enum MapStack: Hashable {
     case userProfile(id: String)
     case place(id: String, action: PlaceAction? = nil)
+    case userConnections(userId: String, initTab: UserConnectionsTab)
     
     func hash(into hasher: inout Hasher) {
         switch self {
@@ -20,6 +21,10 @@ enum MapStack: Hashable {
             hasher.combine("place")
             hasher.combine(id)
             hasher.combine(action)
+        case .userConnections(let userId, let tab):
+            hasher.combine("userConnections")
+            hasher.combine(userId)
+            hasher.combine(tab)
         }
     }
 }

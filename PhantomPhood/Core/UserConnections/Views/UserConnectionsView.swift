@@ -179,6 +179,7 @@ fileprivate struct UserCard: View {
         }
     }
 }
+
 #Preview {
     UserConnectionsView(userId: "645e7f843abeb74ee6248ced")
 }

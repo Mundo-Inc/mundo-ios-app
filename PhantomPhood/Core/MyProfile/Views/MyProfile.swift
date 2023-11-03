@@ -163,27 +163,20 @@ struct MyProfile: View {
                             }
                             .frame(maxWidth: .infinity)
                         case .activity:
-                            VStack {
-                                Text("No Activity yet")
-                                    .font(.custom(style: .headline))
-                            }
-                            .frame(maxWidth: .infinity)
+                            ProfileActivity()
                         case .checkins:
-                            VStack {
-                                Text("No Checkins yet")
-                                    .font(.custom(style: .headline))
-                            }
-                            .frame(maxWidth: .infinity)
+                            ProfileCheckins()
                         }
                     }
                 }
-                .frame(minHeight: UIScreen.main.bounds.height / 2)
+                .frame(minHeight: UIScreen.main.bounds.height / 1.5)
                 .background(
                     Color.themeBG
                         .offset(y: -30)
                 )
                 .zIndex(-1)
             }
+            .scrollIndicators(.hidden)
             .fullScreenCover(isPresented: $appData.showEditProfile, content: {
                 EditProfileView()
             })
@@ -217,6 +210,8 @@ struct MyProfile: View {
                     UserProfileView(id: id)
                 case .myConnections(let initTab):
                     MyConnections(activeTab: initTab)
+                case .userConnections(let userId, let initTab):
+                    UserConnectionsView(userId: userId, activeTab: initTab)
                 }
             }
         }

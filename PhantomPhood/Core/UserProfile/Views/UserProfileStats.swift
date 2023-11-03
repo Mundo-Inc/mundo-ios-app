@@ -9,25 +9,22 @@ import SwiftUI
 
 struct UserProfileStats: View {
     let user: UserProfile?
-//    @ObservedObject private var appData = AppData.shared
-//    @ObservedObject private var auth = Authentication.shared
+    @Binding var activeTab: UserProfileTab
     
-//    func navigateTo(id: String) {
-//        if let userId = auth.userId, userId == id {
-//            appData.activeTab = .myProfile
-//            return
-//        }
-//        switch appData.activeTab {
-//        case .home:
-//            appData.homeNavStack.append(.userProfile(id: id))
-//        case .map:
-//            appData.mapNavStack.append(.userProfile(id: id))
-//        case .leaderboard:
-//            appData.leaderboardNavStack.append(.userProfile(id: id))
-//        case .myProfile:
-//            appData.myProfileNavStack.append(.userProfile(id: id))
-//        }
-//    }
+    @ObservedObject var appData = AppData.shared
+        
+    func connectionNavigationHandler(type: UserConnectionsTab) -> any Hashable {
+        switch appData.activeTab {
+        case .home:
+            return HomeStack.userConnections(userId: user?.id ?? "", initTab: type)
+        case .map:
+            return MapStack.userConnections(userId: user?.id ?? "", initTab: type)
+        case .leaderboard:
+            return LeaderboardStack.userConnections(userId: user?.id ?? "", initTab: type)
+        case .myProfile:
+            return MyProfileStack.userConnections(userId: user?.id ?? "", initTab: type)
+        }
+    }
     
     var body: some View {
         VStack(spacing: 30) {
@@ -39,7 +36,7 @@ struct UserProfileStats: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack {
-                    NavigationLink(value: HomeStack.userConnections(userId: user?.id ?? "", initTab: .followers)) {
+                    NavigationLink(value: connectionNavigationHandler(type: .followers)) {
                         DataCard(
                             icon: "person.3.fill",
                             iconColor: LinearGradient(colors: [
@@ -58,7 +55,7 @@ struct UserProfileStats: View {
                     
                     Spacer()
                     
-                    NavigationLink(value: HomeStack.userConnections(userId: user?.id ?? "", initTab: .followings)) {
+                    NavigationLink(value: connectionNavigationHandler(type: .followings)) {
                         DataCard(
                             icon: "person.2.fill",
                             iconColor: LinearGradient(colors: [
@@ -155,6 +152,11 @@ struct UserProfileStats: View {
                         title: "Reviews",
                         value: user?.reviewsCount
                     )
+                    .onTapGesture {
+                        withAnimation {
+                            activeTab = .activity
+                        }
+                    }
                     
                     Spacer()
                     
@@ -171,6 +173,11 @@ struct UserProfileStats: View {
                         title: "Checkins",
                         value: user?.totalCheckins
                     )
+                    .onTapGesture {
+                        withAnimation {
+                            activeTab = .checkins
+                        }
+                    }
                 }
             }
             
@@ -181,5 +188,5 @@ struct UserProfileStats: View {
 }
 
 #Preview {
-    UserProfileStats(user: nil)
+    UserProfileStats(user: nil, activeTab: .constant(.stats))
 }

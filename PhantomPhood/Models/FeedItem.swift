@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum FeedItemActivityType: String, Decodable {
+enum FeedItemActivityType: String, Decodable, CaseIterable {
     case newCheckin = "NEW_CHECKIN"
     case newReview = "NEW_REVIEW"
     case newRecommend = "NEW_RECOMMEND"

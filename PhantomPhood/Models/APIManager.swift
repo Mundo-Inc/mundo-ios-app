@@ -11,14 +11,19 @@ class APIManager {
     
     // MARK: - Nested Types
     
-    struct ServerError: Codable {
+    struct ServerResponseError: Codable {
         let success: Bool
         let error: ErrorRes
         
         struct ErrorRes: Codable {
             let message: String
         }
-        
+    }
+    
+    struct ServerError: Codable {
+        let success: Bool
+        let error: ServerResponseError.ErrorRes
+        let statusCode: Int
         // Convenience property to get the main error message
         var message: String {
             return error.message
@@ -98,8 +103,8 @@ class APIManager {
         
         if httpResponse.statusCode < 200 || httpResponse.statusCode >= 300 {
             // Try decoding server error
-            if let serverError = try? JSONDecoder().decode(ServerError.self, from: data) {
-                throw APIError.serverError(serverError)
+            if let serverError = try? JSONDecoder().decode(ServerResponseError.self, from: data) {
+                throw APIError.serverError(.init(success: serverError.success, error: serverError.error, statusCode: httpResponse.statusCode))
             } else {
                 throw APIError.unknown
             }
@@ -166,9 +171,11 @@ class APIManager {
         
         if httpResponse.statusCode < 200 || httpResponse.statusCode >= 300 {
             // Try decoding server error
-            if let serverError = try? JSONDecoder().decode(ServerError.self, from: data) {
-                throw APIError.serverError(serverError)
+            if let serverError = try? JSONDecoder().decode(ServerResponseError.self, from: data) {
+                throw APIError.serverError(.init(success: serverError.success, error: serverError.error, statusCode: httpResponse.statusCode))
             } else {
+                print("Here")
+                print(httpResponse.statusCode)
                 throw APIError.unknown
             }
         }
@@ -234,8 +241,8 @@ class APIManager {
         
         if httpResponse.statusCode < 200 || httpResponse.statusCode >= 300 {
             // Try decoding server error
-            if let serverError = try? JSONDecoder().decode(ServerError.self, from: data) {
-                throw APIError.serverError(serverError)
+            if let serverError = try? JSONDecoder().decode(ServerResponseError.self, from: data) {
+                throw APIError.serverError(.init(success: serverError.success, error: serverError.error, statusCode: httpResponse.statusCode))
             } else {
                 throw APIError.unknown
             }

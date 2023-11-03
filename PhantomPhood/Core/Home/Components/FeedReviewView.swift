@@ -89,7 +89,7 @@ struct FeedReviewView: View {
                     Button {
                         showActions = true
                     } label: {
-                        Text("...")
+                        Image(systemName: "ellipsis")
                     }
                 }
             }

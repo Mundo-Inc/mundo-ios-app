@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileStats: View {
     @EnvironmentObject private var auth: Authentication
+    @EnvironmentObject private var appData: AppData
     
     var body: some View {
         VStack(spacing: 30) {
@@ -138,6 +139,11 @@ struct ProfileStats: View {
                         title: "Reviews",
                         value: auth.user?.reviewsCount
                     )
+                    .onTapGesture {
+                        withAnimation {
+                            appData.myProfileActiveTab = .activity
+                        }
+                    }
                     
                     Spacer()
                     
@@ -154,6 +160,11 @@ struct ProfileStats: View {
                         title: "Checkins",
                         value: auth.user?.totalCheckins
                     )
+                    .onTapGesture {
+                        withAnimation {
+                            appData.myProfileActiveTab = .checkins
+                        }
+                    }
                 }
             }
             

@@ -7,18 +7,6 @@
 
 import Foundation
 
-//enum HomeStack: String, CaseIterable {
-//    case notifications = "Notifications"
-//    case userProfile = "UserProfile"
-//    case place = "Place"
-//
-//    static func convert(from: String) -> Self? {
-//        return HomeStack.allCases.first { stack in
-//            stack.rawValue.lowercased() == from.lowercased()
-//        }
-//    }
-//}
-
 enum PlaceAction {
     case checkin
     case addReview

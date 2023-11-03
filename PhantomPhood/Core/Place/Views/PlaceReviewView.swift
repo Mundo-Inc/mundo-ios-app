@@ -68,7 +68,7 @@ struct PlaceReviewView: View {
                 Button {
                     showActions = true
                 } label: {
-                    Text("...")
+                    Image(systemName: "ellipsis")
                 }
                 .confirmationDialog("Actions", isPresented: $showActions) {
                     Button(role: .destructive) {

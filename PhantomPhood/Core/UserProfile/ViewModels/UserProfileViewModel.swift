@@ -19,6 +19,14 @@ class UserProfileViewModel: ObservableObject {
     @Published private(set) var user: UserProfile?
     @Published private(set) var error: String?
     
+    @Published var showActions = false
+    @Published var blockStatus: BlockStatus? = nil
+    
+    enum BlockStatus {
+        case isBlocked
+        case hasBlocked
+    }
+    
     init(id: String) {
         self.id = id
         
@@ -35,6 +43,25 @@ class UserProfileViewModel: ObservableObject {
             self.error = nil
         } catch {
             self.error = error.localizedDescription
+            guard let theError = error as? APIManager.APIError else { return }
+            switch theError {
+            case .serverError(let serverError):
+                if serverError.statusCode == 403 {
+                    if serverError.message == "You have blocked this user" {
+                        self.blockStatus = .isBlocked
+                    } else {
+                        self.blockStatus = .hasBlocked
+                    }
+                    self.user = nil
+                    self.isLoading = false
+                    self.isFollowing = nil
+                }
+                self.error = serverError.message
+            case .decodingError(let decodingError):
+                self.error = decodingError.localizedDescription
+            case .unknown:
+                print("Unknown error")
+            }
         }
     }
     
@@ -65,5 +92,29 @@ class UserProfileViewModel: ObservableObject {
             }
         }
     }
+    
+    func block() async {
+        self.isLoading = true
+        do {
+            try await dataManager.block(id: id)
+            self.user = nil
+            self.isFollowing = nil
+            self.blockStatus = .isBlocked
+        } catch {
+            print(error)
+        }
+        self.isLoading = false
+    }
 
+    func unblock() async {
+        self.isLoading = true
+        do {
+            try await dataManager.unblock(id: id)
+            self.blockStatus = nil
+            await fetchUser()
+        } catch {
+            print(error)
+        }
+        self.isLoading = false
+    }
 }

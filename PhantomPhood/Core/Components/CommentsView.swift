@@ -157,12 +157,8 @@ struct CommentsView: View {
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
-                        .padding(.top, 50)
                     }
                 }
-            }
-            .refreshable {
-//                await vm.getComments()
             }
             
             Spacer()
