@@ -89,6 +89,12 @@ class SearchViewModel: ObservableObject {
         $scope
             .sink { scope in
                 self.search(self.text)
+                
+                if !self.tokens.isEmpty {
+                    if scope != .places {
+                        self.tokens.removeAll()
+                    }
+                }
             }
             .store(in: &cancellable)
         

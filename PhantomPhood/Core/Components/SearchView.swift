@@ -9,8 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct SearchView: View {
-    @Environment(\.dismissSearch) var dismissSearch
-    @Environment(\.isSearching) var isSearching
+    @Environment(\.dismiss) var dismiss
     @ObservedObject var locationManager = LocationManager.shared
     
     @ObservedObject var searchViewModel: SearchViewModel
@@ -29,166 +28,246 @@ struct SearchView: View {
     }
         
     func closeSearch() {
-        dismissSearch()
+        dismiss()
         searchViewModel.showSearch = false
         searchViewModel.tokens.removeAll()
         searchViewModel.text = ""
     }
     
+    @FocusState var textFocused
+    
     var body: some View {
         NavigationStack {
             ZStack {
-                if let onPlaceSelect, let onUserSelect {
-                    TabView(selection: $searchViewModel.scope) {
-                        VStack {
-                            HStack {
-                                Text("Region")
-                                
-                                Spacer()
-                                
-                                Button {
-                                    withAnimation {
-                                        switch searchViewModel.searchPlaceRegion {
-                                        case .nearMe:
-                                            searchViewModel.searchPlaceRegion = .global
-                                        case .global:
-                                            searchViewModel.searchPlaceRegion = .nearMe
+                VStack(spacing: 8) {
+                    RoundedRectangle(cornerRadius: 3)
+                        .frame(width: 30, height: 3)
+                        .foregroundStyle(.tertiary)
+                        .padding(.top, 8)
+                    
+                    HStack(spacing: -14) {
+                        ForEach(searchViewModel.tokens) { token in
+                            Label(
+                                title: {
+                                    switch token {
+                                    case .checkin: Text(SearchTokens.checkin.rawValue)
+                                    case .addReview: Text(SearchTokens.addReview.rawValue)
+                                    }
+                                },
+                                icon: { Image(systemName: "xmark") }
+                            )
+                            .animation(.spring, value: searchViewModel.tokens.isEmpty)
+                            .transition(.push(from: .trailing))
+                            .font(.custom(style: .caption))
+                            .bold()
+                            .foregroundStyle(Color.accentColor)
+                            .padding(.vertical, 10.9)
+                            .padding(.horizontal, 5)
+                            .background(Color.themePrimary)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .zIndex(10)
+                            .shadow(radius: 10)
+                            .onTapGesture {
+                                withAnimation {
+                                    searchViewModel.tokens.removeAll()
+                                }
+                            }
+                        }
+                                              
+                        ZStack {
+                            TextField("Search", text: $searchViewModel.text)
+                                .withFilledStyle(size: .small, paddingLeading: searchViewModel.tokens.isEmpty ? 34 : 20)
+                                .textInputAutocapitalization(.never)
+                                .animation(.spring, value: searchViewModel.tokens.isEmpty)
+                                .focused($textFocused)
+                            
+                            if searchViewModel.tokens.isEmpty {
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 14))
+                                    .padding(.leading, 10)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .foregroundStyle(.secondary)
+                                    .transition(.push(from: .leading))
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                    .onAppear {
+                        textFocused = true
+                    }
+                    
+                    Picker("Scope", selection: $searchViewModel.scope) {
+                        Text("Places")
+                            .tag(SearchScopes.places)
+                        
+                        Text("Users")
+                            .tag(SearchScopes.users)
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal)
+                    
+                    Group {
+                        if let onPlaceSelect, let onUserSelect {
+                            TabView(selection: $searchViewModel.scope) {
+                                VStack {
+                                    HStack {
+                                        Text("Region")
+                                        
+                                        Spacer()
+                                        
+                                        Button {
+                                            withAnimation {
+                                                switch searchViewModel.searchPlaceRegion {
+                                                case .nearMe:
+                                                    searchViewModel.searchPlaceRegion = .global
+                                                case .global:
+                                                    searchViewModel.searchPlaceRegion = .nearMe
+                                                }
+                                            }
+                                        } label: {
+                                            Label {
+                                                Text(searchViewModel.searchPlaceRegion.title)
+                                            } icon: {
+                                                Image(systemName: searchViewModel.searchPlaceRegion.icon)
+                                            }
                                         }
                                     }
-                                } label: {
+                                    .padding(.horizontal)
+                                    .font(.custom(style: .body))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 6)
+                                    .background(Color.themePrimary.opacity(0.5))
+                                    .clipShape(.rect(cornerRadius: 4))
+                                    .padding(.horizontal)
+                                    
+                                    Divider()
+                                    
+                                    ScrollView {
+                                        VStack {
+                                            ForEach(searchViewModel.placeSearchResults) { place in
+                                                PlaceCard(searchViewModel: searchViewModel, place: place, closeSearch: closeSearch, onSelect: onPlaceSelect)
+                                                Divider()
+                                            }
+                                            if searchViewModel.isLoading {
+                                                ProgressView()
+                                                    .padding(.top)
+                                            }
+                                        }
+                                        .padding(.horizontal)
+                                    }
+                                    .scrollDismissesKeyboard(.interactively)
+                                }
+                                
+                                .tag(SearchScopes.places)
+                                
+                                if !searchViewModel.tokens.contains(.checkin) && !searchViewModel.tokens.contains(.checkin) {
+                                    ScrollView {
+                                        VStack {
+                                            ForEach(searchViewModel.userSearchResults) { user in
+                                                UserCard(user: user, closeSearch: closeSearch, onSelect: onUserSelect)
+                                                Divider()
+                                            }
+                                            if searchViewModel.isLoading {
+                                                ProgressView()
+                                                    .padding(.top)
+                                            }
+                                        }
+                                        .padding(.horizontal)
+                                    }
+                                    .scrollDismissesKeyboard(.interactively)
+                                    .tag(SearchScopes.users)
+                                }
+                            }
+                            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                        } else if let onPlaceSelect {
+                            VStack {
+                                HStack {
+                                    Text("Region")
+                                    
+                                    Spacer()
+                                    
                                     Label {
-                                        Text(searchViewModel.searchPlaceRegion.title)
+                                        Text(isLocationAvailable ? "Near you" : "Global")
                                     } icon: {
-                                        Image(systemName: searchViewModel.searchPlaceRegion.icon)
+                                        Image(systemName: isLocationAvailable ? "location.fill" : "globe")
                                     }
-                                }
-                            }
-                            .padding(.horizontal)
-                            .font(.custom(style: .body))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 6)
-                            .background(Color.themePrimary.opacity(0.5))
-                            .clipShape(.rect(cornerRadius: 4))
-                            .padding(.horizontal)
-                            
-                            Divider()
-                            
-                            ScrollView {
-                                VStack {
-                                    ForEach(searchViewModel.placeSearchResults) { place in
-                                        PlaceCard(searchViewModel: searchViewModel, place: place, closeSearch: closeSearch, onSelect: onPlaceSelect)
-                                        Divider()
-                                    }
-                                    if searchViewModel.isLoading {
-                                        ProgressView()
-                                    }
+                                    .foregroundStyle(.secondary)
                                 }
                                 .padding(.horizontal)
-                            }
-                            .scrollDismissesKeyboard(.interactively)
-                        }
-                        
-                        .tag(SearchScopes.places)
-                        
-                        if !searchViewModel.tokens.contains(.checkin) && !searchViewModel.tokens.contains(.checkin) {
-                            ScrollView {
-                                VStack {
-                                    ForEach(searchViewModel.userSearchResults) { user in
-                                        UserCard(user: user, closeSearch: closeSearch, onSelect: onUserSelect)
-                                        Divider()
-                                    }
-                                    if searchViewModel.isLoading {
-                                        ProgressView()
-                                    }
-                                }
+                                .font(.custom(style: .body))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 6)
+                                .background(Color.themePrimary.opacity(0.5))
+                                .clipShape(.rect(cornerRadius: 4))
                                 .padding(.horizontal)
+                                
+                                Divider()
+                                
+                                ScrollView {
+                                    VStack {
+                                        ForEach(searchViewModel.placeSearchResults) { place in
+                                            PlaceCard(searchViewModel: searchViewModel, place: place, closeSearch: closeSearch, onSelect: onPlaceSelect)
+                                            Divider()
+                                        }
+                                        if searchViewModel.isLoading {
+                                            ProgressView()
+                                                .padding(.top)
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                }
+                                .scrollDismissesKeyboard(.interactively)
                             }
-                            .scrollDismissesKeyboard(.interactively)
-                            .tag(SearchScopes.users)
+                        } else if let onUserSelect {
+                            if !searchViewModel.tokens.contains(.checkin) && !searchViewModel.tokens.contains(.checkin) {
+                                ScrollView {
+                                    VStack {
+                                        ForEach(searchViewModel.userSearchResults) { user in
+                                            UserCard(user: user, closeSearch: closeSearch, onSelect: onUserSelect)
+                                            Divider()
+                                        }
+                                        if searchViewModel.isLoading {
+                                            ProgressView()
+                                                .padding(.top)
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                }
+                                .scrollDismissesKeyboard(.interactively)
+                                .tag(SearchScopes.users)
+                            }
                         }
                     }
-                } else if let onPlaceSelect {
-                    VStack {
-                        HStack {
-                            Text("Region")
-                            
-                            Spacer()
-                            
-                            Label {
-                                Text(isLocationAvailable ? "Near you" : "Global")
-                            } icon: {
-                                Image(systemName: isLocationAvailable ? "location.fill" : "globe")
-                            }
-                            .foregroundStyle(.secondary)
-                        }
-                        .padding(.horizontal)
-                        .font(.custom(style: .body))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
-                        .background(Color.themePrimary.opacity(0.5))
-                        .clipShape(.rect(cornerRadius: 4))
-                        .padding(.horizontal)
-                        
-                        Divider()
-                        
-                        ScrollView {
-                            VStack {
-                                ForEach(searchViewModel.placeSearchResults) { place in
-                                    PlaceCard(searchViewModel: searchViewModel, place: place, closeSearch: closeSearch, onSelect: onPlaceSelect)
-                                    Divider()
-                                }
-                                if searchViewModel.isLoading {
-                                    ProgressView()
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                        .scrollDismissesKeyboard(.interactively)
-                    }
-                } else if let onUserSelect {
-                    if !searchViewModel.tokens.contains(.checkin) && !searchViewModel.tokens.contains(.checkin) {
-                        ScrollView {
-                            VStack {
-                                ForEach(searchViewModel.userSearchResults) { user in
-                                    UserCard(user: user, closeSearch: closeSearch, onSelect: onUserSelect)
-                                    Divider()
-                                }
-                                if searchViewModel.isLoading {
-                                    ProgressView()
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                        .scrollDismissesKeyboard(.interactively)
-                        .tag(SearchScopes.users)
-                    }
+                    .opacity(searchViewModel.isLoading ? 0.6 : 1)
                 }
             }
-            .searchable(text: $searchViewModel.text, tokens: $searchViewModel.tokens, placement: .navigationBarDrawer(displayMode: .always), token: { token in
-                switch token {
-                case .checkin: Text(SearchTokens.checkin.rawValue)
-                case .addReview: Text(SearchTokens.addReview.rawValue)
-                }
-            })
-            .searchScopes($searchViewModel.scope, activation: .onSearchPresentation, {
-                if onPlaceSelect != nil && onUserSelect != nil {
-                    if !searchViewModel.tokens.contains(.checkin) && !searchViewModel.tokens.contains(.checkin) {
-                        ForEach(SearchScopes.allCases) { scope in
-                            Text(scope.rawValue)
-                                .tag(scope)
-                        }
-                    }
-                }
-            })
-            .onSubmit(of: .search) {
-                print(searchViewModel.text)
-            }
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.inline)
-            .opacity(searchViewModel.isLoading ? 0.6 : 1)
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+//            .toolbar(content: {
+//                ToolbarItem(placement: .principal) {
+//                    TextField("Search", text: $searchViewModel.text)
+//                        .withFilledStyle(size: .small)
+//                        .frame(width: UIScreen.main.bounds.width - 30)
+//                }
+//                
+//            })
+//            .searchable(text: $searchViewModel.text, tokens: $searchViewModel.tokens, placement: .navigationBarDrawer(displayMode: .always), token: { token in
+//                switch token {
+//                case .checkin: Text(SearchTokens.checkin.rawValue)
+//                case .addReview: Text(SearchTokens.addReview.rawValue)
+//                }
+//            })
+//            .searchScopes($searchViewModel.scope, activation: .onSearchPresentation, {
+//                if onPlaceSelect != nil && onUserSelect != nil {
+//                    if !searchViewModel.tokens.contains(.checkin) && !searchViewModel.tokens.contains(.checkin) {
+//                        ForEach(SearchScopes.allCases) { scope in
+//                            Text(scope.rawValue)
+//                                .tag(scope)
+//                        }
+//                    }
+//                }
+//            })
+//            .navigationTitle("Search")
+//            .navigationBarTitleDisplayMode(.inline)
             .background(Color.themeBG)
-            
         }
     }
 }
