@@ -32,15 +32,6 @@ struct PhantomPhoodApp: App {
     init() {
         URLCache.shared.memoryCapacity = 50_000_000 // ~50 MB memory space
         URLCache.shared.diskCapacity = 1_000_000_000 // ~1GB disk cache space
-        
-//        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { status, error in
-//            if error == nil {
-//                if status {
-//                    UIApplication.shared.registerForRemoteNotifications()
-//                    UIApplication.shared.delegate?.application(<#T##UIApplication#>, didRegisterForRemoteNotificationsWithDeviceToken: <#T##Data#>)
-//                }
-//            }
-//        }
     }
     
     var body: some Scene {
