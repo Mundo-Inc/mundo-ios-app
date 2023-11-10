@@ -6,25 +6,79 @@
 //
 
 import Foundation
+import SwiftUI
+import MapKit
 
 class PlaceDataManager {
     private let apiManager = APIManager()
     private let auth: Authentication = Authentication.shared
     
-    func fetch(id: String) async throws -> Place {
-        struct PlaceResponse: Decodable {
-            let success: Bool
-            let data: Place
+    struct PlaceResponse: Decodable {
+        let success: Bool
+        let data: Place
+    }
+    
+    func fetch(mapPlace: MapPlace) async throws -> Place {
+        guard let token = await auth.token else {
+            throw URLError(.userAuthenticationRequired)
+        }
+                
+        let data = try await apiManager.requestData("/places/context?title=\(mapPlace.title)&lat=\(mapPlace.coordinate.latitude)&lng=\(mapPlace.coordinate.longitude)", method: .get, token: token) as PlaceResponse?
+
+        guard let data else {
+            throw URLError(.badServerResponse)
         }
         
+        return data.data
+    }
+    
+    func fetch(mapItem: MKMapItem) async throws -> Place {
         guard let token = await auth.token else {
-            fatalError("No token")
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        guard let title = mapItem.name else {
+            throw URLError(.requestBodyStreamExhausted)
+        }
+        
+        let data = try await apiManager.requestData("/places/context?title=\(title)&lat=\(mapItem.placemark.coordinate.latitude)&lng=\(mapItem.placemark.coordinate.longitude)", method: .get, token: token) as PlaceResponse?
+
+        guard let data else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return data.data
+    }
+    
+    @available(iOS 17.0, *)
+    func fetch(mapFeature: MapFeature) async throws -> Place {
+        guard let token = await auth.token else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        guard let title = mapFeature.title else {
+            throw URLError(.requestBodyStreamExhausted)
+        }
+        
+//        645c1d1ab41f8e12a0d166bc
+        let data = try await apiManager.requestData("/places/context?title=\(title)&lat=\(mapFeature.coordinate.latitude)&lng=\(mapFeature.coordinate.longitude)", method: .get, token: token) as PlaceResponse?
+
+        guard let data else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return data.data
+    }
+    
+    func fetch(id: String) async throws -> Place {
+        guard let token = await auth.token else {
+            throw URLError(.userAuthenticationRequired)
         }
         
         let data = try await apiManager.requestData("/places/\(id)", method: .get, token: token) as PlaceResponse?
 
-        guard let data = data else {
-            fatalError("Couldn't get the data")
+        guard let data else {
+            throw URLError(.badServerResponse)
         }
         
         return data.data
@@ -42,7 +96,7 @@ class PlaceDataManager {
         }
         
         guard let token = await auth.token else {
-            fatalError("No token")
+            throw URLError(.userAuthenticationRequired)
         }
         
         struct RequestBody: Encodable {

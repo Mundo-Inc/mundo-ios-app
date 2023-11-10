@@ -80,7 +80,7 @@ struct Place: Identifiable, Decodable {
         struct GoogleReviews: Decodable {
             let author_name: String
             let language: String?
-            let original_language: String
+            let original_language: String?
             let profile_photo_url: String?
             let rating: Int
             let relative_time_description: String

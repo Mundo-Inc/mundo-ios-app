@@ -56,6 +56,8 @@ struct HomeView: View {
                     NotificationsView()
                 case .place(let id, let action):
                     PlaceView(id: id, action: action)
+                case .placeMapPlace(let mapPlace, let action):
+                    PlaceView(mapPlace: mapPlace, action: action)
                 case .userProfile(let id):
                     UserProfileView(id: id)
                 case .userConnections(let userId, let initTab):

@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import MapKit
 import Kingfisher
 
-struct SearchView: View {
+struct SearchView<Content>: View where Content : View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var locationManager = LocationManager.shared
     
@@ -18,13 +19,15 @@ struct SearchView: View {
         locationManager.location != nil
     }
     
-    var onPlaceSelect: ((CompactPlace) -> Void)? = nil
+    var onPlaceSelect: ((MKMapItem) -> Void)? = nil
     var onUserSelect: ((User) -> Void)? = nil
     
-    init(vm: SearchViewModel, onPlaceSelect: ((CompactPlace) -> Void)? = nil, onUserSelect: ((User) -> Void)? = nil) {
+    var header: Content
+    init(vm: SearchViewModel, onPlaceSelect: ((MKMapItem) -> Void)? = nil, onUserSelect: ((User) -> Void)? = nil, @ViewBuilder header: () -> Content = {EmptyView()}) {
         self._searchViewModel = ObservedObject(wrappedValue: vm)
         self.onPlaceSelect = onPlaceSelect
         self.onUserSelect = onUserSelect
+        self.header = header()
     }
         
     func closeSearch() {
@@ -110,41 +113,42 @@ struct SearchView: View {
                         if let onPlaceSelect, let onUserSelect {
                             TabView(selection: $searchViewModel.scope) {
                                 VStack {
-                                    HStack {
-                                        Text("Region")
-                                        
-                                        Spacer()
-                                        
-                                        Button {
-                                            withAnimation {
-                                                switch searchViewModel.searchPlaceRegion {
-                                                case .nearMe:
-                                                    searchViewModel.searchPlaceRegion = .global
-                                                case .global:
-                                                    searchViewModel.searchPlaceRegion = .nearMe
-                                                }
-                                            }
-                                        } label: {
-                                            Label {
-                                                Text(searchViewModel.searchPlaceRegion.title)
-                                            } icon: {
-                                                Image(systemName: searchViewModel.searchPlaceRegion.icon)
-                                            }
-                                        }
-                                    }
-                                    .padding(.horizontal)
-                                    .font(.custom(style: .body))
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 6)
-                                    .background(Color.themePrimary.opacity(0.5))
-                                    .clipShape(.rect(cornerRadius: 4))
-                                    .padding(.horizontal)
+                                    self.header
+//                                    HStack {
+//                                        Text("Region")
+//                                        
+//                                        Spacer()
+//                                        
+//                                        Button {
+//                                            withAnimation {
+//                                                switch searchViewModel.searchPlaceRegion {
+//                                                case .nearMe:
+//                                                    searchViewModel.searchPlaceRegion = .global
+//                                                case .global:
+//                                                    searchViewModel.searchPlaceRegion = .nearMe
+//                                                }
+//                                            }
+//                                        } label: {
+//                                            Label {
+//                                                Text(searchViewModel.searchPlaceRegion.title)
+//                                            } icon: {
+//                                                Image(systemName: searchViewModel.searchPlaceRegion.icon)
+//                                            }
+//                                        }
+//                                    }
+//                                    .padding(.horizontal)
+//                                    .font(.custom(style: .body))
+//                                    .frame(maxWidth: .infinity)
+//                                    .padding(.vertical, 6)
+//                                    .background(Color.themePrimary.opacity(0.5))
+//                                    .clipShape(.rect(cornerRadius: 4))
+//                                    .padding(.horizontal)
                                     
                                     Divider()
                                     
                                     ScrollView {
                                         VStack {
-                                            ForEach(searchViewModel.placeSearchResults) { place in
+                                            ForEach(searchViewModel.placeSearchResults, id: \.self) { place in
                                                 PlaceCard(searchViewModel: searchViewModel, place: place, closeSearch: closeSearch, onSelect: onPlaceSelect)
                                                 Divider()
                                             }
@@ -205,7 +209,7 @@ struct SearchView: View {
                                 
                                 ScrollView {
                                     VStack {
-                                        ForEach(searchViewModel.placeSearchResults) { place in
+                                        ForEach(searchViewModel.placeSearchResults, id: \.self) { place in
                                             PlaceCard(searchViewModel: searchViewModel, place: place, closeSearch: closeSearch, onSelect: onPlaceSelect)
                                             Divider()
                                         }
@@ -241,32 +245,6 @@ struct SearchView: View {
                     .opacity(searchViewModel.isLoading ? 0.6 : 1)
                 }
             }
-//            .toolbar(content: {
-//                ToolbarItem(placement: .principal) {
-//                    TextField("Search", text: $searchViewModel.text)
-//                        .withFilledStyle(size: .small)
-//                        .frame(width: UIScreen.main.bounds.width - 30)
-//                }
-//                
-//            })
-//            .searchable(text: $searchViewModel.text, tokens: $searchViewModel.tokens, placement: .navigationBarDrawer(displayMode: .always), token: { token in
-//                switch token {
-//                case .checkin: Text(SearchTokens.checkin.rawValue)
-//                case .addReview: Text(SearchTokens.addReview.rawValue)
-//                }
-//            })
-//            .searchScopes($searchViewModel.scope, activation: .onSearchPresentation, {
-//                if onPlaceSelect != nil && onUserSelect != nil {
-//                    if !searchViewModel.tokens.contains(.checkin) && !searchViewModel.tokens.contains(.checkin) {
-//                        ForEach(SearchScopes.allCases) { scope in
-//                            Text(scope.rawValue)
-//                                .tag(scope)
-//                        }
-//                    }
-//                }
-//            })
-//            .navigationTitle("Search")
-//            .navigationBarTitleDisplayMode(.inline)
             .background(Color.themeBG)
         }
     }
@@ -275,10 +253,10 @@ struct SearchView: View {
 fileprivate struct PlaceCard: View {
     @ObservedObject var searchViewModel: SearchViewModel
 
-    let place: CompactPlace
+    let place: MKMapItem
     
     let closeSearch: () -> Void
-    let onSelect: (CompactPlace) -> Void
+    let onSelect: (MKMapItem) -> Void
         
     var body: some View {
         Button {
@@ -291,9 +269,23 @@ fileprivate struct PlaceCard: View {
                     .frame(width: 42, height: 42)
                     .overlay {
                         Group {
-                            if let amenity = place.amenity {
-                                Image(systemName: amenity.image)
-                            } else {
+                            if let pointOfInterestCategory = place.pointOfInterestCategory {
+                                switch pointOfInterestCategory {
+                                case .restaurant:
+                                    Image(systemName: "fork.knife.circle.fill")
+                                case .cafe:
+                                    Image(systemName: "cup.and.saucer.fill")
+                                case .bakery:
+                                    Image(systemName: "storefront.fill")
+                                case .nightlife:
+                                    Image(systemName: "mug.fill")
+                                case .winery:
+                                    Image(systemName: "wineglass.fill")
+                                default:
+                                    Image(systemName: "mappin.circle")
+                                }
+                            }
+                            else {
                                 Image(systemName: "mappin.circle")
                             }
                         }
@@ -302,11 +294,11 @@ fileprivate struct PlaceCard: View {
                     }
                 
                 VStack {
-                    Text(place.name)
+                    Text(place.name ?? place.placemark.name ?? "Unknown")
                         .font(.custom(style: .body))
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    if let distance = distanceFromMe(lat: place.location.geoLocation.lat, lng: place.location.geoLocation.lng, unit: .miles) {
+                    if let distance = distanceFromMe(lat: place.placemark.coordinate.latitude, lng: place.placemark.coordinate.longitude, unit: .miles) {
                         Text(String(format: "%.1f", distance) + " Miles away")
                             .font(.custom(style: .caption))
                             .frame(maxWidth: .infinity, alignment: .leading)

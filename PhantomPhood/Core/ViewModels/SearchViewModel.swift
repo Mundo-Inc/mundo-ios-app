@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import MapKit
 
 enum SearchScopes: String, CaseIterable, Identifiable {
     case places = "Places"
@@ -62,7 +63,7 @@ class SearchViewModel: ObservableObject {
     @Published var scope: SearchScopes = .places
     @Published var tokens: [SearchTokens] = []
     
-    @Published var placeSearchResults: [CompactPlace] = []
+    @Published var placeSearchResults: [MKMapItem] = []
     @Published var userSearchResults: [User] = []
     @Published var isLoading: Bool = false
     @Published var error: String? = nil
@@ -111,33 +112,56 @@ class SearchViewModel: ObservableObject {
             .store(in: &cancellable)
     }
     
-    func search(_ value: String) {
+    func search(_ value: String, region: MKCoordinateRegion? = nil) {
         self.isLoading = true
 
         if self.scope == .places {
-            Task {
-                do {
-                    var locationQuery = ""
-                    if let location = locationManager.location {
-                        locationQuery += "&lat=\(location.coordinate.latitude)&lng=\(location.coordinate.longitude)&radius=\(self.searchPlaceRegion == .global ? "global" : String(2000))"
-                    }
-                    let data = try await self.apiManager.requestData("/places?limit=8\(value.isEmpty ? "" : "&q=\(value)")\(locationQuery)", token: self.auth.token) as PlaceSearchResponse?
-                    if let data {
-                        self.placeSearchResults = data.places
-                    }
-                    self.isLoading = false
-                } catch let error as APIManager.APIError {
-                    self.isLoading = false
-                    switch error {
-                    case .serverError(let serverError):
-                        self.error = serverError.message
-                        break
-                    default:
-                        self.error = "Unknown Error"
-                        break
-                    }
-                }
+            var theRegion: MKCoordinateRegion
+            if let region {
+                theRegion = region
+            } else {
+                theRegion = locationManager.region
             }
+            
+            let searchRequest = MKLocalSearch.Request()
+            searchRequest.region = theRegion
+            searchRequest.resultTypes = .pointOfInterest
+            searchRequest.pointOfInterestFilter = MKPointOfInterestFilter(including: [.cafe, .restaurant, .nightlife, .bakery, .brewery, .winery])
+            searchRequest.naturalLanguageQuery = !value.isEmpty ? value : "cafe"
+            
+            let search = MKLocalSearch(request: searchRequest)
+            
+            search.start { response, error in
+                self.isLoading = false
+                guard let response else {
+                    print(error?.localizedDescription ?? "Error")
+                    return
+                }
+                self.placeSearchResults = response.mapItems
+            }
+//            Task {
+//                do {
+//                    var locationQuery = ""
+//                    if let location = locationManager.location {
+//                        locationQuery += "&lat=\(location.coordinate.latitude)&lng=\(location.coordinate.longitude)&radius=\(self.searchPlaceRegion == .global ? "global" : String(2000))"
+//                    }
+//                    let data = try await self.apiManager.requestData("/places?limit=8\(value.isEmpty ? "" : "&q=\(value)")\(locationQuery)", token: self.auth.token) as PlaceSearchResponse?
+//                    if let data {
+//                        self.placeSearchResults = data.places
+//                    }
+//                    self.isLoading = false
+//                } catch let error as APIManager.APIError {
+//                    self.isLoading = false
+//                    switch error {
+//                    case .serverError(let serverError):
+//                        self.error = serverError.message
+//                        break
+//                    default:
+//                        self.error = "Unknown Error"
+//                        break
+//                    }
+//                }
+//            }
         } else if self.scope == .users {
             Task {
                 do {
@@ -161,10 +185,10 @@ class SearchViewModel: ObservableObject {
         }
     }
     
-    struct PlaceSearchResponse: Decodable {
-        let success: Bool
-        let places: [CompactPlace]
-    }
+//    struct PlaceSearchResponse: Decodable {
+//        let success: Bool
+//        let places: [CompactPlace]
+//    }
     struct UserSearchResponse: Decodable {
         let success: Bool
         let data: [User]

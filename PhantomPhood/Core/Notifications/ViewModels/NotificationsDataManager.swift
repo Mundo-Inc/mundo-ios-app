@@ -24,7 +24,7 @@ class NotificationsDataManager {
     
     func getNotifications(page: Int = 1) async throws -> FeedResponse {
         guard let token = await auth.token else {
-            fatalError("No token provided")
+            throw URLError(.userAuthenticationRequired)
         }
         
         let data = try await apiManager.requestData("/notifications?page=\(page)&limit=30", method: .get, token: token) as FeedResponse?
@@ -32,7 +32,7 @@ class NotificationsDataManager {
         if let data = data {
             return data
         } else {
-            fatalError("Unable to get feed data")
+            throw URLError(.badServerResponse)
         }
     }
 }

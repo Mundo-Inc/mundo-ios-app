@@ -6,18 +6,22 @@
 //
 
 import SwiftUI
+import MapKit
 import Kingfisher
 
 struct PlaceView: View {
-    let id: String
     let action: PlaceAction?
     
     @StateObject private var vm: PlaceViewModel
     
     init(id: String, action: PlaceAction? = nil) {
-        self.id = id
         self.action = action
         self._vm = StateObject(wrappedValue: PlaceViewModel(id: id, action: action))
+    }
+    
+    init(mapPlace: MapPlace, action: PlaceAction? = nil) {
+        self.action = action
+        self._vm = StateObject(wrappedValue: PlaceViewModel(mapPlace: mapPlace, action: action))
     }
     
     @State var isCollapsed = true
@@ -255,16 +259,20 @@ struct PlaceView: View {
                 .padding(.vertical)
                 
                 Group {
-                    switch vm.activeTab {
-                    case .overview:
-                        PlaceOverviewView(vm: vm)
-                            .transition(.slide)
-                    case .reviews:
-                        PlaceReviewsView(placeId: id, vm: vm)
-                            .transition(.slide)
-                    case .media:
-                        PlaceMediaView(placeId: id, vm: vm)
-                            .transition(.slide)
+                    if let id = vm.id {
+                        switch vm.activeTab {
+                        case .overview:
+                            PlaceOverviewView(vm: vm)
+                                .transition(.slide)
+                        case .reviews:
+                            PlaceReviewsView(placeId: id, vm: vm)
+                                .transition(.slide)
+                        case .media:
+                            PlaceMediaView(placeId: id, vm: vm)
+                                .transition(.slide)
+                        }
+                    } else {
+                        Text("Loading")
                     }
                 }
                 .frame(maxWidth: .infinity)

@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import MapKit
 
-enum PlaceAction {
+enum PlaceAction: Hashable {
     case checkin
     case addReview
 }
@@ -16,6 +17,7 @@ enum HomeStack: Hashable {
     case notifications
     case userProfile(id: String)
     case place(id: String, action: PlaceAction? = nil)
+    case placeMapPlace(mapPlace: MapPlace, action: PlaceAction? = nil)
     case userConnections(userId: String, initTab: UserConnectionsTab)
     
     func hash(into hasher: inout Hasher) {
@@ -28,6 +30,10 @@ enum HomeStack: Hashable {
         case .place(let id, let action):
             hasher.combine("place")
             hasher.combine(id)
+            hasher.combine(action)
+        case .placeMapPlace(let mapPlace, let action):
+            hasher.combine("place")
+            hasher.combine(mapPlace)
             hasher.combine(action)
         case .userConnections(let userId, let tab):
             hasher.combine("userConnections")

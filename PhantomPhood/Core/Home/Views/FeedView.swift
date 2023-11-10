@@ -28,7 +28,9 @@ struct FeedView: View {
                     dismissSearch()
                 }) {
                     SearchView(vm: searchViewModel) { place in
-                        appData.homeNavStack.append(HomeStack.place(id: place.id, action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
+                        if let title = place.name {
+                            appData.homeNavStack.append(HomeStack.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title), action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
+                        }
                     } onUserSelect: { user in
                         appData.homeNavStack.append(HomeStack.userProfile(id: user.id))
                     }

@@ -174,7 +174,7 @@ class APIManager {
             if let serverError = try? JSONDecoder().decode(ServerResponseError.self, from: data) {
                 throw APIError.serverError(.init(success: serverError.success, error: serverError.error, statusCode: httpResponse.statusCode))
             } else {
-                print("Here")
+                print("API Unknown Error")
                 print(httpResponse.statusCode)
                 throw APIError.unknown
             }

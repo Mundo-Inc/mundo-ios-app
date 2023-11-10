@@ -18,13 +18,13 @@ class LeaderboardDataManager {
     
     func fetchLeaderboard(page: Int = 1) async throws -> [User] {
         guard let token = await auth.token else {
-            fatalError("No token provided")
+            throw URLError(.userAuthenticationRequired)
         }
         
         let data = try await apiManager.requestData("/users/leaderboard?page=\(page)&limit=30", method: .get, token: token) as LeaderboardResponse?
         
         guard let data = data else {
-            fatalError("Couldn't get the data")
+            throw URLError(.badServerResponse)
         }
         
         return data.data
