@@ -482,9 +482,12 @@ struct AddReviewView: View {
                     .overlay {
                         ProgressView(
                             "Submitting...",
-                            value: max(Double((vm.imageUploads.count + vm.videoUploads.count) / vm.mediaItemsState.count == 0 ? 1 : vm.mediaItemsState.count), 0.2)
+                            value: vm.mediaItemsState.count >= 1 ? max(
+                                Double((vm.imageUploads.count + vm.videoUploads.count) / vm.mediaItemsState.count),
+                                0.2
+                            ) : 0.9
                         )
-                        .animation(.bouncy, value: max(Double((vm.imageUploads.count + vm.videoUploads.count) / vm.mediaItemsState.count), 0.2))
+                        .animation(.bouncy, value: vm.mediaItemsState.count >= 1 ? max(Double((vm.imageUploads.count + vm.videoUploads.count) / vm.mediaItemsState.count), 0.2) : 0.9)
                         .progressViewStyle(LinearProgressViewStyle())
                         .padding(.horizontal)
                     }
