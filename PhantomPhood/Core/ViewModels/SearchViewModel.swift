@@ -133,10 +133,7 @@ class SearchViewModel: ObservableObject {
             
             search.start { response, error in
                 self.isLoading = false
-                guard let response else {
-                    print(error?.localizedDescription ?? "Error")
-                    return
-                }
+                guard let response else { return }
                 self.placeSearchResults = response.mapItems
             }
 //            Task {

@@ -9,7 +9,6 @@ import SwiftUI
 import Kingfisher
 
 struct FeedView: View {
-    @Environment(\.dismissSearch) var dismissSearch
     @EnvironmentObject private var appData: AppData
     @EnvironmentObject var searchViewModel: SearchViewModel
     
@@ -22,19 +21,7 @@ struct FeedView: View {
     var body: some View {
         ZStack {
             Color.themeBG.ignoresSafeArea()
-                .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
-                    searchViewModel.tokens.removeAll()
-                    searchViewModel.text = ""
-                    dismissSearch()
-                }) {
-                    SearchView(vm: searchViewModel) { place in
-                        if let title = place.name {
-                            appData.homeNavStack.append(HomeStack.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title), action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
-                        }
-                    } onUserSelect: { user in
-                        appData.homeNavStack.append(HomeStack.userProfile(id: user.id))
-                    }
-                }
+
             ScrollView {
                 if !vm.isLoading && vm.feedItems.isEmpty {
                     Text("Everyone starts somewhere! Why not with our rockstar CEO, Nabeel? 🎸")
@@ -179,22 +166,14 @@ struct FeedView: View {
                     }
                 }
             }
-            .scrollIndicators(.hidden)
-            .navigationTitle("Home")
             .toolbar(content: {
                 ToolbarItem(placement: .topBarLeading) {
                     if vm.isLoading {
                         ProgressView()
                     }
                 }
-                                
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink(value: HomeStack.notifications) {
-                        Image(systemName: "bell")
-                    }
-                }
             })
-            .navigationBarTitleDisplayMode(.inline)
+            .scrollIndicators(.hidden)
             .refreshable {
                 Task {
                     if !vm.isLoading {

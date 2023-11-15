@@ -11,7 +11,7 @@ struct HomeView: View {
     @EnvironmentObject var auth: Authentication
     @EnvironmentObject private var appData: AppData
     @EnvironmentObject var locationManager: LocationManager
-                    
+    
     @StateObject var searchViewModel = SearchViewModel()
     
     @State var showActions: Bool = false
@@ -21,7 +21,65 @@ struct HomeView: View {
     var body: some View {
         NavigationStack(path: $appData.homeNavStack) {
             ZStack(alignment: .bottomTrailing) {
-                FeedView(reportId: $reportId)
+                TabView(selection: $appData.homeActiveTab) {
+                    ForYouView()
+                        .tag(HomeTab.forYou)
+                    
+                    FeedView(reportId: $reportId)
+                        .tag(HomeTab.followings)
+                }
+                .ignoresSafeArea()
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                .background(Color.themeBG)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NavigationLink(value: HomeStack.notifications) {
+                            Image(systemName: "bell")
+                        }
+                    }
+                    
+                    ToolbarItem(placement: .principal) {
+                        HStack(spacing: 0) {
+                            Button {
+                                withAnimation {
+                                    appData.homeActiveTab = .forYou
+                                }
+                            } label: {
+                                Text(HomeTab.forYou.rawValue)
+                                    .overlay(alignment: .bottom) {
+                                        RoundedRectangle(cornerRadius: 2)
+                                            .foregroundStyle(.secondary)
+                                            .frame(height: 3)
+                                            .frame(maxWidth: appData.homeActiveTab != .forYou ? 0 : .infinity)
+                                            .offset(y: 5)
+                                            .animation(appData.homeActiveTab != .forYou ? .easeOut : .bouncy, value: appData.homeActiveTab)
+                                    }
+                            }
+                            
+                            Button {
+                                withAnimation {
+                                    appData.homeActiveTab = .followings
+                                }
+                            } label: {
+                                Text(HomeTab.followings.rawValue)
+                                    .overlay(alignment: .bottom) {
+                                        RoundedRectangle(cornerRadius: 2)
+                                            .foregroundStyle(.secondary)
+                                            .frame(height: 3)
+                                            .frame(maxWidth: appData.homeActiveTab != .followings ? 0 : .infinity)
+                                            .offset(y: 5)
+                                            .animation(appData.homeActiveTab != .followings ? .easeOut : .bouncy, value: appData.homeActiveTab)
+                                    }
+                            }
+                        }
+                        .font(.custom(style: .headline))
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                    }
+                }
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.hidden, for: .automatic)
+                .navigationBarTitleDisplayMode(.inline)
                 
                 Button {
                     showActions = true
@@ -48,7 +106,19 @@ struct HomeView: View {
                         .transition(.move(edge: .bottom))
                         .animation(.easeInOut, value: reportId)
                 }
-
+                
+            }
+            .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
+                searchViewModel.tokens.removeAll()
+                searchViewModel.text = ""
+            }) {
+                SearchView(vm: searchViewModel) { place in
+                    if let title = place.name {
+                        appData.homeNavStack.append(HomeStack.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title), action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
+                    }
+                } onUserSelect: { user in
+                    appData.homeNavStack.append(HomeStack.userProfile(id: user.id))
+                }
             }
             .navigationDestination(for: HomeStack.self) { link in
                 switch link {
@@ -134,32 +204,6 @@ struct HomeView: View {
             .padding(.horizontal)
             .presentationDetents([.height(250)])
         }
-//        .searchable(text: $searchText) {
-//            Label("Restaurants", systemImage: "fork.knife")
-//                .searchCompletion("restaurant")
-//            Label("Bars", systemImage: "wineglass")
-//                .searchCompletion("restaurant")
-//            Label("Cafe", systemImage: "cup.and.saucer.fill")
-//                .searchCompletion("restaurant")
-//        }
-//        .searchable(text: $searchText, tokens: $tokens, suggestedTokens: $suggestedTokens, token: { token in
-//            switch token {
-//            case .restaurant: Text("Restaurant")
-//            case .bar: Text("Bar")
-//            case .cafe: Text("Cafe")
-//            }
-//        })
-//        .onChange(of: searchScopes, {
-//            print("Changed to \(searchScopes)")
-//        })
-//        .onChange(of: searchScopes, perform: { value in
-//            tokens.removeAll()
-//            if value == "Places" {
-//                suggestedTokens = [.bar]
-//            } else {
-//                suggestedTokens = [.cafe, .restaurant]
-//            }
-//        })
     }
 }
 

@@ -16,6 +16,9 @@ class AppData: ObservableObject {
     @Published var mapNavStack: [MapStack] = []
     @Published var leaderboardNavStack: [LeaderboardStack] = []
     @Published var authNavStack: [AuthStack] = []
+
+    // Home Tab
+    @Published var homeActiveTab: HomeTab = .forYou
     
     // My Profile Tab
     @Published var myProfileNavStack: [MyProfileStack] = []
@@ -34,4 +37,9 @@ class AppData: ObservableObject {
         self.myProfileActiveTab = .stats
         self.showEditProfile = false
     }
+}
+
+enum HomeTab: String {
+    case forYou = "For You"
+    case followings = "Followings"
 }
