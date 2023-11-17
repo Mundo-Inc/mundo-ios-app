@@ -46,7 +46,7 @@ struct FeedFollowingView: View {
                         .padding(.vertical, 4)
                         .background(Color("Followed"))
                         .clipShape(RoundedRectangle(cornerRadius: 5))
-
+                    
                     switch data.resource {
                     case .user(let resourceUser):
                         Text(resourceUser.name)
@@ -58,68 +58,63 @@ struct FeedFollowingView: View {
                 }
             }.padding(.bottom)
         } content: {
-                switch data.resource {
-                case .user(let user):
-                    NavigationLink(value: HomeStack.userProfile(id: user.id)) {
-                        HStack {
-                            ZStack {
-                                Circle()
-                                    .frame(width: 54, height: 54)
-                                    .foregroundStyle(.gray.opacity(0.8))
-                                
-                                if !user.profileImage.isEmpty, let url = URL(string: user.profileImage) {
-                                    KFImage.url(url)
-                                        .placeholder {
-                                            Circle()
-                                                .foregroundStyle(Color.themePrimary)
-                                                .overlay {
-                                                    ProgressView()
-                                                }
-                                        }
-                                        .loadDiskFileSynchronously()
-                                        .cacheMemoryOnly()
-                                        .fade(duration: 0.25)
-                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 50, height: 50)
-                                        .clipShape(Circle())
-                                } else {
-                                    Image(systemName: "person.circle.fill")
-                                        .resizable()
-                                        .frame(width: 50, height: 50)
-                                }
-                            }
+            switch data.resource {
+            case .user(let user):
+                NavigationLink(value: HomeStack.userProfile(id: user.id)) {
+                    HStack {
+                        ZStack {
+                            Circle()
+                                .frame(width: 54, height: 54)
+                                .foregroundStyle(.gray.opacity(0.8))
                             
-                            
-                            Spacer()
-                            
-                            Text(user.name)
-                                .font(.custom(style: .subheadline))
-                                .fontWeight(.bold)
-                                .foregroundStyle(Color.white)
-                            
-//                            Spacer()
-//                            
-//                            LevelView(level: user.progress.level)
-//                                .frame(width: 50, height: 50)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background {
-                            ZStack {
-                                Color(red: 0.14, green: 0.14, blue: 0.14)
-                                Image(.profileCardBG)
+                            if !user.profileImage.isEmpty, let url = URL(string: user.profileImage) {
+                                KFImage.url(url)
+                                    .placeholder {
+                                        Circle()
+                                            .foregroundStyle(Color.themePrimary)
+                                            .overlay {
+                                                ProgressView()
+                                            }
+                                    }
+                                    .loadDiskFileSynchronously()
+                                    .cacheMemoryOnly()
+                                    .fade(duration: 0.25)
+                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
                                     .resizable()
-                                    .scaledToFill()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(Circle())
+                            } else {
+                                Image(systemName: "person.circle.fill")
+                                    .resizable()
+                                    .frame(width: 50, height: 50)
                             }
                         }
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        
+                        
+                        Spacer()
+                        
+                        Text(user.name)
+                            .font(.custom(style: .subheadline))
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color.white)
                     }
-                    .foregroundStyle(.primary)
-                default:
-                    EmptyView()
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background {
+                        ZStack {
+                            Color(red: 0.14, green: 0.14, blue: 0.14)
+                            Image(.profileCardBG)
+                                .resizable()
+                                .scaledToFill()
+                        }
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
+                .foregroundStyle(.primary)
+            default:
+                EmptyView()
+            }
         } footer: {
             WrappingHStack(horizontalSpacing: 4, verticalSpacing: 6) {
                 Button {

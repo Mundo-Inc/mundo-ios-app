@@ -13,7 +13,6 @@ class FeedViewModel: ObservableObject {
     
     @Published var feedItems: [FeedItem] = []
     @Published var isLoading: Bool = false
-    @Published var endReached: Bool = false
     
     @Published private(set) var isFollowingNabeel: Bool? = nil
     @Published var nabeel: UserProfile? = nil
@@ -27,22 +26,16 @@ class FeedViewModel: ObservableObject {
         }
     }
     
-    enum GetFeedAction {
-        case refresh
-        case new
-    }
-    
-    func getFeed(_ action: GetFeedAction) async {
+    func getFeed(_ action: RefreshNewAction) async {
+        guard !isLoading else { return }
+        
         if action == .refresh {
             page = 1
         }
         
-        if isLoading {
-            return
-        }
         do {
             self.isLoading = true
-            let data = try await dataManager.getFeed(page: self.page)
+            let data = try await dataManager.getFeed(page: self.page, type: .followings)
             if action == .refresh || self.feedItems.isEmpty {
                 self.feedItems = data
             } else {

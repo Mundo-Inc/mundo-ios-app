@@ -284,12 +284,18 @@ struct PlaceView: View {
                 vm.showActions = true
             } label: {
                 Circle()
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(Color.clear)
                     .frame(width: 52, height: 52)
                     .overlay {
-                        Image(systemName: "plus")
-                            .font(.system(size: 28))
-                            .foregroundStyle(.white)
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 12)
+                                .foregroundStyle(Color.accentColor)
+                                .rotationEffect(.degrees(45))
+                            
+                            Image(systemName: "plus")
+                                .font(.system(size: 28))
+                                .foregroundStyle(.white)
+                        }
                     }
                     .rotationEffect(vm.showActions ? .degrees(135) : .zero)
                     .scaleEffect(vm.showActions ? 2 : 1)

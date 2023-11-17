@@ -30,7 +30,7 @@ struct ReactionLabel: View {
             .padding(.all, 5)
             .padding(.trailing, 5)
             .background(isSelected ? Color.accentColor.opacity(0.3) : Color.themePrimary)
-            .font(.custom(style: .caption))
+            .font(.system(size: 20))
             .overlay {
                 RoundedRectangle(cornerRadius: 25)
                     .stroke(isSelected ? Color.accentColor : Color.themePrimary, lineWidth: 2)
@@ -40,6 +40,46 @@ struct ReactionLabel: View {
         .foregroundStyle(.primary)
     }
 }
+
+struct ForYouReactionLabel: View {
+    let reaction: Reaction
+    let isSelected: Bool
+    let onPress: ((_ isSelected: Bool) -> Void)?
+    
+    init(reaction: Reaction, isSelected: Bool, onPress: @escaping (_: Bool) -> Void = { _ in }) {
+        self.reaction = reaction
+        self.isSelected = isSelected
+        self.onPress = onPress
+    }
+    
+    var body: some View {
+        Button {
+            onPress?(isSelected)
+        } label: {
+            HStack {
+                Text(reaction.reaction)
+                    .font(.system(size: 20))
+                
+                Text(String(reaction.count))
+                    .font(.custom(style: .headline))
+                    .frame(maxWidth: .infinity)
+            }
+            .foregroundStyle(.white)
+            .padding(.vertical, 6)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 10)
+            .background(isSelected ? Color.accentColor.opacity(0.5) : Color.black.opacity(0.3))
+            .background(.ultraThinMaterial)
+            .overlay {
+                Capsule()
+                    .stroke(isSelected ? Color.accentColor : Color.black.opacity(0.1), lineWidth: 4)
+            }
+            .clipShape(Capsule())
+        }
+        .foregroundStyle(.primary)
+    }
+}
+
 
 #Preview {
     Group {

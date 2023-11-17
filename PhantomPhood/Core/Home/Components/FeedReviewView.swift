@@ -28,8 +28,8 @@ struct FeedReviewView: View {
         self._reportId = reportId
     }
     
-    @StateObject var selectReactionsViewModel = SelectReactionsViewModel.shared
-
+    @ObservedObject var selectReactionsViewModel = SelectReactionsViewModel.shared
+    
     func showMedia() {
         switch data.resource {
         case .review(let feedReview):
@@ -324,7 +324,7 @@ struct FeedReviewView: View {
             print("Error")
         }
     }
-        
+    
 }
 
 #Preview {

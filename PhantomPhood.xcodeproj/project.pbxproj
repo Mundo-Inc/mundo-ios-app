@@ -67,6 +67,7 @@
 		0B83A0CD2AF433D50096780B /* UserProfileActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B83A0CC2AF433D50096780B /* UserProfileActivity.swift */; };
 		0B83A0CF2AF434090096780B /* UserProfileActivityVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B83A0CE2AF434090096780B /* UserProfileActivityVM.swift */; };
 		0B8AA3CB2AFE8817008284F5 /* MapKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8AA3CA2AFE8817008284F5 /* MapKit.swift */; };
+		0B9307F32B0709F1005FA1C3 /* ProfileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9307F22B0709F1005FA1C3 /* ProfileImage.swift */; };
 		0B96D66C2AD2E73500612C27 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B96D66B2AD2E73500612C27 /* LocationManager.swift */; };
 		0B985AE12AC9AFC200019A06 /* PlaceDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B985AE02AC9AFC200019A06 /* PlaceDataManager.swift */; };
 		0B985AE32AC9AFCA00019A06 /* PlaceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B985AE22AC9AFCA00019A06 /* PlaceViewModel.swift */; };
@@ -100,6 +101,8 @@
 		0BCBC1902ACDEDDE00992D8E /* PlaceReviewsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCBC18F2ACDEDDE00992D8E /* PlaceReviewsViewModel.swift */; };
 		0BCBC1922ACDF22100992D8E /* CommentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCBC1912ACDF22100992D8E /* CommentsViewModel.swift */; };
 		0BCBC1942ACDF30600992D8E /* CommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCBC1932ACDF30600992D8E /* CommentsView.swift */; };
+		0BD1942B2B06677600C1C35F /* ForYouItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD1942A2B06677600C1C35F /* ForYouItem.swift */; };
+		0BD1942D2B06681B00C1C35F /* ForYouViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD1942C2B06681B00C1C35F /* ForYouViewModel.swift */; };
 		0BDBD3C82ACB0E8B003B8D2D /* PlaceOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDBD3C72ACB0E8B003B8D2D /* PlaceOverviewView.swift */; };
 		0BDBD3CA2ACB32B7003B8D2D /* PhantomScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDBD3C92ACB32B7003B8D2D /* PhantomScoreView.swift */; };
 		0BDBD3CC2ACB5FCD003B8D2D /* GoogleRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDBD3CB2ACB5FCD003B8D2D /* GoogleRatingView.swift */; };
@@ -209,6 +212,7 @@
 		0B83A0CC2AF433D50096780B /* UserProfileActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileActivity.swift; sourceTree = "<group>"; };
 		0B83A0CE2AF434090096780B /* UserProfileActivityVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileActivityVM.swift; sourceTree = "<group>"; };
 		0B8AA3CA2AFE8817008284F5 /* MapKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKit.swift; sourceTree = "<group>"; };
+		0B9307F22B0709F1005FA1C3 /* ProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImage.swift; sourceTree = "<group>"; };
 		0B96D66B2AD2E73500612C27 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		0B985AE02AC9AFC200019A06 /* PlaceDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceDataManager.swift; sourceTree = "<group>"; };
 		0B985AE22AC9AFCA00019A06 /* PlaceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceViewModel.swift; sourceTree = "<group>"; };
@@ -242,6 +246,8 @@
 		0BCBC18F2ACDEDDE00992D8E /* PlaceReviewsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceReviewsViewModel.swift; sourceTree = "<group>"; };
 		0BCBC1912ACDF22100992D8E /* CommentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewModel.swift; sourceTree = "<group>"; };
 		0BCBC1932ACDF30600992D8E /* CommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsView.swift; sourceTree = "<group>"; };
+		0BD1942A2B06677600C1C35F /* ForYouItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForYouItem.swift; sourceTree = "<group>"; };
+		0BD1942C2B06681B00C1C35F /* ForYouViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForYouViewModel.swift; sourceTree = "<group>"; };
 		0BDBD3C72ACB0E8B003B8D2D /* PlaceOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceOverviewView.swift; sourceTree = "<group>"; };
 		0BDBD3C92ACB32B7003B8D2D /* PhantomScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomScoreView.swift; sourceTree = "<group>"; };
 		0BDBD3CB2ACB5FCD003B8D2D /* GoogleRatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleRatingView.swift; sourceTree = "<group>"; };
@@ -416,6 +422,7 @@
 				0B0E6D252ABB22ED00EC62EE /* FeedLevelUpView.swift */,
 				0BB805852AC203EB0074155D /* FeedReviewView.swift */,
 				0B4681502AC61D49009C5EF9 /* FeedCheckinView.swift */,
+				0BD1942A2B06677600C1C35F /* ForYouItem.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -425,6 +432,7 @@
 			children = (
 				0B6A47C12ABC9157000CBDA3 /* FeedDataManager.swift */,
 				0B6A47C52ABC998A000CBDA3 /* FeedViewModel.swift */,
+				0BD1942C2B06681B00C1C35F /* ForYouViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -655,6 +663,7 @@
 				0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */,
 				0BE3118D2AC4842700CF9BA5 /* ReviewVideoView.swift */,
 				0B013EED2AB7559E003CB57F /* LevelView.swift */,
+				0B9307F22B0709F1005FA1C3 /* ProfileImage.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -949,6 +958,7 @@
 			files = (
 				0BAE47302ACC68FD001FBDAF /* YelpRatingView.swift in Sources */,
 				0B6E99122AC7629A00D8CE26 /* LeaderboardDataManager.swift in Sources */,
+				0BD1942D2B06681B00C1C35F /* ForYouViewModel.swift in Sources */,
 				0BC84A712AD0A8B100D723AA /* PlaceMediaViewModel.swift in Sources */,
 				0BAE473A2ACC9A20001FBDAF /* PlaceReviewView.swift in Sources */,
 				0B83A0C72AF3F8110096780B /* UserProfileCheckinsVM.swift in Sources */,
@@ -984,6 +994,7 @@
 				0BE3118E2AC4842700CF9BA5 /* ReviewVideoView.swift in Sources */,
 				0B695D7C2AF14E0C00C11870 /* MyConnectionsViewModel.swift in Sources */,
 				0B37ABFA2AD6EC7A00E8D4BC /* SearchView.swift in Sources */,
+				0BD1942B2B06677600C1C35F /* ForYouItem.swift in Sources */,
 				0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */,
 				0BE1E17C2AD5A38A00645AA0 /* SearchViewModel.swift in Sources */,
 				0BB37E9E2ABA6D84009E1272 /* FeedView.swift in Sources */,
@@ -1003,6 +1014,7 @@
 				0BF17BAB2AF2FDE800D87812 /* GeneralTypes.swift in Sources */,
 				0B6495562AB10F5E000E57AF /* APIManager.swift in Sources */,
 				0BF5B4A62AB353CB00DEC403 /* TextField.swift in Sources */,
+				0B9307F32B0709F1005FA1C3 /* ProfileImage.swift in Sources */,
 				0B6E990F2AC7627700D8CE26 /* LeaderboardViewModel.swift in Sources */,
 				0B6A47C42ABC9806000CBDA3 /* FeedItem.swift in Sources */,
 				0BC84A652AD0339F00D723AA /* ReactionLabel.swift in Sources */,

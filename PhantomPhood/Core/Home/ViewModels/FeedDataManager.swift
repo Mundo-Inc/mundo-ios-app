@@ -11,7 +11,12 @@ class FeedDataManager {
     let apiManager = APIManager()
     private let auth: Authentication = Authentication.shared
     
-    func getFeed(page: Int = 1) async throws -> [FeedItem] {
+    enum FeedType: String {
+        case followings
+        case forYou
+    }
+    
+    func getFeed(page: Int = 1, type: FeedType) async throws -> [FeedItem] {
         struct FeedResponse: Decodable {
             let success: Bool
             let result: [FeedItem]
@@ -20,8 +25,8 @@ class FeedDataManager {
         guard let token = await auth.token else {
             throw URLError(.userAuthenticationRequired)
         }
-        
-        let data = try await apiManager.requestData("/feeds?page=\(page)", method: .get, token: token) as FeedResponse?
+                
+        let data = try await apiManager.requestData("/feeds?page=\(page)\(type == .forYou ? "&isForYou=true" : "")", method: .get, token: token) as FeedResponse?
         if let data = data {
             return data.result
         } else {

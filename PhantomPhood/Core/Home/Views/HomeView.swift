@@ -10,7 +10,6 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var auth: Authentication
     @EnvironmentObject private var appData: AppData
-    @EnvironmentObject var locationManager: LocationManager
     
     @StateObject var searchViewModel = SearchViewModel()
     
@@ -18,14 +17,18 @@ struct HomeView: View {
     
     @State var reportId: String? = nil
     
+    // -
+    @StateObject var commentsViewModel = CommentsViewModel()
+    @StateObject var mediasViewModel = MediasViewModel()
+    
     var body: some View {
         NavigationStack(path: $appData.homeNavStack) {
             ZStack(alignment: .bottomTrailing) {
                 TabView(selection: $appData.homeActiveTab) {
-                    ForYouView()
+                    ForYouView(commentsViewModel: commentsViewModel)
                         .tag(HomeTab.forYou)
                     
-                    FeedView(reportId: $reportId)
+                    FeedView(commentsViewModel: commentsViewModel, mediasViewModel: mediasViewModel, reportId: $reportId)
                         .tag(HomeTab.followings)
                 }
                 .ignoresSafeArea()
@@ -45,15 +48,25 @@ struct HomeView: View {
                                     appData.homeActiveTab = .forYou
                                 }
                             } label: {
-                                Text(HomeTab.forYou.rawValue)
-                                    .overlay(alignment: .bottom) {
-                                        RoundedRectangle(cornerRadius: 2)
-                                            .foregroundStyle(.secondary)
-                                            .frame(height: 3)
-                                            .frame(maxWidth: appData.homeActiveTab != .forYou ? 0 : .infinity)
-                                            .offset(y: 5)
-                                            .animation(appData.homeActiveTab != .forYou ? .easeOut : .bouncy, value: appData.homeActiveTab)
-                                    }
+                                ZStack {
+                                    Text(HomeTab.forYou.rawValue)
+                                        .overlay(alignment: .bottom) {
+                                            RoundedRectangle(cornerRadius: 2)
+                                                .foregroundStyle(.secondary)
+                                                .frame(height: 3)
+                                                .frame(maxWidth: appData.homeActiveTab != .forYou ? 0 : .infinity)
+                                                .offset(y: 5)
+                                                .animation(appData.homeActiveTab != .forYou ? .easeOut : .bouncy, value: appData.homeActiveTab)
+                                        }
+                                    
+                                    Text("Beta")
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.black)
+                                        .padding(.horizontal, 5)
+                                        .background(Capsule().foregroundStyle(.yellow).opacity(0.9))
+                                        .rotationEffect(.degrees(-10))
+                                        .offset(x: -25, y: -15)
+                                }
                             }
                             
                             Button {
@@ -85,12 +98,18 @@ struct HomeView: View {
                     showActions = true
                 } label: {
                     Circle()
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Color.clear)
                         .frame(width: 52, height: 52)
                         .overlay {
-                            Image(systemName: "plus")
-                                .font(.system(size: 28))
-                                .foregroundStyle(.white)
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .foregroundStyle(Color.accentColor)
+                                    .rotationEffect(.degrees(45))
+                                
+                                Image(systemName: "plus")
+                                    .font(.system(size: 28))
+                                    .foregroundStyle(.white)
+                            }
                         }
                         .rotationEffect(showActions ? .degrees(135) : .zero)
                         .scaleEffect(showActions ? 2 : 1)
@@ -107,6 +126,11 @@ struct HomeView: View {
                         .animation(.easeInOut, value: reportId)
                 }
                 
+                Color.clear
+                    .frame(width: 0, height: 0)
+                    .sheet(isPresented: $commentsViewModel.showComments, content: {
+                        CommentsView(vm: commentsViewModel)
+                    })
             }
             .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
                 searchViewModel.tokens.removeAll()

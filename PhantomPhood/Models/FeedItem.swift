@@ -45,7 +45,11 @@ struct ReactionsObject: Decodable {
     var user: [UserReaction]
 }
 
-struct FeedItem: Identifiable, Decodable {
+struct FeedItem: Identifiable, Decodable, Equatable {
+    static func == (lhs: FeedItem, rhs: FeedItem) -> Bool {
+        lhs.id == rhs.id
+    }
+    
     let id: String
     let user: User
     let place: CompactPlace?

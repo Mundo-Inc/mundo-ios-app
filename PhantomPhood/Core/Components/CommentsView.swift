@@ -46,121 +46,128 @@ struct CommentsView: View {
                 .fontWeight(.bold)
                 .padding(.top, 5)
             Divider()
-                        
-            List(vm.comments) { comment in
-                VStack {
-                    HStack {
-                        Group {
-                            if !comment.author.profileImage.isEmpty, let url = URL(string: comment.author.profileImage) {
-                                KFImage.url(url)
-                                    .placeholder {
-                                        Circle()
+
+            if vm.comments.isEmpty && vm.isLoading {
+                ProgressView()
+            } else {
+                if vm.comments.isEmpty {
+                    VStack {
+                        Text("No Comments yet")
+                            .font(.title2)
+
+                        Text("Start the conversation")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.top)
+                } else {
+                    List(vm.comments) { comment in
+                        VStack {
+                            HStack {
+                                Group {
+                                    if !comment.author.profileImage.isEmpty, let url = URL(string: comment.author.profileImage) {
+                                        KFImage.url(url)
+                                            .placeholder {
+                                                Circle()
+                                                    .frame(width: 44, height: 44)
+                                                    .foregroundStyle(Color.themePrimary)
+                                                    .overlay {
+                                                        ProgressView()
+                                                    }
+                                            }
+                                            .loadDiskFileSynchronously()
+                                            .cacheMemoryOnly()
+                                            .fade(duration: 0.25)
+                                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
                                             .frame(width: 44, height: 44)
-                                            .foregroundStyle(Color.themePrimary)
-                                            .overlay {
-                                                ProgressView()
+                                            .clipShape(Circle())
+                                            .overlay(alignment: .top) {
+                                                LevelView(level: comment.author.progress.level)
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .frame(width: 24, height: 30)
+                                                    .offset(y: 28)
+                                            }
+                                    } else {
+                                        Image(systemName: "person.circle.fill")
+                                            .resizable()
+                                            .frame(width: 44, height: 44)
+                                            .overlay(alignment: .top) {
+                                                LevelView(level: comment.author.progress.level)
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .frame(width: 24, height: 30)
+                                                    .offset(y: 28)
                                             }
                                     }
-                                    .loadDiskFileSynchronously()
-                                    .cacheMemoryOnly()
-                                    .fade(duration: 0.25)
-                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 44, height: 44)
-                                    .clipShape(Circle())
-                                    .overlay(alignment: .top) {
-                                        LevelView(level: comment.author.progress.level)
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(width: 24, height: 30)
-                                            .offset(y: 28)
-                                    }
-                            } else {
-                                Image(systemName: "person.circle.fill")
-                                    .resizable()
-                                    .frame(width: 44, height: 44)
-                                    .overlay(alignment: .top) {
-                                        LevelView(level: comment.author.progress.level)
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(width: 24, height: 30)
-                                            .offset(y: 28)
-                                    }
-                            }
-                        }
-                        .onTapGesture(perform: {
-                            navigateToUserProfile(id: comment.author.id)
-                        })
-                        
-                        HStack {
-                            VStack(alignment: .leading) {
+                                }
+                                .onTapGesture(perform: {
+                                    navigateToUserProfile(id: comment.author.id)
+                                })
+                                
                                 HStack {
-                                    Text(comment.author.name)
-                                        .font(.custom(style: .body))
-                                        .bold()
-                                        .foregroundStyle(.primary)
-                                    Text(DateFormatter.getPassedTime(from: comment.createdAt))
-                                        .font(.custom(style: .caption))
-                                        .foregroundStyle(.secondary)
-                                    Spacer()
+                                    VStack(alignment: .leading) {
+                                        HStack {
+                                            Text(comment.author.name)
+                                                .font(.custom(style: .body))
+                                                .bold()
+                                                .foregroundStyle(.primary)
+                                            Text(DateFormatter.getPassedTime(from: comment.createdAt))
+                                                .font(.custom(style: .caption))
+                                                .foregroundStyle(.secondary)
+                                            Spacer()
+                                        }
+                                        .frame(maxWidth: .infinity)
+
+                                        Text(comment.content)
+                                            .font(.custom(style: .body))
+                                            .multilineTextAlignment(.leading)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    VStack {
+                                        Image(systemName: comment.liked ? "heart.fill" : "heart")
+                                            .font(.system(size: 16))
+                                            .foregroundStyle(comment.liked ? Color.accentColor : Color.secondary)
+                                        Text("\(comment.likes)")
+                                            .font(.custom(style: .callout))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .animation(.easeInOut, value: vm.isSubmitting)
+                                    .opacity(vm.isSubmitting ? 0.6 : 1)
+                                    .onTapGesture(perform: {
+                                        if !vm.isSubmitting {
+                                            Task {
+                                                await vm.updateCommentLike(id: comment.id, action: comment.liked ? .remove : .add)
+                                            }
+                                        }
+                                    })
                                 }
                                 .frame(maxWidth: .infinity)
-
-                                Text(comment.content)
-                                    .font(.custom(style: .body))
-                                    .multilineTextAlignment(.leading)
                             }
-                            .frame(maxWidth: .infinity)
-                            
-                            VStack {
-                                Image(systemName: comment.liked ? "heart.fill" : "heart")
-                                    .font(.system(size: 16))
-                                    .foregroundStyle(comment.liked ? Color.accentColor : Color.secondary)
-                                Text("\(comment.likes)")
-                                    .font(.custom(style: .callout))
-                                    .foregroundStyle(.secondary)
-                            }
-                            .animation(.easeInOut, value: vm.isSubmitting)
-                            .opacity(vm.isSubmitting ? 0.6 : 1)
-                            .onTapGesture(perform: {
-                                if !vm.isSubmitting {
+                        }
+                        .onAppear {
+                            if !vm.isLoading && vm.comments.count > 9 && (vm.comments.firstIndex(where: { cm in cm.id == comment.id }) ?? 0) + 4 >= vm.comments.count {
+                                if let activityId = vm.currentActivityId {
                                     Task {
-                                        await vm.updateCommentLike(id: comment.id, action: comment.liked ? .remove : .add)
+                                        await vm.getComments(activityId: activityId)
                                     }
                                 }
-                            })
+                            }
                         }
-                        .frame(maxWidth: .infinity)
-                    }
-                }
-                .swipeActions {
-                    Button {
-                        reportId = comment.id
-                    } label: {
-                        Text("Report")
-                    }
+                        .swipeActions {
+                            Button {
+                                reportId = comment.id
+                            } label: {
+                                Text("Report")
+                            }
 
-                }
-            }
-            .listStyle(.plain)
-            
-            
-            ScrollView {
-                if vm.isLoading {
-                    ProgressView()
-                } else {
-                    if vm.comments.isEmpty {
-                        VStack {
-                            Text("No Comments yet")
-                                .font(.title2)
-
-                            Text("Start the conversation")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
                         }
                     }
+                    .listStyle(.plain)
                 }
             }
-            
+                        
             Spacer()
             
             Divider()

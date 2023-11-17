@@ -9,11 +9,8 @@ import SwiftUI
 import Kingfisher
 
 struct FeedView: View {
-    @EnvironmentObject private var appData: AppData
-    @EnvironmentObject var searchViewModel: SearchViewModel
-    
-    @StateObject var commentsViewModel = CommentsViewModel()
-    @StateObject var mediasViewModel = MediasViewModel()
+    @ObservedObject var commentsViewModel: CommentsViewModel
+    @ObservedObject var mediasViewModel: MediasViewModel
     @StateObject var vm = FeedViewModel()
     
     @Binding var reportId: String?
@@ -127,11 +124,6 @@ struct FeedView: View {
                 } else {
                     Color.clear
                         .frame(width: 0, height: 0)
-                        .sheet(isPresented: $commentsViewModel.showComments, content: {
-                            CommentsView(vm: commentsViewModel)
-                        })
-                    Color.clear
-                        .frame(width: 0, height: 0)
                         .fullScreenCover(isPresented: $mediasViewModel.show, content: {
                             MediasView(vm: mediasViewModel)
                         })
@@ -187,7 +179,7 @@ struct FeedView: View {
 
 #Preview {
     NavigationStack {
-        FeedView(reportId: .constant(nil))
+        FeedView(commentsViewModel: CommentsViewModel(), mediasViewModel: MediasViewModel(), reportId: .constant(nil))
             .environmentObject(AppData())
             .environmentObject(SearchViewModel())
     }
