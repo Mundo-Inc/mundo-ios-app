@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     let toastViewModel = ToastViewModel.shared
-    let apiManager = APIManager()
+    let apiManager = APIManager.shared
     
     @ObservedObject private var auth = Authentication.shared
     @AppStorage("theme") var theme: String = ""
@@ -17,7 +17,7 @@ struct SettingsView: View {
     @State var showAccountDeleteWarning = false
     func deleteAccount() async {
         do {
-            guard let token = auth.token, let user = auth.user else { return }
+            guard let token = await auth.getToken(), let user = auth.currentUser else { return }
                         
             let _ = try await apiManager.requestNoContent("/users/\(user.id)", method: .delete, token: token)
             
@@ -37,7 +37,7 @@ struct SettingsView: View {
                     HStack {
                         Text("Email")
                             .font(.custom(style: .body))
-                        if let user = auth.user {
+                        if let user = auth.currentUser {
                             HStack(spacing: 2) {
                                 Image(systemName: user.email.verified ? "checkmark.seal" : "xmark.square")
                                     .font(.system(size: 14))
@@ -47,7 +47,7 @@ struct SettingsView: View {
                             .foregroundColor(user.email.verified ? .accentColor : .secondary)
                         }
                     }
-                    Text(auth.user?.email.address ?? "user@domain.com")
+                    Text(auth.currentUser?.email.address ?? "user@domain.com")
                         .font(.custom(style: .callout))
                         .foregroundStyle(.secondary)
                 }

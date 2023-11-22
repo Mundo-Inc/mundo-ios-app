@@ -25,7 +25,7 @@ class UserProfileActivityVM: ObservableObject {
     }
     
     private let auth = Authentication.shared
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     
     @Published var activityType: ProfileActivityVm.FeedItemActivityType = .all
     @Published var isLoading = false
@@ -35,7 +35,7 @@ class UserProfileActivityVM: ObservableObject {
     var page = 1
             
     func getActivities(_ type: RefreshNewAction) async {
-        guard let token = auth.token else { return }
+        guard let token = await auth.getToken() else { return }
         
         if type == .refresh {
             self.page = 1

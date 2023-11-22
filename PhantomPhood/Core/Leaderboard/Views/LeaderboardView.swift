@@ -21,7 +21,7 @@ struct LeaderboardView: View {
                 
                 VStack {
                     HStack(spacing: 10) {
-                        if let user = auth.user, let profileImage = URL(string: user.profileImage) {
+                        if let user = auth.currentUser, let profileImage = URL(string: user.profileImage) {
                             KFImage.url(profileImage)
                                 .placeholder {
                                     Rectangle()
@@ -48,29 +48,29 @@ struct LeaderboardView: View {
                         }
                         
                         VStack {
-                            Text(auth.user?.name ?? "User Name")
+                            Text(auth.currentUser?.name ?? "User Name")
                                 .font(.custom(style: .headline))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            ProgressView(value: auth.user == nil ? 0 : Double(auth.user!.progress.xp) / Double(auth.user!.progress.xp + auth.user!.remainingXp))
+                            ProgressView(value: auth.currentUser == nil ? 0 : Double(auth.currentUser!.progress.xp) / Double(auth.currentUser!.progress.xp + auth.currentUser!.remainingXp))
                                 .foregroundStyle(.secondary)
                                 .progressViewStyle(.linear)
                             
                             HStack {
-                                Text("\(auth.user?.progress.xp ?? 100) XP")
+                                Text("\(auth.currentUser?.progress.xp ?? 100) XP")
                                     .font(.custom(style: .body))
                                     .foregroundStyle(.secondary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                Text("#\(auth.user?.rank ?? 10) Global")
+                                Text("#\(auth.currentUser?.rank ?? 10) Global")
                                     .font(.custom(style: .body))
                                     .foregroundStyle(.secondary)
                             }
                         }
-                        .redacted(reason: auth.user == nil ? .placeholder : [])
+                        .redacted(reason: auth.currentUser == nil ? .placeholder : [])
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        LevelView(level: auth.user != nil ? auth.user!.progress.level : -1)
+                        LevelView(level: auth.currentUser != nil ? auth.currentUser!.progress.level : -1)
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 46, height: 54)
                         
@@ -139,7 +139,7 @@ struct LeaderboardView: View {
                                         }
                                     }
                                 }
-                                .foregroundStyle(auth.user?.id == vm.list[index].id ? Color.accentColor : Color.primary)
+                                .foregroundStyle(auth.currentUser?.id == vm.list[index].id ? Color.accentColor : Color.primary)
                                 
                                 Divider()
                             }

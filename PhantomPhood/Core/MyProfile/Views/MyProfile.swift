@@ -17,7 +17,7 @@ struct MyProfile: View {
             ScrollView {
                 VStack {
                     HStack(spacing: 12) {
-                        if let user = auth.user, !user.profileImage.isEmpty, let imageURL = URL(string: user.profileImage) {
+                        if let user = auth.currentUser, !user.profileImage.isEmpty, let imageURL = URL(string: user.profileImage) {
                             KFImage.url(imageURL)
                                 .placeholder { progress in
                                     RoundedRectangle(cornerRadius: 15)
@@ -38,7 +38,7 @@ struct MyProfile: View {
                                 .clipShape(.rect(cornerRadius: 15))
                         } else {
                             // No Image
-                            if auth.user == nil {
+                            if auth.currentUser == nil {
                                 RoundedRectangle(cornerRadius: 15)
                                     .foregroundStyle(.tertiary)
                                     .frame(width: 82, height: 82)
@@ -54,9 +54,9 @@ struct MyProfile: View {
                         }
                         
                         VStack {
-                            if (auth.user != nil && auth.user!.verified) {
+                            if (auth.currentUser != nil && auth.currentUser!.verified) {
                                 HStack {
-                                    Text(auth.user?.name ?? "User Name")
+                                    Text(auth.currentUser?.name ?? "User Name")
                                         .font(.custom(style: .title2))
                                         .bold()
                                     Image(systemName: "checkmark.seal")
@@ -65,13 +65,13 @@ struct MyProfile: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 
                             } else {
-                                Text(auth.user?.name ?? "User Name")
+                                Text(auth.currentUser?.name ?? "User Name")
                                     .font(.custom(style: .title2))
                                     .bold()
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             
-                            Text("@\(auth.user?.username ?? "testUsername")")
+                            Text("@\(auth.currentUser?.username ?? "testUsername")")
                                 .font(.custom(style: .footnote))
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -89,11 +89,11 @@ struct MyProfile: View {
                         }
                         .frame(maxWidth: .infinity)
                     }
-                    .redacted(reason: auth.user == nil ? .placeholder : [])
+                    .redacted(reason: auth.currentUser == nil ? .placeholder : [])
                     .padding(.horizontal)
                     .padding(.bottom)
 
-                    if let bio = auth.user?.bio, bio.count > 0 {
+                    if let bio = auth.currentUser?.bio, bio.count > 0 {
                         Text(bio)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .font(.custom(style: .footnote))

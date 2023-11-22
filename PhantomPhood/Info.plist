@@ -12,7 +12,19 @@
 				<string>phantom</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>Google Sign In</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.323069822782-cuk2poatn6g4mjhca6mjp8hfgclsdpe5</string>
+			</array>
+		</dict>
 	</array>
+	<key>GIDClientID</key>
+	<string>323069822782-cuk2poatn6g4mjhca6mjp8hfgclsdpe5.apps.googleusercontent.com</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Poppins-Thin.ttf</string>
@@ -33,6 +45,11 @@
 		<string>Poppins-BoldItalic.ttf</string>
 		<string>Poppins-Black.ttf</string>
 		<string>Poppins-BlackItalic.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
 	</array>
 </dict>
 </plist>

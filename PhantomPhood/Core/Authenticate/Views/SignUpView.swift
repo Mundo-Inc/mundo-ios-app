@@ -23,7 +23,7 @@ class SignUpDataManager {
     
     // MARK: - API Manager
     
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     
     
     // MARK: - Public Methods
@@ -95,7 +95,7 @@ class SignUpViewModel: ObservableObject {
 // MARK: - View
 
 struct SignUpView: View {
-    @EnvironmentObject var auth: Authentication
+    @ObservedObject var auth = Authentication.shared
     @Environment(\.dismiss) var dismiss
     @StateObject private var vm = SignUpViewModel()
     

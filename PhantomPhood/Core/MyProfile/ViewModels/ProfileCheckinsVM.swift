@@ -10,7 +10,7 @@ import Foundation
 @MainActor
 class ProfileCheckinsVM: ObservableObject {
     private let auth = Authentication.shared
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     
     @Published var isLoading = false
     @Published var checkins: [Checkin]? = nil
@@ -19,7 +19,7 @@ class ProfileCheckinsVM: ObservableObject {
     var page = 1
     
     func getCheckins(type: RefreshNewAction) async {
-        guard let token = auth.token, let userId = auth.userId else { return }
+        guard let token = await auth.getToken(), let uid = auth.currentUser?.id else { return }
         
         if type == .refresh {
             self.page = 1
@@ -38,7 +38,7 @@ class ProfileCheckinsVM: ObservableObject {
                 let data: [Checkin]
                 let total: Int
             }
-            let data = try await apiManager.requestData("/checkins?user=\(userId)&page=\(self.page)", method: .get, token: token) as RequestResponse?
+            let data = try await apiManager.requestData("/checkins?user=\(uid)&page=\(self.page)", method: .get, token: token) as RequestResponse?
             
             if let data {
                 switch type {

@@ -6,9 +6,11 @@
 //
 
 import Foundation
-//import Combine
+import Firebase
+import GoogleSignIn
+import FirebaseAuth
 
-enum Role: String, Codable {
+enum UserRole: String, Codable {
     case user
     case admin
 }
@@ -18,7 +20,7 @@ struct CurrentUserCoreData: Codable, Identifiable {
     let bio: String?
     let email: Email
     let coins: Int
-    let role: Role
+    let role: UserRole
     let verified: Bool
     let progress: UserProgress
     
@@ -37,7 +39,7 @@ struct CurrentUserFullData: Codable {
     var bio: String?
     let email: Email
     let rank, remainingXp, coins, reviewsCount, followersCount, followingCount, totalCheckins: Int
-    let role: Role
+    let role: UserRole
     let verified: Bool
     let progress: UserProgress
     
@@ -53,81 +55,116 @@ struct CurrentUserFullData: Codable {
 
 @MainActor
 class Authentication: ObservableObject {
-    
     static let shared = Authentication()
     
     private let appData = AppData.shared
-    
-    // MARK: - API Manager
-    
-    private let apiManager = APIManager()
-    
-    // MARK: - Internal Structs
-    
-    struct SignUpData: Codable {
-        let userId: String
-        let token: String
-    }
-    
-    typealias SignInData = SignUpData
+    private let apiManager = APIManager.shared
     
     // MARK: - Properties
     
-    @Published private(set) var user: CurrentUserFullData? = nil
-    @Published private(set) var isSignedIn: Bool = false
-    
-    @Published private(set) var userId: String? = nil
-    
-    var token: String? {
-        // get jwt token from Keychain
-        let tk = KeychainHelper.getData(for: .userToken)
-        return tk
-    }
+    @Published private(set) var userSession: Firebase.User?
+    @Published private(set) var currentUser: CurrentUserFullData? = nil
     
     // MARK: - INIT
     
     init() {
-        let uId = UserDefaults.standard.string(forKey: "userId")
-        if let uId, let _ = token {
-            self.userId = uId
-            self.isSignedIn = true
-        }
+        self.userSession = Auth.auth().currentUser
         
         Task {
-            await self.updateUserInfo()
+            await updateUserInfo()
         }
-        
     }
     
     // MARK: - Public Methods
     
-    func signin(email: String, password: String) async throws -> SignInData? {
-        struct SignInRequestBody: Encodable {
-            let action: String
-            let email: String
-            let password: String
+    func getToken() async -> String? {
+        do {
+            let token = try await Auth.auth().currentUser?.getIDToken()
+            return token
+        } catch {
+            return nil
         }
-        
-        let reqBody = try apiManager.createRequestBody(SignInRequestBody(action: "signin", email: email, password: password))
-        
-        let data = try await apiManager.requestData("/auth", method: .post, body: reqBody) as SignInData?
-        
-        self.isSignedIn = true
-        if let data {
-            self.userId = data.userId
-            let isSaved = KeychainHelper.save(data: data.token, for: .userToken)
-            if !isSaved {
-                self.signout()
-                throw CancellationError()
-            }
-            UserDefaults.standard.set(data.userId, forKey: "userId")
-        }
-        await self.updateUserInfo()
-        
-        return data
     }
     
-    func signup(name: String, email: String, password: String, username: String?) async throws -> SignUpData? {
+    @discardableResult
+    func signin(email: String, password: String) async -> (success: Bool, error: String?) {
+        do {
+            let result = try await Auth.auth().signIn(withEmail: email, password: password)
+            do {
+                guard let uid = Auth.auth().currentUser?.uid, let token = await getToken() else {
+                    throw URLError(.userAuthenticationRequired)
+                }
+                let user = try await getUserInfo(uid: uid, token: token)
+                self.userSession = result.user
+                self.currentUser = user
+                await setDeviceToken()
+                return (true, nil)
+            } catch {
+                print("DEBUG: Couldn't get user info | Error: \(error.localizedDescription)")
+                return (false, "Couldn't get user info")
+            }
+        } catch {
+            return (false, "Email/Password is incorrect")
+        }
+    }
+    
+    @discardableResult
+    func signin(credential: AuthCredential) async -> (success: Bool, error: String?) {
+        do {
+            let result = try await Auth.auth().signIn(with: credential)
+            do {
+                guard let uid = Auth.auth().currentUser?.uid, let token = await getToken() else {
+                    throw URLError(.userAuthenticationRequired)
+                }
+                let user = try await getUserInfo(uid: uid, token: token)
+                self.userSession = result.user
+                self.currentUser = user
+                await setDeviceToken()
+                return (true, nil)
+            } catch let error as APIManager.APIError {
+                switch error {
+                case .serverError(let serverError):
+                    if serverError.statusCode == 404 {
+                        do {
+                            try Auth.auth().signOut()
+                            self.currentUser = nil
+                            self.userSession = nil
+                        } catch(let err) {
+                            print("DEBUG: Unable to Sign Out | Error: \(err.localizedDescription)")
+                        }
+                        return (false, "You are not signed up with Phantom Phood")
+                    }
+                case .decodingError(let error):
+                    print("DEBUG: Couldn't decode user info | Error: \(error.localizedDescription)")
+                case .unknown:
+                    print("DEBUG: Couldn't get user info | Error: \(error.localizedDescription)")
+                }
+                return (false, "Something went wrong")
+            }
+        } catch {
+            print("DEBUG: Something went wrong | Error: \(error.localizedDescription)")
+            return (false, "Something went wrong")
+        }
+    }
+    
+    func signinWithGoogle(tokens: GoogleSignInResult) async -> (success: Bool, error: String?) {
+        let credential = GoogleAuthProvider.credential(withIDToken: tokens.idToken, accessToken: tokens.accessToken)
+        let result = await signin(credential: credential)
+        return result
+    }
+    
+    func signinWithApple(tokens: SignInWithAppleResult) async -> (success: Bool, error: String?) {
+        let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: tokens.token, rawNonce: tokens.nonce)
+        let result = await signin(credential: credential)
+        return result
+    }
+    
+    func signup(name: String, email: String, password: String, username: String?) async throws {
+        struct SignUpData: Codable {
+            let userId: String
+            let token: String
+        }
+        
         struct SignUpRequestBody: Encodable {
             let name: String
             let email: String
@@ -136,58 +173,56 @@ class Authentication: ObservableObject {
         }
         
         let reqBody = try apiManager.createRequestBody(SignUpRequestBody(name: name, email: email, password: password, username: username))
+        let _ = try await apiManager.requestData("/users", method: .post, body: reqBody) as SignUpData?
         
-        let data = try await apiManager.requestData("/users", method: .post, body: reqBody) as SignUpData?
-        
-        self.isSignedIn = true
-        if let data {
-            self.userId = data.userId
-            let isSaved = KeychainHelper.save(data: data.token, for: .userToken)
-            if !isSaved {
-                self.signout()
-                throw CancellationError()
-            }
-            UserDefaults.standard.set(data.userId, forKey: "userId")
-        }
-        await self.updateUserInfo()
-        
-        return data
+        await self.signin(email: email, password: password)
     }
     
     func signout() {
-        self.isSignedIn = false
-        let _ = KeychainHelper.deleteData(for: .userToken)
-        UserDefaults.standard.removeObject(forKey: "userId")
-        self.userId = nil
-        self.user = nil
-        appData.reset()
+        do {
+            try Auth.auth().signOut()
+            
+            self.currentUser = nil
+            self.userSession = nil
+            appData.reset()
+        } catch {
+            print("DEBUG: Failed to signout | Error: \(error.localizedDescription)")
+        }
     }
     
+    struct UserResponse: Codable {
+        let success: Bool
+        let data: CurrentUserFullData
+    }
     func updateUserInfo() async {
-        struct UserResponse: Codable {
-            let success: Bool
-            let data: CurrentUserFullData
-        }
-
-        if let userId, let token {
-            do {
-                let data = try await apiManager.requestData("/users/\(userId)", method: .get, token: token) as UserResponse?
+        do {
+            guard let uid = Auth.auth().currentUser?.uid, let token = await getToken() else { return }
+            
+            let data = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token) as UserResponse?
+            
+            if let data {
+                self.currentUser = data.data
                 
-                if let data {
-                    self.user = data.data
-                    
-                    await setDeviceToken()
-                }
-            } catch {
-                print(error)
+                await setDeviceToken()
             }
+        } catch {
+            print("DEBUG: Couldn't get user info | Error: \(error.localizedDescription)")
+        }
+    }
+    func getUserInfo(uid: String, token: String) async throws -> CurrentUserFullData {
+        let data = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token) as UserResponse?
+        
+        if let data {
+            return data.data
+        } else {
+            throw URLError(.badServerResponse)
         }
     }
     
     func setDeviceToken() async {
         let deviceToken = UserDefaults.standard.string(forKey: "deviceToken")
         
-        guard let token, let user, let deviceToken, !deviceToken.isEmpty else {
+        guard let token = await getToken(), let currentUser, let deviceToken, !deviceToken.isEmpty else {
             return
         }
         
@@ -200,10 +235,10 @@ class Authentication: ObservableObject {
         do {
             let body = try apiManager.createRequestBody(RequestBody(token: deviceToken))
             
-            let _ = try await apiManager.requestNoContent("/users/\(user.id)/settings", method: .put, body: body, token: token)
+            let _ = try await apiManager.requestNoContent("/users/\(currentUser.id)/settings", method: .put, body: body, token: token)
             UserDefaults.standard.removeObject(forKey: "deviceToken")
         } catch {
-            print(error)
+            print("DEBUG: Couldn't send device token | Error: \(error.localizedDescription)")
         }
     }
 }

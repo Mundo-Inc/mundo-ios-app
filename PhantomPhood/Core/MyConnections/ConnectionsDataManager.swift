@@ -8,7 +8,7 @@
 import Foundation
 
 class ConnectionsDataManager {
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     
     enum UserConnectionType: String {
@@ -17,7 +17,7 @@ class ConnectionsDataManager {
     }
     
     func getConnections(userId: String, type: UserConnectionType, page: Int = 1, limit: Int = 30) async throws -> (data: [UserConnection], total: Int) {
-        guard let token = await auth.token else { throw URLError(.userAuthenticationRequired) }
+        guard let token = await auth.getToken() else { throw URLError(.userAuthenticationRequired) }
         
         struct RequestResponse: Decodable {
             let success: Bool

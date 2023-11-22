@@ -16,7 +16,7 @@ struct CommentsView: View {
     @Environment(\.dismiss) var dismiss
     
     func navigateToUserProfile(id: String) {
-        if let userId = auth.userId, userId == id {
+        if let userId = auth.currentUser?.id, userId == id {
             appData.activeTab = .myProfile
             dismiss()
             return

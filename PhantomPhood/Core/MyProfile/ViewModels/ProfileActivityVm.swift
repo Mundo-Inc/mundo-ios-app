@@ -11,7 +11,7 @@ import Combine
 @MainActor
 class ProfileActivityVm: ObservableObject {
     private let auth = Authentication.shared
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     
     enum FeedItemActivityType: String, Decodable, CaseIterable {
         case all = "ALL"
@@ -66,7 +66,7 @@ class ProfileActivityVm: ObservableObject {
     var page = 1
     
     func getActivities(_ type: RefreshNewAction) async {
-        guard let token = auth.token, let userId = auth.userId else { return }
+        guard let token = await auth.getToken(), let uid = auth.currentUser?.id else { return }
         
         if type == .refresh {
             self.page = 1
@@ -85,7 +85,7 @@ class ProfileActivityVm: ObservableObject {
                 let data: [FeedItem]
                 let total: Int
             }
-            let data = try await apiManager.requestData("/users/\(userId)/userActivities?page=\(self.page)\(activityType == .all ? "" : "&type=\(activityType.rawValue)")", method: .get, token: token) as RequestResponse?
+            let data = try await apiManager.requestData("/users/\(uid)/userActivities?page=\(self.page)\(activityType == .all ? "" : "&type=\(activityType.rawValue)")", method: .get, token: token) as RequestResponse?
             
             if let data {
                 switch type {

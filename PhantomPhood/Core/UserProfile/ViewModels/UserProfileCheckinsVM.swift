@@ -16,7 +16,7 @@ class UserProfileCheckinsVM: ObservableObject {
     }
     
     private let auth = Authentication.shared
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     
     @Published var isLoading = false
     @Published var checkins: [Checkin]? = nil
@@ -25,7 +25,7 @@ class UserProfileCheckinsVM: ObservableObject {
     var page = 1
         
     func getCheckins(type: RefreshNewAction) async {
-        guard let token = auth.token else { return }
+        guard let token = await auth.getToken() else { return }
         
         if type == .refresh {
             self.page = 1

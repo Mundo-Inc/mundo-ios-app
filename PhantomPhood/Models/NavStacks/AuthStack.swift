@@ -8,13 +8,16 @@
 import Foundation
 
 enum AuthStack: Hashable {
-    case signin
+    case signinOptions
+    case signinWithEmail
     case signup
     
     func hash(into hasher: inout Hasher) {
         switch self {
-        case .signin:
-            hasher.combine("signin")
+        case .signinOptions:
+            hasher.combine("signinOptions")
+        case .signinWithEmail:
+            hasher.combine("signinWithEmail")
         case .signup:
             hasher.combine("signup")
         }

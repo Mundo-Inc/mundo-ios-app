@@ -8,6 +8,7 @@
 import Foundation
 
 class APIManager {
+    static let shared = APIManager()
     
     // MARK: - Nested Types
     
@@ -174,8 +175,7 @@ class APIManager {
             if let serverError = try? JSONDecoder().decode(ServerResponseError.self, from: data) {
                 throw APIError.serverError(.init(success: serverError.success, error: serverError.error, statusCode: httpResponse.statusCode))
             } else {
-                print("API Unknown Error")
-                print(httpResponse.statusCode)
+                print("API Unknown Error | Status Code \(httpResponse.statusCode)")
                 throw APIError.unknown
             }
         }

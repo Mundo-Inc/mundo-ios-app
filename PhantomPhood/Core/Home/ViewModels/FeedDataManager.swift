@@ -8,7 +8,7 @@
 import Foundation
 
 class FeedDataManager {
-    let apiManager = APIManager()
+    let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
     enum FeedType: String {
@@ -22,7 +22,7 @@ class FeedDataManager {
             let result: [FeedItem]
         }
         
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
                 
@@ -40,7 +40,7 @@ class FeedDataManager {
             let data: UserProfile
         }
         
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
@@ -64,7 +64,7 @@ class FeedDataManager {
             }
         }
         
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw CancellationError()
         }
         

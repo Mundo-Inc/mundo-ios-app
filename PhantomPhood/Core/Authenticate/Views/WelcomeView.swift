@@ -9,9 +9,7 @@ import SwiftUI
 import Lottie
 
 struct WelcomeView: View {
-//    @State private var stackPath: [AuthNavigationModel] = []
-    
-    @EnvironmentObject var appData: AppData
+    @ObservedObject var appData = AppData.shared
     
     var body: some View {
         ZStack {
@@ -44,7 +42,7 @@ struct WelcomeView: View {
                     .controlSize(.large)
                     .padding(.horizontal)
                     
-                    NavigationLink(value: AuthStack.signin) {
+                    NavigationLink(value: AuthStack.signinOptions) {
                         Text("I already have an account")
                             .frame(maxWidth: .infinity)
                     }
@@ -59,8 +57,10 @@ struct WelcomeView: View {
                     switch link {
                     case .signup:
                         SignUpView()
-                    case .signin:
-                        SignInView()
+                    case .signinOptions:
+                        SignInOptionsView()
+                    case .signinWithEmail:
+                        SignInWithEmailView()
                     }
                 }
             }
@@ -70,7 +70,6 @@ struct WelcomeView: View {
 
 #Preview {
     WelcomeView()
-        .environmentObject(AppData())
 }
 
 

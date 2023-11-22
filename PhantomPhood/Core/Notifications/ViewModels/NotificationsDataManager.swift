@@ -8,7 +8,7 @@
 import Foundation
 
 class NotificationsDataManager {
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
     struct FeedResponse: Decodable {
@@ -23,7 +23,7 @@ class NotificationsDataManager {
     }
     
     func getNotifications(page: Int = 1) async throws -> FeedResponse {
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         

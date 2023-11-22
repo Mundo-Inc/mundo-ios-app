@@ -15,13 +15,13 @@ class ReactionsViewModel: ObservableObject {
         self.activityId = activityId
     }
     
-    let apiManager = APIManager()
+    let apiManager = APIManager.shared
     let auth = Authentication.shared
     
     @Published var isLoading = false
     
     func addReaction(type: ReactionType, reaction: String) async throws -> RequestResponse.ReactionData {
-        guard let token = auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
@@ -37,7 +37,7 @@ class ReactionsViewModel: ObservableObject {
         }
     }
     func removeReaction(id: String) async throws {
-        guard let token = auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         

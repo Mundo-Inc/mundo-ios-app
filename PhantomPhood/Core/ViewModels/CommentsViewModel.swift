@@ -10,7 +10,7 @@ import Combine
 
 @MainActor
 class CommentsViewModel: ObservableObject {
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     private let toastViewModel = ToastViewModel.shared
     
@@ -40,13 +40,15 @@ class CommentsViewModel: ObservableObject {
 
     func getComments(activityId: String) async {
         if isLoading { return }
+        guard let token = await auth.getToken() else { return }
+        
         struct CommentsResponse: Decodable {
             let success: Bool
             let data: [Comment]
         }
         isLoading = true
         do {
-            let data = try await apiManager.requestData("/feeds/\(activityId)/comments?page=\(commentsPage)", token: auth.token) as CommentsResponse?
+            let data = try await apiManager.requestData("/feeds/\(activityId)/comments?page=\(commentsPage)", token: token) as CommentsResponse?
             if let data = data {
                 if commentsPage == 1 {
                     comments = data.data
@@ -72,7 +74,7 @@ class CommentsViewModel: ObservableObject {
     func submitComment() async {
         guard
             let activityID = self.currentActivityId,
-            let token = auth.token,
+            let token = await auth.getToken(),
             !activityID.isEmpty && self.showComments && !self.isSubmitting
         else { return }
         
@@ -108,7 +110,7 @@ class CommentsViewModel: ObservableObject {
         case remove
     }
     func updateCommentLike(id: String, action: LikeAction) async {
-        guard let token = auth.token else { return }
+        guard let token = await auth.getToken() else { return }
         
         struct ResponseData: Decodable {
             let success: Bool

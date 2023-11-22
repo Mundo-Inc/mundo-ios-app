@@ -26,7 +26,7 @@ enum FlagType: String, CaseIterable {
 
 struct ReportView: View {
     let toastViewModel = ToastViewModel.shared
-    let apiManager = APIManager()
+    let apiManager = APIManager.shared
     @ObservedObject var auth = Authentication.shared
     
     @Binding var id: String?
@@ -39,7 +39,7 @@ struct ReportView: View {
     
     func submit() async {
         do {
-            guard let id, let flagType, let token = auth.token else { return }
+            guard let id, let flagType, let token = await auth.getToken() else { return }
             
             struct RequestBody: Encodable {
                 let flagType: String

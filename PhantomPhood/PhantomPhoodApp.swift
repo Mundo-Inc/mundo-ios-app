@@ -6,16 +6,20 @@
 //
 
 import SwiftUI
+import Firebase
+import GoogleSignIn
 import UserNotifications
 
 @main
 struct PhantomPhoodApp: App {
-    @ObservedObject private var auth = Authentication.shared
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
+    @StateObject private var auth = Authentication.shared
     @StateObject private var appData: AppData = AppData.shared
     @StateObject var locationManager = LocationManager.shared
-    @AppStorage("theme") var theme: String = ""
-    
     @StateObject private var toastViewModel = ToastViewModel.shared
+    
+    @AppStorage("theme") var theme: String = ""
     
     private func getKeyValue(_ key: String, string: String) -> String? {
         let components = string.components(separatedBy: "/")
@@ -27,8 +31,6 @@ struct PhantomPhoodApp: App {
         return nil
     }
     
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
     init() {
         URLCache.shared.memoryCapacity = 50_000_000 // ~50 MB memory space
         URLCache.shared.diskCapacity = 1_000_000_000 // ~1GB disk cache space
@@ -36,10 +38,10 @@ struct PhantomPhoodApp: App {
     
     var body: some Scene {
         WindowGroup {
-
+            
             ZStack {
-                if auth.isSignedIn {
-                    if let _ = auth.user {
+                if auth.userSession != nil {
+                    if auth.currentUser != nil {
                         ContentView()
                             .environmentObject(locationManager)
                     } else {
@@ -101,7 +103,7 @@ struct PhantomPhoodApp: App {
             .environmentObject(appData)
             .onOpenURL { url in
                 // return if not signed in
-                guard auth.isSignedIn else { return }
+                guard auth.userSession != nil else { return }
                 
                 let string = url.absoluteString.replacingOccurrences(of: "phantom://", with: "")
                 let components = string.components(separatedBy: "/")
@@ -194,22 +196,98 @@ struct PhantomPhoodApp: App {
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
-            guard granted else { return }
-
-            DispatchQueue.main.async {
-                application.registerForRemoteNotifications()
-            }
+    let gcmMessageIDKey = "gcm.message_id"
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        
+        Messaging.messaging().delegate = self
+        
+        if #available(iOS 10.0, *) {
+            // For iOS 10 display notification (sent via APNS)
+            UNUserNotificationCenter.current().delegate = self
+            
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(
+                options: authOptions,
+                completionHandler: {_, _ in })
+        } else {
+            let settings: UIUserNotificationSettings =
+            UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+            application.registerUserNotificationSettings(settings)
         }
+        
+        application.registerForRemoteNotifications()
         return true
     }
     
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        let token = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         
-        UserDefaults.standard.set(token, forKey: "deviceToken")
+        if let messageID = userInfo[gcmMessageIDKey] {
+            print("Message ID: \(messageID)")
+        }
+        
+        completionHandler(UIBackgroundFetchResult.newData)
+    }
+}
+
+extension AppDelegate: MessagingDelegate {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        
+        //        let deviceToken:[String: String] = ["token": fcmToken ?? ""]
+        
+        UserDefaults.standard.set(fcmToken, forKey: "deviceToken")
+    }
+}
+
+@available(iOS 10, *)
+extension AppDelegate : UNUserNotificationCenterDelegate {
+    
+    // Receive displayed notifications for iOS 10 devices.
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        let userInfo = notification.request.content.userInfo
+        
+        if let messageID = userInfo[gcmMessageIDKey] {
+            print("Message ID: \(messageID)")
+        }
+        
+        print(userInfo)
+        
+        // Change this to your preferred presentation option
+        completionHandler([[.banner, .badge, .sound]])
     }
     
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo
+        
+        if let messageID = userInfo[gcmMessageIDKey] {
+            print("Message ID from userNotificationCenter didReceive: \(messageID)")
+        }
+        
+        print(userInfo)
+        
+        completionHandler()
+    }
+}
+
+// SignIn with Google
+extension AppDelegate {
+    func application(_ app: UIApplication,
+                     open url: URL,
+                     options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        return GIDSignIn.sharedInstance.handle(url)
+    }
 }

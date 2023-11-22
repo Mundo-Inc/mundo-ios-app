@@ -33,7 +33,7 @@ struct ProfileStats: View {
                                 Color(red: 0.19, green: 1, blue: 0.76).opacity(0.2)
                             ], startPoint: .topLeading, endPoint: .bottomTrailing),
                             title: "Followers",
-                            value: auth.user?.followersCount
+                            value: auth.currentUser?.followersCount
                         )
                     }
                     .foregroundStyle(.primary)
@@ -52,7 +52,7 @@ struct ProfileStats: View {
                                 Color(red: 0.83, green: 0.37, blue: 1).opacity(0.15)
                             ], startPoint: .topLeading, endPoint: .bottomTrailing),
                             title: "Followings",
-                            value: auth.user?.followingCount
+                            value: auth.currentUser?.followingCount
                         )
                     }
                     .foregroundStyle(.primary)
@@ -67,7 +67,7 @@ struct ProfileStats: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack(spacing: 10) {
-                    LevelView(level: auth.user?.progress.level ?? -1)
+                    LevelView(level: auth.currentUser?.progress.level ?? -1)
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 60, height: 60)
                         .padding(.all, 5)
@@ -78,18 +78,18 @@ struct ProfileStats: View {
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        ProgressView(value: auth.user == nil ? 0 : Double(auth.user!.progress.xp) / Double(auth.user!.progress.xp + auth.user!.remainingXp))
+                        ProgressView(value: auth.currentUser == nil ? 0 : Double(auth.currentUser!.progress.xp) / Double(auth.currentUser!.progress.xp + auth.currentUser!.remainingXp))
                             .foregroundStyle(.secondary)
                             .progressViewStyle(.linear)
                             
                         
                         HStack(spacing: 0) {
-                            Text("\(auth.user?.progress.xp ?? 1000)")
+                            Text("\(auth.currentUser?.progress.xp ?? 1000)")
                                 .foregroundStyle(Color.accentColor)
-                            Text("/\(auth.user == nil ? 3000 : auth.user!.progress.xp + auth.user!.remainingXp)")
+                            Text("/\(auth.currentUser == nil ? 3000 : auth.currentUser!.progress.xp + auth.currentUser!.remainingXp)")
                                 .foregroundStyle(.secondary)
                         }
-                        .redacted(reason: auth.user == nil ? .placeholder : [])
+                        .redacted(reason: auth.currentUser == nil ? .placeholder : [])
                         .font(.custom(style: .body))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
@@ -100,9 +100,9 @@ struct ProfileStats: View {
                     VStack {
                         Text("Rank")
                             .foregroundStyle(.tertiary)
-                        Text("\(auth.user?.rank ?? 10)")
+                        Text("\(auth.currentUser?.rank ?? 10)")
                             .foregroundStyle(.secondary)
-                            .redacted(reason: auth.user == nil ? .placeholder : [])
+                            .redacted(reason: auth.currentUser == nil ? .placeholder : [])
                     }
                     .font(.custom(style: .title3))
                     .bold()
@@ -137,7 +137,7 @@ struct ProfileStats: View {
                             Color(red: 0.94, green: 1, blue: 0.19).opacity(0.2)
                         ], startPoint: .leading, endPoint: .trailing),
                         title: "Reviews",
-                        value: auth.user?.reviewsCount
+                        value: auth.currentUser?.reviewsCount
                     )
                     .onTapGesture {
                         withAnimation {
@@ -158,7 +158,7 @@ struct ProfileStats: View {
                             Color(red: 1, green: 0.25, blue: 0.5).opacity(0.15)
                         ], startPoint: .topLeading, endPoint: .bottomTrailing),
                         title: "Checkins",
-                        value: auth.user?.totalCheckins
+                        value: auth.currentUser?.totalCheckins
                     )
                     .onTapGesture {
                         withAnimation {

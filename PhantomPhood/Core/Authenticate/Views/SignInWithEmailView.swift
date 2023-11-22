@@ -1,18 +1,16 @@
 //
-//  SignInView.swift
+//  SignInWithEmailView.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 14.09.2023.
+//  Created by Kia Abdi on 11/21/23.
 //
 
 import SwiftUI
 
 // MARK: - Data Manager
-
 class SignInDataManager {
     
     // MARK: - Nested Types
-    
     struct ServerError: Codable {
         let success: Bool
         let error: ErrorRes
@@ -24,11 +22,10 @@ class SignInDataManager {
     
     // MARK: - API Manager
     
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     
     
     // MARK: - Public Methods
-    
     func checkUsername(_ username: String) async throws -> HTTPURLResponse {
         let response = try await apiManager.requestNoContent("/users/username-availability/\(username)")
         return response
@@ -37,7 +34,6 @@ class SignInDataManager {
 }
 
 // MARK: - ViewModel
-
 @MainActor
 class SignInViewModel: ObservableObject {
     private let dataManager = SignUpDataManager()
@@ -49,17 +45,16 @@ class SignInViewModel: ObservableObject {
     @Published var password: String = ""
     
     @Published var error: String?
-
+    
 }
 
 // MARK: - View
-
-struct SignInView: View {
-    @EnvironmentObject var auth: Authentication
+struct SignInWithEmailView: View {
+    @ObservedObject var auth = Authentication.shared
     @Environment(\.dismiss) var dismiss
     
     @StateObject private var vm = SignInViewModel()
-
+    
     enum TextFields: Hashable {
         case email
         case password
@@ -69,15 +64,6 @@ struct SignInView: View {
     
     var body: some View {
         VStack {
-            if let error = vm.error {
-                Text(error)
-                    .font(.custom(style: .headline))
-                    .foregroundColor(.red)
-                    .onTapGesture {
-                        vm.error = nil
-                    }
-            }
-            
             Spacer(minLength: 0)
             
             VStack(alignment: .leading) {
@@ -92,6 +78,15 @@ struct SignInView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.bottom)
+            .alert("Error", isPresented: Binding(optionalValue: $vm.error)) {
+                Button(role: .cancel) {
+                    vm.error = nil
+                } label: {
+                    Text("Ok")
+                }
+            } message: {
+                Text(vm.error ?? "")
+            }
             
             TextField("Email", text: $vm.email)
                 .withFilledStyle()
@@ -132,22 +127,18 @@ struct SignInView: View {
             Spacer()
             
             Button {
+                withAnimation {
+                    vm.isLoading = true
+                }
                 Task {
-                    withAnimation {
-                        vm.isLoading = true
-                    }
-                    do {
-                        let _ = try await auth.signin(email: vm.email, password: vm.password)
-                    } catch APIManager.APIError.serverError(let serverError) {
+                    let result = await auth.signin(email: vm.email, password: vm.password)
+                    if let error = result.error, !result.success {
                         withAnimation {
-                            vm.error = serverError.message
-                        }
-                    } catch {
-                        withAnimation {
-                            vm.error = error.localizedDescription
+                            vm.error = error
                         }
                     }
-                    
+                }
+                withAnimation {
                     vm.isLoading = false
                 }
             } label: {
@@ -192,7 +183,8 @@ struct SignInView: View {
     }
 }
 
+
+
 #Preview {
-    SignInView()
-        .environmentObject(Authentication())
+    SignInWithEmailView()
 }

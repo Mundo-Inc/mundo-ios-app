@@ -30,7 +30,7 @@ class MyConnectionsViewModel: ObservableObject {
     }
     
     func getConnections(type: ConnectionsDataManager.UserConnectionType, requestType: RequestType) async {
-        guard let userId = auth.userId, !isLoading else { return }
+        guard let userId = auth.currentUser?.id, !isLoading else { return }
         
         isLoading = true
 

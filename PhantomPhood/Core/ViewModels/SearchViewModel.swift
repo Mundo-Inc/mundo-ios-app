@@ -53,7 +53,7 @@ enum SearchPlaceRegion {
 
 @MainActor
 class SearchViewModel: ObservableObject {
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     private let locationManager = LocationManager.shared
     
@@ -162,7 +162,7 @@ class SearchViewModel: ObservableObject {
         } else if self.scope == .users {
             Task {
                 do {
-                    let data = try await self.apiManager.requestData("/users?q=\(value)", token: self.auth.token) as UserSearchResponse?
+                    let data = try await self.apiManager.requestData("/users?q=\(value)", token: self.auth.getToken()) as UserSearchResponse?
                     if let data {
                         self.userSearchResults = data.data
                     }

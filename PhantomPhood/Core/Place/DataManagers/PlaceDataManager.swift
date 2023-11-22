@@ -10,7 +10,7 @@ import SwiftUI
 import MapKit
 
 class PlaceDataManager {
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
     struct PlaceResponse: Decodable {
@@ -19,7 +19,7 @@ class PlaceDataManager {
     }
     
     func fetch(mapPlace: MapPlace) async throws -> Place {
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
                 
@@ -33,7 +33,7 @@ class PlaceDataManager {
     }
     
     func fetch(mapItem: MKMapItem) async throws -> Place {
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
@@ -52,7 +52,7 @@ class PlaceDataManager {
     
     @available(iOS 17.0, *)
     func fetch(mapFeature: MapFeature) async throws -> Place {
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
@@ -71,7 +71,7 @@ class PlaceDataManager {
     }
     
     func fetch(id: String) async throws -> Place {
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
@@ -95,7 +95,7 @@ class PlaceDataManager {
             }
         }
         
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         

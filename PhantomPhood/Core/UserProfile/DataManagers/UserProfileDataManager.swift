@@ -8,7 +8,7 @@
 import Foundation
 
 class UserProfileDataManager {
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
     func fetch(id: String) async throws -> UserProfile {
@@ -17,7 +17,7 @@ class UserProfileDataManager {
             let data: UserProfile
         }
         
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
@@ -41,7 +41,7 @@ class UserProfileDataManager {
             }
         }
         
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
@@ -59,7 +59,7 @@ class UserProfileDataManager {
             }
         }
         
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
@@ -67,7 +67,7 @@ class UserProfileDataManager {
     }
     
     func block(id: String) async throws {
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
@@ -75,7 +75,7 @@ class UserProfileDataManager {
     }
     
     func unblock(id: String) async throws {
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         

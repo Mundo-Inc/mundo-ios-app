@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>323069822782-cuk2poatn6g4mjhca6mjp8hfgclsdpe5.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.323069822782-cuk2poatn6g4mjhca6mjp8hfgclsdpe5</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDcYo2Ljth25lJe3iWbUOLX68ry51XLYP4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>323069822782</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>ai.phantomphood.app</string>
+	<key>PROJECT_ID</key>
+	<string>phantom-phood</string>
+	<key>STORAGE_BUCKET</key>
+	<string>phantom-phood.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:323069822782:ios:08e0c6779afab706de4e6f</string>
+</dict>
+</plist>

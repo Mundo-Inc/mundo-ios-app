@@ -14,7 +14,7 @@ import UIKit
 
 @MainActor
 class EditProfileViewModel: ObservableObject {
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
     @Published var name: String = ""
@@ -43,7 +43,8 @@ class EditProfileViewModel: ObservableObject {
                 self?.isLoading = true
                 Task {
                     do {
-                        let _ = try await self?.apiManager.requestNoContent("/users/username-availability/\(value)", token: self?.auth.token)
+                        let token = await self?.auth.getToken()
+                        let _ = try await self?.apiManager.requestNoContent("/users/username-availability/\(value)", token: token)
                         self?.isUsernameValid = true
                     } catch let error as APIManager.APIError {
                         self?.isUsernameValid = false
@@ -164,10 +165,10 @@ class EditProfileViewModel: ObservableObject {
         
         
         
-        if let token = auth.token, let userId = auth.userId {
+        if let token = await auth.getToken(), let uid = auth.currentUser?.id {
             do {
                 let reqBody = try apiManager.createRequestBody(EditUserBody(name: self.name, username: self.username, bio: self.bio, removeProfileImage: self.isDeleting ? self.isDeleting : nil))
-                let _ = try await apiManager.requestData("/users/\(userId)", method: .put, body: reqBody, token: token) as EditUserResponse?
+                let _ = try await apiManager.requestData("/users/\(uid)", method: .put, body: reqBody, token: token) as EditUserResponse?
             } catch {
                 print(error)
             }
@@ -203,7 +204,7 @@ class EditProfileViewModel: ObservableObject {
     private func uploadImage() async throws {
         switch imageState {
         case .success(let (_, uiImage, _)):
-            if let token = auth.token {
+            if let token = await auth.getToken() {
                 var media: UIImage = uiImage
                 if uiImage.size.width > 1024 || uiImage.size.height > 1024 {
                     media = uiImage.resized(to: CGSize(width: 1024, height: 1024))

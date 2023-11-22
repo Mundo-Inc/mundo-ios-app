@@ -8,7 +8,7 @@
 import Foundation
 
 class LeaderboardDataManager {
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
         
     struct LeaderboardResponse: Decodable {
@@ -17,7 +17,7 @@ class LeaderboardDataManager {
     }
     
     func fetchLeaderboard(page: Int = 1) async throws -> [User] {
-        guard let token = await auth.token else {
+        guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         

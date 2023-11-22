@@ -18,7 +18,7 @@ class AddReviewViewModel: ObservableObject {
         case review
     }
     
-    private let apiManager = APIManager()
+    private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     private let toastViewModel = ToastViewModel.shared
     
@@ -46,7 +46,7 @@ class AddReviewViewModel: ObservableObject {
         do {
             try await uploadMedias()
             
-            guard let token = auth.token else {
+            guard let token = await auth.getToken() else {
                 throw CancellationError()
             }
             
@@ -138,7 +138,7 @@ class AddReviewViewModel: ObservableObject {
             }
         }
 
-        if let token = auth.token {
+        if let token = await auth.getToken() {
             for media in mediaItemsState {
                 switch media.state {
                 case .successImage(let uiImage):

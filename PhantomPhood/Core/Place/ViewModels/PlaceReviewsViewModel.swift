@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 class PlaceReviewsViewModel: ObservableObject {
-    let apiManager = APIManager()
+    let apiManager = APIManager.shared
     let auth: Authentication = Authentication.shared
 
     let placeId: String
@@ -25,6 +25,8 @@ class PlaceReviewsViewModel: ObservableObject {
     func fetch(type: FetchType) async {
         if isLoading { return }
         
+        guard let token = await auth.getToken() else { return }
+        
         struct ReviewsResponse: Decodable {
             let success: Bool
             let total: Int
@@ -38,7 +40,7 @@ class PlaceReviewsViewModel: ObservableObject {
         }
         
         do {
-            let data = try await apiManager.requestData("/places/\(placeId)/reviews?page=\(page)", token: auth.token) as ReviewsResponse?
+            let data = try await apiManager.requestData("/places/\(placeId)/reviews?page=\(page)", token: token) as ReviewsResponse?
             if let data = data {
                 if page == 1 {
                     reviews = data.data
