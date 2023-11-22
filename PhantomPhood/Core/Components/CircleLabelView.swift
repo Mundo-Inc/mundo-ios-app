@@ -9,6 +9,12 @@ import SwiftUI
 
 struct CircleLabelView: View {
     let text: String
+    let fontSize: CGFloat
+    
+    init(text: String, fontSize: CGFloat = 14) {
+        self.text = text
+        self.fontSize = fontSize
+    }
     
     var body: some View {
         ZStack {
@@ -20,7 +26,7 @@ struct CircleLabelView: View {
                 .rotationEffect(.degrees(Double(index * 360 / text.count)))
             }
         }
-        .font(.system(size: 14, design: .monospaced))
+        .font(.system(size: self.fontSize, design: .monospaced))
         .bold()
     }
 }

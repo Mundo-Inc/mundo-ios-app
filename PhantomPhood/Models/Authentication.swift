@@ -42,6 +42,7 @@ struct CurrentUserFullData: Codable {
     let role: UserRole
     let verified: Bool
     let progress: UserProgress
+    let accepted_eula: String?
     
     struct Email: Codable {
         let address: String
@@ -87,7 +88,7 @@ class Authentication: ObservableObject {
     }
     
     @discardableResult
-    func signin(email: String, password: String) async -> (success: Bool, error: String?) {
+    func signin(email: String, password: String) async -> (success: Bool, error: String?, errorCode: Int?) {
         do {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
             do {
@@ -98,62 +99,91 @@ class Authentication: ObservableObject {
                 self.userSession = result.user
                 self.currentUser = user
                 await setDeviceToken()
-                return (true, nil)
+                return (true, nil, nil)
             } catch {
                 print("DEBUG: Couldn't get user info | Error: \(error.localizedDescription)")
-                return (false, "Couldn't get user info")
+                return (false, "Couldn't get user info", nil)
             }
         } catch {
-            return (false, "Email/Password is incorrect")
+            return (false, "Email/Password is incorrect", 400)
         }
     }
     
     @discardableResult
-    func signin(credential: AuthCredential) async -> (success: Bool, error: String?) {
+    func signin(credential: AuthCredential) async -> (success: Bool, error: String?, errorCode: Int?) {
         do {
             let result = try await Auth.auth().signIn(with: credential)
             do {
                 guard let uid = Auth.auth().currentUser?.uid, let token = await getToken() else {
                     throw URLError(.userAuthenticationRequired)
                 }
-                let user = try await getUserInfo(uid: uid, token: token)
                 self.userSession = result.user
+                let user = try await getUserInfo(uid: uid, token: token)
                 self.currentUser = user
                 await setDeviceToken()
-                return (true, nil)
+                return (true, nil, nil)
             } catch let error as APIManager.APIError {
                 switch error {
                 case .serverError(let serverError):
                     if serverError.statusCode == 404 {
                         do {
-                            try Auth.auth().signOut()
-                            self.currentUser = nil
-                            self.userSession = nil
-                        } catch(let err) {
-                            print("DEBUG: Unable to Sign Out | Error: \(err.localizedDescription)")
+                            // Delaying until account is ready
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                                Task {
+                                    do {
+                                        guard let uid = Auth.auth().currentUser?.uid, let token = await self.getToken() else {
+                                            throw URLError(.userAuthenticationRequired)
+                                        }
+                                        self.userSession = result.user
+                                        let user = try await self.getUserInfo(uid: uid, token: token)
+                                        self.currentUser = user
+                                        await self.setDeviceToken()
+                                    } catch {
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                                            Task {
+                                                do {
+                                                    guard let uid = Auth.auth().currentUser?.uid, let token = await self.getToken() else {
+                                                        throw URLError(.userAuthenticationRequired)
+                                                    }
+                                                    self.userSession = result.user
+                                                    let user = try await self.getUserInfo(uid: uid, token: token)
+                                                    self.currentUser = user
+                                                    await self.setDeviceToken()
+                                                } catch {
+                                                    try Auth.auth().signOut()
+                                                    self.currentUser = nil
+                                                    self.userSession = nil
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        return (false, "You are not signed up with Phantom Phood")
+                        return (false, "You are not signed up with Phantom Phood", 404)
                     }
                 case .decodingError(let error):
                     print("DEBUG: Couldn't decode user info | Error: \(error.localizedDescription)")
                 case .unknown:
                     print("DEBUG: Couldn't get user info | Error: \(error.localizedDescription)")
                 }
-                return (false, "Something went wrong")
+                return (false, "Something went wrong", nil)
             }
         } catch {
             print("DEBUG: Something went wrong | Error: \(error.localizedDescription)")
-            return (false, "Something went wrong")
+            return (false, "Something went wrong", nil)
         }
     }
     
-    func signinWithGoogle(tokens: GoogleSignInResult) async -> (success: Bool, error: String?) {
+    @discardableResult
+    func signinWithGoogle(tokens: GoogleSignInResult) async -> (success: Bool, error: String?, errorCode: Int?) {
         let credential = GoogleAuthProvider.credential(withIDToken: tokens.idToken, accessToken: tokens.accessToken)
         let result = await signin(credential: credential)
         return result
     }
     
-    func signinWithApple(tokens: SignInWithAppleResult) async -> (success: Bool, error: String?) {
+    @discardableResult
+    func signinWithApple(tokens: SignInWithAppleResult) async -> (success: Bool, error: String?, errorCode: Int?) {
         let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: tokens.token, rawNonce: tokens.nonce)
         let result = await signin(credential: credential)
         return result
@@ -216,6 +246,17 @@ class Authentication: ObservableObject {
             return data.data
         } else {
             throw URLError(.badServerResponse)
+        }
+    }
+    
+    func requestResetPassword(email: String, _ callback: @escaping (Bool) -> Void) {
+        Auth.auth().sendPasswordReset(withEmail: email) { error in
+            if let error {
+                print("DEBUG: Unable to send reset password email | Error :\(error.localizedDescription)")
+                callback(false)
+            } else {
+                callback(true)
+            }
         }
     }
     

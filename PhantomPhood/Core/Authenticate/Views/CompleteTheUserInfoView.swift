@@ -1,43 +1,18 @@
 //
-//  LoginScreen.swift
+//  CompleteTheUserInfoView.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 11.09.2023.
+//  Created by Kia Abdi on 11/23/23.
 //
 
 import SwiftUI
 import Combine
 
-class SignUpDataManager {
-    
-    // MARK: - Nested Types
-    
-    struct ServerError: Codable {
-        let success: Bool
-        let error: ErrorRes
-        
-        struct ErrorRes: Codable {
-            let message: String
-        }
-    }
-    
-    // MARK: - API Manager
-    
-    private let apiManager = APIManager.shared
-    
-    
-    // MARK: - Public Methods
-    
-    func checkUsername(_ username: String) async throws -> HTTPURLResponse {
-        let response = try await apiManager.requestNoContent("/users/username-availability/\(username)")
-        return response
-    }
-    
-}
-
 @MainActor
-class SignUpViewModel: ObservableObject {
-    private let dataManager = SignUpDataManager()
+class CompleteTheUserInfoVM: ObservableObject {
+    private let apiManager = APIManager.shared
+    @ObservedObject var auth = Authentication.shared
+    private let dataManager = SignUpWithPasswordDataManager()
     
     @Published var step = 0
     @Published var direction = 1
@@ -46,13 +21,11 @@ class SignUpViewModel: ObservableObject {
     
     @Published var eula = false
     
-    @Published var email: String = ""
-    @Published var isValidEmail: Bool = false
     @Published var name: String = ""
     @Published var username: String = ""
+    @Published var currentUsername: String = ""
     @Published var isUsernameValid: Bool = false
     @Published var usernameError: String? = nil
-    @Published var password: String = ""
     
     @Published var error: String?
     
@@ -89,21 +62,34 @@ class SignUpViewModel: ObservableObject {
             }
             .store(in: &cancellable)
     }
-
+    
+    func saveData() async throws {
+        struct EditUserBody: Encodable {
+            let name: String?
+            let username: String?
+            let eula: Bool
+        }
+        struct EditUserResponse: Codable {
+            let success: Bool
+            let data: CurrentUserCoreData
+        }
+        
+        if let token = await auth.getToken(), let uid = auth.currentUser?.id {
+            let reqBody = try apiManager.createRequestBody(EditUserBody(name: self.name, username: self.username.isEmpty ? nil : self.username, eula: self.eula))
+            let _ = try await apiManager.requestData("/users/\(uid)", method: .put, body: reqBody, token: token) as EditUserResponse?
+            await auth.updateUserInfo()
+        }
+    }
+    
 }
 
-// MARK: - View
-
-struct SignUpView: View {
-    @ObservedObject var auth = Authentication.shared
-    @Environment(\.dismiss) var dismiss
-    @StateObject private var vm = SignUpViewModel()
+struct CompleteTheUserInfoView: View {
+    @ObservedObject private var auth = Authentication.shared
+    @StateObject private var vm = CompleteTheUserInfoVM()
     
     enum Field: Hashable {
-        case email
         case name
         case username
-        case password
     }
     
     @FocusState private var focusedField: Field?
@@ -121,61 +107,6 @@ struct SignUpView: View {
             Group {
                 switch vm.step {
                 case 0:
-                    VStack {
-                        Spacer()
-                        
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text("Create an account")
-                                    .font(.custom(style: .title2))
-                                    .fontWeight(.semibold)
-                                    .padding(.bottom)
-                                Text("Sign up to explore, socialize, and review thousands of dining spots!")
-                                    .font(.custom(style: .subheadline))
-                                    .foregroundColor(.secondary)
-                                    .multilineTextAlignment(.leading)
-                            }.frame(minHeight: 140)
-                            
-                            Spacer()
-                            
-                            Image(.ghost)
-                        }.padding(.bottom)
-                        
-                        TextField("Email", text: $vm.email)
-                            .font(.title2)
-                            .keyboardType(.emailAddress)
-                            .textContentType(UITextContentType.emailAddress)
-                            .focused($focusedField, equals: .email)
-                            .onChange(of: vm.email) { newValue in
-                                withAnimation {
-                                    if !Validator.email(newValue) {
-                                        vm.isValidEmail = false
-                                    } else {
-                                        vm.isValidEmail = true
-                                    }
-                                }
-                            }
-                        if vm.email.count > 0 && !vm.isValidEmail {
-                            Text("Invalid email address")
-                                .font(.custom(style: .caption))
-                                .foregroundColor(.red)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        Text("In the digital realm, pigeons are passé. We use emails. Yours, please?")
-                            .font(.custom(style: .caption))
-                            .foregroundColor(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        
-                        Spacer()
-                    }
-                    .onAppear {
-                        if vm.email.count < 3 {
-                            focusedField = .email
-                        }
-                    }
-                    
-                case 1:
                     VStack {
                         Spacer()
                         
@@ -207,7 +138,7 @@ struct SignUpView: View {
                         }
                     }
                     
-                case 2:
+                case 1:
                     VStack {
                         Spacer()
                         
@@ -225,25 +156,37 @@ struct SignUpView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom)
                         
-                        TextField("Username", text: $vm.username)
-                            .font(.title2)
-                            .keyboardType(.default)
-                            .autocorrectionDisabled(true)
-                            .focused($focusedField, equals: .username)
-                            .overlay(
-                                HStack {
-                                    if vm.username.count > 0 {
-                                        if vm.isLoading {
-                                            ProgressView()
-                                        } else {
-                                            vm.isUsernameValid ?
-                                            Image(systemName: "checkmark").foregroundColor(.green) :
-                                            Image(systemName: "xmark").foregroundColor(.red)
+                        VStack {
+                            TextField("Username", text: $vm.username)
+                                .font(.title2)
+                                .keyboardType(.default)
+                                .autocorrectionDisabled(true)
+                                .focused($focusedField, equals: .username)
+                                .overlay(
+                                    HStack {
+                                        if vm.username.count > 0 {
+                                            if vm.isLoading {
+                                                ProgressView()
+                                            } else {
+                                                vm.isUsernameValid ?
+                                                Image(systemName: "checkmark").foregroundColor(.green) :
+                                                Image(systemName: "xmark").foregroundColor(.red)
+                                            }
                                         }
-                                    }
-                                },
-                                alignment: .trailing
-                            )
+                                    },
+                                    alignment: .trailing
+                                )
+                            
+                            VStack {
+                                Text("Your current username:")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .foregroundStyle(.secondary)
+                                Text(vm.currentUsername)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .foregroundStyle(Color.accentColor)
+                            }
+                            .font(.custom(style: .caption))
+                        }
                         
                         if vm.username.count > 0, let error = vm.usernameError, !vm.isUsernameValid {
                             Text(error)
@@ -260,38 +203,7 @@ struct SignUpView: View {
                         }
                     }
                     
-                case 3:
-                    VStack {
-                        Spacer()
-                        
-                        VStack(alignment: .leading) {
-                            Image(.lock)
-                            Text("Choose a password")
-                                .font(.custom(style: .title2))
-                                .fontWeight(.semibold)
-                                .padding(.bottom)
-                            Text("Tip: Something memorable but not 'password123' memorable.")
-                                .font(.custom(style: .subheadline))
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.leading)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.bottom)
-                        
-                        SecureField("Password", text: $vm.password)
-                            .font(.title2)
-                            .textContentType(.password)
-                            .focused($focusedField, equals: .password)
-                        
-                        Spacer()
-                    }
-                    .onAppear {
-                        if vm.password.count < 5 {
-                            focusedField = .password
-                        }
-                    }
-                    
-                case 4:
+                case 2:
                     VStack {
                         Spacer()
                         
@@ -349,32 +261,25 @@ struct SignUpView: View {
                         }
                     } else {
                         vm.direction = 1
-                        dismiss()
                     }
                 } label: {
-                    Text(vm.step == 0 ? "Cancel" : "Back")
+                    Text(vm.step == 0 ? "-" : "Back")
                         .font(.custom(style: .subheadline))
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderless)
                 .controlSize(.large)
+                .allowsHitTesting(vm.step == 0 ? false : true)
+                .opacity(vm.step == 0 ? 0 : 1)
                 
                 Button {
                     var proceed = true
                     switch vm.step {
-                    case 0:
-                        if !vm.isValidEmail {
+                    case 1:
+                        if (!vm.username.isEmpty && !vm.isUsernameValid) {
                             proceed = false
                         }
                     case 2:
-                        if !vm.isUsernameValid {
-                            proceed = false
-                        }
-                    case 3:
-                        if vm.password.count < 5 {
-                            proceed = false
-                        }
-                    case 4:
                         if !vm.eula {
                             proceed = false
                         }
@@ -383,14 +288,14 @@ struct SignUpView: View {
                     }
                     
                     if (proceed) {
-                        if vm.step == 4 {
-                            // sign up
+                        if vm.step == 2 {
                             Task {
                                 withAnimation {
                                     vm.isLoading = true
                                 }
+                                
                                 do {
-                                    let _ = try await auth.signup(name: vm.name, email: vm.email, password: vm.password, username: vm.username.count > 5 ? vm.username : nil)
+                                    try await vm.saveData()
                                 } catch APIManager.APIError.serverError(let serverError) {
                                     withAnimation {
                                         vm.error = serverError.message
@@ -416,7 +321,7 @@ struct SignUpView: View {
                             ProgressView()
                                 .controlSize(.regular)
                         }
-                        Text(vm.step == 4 ? "Sign Up" : "Next")
+                        Text(vm.step == 2 ? "Finish Sign Up" : "Next")
                     }
                     .font(.custom(style: .subheadline))
                     .frame(maxWidth: .infinity)
@@ -427,16 +332,23 @@ struct SignUpView: View {
                 .disabled(
                     vm.isLoading ||
                     (
-                        vm.step == 0 ? (vm.email.count == 0 || !vm.isValidEmail) :
-                            vm.step == 2 ? !vm.isUsernameValid :
-                            vm.step == 3 ? vm.password.count < 5 :
-                            vm.step == 4 ? !vm.eula : false
+                        vm.step == 0 ? vm.name.isEmpty :
+                            vm.step == 1 ? (!vm.username.isEmpty && !vm.isUsernameValid) :
+                            vm.step == 2 ? !vm.eula : false
                     )
                     
                 )
             }
             .padding(.horizontal)
             .padding(.bottom)
+            .onAppear {
+                if let user = auth.currentUser {
+                    if !user.name.isEmpty {
+                        vm.name = user.name
+                    }
+                    vm.currentUsername = user.username
+                }
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
@@ -450,8 +362,6 @@ struct SignUpView: View {
     }
 }
 
-
 #Preview {
-    SignUpView()
-        .environmentObject(Authentication())
+    CompleteTheUserInfoView()
 }

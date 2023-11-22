@@ -41,9 +41,13 @@ struct PhantomPhoodApp: App {
             
             ZStack {
                 if auth.userSession != nil {
-                    if auth.currentUser != nil {
-                        ContentView()
-                            .environmentObject(locationManager)
+                    if let user = auth.currentUser {
+                        if user.accepted_eula != nil {
+                            ContentView()
+                                .environmentObject(locationManager)
+                        } else {
+                            CompleteTheUserInfoView()
+                        }
                     } else {
                         FirstLoadingView()
                     }

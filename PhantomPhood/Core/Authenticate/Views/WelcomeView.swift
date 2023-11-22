@@ -30,20 +30,22 @@ struct WelcomeView: View {
                     
                     LottieView(file: .welcome, loop: true)
                         .frame(width: UIScreen.main.bounds.width + 10, height: UIScreen.main.bounds.width + 10)
-                        
                     
                     Spacer()
                     
-                    NavigationLink(value: AuthStack.signup) {
+                    NavigationLink(value: AuthStack.signUpOptions) {
                         Text("Create an Account")
+                            .font(.custom(style: .headline))
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
                     .padding(.horizontal)
                     
-                    NavigationLink(value: AuthStack.signinOptions) {
+                    NavigationLink(value: AuthStack.signInOptions) {
                         Text("I already have an account")
+                            .font(.custom(style: .headline))
+                            .padding(.vertical, 5)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderless)
@@ -55,11 +57,13 @@ struct WelcomeView: View {
                 .navigationTitle("Welcome")
                 .navigationDestination(for: AuthStack.self) { link in
                     switch link {
-                    case .signup:
-                        SignUpView()
-                    case .signinOptions:
+                    case .signUpOptions:
+                        SignUpOptionsView()
+                    case .signUpWithPassword:
+                        SignUpWithPasswordView()
+                    case .signInOptions:
                         SignInOptionsView()
-                    case .signinWithEmail:
+                    case .signInWithPassword:
                         SignInWithEmailView()
                     }
                 }

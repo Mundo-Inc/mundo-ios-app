@@ -36,7 +36,7 @@ class SignInDataManager {
 // MARK: - ViewModel
 @MainActor
 class SignInViewModel: ObservableObject {
-    private let dataManager = SignUpDataManager()
+    private let dataManager = SignUpWithPasswordDataManager()
     
     @Published var isLoading = false
     
@@ -46,6 +46,7 @@ class SignInViewModel: ObservableObject {
     
     @Published var error: String?
     
+    @Published var showResetPassword = false
 }
 
 // MARK: - View
@@ -58,6 +59,7 @@ struct SignInWithEmailView: View {
     enum TextFields: Hashable {
         case email
         case password
+        case resetEmail
     }
     
     @FocusState private var focusedField: TextFields?
@@ -117,11 +119,90 @@ struct SignInWithEmailView: View {
                 .textContentType(UITextContentType.password)
                 .focused($focusedField, equals: .password)
             
-            Button("Recover my password") {
-                if let url = URL(string: "https://phantomphood.ai/reset-password") {
-                    UIApplication.shared.open(url)
+            Button {
+                vm.showResetPassword = true
+            } label: {
+                Text("Recover my password")
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .font(.custom(style: .caption))
+            }
+            .sheet(isPresented: $vm.showResetPassword) {
+                VStack {
+                    VStack(alignment: .leading) {
+                        Image(.lock)
+                        Text("Reset Password")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .font(.custom(style: .title2))
+                            .fontWeight(.semibold)
+                        Text("We will send you an email containing a link to reset your password.")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .font(.custom(style: .subheadline))
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding(.bottom)
+                    
+                    TextField("Email", text: $vm.email)
+                        .withFilledStyle()
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled(true)
+                        .keyboardType(.emailAddress)
+                        .textContentType(UITextContentType.emailAddress)
+                        .focused($focusedField, equals: .resetEmail)
+                        .onChange(of: vm.email) { newValue in
+                            withAnimation {
+                                if !Validator.email(newValue) {
+                                    vm.isValidEmail = false
+                                } else {
+                                    vm.isValidEmail = true
+                                }
+                            }
+                        }
+                    
+                    if vm.email.count > 0 && !vm.isValidEmail {
+                        Text("Invalid email address")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .font(.custom(style: .caption))
+                            .foregroundColor(.red)
+                    }
+                    
+                    Button {
+                        withAnimation {
+                            vm.isLoading = true
+                        }
+                        auth.requestResetPassword(email: vm.email) { result in
+                            withAnimation {
+                                vm.isLoading = false
+                            }
+                            if result {
+                                vm.showResetPassword = false
+                                ToastViewModel.shared.toast(.init(type: .success, title: "Email Sent", message: "Email sent"))
+                            } else {
+                                ToastViewModel.shared.toast(.init(type: .error, title: "Failed", message: "Something went wrong, please try again in couple minutes."))
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 5) {
+                            if vm.isLoading {
+                                ProgressView()
+                                    .controlSize(.regular)
+                            }
+                            Text("Send")
+                        }
+                        .font(.custom(style: .subheadline))
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .padding(.bottom)
+                    .disabled(
+                        vm.isLoading ||
+                        vm.email.count == 0 ||
+                        !vm.isValidEmail
+                    )
                 }
-            }.frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.horizontal)
+            }
             
             Spacer()
             Spacer()

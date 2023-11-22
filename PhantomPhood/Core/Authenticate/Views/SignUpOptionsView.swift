@@ -1,13 +1,13 @@
 //
-//  SignInOptionsView.swift
+//  SignUpOptionsView.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 11/21/23.
+//  Created by Kia Abdi on 11/23/23.
 //
 
 import SwiftUI
 
-struct SignInOptionsView: View {
+struct SignUpOptionsView: View {
     @StateObject var vm = OAuthViewModel()
     
     @Environment(\.colorScheme) var colorScheme
@@ -18,10 +18,10 @@ struct SignInOptionsView: View {
                 Spacer()
                 
                 VStack(alignment: .leading) {
-                    Text("Welcome Back")
+                    Text("Create an account")
                         .font(.custom(style: .title2))
                         .fontWeight(.semibold)
-                    Text("Please choose how you want to sign in")
+                    Text("Please choose how you want to sign up")
                         .font(.custom(style: .subheadline))
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.leading)
@@ -72,7 +72,7 @@ struct SignInOptionsView: View {
                             .foregroundStyle(.tertiary)
                             .padding(.vertical, 10)
                         
-                        NavigationLink(value: AuthStack.signInWithPassword) {
+                        NavigationLink(value: AuthStack.signUpWithPassword) {
                             Label(
                                 title: { Text("Using Email and Password") },
                                 icon: { Image(systemName: "envelope.fill") }
@@ -124,5 +124,5 @@ struct SignInOptionsView: View {
 }
 
 #Preview {
-    SignInOptionsView()
+    SignUpOptionsView()
 }
