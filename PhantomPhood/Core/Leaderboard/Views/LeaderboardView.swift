@@ -6,11 +6,10 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct LeaderboardView: View {
-    @EnvironmentObject private var appData: AppData
-    @EnvironmentObject private var auth: Authentication
+    @ObservedObject private var appData = AppData.shared
+    @ObservedObject private var auth = Authentication.shared
     
     @StateObject private var vm = LeaderboardViewModel()
     
@@ -20,36 +19,12 @@ struct LeaderboardView: View {
                 Color.themeBG.ignoresSafeArea()
                 
                 VStack {
-                    HStack(spacing: 10) {
-                        if let user = auth.currentUser, let profileImage = URL(string: user.profileImage) {
-                            KFImage.url(profileImage)
-                                .placeholder {
-                                    Rectangle()
-                                        .foregroundStyle(.tertiary)
-                                }
-                                .loadDiskFileSynchronously()
-                                .cacheMemoryOnly()
-                                .fade(duration: 0.25)
-                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 64, height: 64)
-                                .contentShape(RoundedRectangle(cornerRadius: 15))
-                                .clipShape(.rect(cornerRadius: 15))
-                        } else {
-                            RoundedRectangle(cornerRadius: 15)
-                                .frame(width: 64, height: 64)
-                                .foregroundStyle(Color.themePrimary)
-                                .overlay {
-                                    Image(systemName: "person.crop.circle")
-                                        .font(.system(size: 36))
-                                        .foregroundStyle(Color.accentColor)
-                                }
-                        }
+                    HStack(spacing: 12) {
+                        ProfileImage(auth.currentUser?.profileImage, size: 64, cornerRadius: 15)
                         
-                        VStack {
+                        VStack(spacing: 8) {
                             Text(auth.currentUser?.name ?? "User Name")
-                                .font(.custom(style: .headline))
+                                .font(.custom(style: .title2))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
                             ProgressView(value: auth.currentUser == nil ? 0 : Double(auth.currentUser!.progress.xp) / Double(auth.currentUser!.progress.xp + auth.currentUser!.remainingXp))
@@ -89,33 +64,7 @@ struct LeaderboardView: View {
                                             .foregroundStyle(.secondary)
                                             .frame(minWidth: 40)
                                         
-                                        if !vm.list[index].profileImage.isEmpty, let profileImageURL = URL(string: vm.list[index].profileImage) {
-                                            KFImage.url(profileImageURL)
-                                                .placeholder {
-                                                    Circle()
-                                                        .foregroundStyle(Color.themePrimary)
-                                                        .overlay {
-                                                            ProgressView()
-                                                        }
-                                                }
-                                                .loadDiskFileSynchronously()
-                                                .cacheMemoryOnly()
-                                                .fade(duration: 0.25)
-                                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 36, height: 36)
-                                                .contentShape(Circle())
-                                                .clipShape(Circle())
-                                        } else {
-                                            Circle()
-                                                .foregroundStyle(Color.themePrimary)
-                                                .frame(width: 36, height: 36)
-                                                .overlay {
-                                                    Image(systemName: "person.crop.circle")
-                                                        .foregroundStyle(.secondary)
-                                                }
-                                        }
+                                        ProfileImage(vm.list[index].profileImage, size: 36, cornerRadius: 10)
                                         
                                         LevelView(level: vm.list[index].progress.level)
                                             .aspectRatio(contentMode: .fit)
@@ -146,7 +95,9 @@ struct LeaderboardView: View {
                         }
                     }
                     .refreshable {
-                        await vm.fetchList(.refresh)
+                        Task {
+                            await vm.fetchList(.refresh)
+                        }
                     }
                 }
                 .navigationTitle("Leaderboard")
@@ -163,10 +114,6 @@ struct LeaderboardView: View {
     }
 }
 
-struct LeaderboardView_Previews: PreviewProvider {
-    static var previews: some View {
-        LeaderboardView()
-            .environmentObject(AppData())
-            .environmentObject(Authentication())
-    }
+#Preview {
+    LeaderboardView()
 }

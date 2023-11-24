@@ -12,11 +12,11 @@ import Kingfisher
 let AcceptablePointOfInterestCategories: [MKPointOfInterestCategory] = [.cafe, .restaurant, .nightlife, .bakery, .brewery, .winery]
 
 struct MapView16: View {
-    @ObservedObject var appData = AppData.shared
+    @ObservedObject private var appData = AppData.shared
+    @ObservedObject private var locationManager = LocationManager.shared
+    
     @ObservedObject var mapVM: MapViewModel
     @State var selectedPlace: MKMapItem? = nil
-    
-    private let locationManager = LocationManager.shared
     @State private var centerCoordinate = CLLocationCoordinate2D()
     //    @State var coordinateRegion: MKCoordinateRegion = MKCoordinateRegion(center: .init(latitude: 40.7250, longitude: -74.002), span: .init(latitudeDelta: 0.1, longitudeDelta: 0.1))
     

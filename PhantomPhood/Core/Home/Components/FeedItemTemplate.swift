@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 // TODO: Add View Model
 
@@ -102,46 +101,14 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
             HStack {
                 VStack {
                     NavigationLink(value: HomeStack.userProfile(id: user.id)) {
-                        if !user.profileImage.isEmpty, let url = URL(string: user.profileImage) {
-                            KFImage.url(url)
-                                .placeholder { _ in
-                                    Circle()
-                                        .foregroundStyle(Color.themePrimary)
-                                        .overlay {
-                                            ProgressView()
-                                        }
-                                }
-                                .loadDiskFileSynchronously()
-                                .cacheMemoryOnly()
-                                .fade(duration: 0.25)
-                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 44, height: 44)
-                                .contentShape(Circle())
-                                .clipShape(Circle())
-                                .overlay(alignment: .top) {
-                                    LevelView(level: user.progress.level)
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 24, height: 30)
-                                        .offset(y: 28)
-                                        .shadow(radius: 10)
-                                }
-                        } else {
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 30))
-                                .frame(width: 44, height: 44)
-                                .foregroundStyle(.secondary)
-                                .background(Color.themePrimary)
-                                .clipShape(Circle())
-                                .overlay(alignment: .top) {
-                                    LevelView(level: user.progress.level)
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 24, height: 30)
-                                        .offset(y: 28)
-                                        .shadow(radius: 10)
-                                }
-                        }
+                        ProfileImage(user.profileImage, size: 44)
+                            .overlay(alignment: .top) {
+                                LevelView(level: user.progress.level)
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 24, height: 30)
+                                    .offset(y: 28)
+                                    .shadow(radius: 10)
+                            }
                     }
                     .foregroundStyle(.secondary)
                     
@@ -177,7 +144,7 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
             ForEach(comments) { comment in
                 CommentView(comment: comment, isActive: isActive)
             }
-                        
+            
             HStack {
                 VStack {}
                     .frame(width: 44)

@@ -24,13 +24,14 @@ struct ReactionLabel: View {
         } label: {
             Label {
                 Text(String(reaction.count))
+                    .font(.custom(style: .body))
             } icon: {
                 Text(reaction.reaction)
             }
             .padding(.all, 5)
             .padding(.trailing, 5)
             .background(isSelected ? Color.accentColor.opacity(0.3) : Color.themePrimary)
-            .font(.system(size: 20))
+            .font(.system(size: 18))
             .overlay {
                 RoundedRectangle(cornerRadius: 25)
                     .stroke(isSelected ? Color.accentColor : Color.themePrimary, lineWidth: 2)
@@ -61,7 +62,7 @@ struct ForYouReactionLabel: View {
                     .font(.system(size: 20))
                 
                 Text(String(reaction.count))
-                    .font(.custom(style: .headline))
+                    .font(.custom(style: .body))
                     .frame(maxWidth: .infinity)
             }
             .foregroundStyle(.white)
@@ -82,8 +83,14 @@ struct ForYouReactionLabel: View {
 
 
 #Preview {
-    Group {
+    VStack {
         ReactionLabel(reaction: Reaction(reaction: "😍", type: .emoji, count: 5), isSelected: false)
         ReactionLabel(reaction: Reaction(reaction: "🙌🏻", type: .emoji, count: 2), isSelected: true)
+        
+        Group {
+            ForYouReactionLabel(reaction: Reaction(reaction: "😍", type: .emoji, count: 5), isSelected: false)
+            ForYouReactionLabel(reaction: Reaction(reaction: "🙌🏻", type: .emoji, count: 2), isSelected: true)
+        }
+        .frame(maxWidth: 80)
     }
 }

@@ -11,23 +11,23 @@ import VideoPlayer
 import SwiftUIPager
 
 struct ForYouItem: View {
-    let data: FeedItem
-    let itemIndex: Int?
-    @ObservedObject var page: Page
-    @Binding var isMute: Bool
-    @ObservedObject var commentsViewModel: CommentsViewModel
-    let parentGeometry: GeometryProxy?
+    private let data: FeedItem
+    private let itemIndex: Int?
+    @ObservedObject private var page: Page
+    @Binding private var isMute: Bool
+    @ObservedObject private var commentsViewModel: CommentsViewModel
+    private let parentGeometry: GeometryProxy?
     
     
-    @StateObject var reactionsViewModel: ReactionsViewModel
-    @State var reactions: ReactionsObject
+    @StateObject private var reactionsViewModel: ReactionsViewModel
+    @State private var reactions: ReactionsObject
     
-    @State private var playId: String? = nil
+    @Binding var playId: String?
     @State private var tabPage: String = ""
     
-    @ObservedObject var selectReactionsViewModel = SelectReactionsViewModel.shared
+    @ObservedObject private var selectReactionsViewModel = SelectReactionsViewModel.shared
     
-    init(data: FeedItem, itemIndex: Int?, page: Page, isMute: Binding<Bool>, commentsViewModel: CommentsViewModel, parentGeometry: GeometryProxy?) {
+    init(data: FeedItem, itemIndex: Int?, page: Page, isMute: Binding<Bool>, commentsViewModel: CommentsViewModel, parentGeometry: GeometryProxy?, playId: Binding<String?>) {
         self.data = data
         self.itemIndex = itemIndex
         self._page = ObservedObject(wrappedValue: page)
@@ -48,6 +48,8 @@ struct ForYouItem: View {
         default:
             break
         }
+        
+        self._playId = playId
     }
     
     var body: some View {
@@ -57,15 +59,6 @@ struct ForYouItem: View {
             switch data.resource {
             case .review(let feedReview):
                 Color.clear
-                    .onChange(of: page.index) { newPage in
-                        if newPage == itemIndex {
-                            if let first = feedReview.videos.first {
-                                playId = first.id
-                            }
-                        } else {
-                            playId = nil
-                        }
-                    }
                     .onChange(of: tabPage) { newTab in
                         if page.index == itemIndex {
                             if feedReview.videos.contains(where: { $0.id == newTab }) {
@@ -84,10 +77,12 @@ struct ForYouItem: View {
                             ForEach(feedReview.videos) { video in
                                 if let url = URL(string: video.src) {
                                     VideoPlayer(url: url, play: Binding(get: {
-                                        return playId == video.id
+                                        return (playId ?? "") == video.id
                                     }, set: { value in
                                         if !value {
                                             playId = nil
+                                        } else {
+                                            playId = video.id
                                         }
                                     }))
                                     .autoReplay(true)
@@ -152,10 +147,12 @@ struct ForYouItem: View {
                     } else if let video = feedReview.videos.first {
                         if let url = URL(string: video.src) {
                             VideoPlayer(url: url, play: Binding(get: {
-                                return playId == video.id
+                                return (playId ?? "") == video.id
                             }, set: { value in
                                 if !value {
                                     playId = nil
+                                } else {
+                                    playId = video.id
                                 }
                             }))
                             .autoReplay(true)
@@ -188,7 +185,7 @@ struct ForYouItem: View {
                         HStack {
                             NavigationLink(value: HomeStack.userProfile(id: data.user.id)) {
                                 ZStack {
-                                    ProfileImage(data.user.profileImage, maxSize: 50)
+                                    ProfileImage(data.user.profileImage, size: 50)
                                     
                                     LevelView(level: data.user.progress.level)
                                         .aspectRatio(contentMode: .fit)
@@ -214,6 +211,7 @@ struct ForYouItem: View {
                                         }
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                     }
+                                    .foregroundStyle(.primary)
                                 } else {
                                     Text("-")
                                 }
@@ -230,7 +228,7 @@ struct ForYouItem: View {
                         
                         Spacer()
                         
-                        if let _ = playId, isMute {
+                        if playId != nil && isMute {
                             Image(systemName: "speaker.slash.fill")
                                 .foregroundStyle(.secondary)
                                 .font(.system(size: 24))
@@ -293,6 +291,7 @@ struct ForYouItem: View {
                         EmptyView()
                     }
                 }
+                .padding(.top)
                 
                 HStack {
                     Spacer()
@@ -386,9 +385,6 @@ struct ForYouItem: View {
             .font(.custom(style: .body))
             .padding(.top, parentGeometry?.safeAreaInsets.top)
         }
-        .onDisappear {
-            playId = nil
-        }
         .frame(maxWidth: .infinity)
     }
     
@@ -413,7 +409,7 @@ struct ForYouItem: View {
 }
 
 extension ForYouItem {
-    var starsView: some View {
+    private var starsView: some View {
         HStack(spacing: 0) {
             Image(systemName: "star.fill")
             Image(systemName: "star.fill")
@@ -478,6 +474,7 @@ extension ForYouItem {
         page: Page.first(),
         isMute: .constant(false),
         commentsViewModel: CommentsViewModel(),
-        parentGeometry: nil
+        parentGeometry: nil,
+        playId: .constant(nil)
     )
 }

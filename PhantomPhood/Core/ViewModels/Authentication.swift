@@ -68,7 +68,7 @@ class Authentication: ObservableObject {
     
     // MARK: - INIT
     
-    init() {
+    private init() {
         self.userSession = Auth.auth().currentUser
         
         Task {

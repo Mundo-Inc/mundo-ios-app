@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct ProfileStats: View {
-    @EnvironmentObject private var auth: Authentication
-    @EnvironmentObject private var appData: AppData
+    @ObservedObject private var appData = AppData.shared
+    @ObservedObject private var auth = Authentication.shared
     
     var body: some View {
         VStack(spacing: 30) {
@@ -179,5 +179,4 @@ struct ProfileStats: View {
 
 #Preview {
     ProfileStats()
-        .environmentObject(Authentication())
 }

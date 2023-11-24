@@ -18,11 +18,11 @@ struct PlaceMediaView: View {
         self._placeMediaViewModel = StateObject(wrappedValue: PlaceMediaViewModel(placeId: placeId))
     }
     
-    
     let gridColumnst: [GridItem] = [
         GridItem(.flexible(minimum: 100, maximum: 500), spacing: 10),
         GridItem(.flexible(minimum: 100, maximum: 500), spacing: 10)
     ]
+    
     var body: some View {
         ScrollView {
             if !placeMediaViewModel.isLoading && placeMediaViewModel.medias.isEmpty {
@@ -34,7 +34,7 @@ struct PlaceMediaView: View {
             } else {
                 LazyVGrid(columns: gridColumnst, content: {
                     ForEach(placeMediaViewModel.medias) {media in
-                        if let url = URL(string: media.src) {
+                        if media.type == .image, let url = URL(string: media.src) {
                             KFImage.url(url)
                                 .placeholder {
                                     RoundedRectangle(cornerRadius: 15)
@@ -52,6 +52,8 @@ struct PlaceMediaView: View {
                                 .frame(width: (UIScreen.main.bounds.size.width / 2) - 30, height: UIScreen.main.bounds.size.width / 2)
                                 .contentShape(Rectangle())
                                 .clipShape(RoundedRectangle(cornerRadius: 15))
+                        } else {
+                            // TODO: ----
                         }
                     }
                     Color.clear

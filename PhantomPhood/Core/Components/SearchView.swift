@@ -7,12 +7,10 @@
 
 import SwiftUI
 import MapKit
-import Kingfisher
 
 struct SearchView<Content>: View where Content : View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var locationManager = LocationManager.shared
-    
     @ObservedObject var searchViewModel: SearchViewModel
     
     var isLocationAvailable: Bool {
@@ -29,7 +27,7 @@ struct SearchView<Content>: View where Content : View {
         self.onUserSelect = onUserSelect
         self.header = header()
     }
-        
+    
     func closeSearch() {
         dismiss()
         searchViewModel.showSearch = false
@@ -76,7 +74,7 @@ struct SearchView<Content>: View where Content : View {
                                 }
                             }
                         }
-                                              
+                        
                         ZStack {
                             TextField("Search", text: $searchViewModel.text)
                                 .withFilledStyle(size: .small, paddingLeading: searchViewModel.tokens.isEmpty ? 34 : 20)
@@ -114,35 +112,35 @@ struct SearchView<Content>: View where Content : View {
                             TabView(selection: $searchViewModel.scope) {
                                 VStack {
                                     self.header
-//                                    HStack {
-//                                        Text("Region")
-//                                        
-//                                        Spacer()
-//                                        
-//                                        Button {
-//                                            withAnimation {
-//                                                switch searchViewModel.searchPlaceRegion {
-//                                                case .nearMe:
-//                                                    searchViewModel.searchPlaceRegion = .global
-//                                                case .global:
-//                                                    searchViewModel.searchPlaceRegion = .nearMe
-//                                                }
-//                                            }
-//                                        } label: {
-//                                            Label {
-//                                                Text(searchViewModel.searchPlaceRegion.title)
-//                                            } icon: {
-//                                                Image(systemName: searchViewModel.searchPlaceRegion.icon)
-//                                            }
-//                                        }
-//                                    }
-//                                    .padding(.horizontal)
-//                                    .font(.custom(style: .body))
-//                                    .frame(maxWidth: .infinity)
-//                                    .padding(.vertical, 6)
-//                                    .background(Color.themePrimary.opacity(0.5))
-//                                    .clipShape(.rect(cornerRadius: 4))
-//                                    .padding(.horizontal)
+                                    //                                    HStack {
+                                    //                                        Text("Region")
+                                    //
+                                    //                                        Spacer()
+                                    //
+                                    //                                        Button {
+                                    //                                            withAnimation {
+                                    //                                                switch searchViewModel.searchPlaceRegion {
+                                    //                                                case .nearMe:
+                                    //                                                    searchViewModel.searchPlaceRegion = .global
+                                    //                                                case .global:
+                                    //                                                    searchViewModel.searchPlaceRegion = .nearMe
+                                    //                                                }
+                                    //                                            }
+                                    //                                        } label: {
+                                    //                                            Label {
+                                    //                                                Text(searchViewModel.searchPlaceRegion.title)
+                                    //                                            } icon: {
+                                    //                                                Image(systemName: searchViewModel.searchPlaceRegion.icon)
+                                    //                                            }
+                                    //                                        }
+                                    //                                    }
+                                    //                                    .padding(.horizontal)
+                                    //                                    .font(.custom(style: .body))
+                                    //                                    .frame(maxWidth: .infinity)
+                                    //                                    .padding(.vertical, 6)
+                                    //                                    .background(Color.themePrimary.opacity(0.5))
+                                    //                                    .clipShape(.rect(cornerRadius: 4))
+                                    //                                    .padding(.horizontal)
                                     
                                     Divider()
                                     
@@ -252,12 +250,12 @@ struct SearchView<Content>: View where Content : View {
 
 fileprivate struct PlaceCard: View {
     @ObservedObject var searchViewModel: SearchViewModel
-
+    
     let place: MKMapItem
     
     let closeSearch: () -> Void
     let onSelect: (MKMapItem) -> Void
-        
+    
     var body: some View {
         Button {
             self.onSelect(place)
@@ -327,31 +325,26 @@ fileprivate struct UserCard: View {
             closeSearch()
         } label: {
             HStack {
-                if !user.profileImage.isEmpty, let url = URL(string: user.profileImage) {
-                    KFImage.url(url)
-                        .placeholder {
-                            Circle()
-                                .foregroundStyle(Color.themePrimary)
-                                .overlay {
-                                    ProgressView()
-                                }
-                        }
-                        .loadDiskFileSynchronously()
-                        .cacheMemoryOnly()
-                        .fade(duration: 0.25)
-                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .contentShape(Circle())
-                        .clipShape(Circle())
-                        .frame(width: 42, height: 42)
-                }
+                ProfileImage(user.profileImage, size: 42, cornerRadius: 10)
                 
                 VStack {
+                    if (user.verified) {
+                        HStack {
+                            Text(user.name)
+                                .font(.custom(style: .body))
+                                .bold()
+                            Image(systemName: "checkmark.seal")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.blue)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                    } else {
                         Text(user.name)
                             .font(.custom(style: .body))
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                     
                     Text("@" + user.username)
                         .font(.custom(style: .caption))

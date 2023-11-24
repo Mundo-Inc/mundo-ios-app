@@ -9,9 +9,9 @@ import SwiftUI
 import Kingfisher
 
 struct MyConnections: View {
-    @State var activeTab: UserConnectionsTab
+    @State private var activeTab: UserConnectionsTab
     
-    @StateObject var vm = MyConnectionsViewModel()
+    @StateObject private var vm = MyConnectionsViewModel()
     
     init(activeTab: UserConnectionsTab = .followers) {
         self._activeTab = State(wrappedValue: activeTab)
@@ -129,33 +129,7 @@ fileprivate struct UserCard: View {
     var body: some View {
         NavigationLink(value: MyProfileStack.userProfile(id: connection.user.id)) {
             HStack {
-                if !connection.user.profileImage.isEmpty, let url = URL(string: connection.user.profileImage) {
-                    KFImage.url(url)
-                        .placeholder {
-                            Circle()
-                                .foregroundStyle(Color.themePrimary)
-                                .overlay {
-                                    ProgressView()
-                                }
-                        }
-                        .loadDiskFileSynchronously()
-                        .cacheMemoryOnly()
-                        .fade(duration: 0.25)
-                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 46, height: 46)
-                        .contentShape(Circle())
-                        .clipShape(Circle())
-                } else {
-                    Circle()
-                        .foregroundStyle(Color.themePrimary)
-                        .frame(width: 46, height: 46)
-                        .overlay {
-                            Image(systemName: "person.fill")
-                                .foregroundStyle(.secondary)
-                        }
-                }
+                ProfileImage(connection.user.profileImage, size: 46, cornerRadius: 10)
                 
                 VStack(spacing: 0) {
                     HStack {

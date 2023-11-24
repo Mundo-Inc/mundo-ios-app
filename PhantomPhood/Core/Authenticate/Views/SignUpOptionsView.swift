@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SignUpOptionsView: View {
-    @StateObject var vm = OAuthViewModel()
+    @StateObject private var vm = OAuthViewModel()
     
     @Environment(\.colorScheme) var colorScheme
     

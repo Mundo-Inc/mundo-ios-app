@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 @MainActor
-class CommentsViewModel: ObservableObject {
+final class CommentsViewModel: ObservableObject {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     private let toastViewModel = ToastViewModel.shared

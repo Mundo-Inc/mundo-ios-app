@@ -60,7 +60,7 @@ private let emojiList: [NewReaction] = [
 ]
 
 struct SelectReactionsView: View {
-    @StateObject var vm = SelectReactionsViewModel.shared
+    @ObservedObject private var vm = SelectReactionsViewModel.shared
     
     enum Tab {
         case emoji

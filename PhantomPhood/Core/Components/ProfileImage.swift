@@ -9,31 +9,40 @@ import SwiftUI
 import Kingfisher
 
 struct ProfileImage: View {
-    let profileImage: String
-    let maxSize: CGFloat
+    let profileImage: String?
+    let size: CGFloat
+    let cornerRadius: CGFloat
     
-    init(_ profileImage: String, maxSize: CGFloat = 80) {
+    init(_ profileImage: String?, size: CGFloat? = nil, cornerRadius: CGFloat? = nil) {
         self.profileImage = profileImage
-        self.maxSize = maxSize
+        self.size = size ?? 80
+        if let cornerRadius {
+            self.cornerRadius = cornerRadius >= self.size / 2 ? self.size / 2 : cornerRadius
+        } else {
+            self.cornerRadius = self.size / 2
+        }
     }
     
     var strokeSize: CGFloat {
-        maxSize * 0.05
+        size * 0.05
+    }
+    
+    var innerCornerRadius: CGFloat {
+        cornerRadius >= size / 2 ? size / 2 : cornerRadius * 0.7
     }
     
     var body: some View {
-        if !profileImage.isEmpty, let url = URL(string: profileImage) {
-            Circle()
+        if let profileImage, !profileImage.isEmpty, let url = URL(string: profileImage) {
+            RoundedRectangle(cornerRadius: cornerRadius)
                 .foregroundStyle(Color(.profileImageStroke))
                 .shadow(color: .black.opacity(0.25), radius: 10, y: 10)
                 .overlay {
-                    Circle()
+                    RoundedRectangle(cornerRadius: innerCornerRadius)
                         .foregroundStyle(Color(.profileImageBG))
-                        .padding(.all, strokeSize)
                         .overlay {
                             KFImage.url(url)
                                 .placeholder {
-                                    Circle()
+                                    RoundedRectangle(cornerRadius: innerCornerRadius)
                                         .foregroundStyle(.tertiary)
                                 }
                                 .loadDiskFileSynchronously()
@@ -42,36 +51,46 @@ struct ProfileImage: View {
                                 .onFailureImage(UIImage(named: "ErrorLoadingImage"))
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .contentShape(Circle())
-                                .clipShape(Circle())
-                                .padding(.all, strokeSize)
-                                .frame(width: maxSize, height: maxSize)
+                                .contentShape(RoundedRectangle(cornerRadius: innerCornerRadius))
+                                .clipShape(RoundedRectangle(cornerRadius: innerCornerRadius))
                         }
+                        .clipShape(RoundedRectangle(cornerRadius: innerCornerRadius))
+                        .padding(.all, strokeSize)
                 }
-                .frame(maxWidth: maxSize, maxHeight: maxSize)
+                .frame(width: size, height: size)
         } else {
-            Circle()
+            RoundedRectangle(cornerRadius: cornerRadius)
                 .foregroundStyle(Color(.profileImageStroke))
                 .shadow(color: .black.opacity(0.25), radius: 10, y: 10)
                 .overlay {
-                    Circle()
+                    RoundedRectangle(cornerRadius: innerCornerRadius)
                         .foregroundStyle(Color(.profileImageBG))
-                        .padding(.all, strokeSize)
                         .overlay {
                             Image(.noProfile)
                                 .resizable()
-                                .padding(.all, strokeSize)
+                                .aspectRatio(contentMode: .fill)
+                                .contentShape(RoundedRectangle(cornerRadius: innerCornerRadius))
+                                .clipShape(RoundedRectangle(cornerRadius: innerCornerRadius))
                         }
+                        .clipShape(RoundedRectangle(cornerRadius: innerCornerRadius))
+                        .padding(.all, strokeSize)
                 }
-                .frame(maxWidth: maxSize, maxHeight: maxSize)
+                .frame(width: size, height: size)
         }
     }
 }
 
 #Preview {
-    VStack {
-        ProfileImage("https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg")
-        ProfileImage("")
-        ProfileImage("", maxSize: 150)
+    HStack {
+        VStack {
+            ProfileImage("https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg")
+            ProfileImage("")
+            ProfileImage("", size: 150)
+        }
+        VStack {
+            ProfileImage("https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", cornerRadius: 10)
+            ProfileImage("", cornerRadius: 10)
+            ProfileImage("", size: 150, cornerRadius: 10)
+        }
     }
 }

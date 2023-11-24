@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-class ReactionsViewModel: ObservableObject {
+final class ReactionsViewModel: ObservableObject {
     let activityId: String
     
     init(activityId: String) {

@@ -23,7 +23,7 @@ class UserProfileCheckinsVM: ObservableObject {
     @Published var total: Int? = nil
     
     var page = 1
-        
+    
     func getCheckins(type: RefreshNewAction) async {
         guard let token = await auth.getToken() else { return }
         

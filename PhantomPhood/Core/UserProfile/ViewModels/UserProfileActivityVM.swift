@@ -33,7 +33,7 @@ class UserProfileActivityVM: ObservableObject {
     @Published var total: Int? = nil
     
     var page = 1
-            
+    
     func getActivities(_ type: RefreshNewAction) async {
         guard let token = await auth.getToken() else { return }
         

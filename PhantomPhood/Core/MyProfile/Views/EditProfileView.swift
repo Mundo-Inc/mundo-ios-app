@@ -10,10 +10,10 @@ import PhotosUI
 import Kingfisher
 
 struct EditProfileView: View {
-    @EnvironmentObject var auth: Authentication
     @Environment(\.dismiss) var dismiss
     
-    @StateObject var vm = EditProfileViewModel()
+    @ObservedObject private var auth = Authentication.shared
+    @StateObject private var vm = EditProfileViewModel()
     
     var body: some View {
         ZStack {
@@ -319,5 +319,4 @@ extension EditProfileView {
 
 #Preview {
     EditProfileView()
-        .environmentObject(Authentication())
 }

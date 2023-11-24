@@ -95,8 +95,9 @@ class SignUpWithPasswordVM: ObservableObject {
 // MARK: - View
 
 struct SignUpWithPasswordView: View {
-    @ObservedObject var auth = Authentication.shared
     @Environment(\.dismiss) var dismiss
+    
+    @ObservedObject private var auth = Authentication.shared
     @StateObject private var vm = SignUpWithPasswordVM()
     
     enum Field: Hashable {
@@ -142,7 +143,7 @@ struct SignUpWithPasswordView: View {
                         }.padding(.bottom)
                         
                         TextField("Email", text: $vm.email)
-                            .font(.title2)
+                            .font(.custom(style: .title2))
                             .keyboardType(.emailAddress)
                             .textContentType(UITextContentType.emailAddress)
                             .focused($focusedField, equals: .email)
@@ -194,7 +195,7 @@ struct SignUpWithPasswordView: View {
                         .padding(.bottom)
                         
                         TextField("Full Name", text: $vm.name)
-                            .font(.title2)
+                            .font(.custom(style: .title2))
                             .keyboardType(.namePhonePad)
                             .focused($focusedField, equals: .name)
                             .textContentType(.name)
@@ -226,7 +227,7 @@ struct SignUpWithPasswordView: View {
                         .padding(.bottom)
                         
                         TextField("Username", text: $vm.username)
-                            .font(.title2)
+                            .font(.custom(style: .title2))
                             .keyboardType(.default)
                             .autocorrectionDisabled(true)
                             .focused($focusedField, equals: .username)
@@ -279,7 +280,7 @@ struct SignUpWithPasswordView: View {
                         .padding(.bottom)
                         
                         SecureField("Password", text: $vm.password)
-                            .font(.title2)
+                            .font(.custom(style: .title2))
                             .textContentType(.password)
                             .focused($focusedField, equals: .password)
                         
@@ -453,5 +454,4 @@ struct SignUpWithPasswordView: View {
 
 #Preview {
     SignUpWithPasswordView()
-        .environmentObject(Authentication())
 }

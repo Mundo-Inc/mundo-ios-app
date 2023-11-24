@@ -7,23 +7,30 @@
 
 import Foundation
 
-class AppData: ObservableObject {
+final class AppData: ObservableObject {
     static var shared = AppData()
+    private init() {}
     
+    // Active Tab
     @Published var activeTab: Tab = .home
     
-    @Published var homeNavStack: [HomeStack] = []
+    // Map Tab
     @Published var mapNavStack: [MapStack] = []
+    
+    // Leaderboard Tab
     @Published var leaderboardNavStack: [LeaderboardStack] = []
-    @Published var authNavStack: [AuthStack] = []
-
+    
     // Home Tab
+    @Published var homeNavStack: [HomeStack] = []
     @Published var homeActiveTab: HomeTab = .forYou
     
     // My Profile Tab
     @Published var myProfileNavStack: [MyProfileStack] = []
     @Published var myProfileActiveTab: MyProfileActiveTab = .stats
     @Published var showEditProfile: Bool = false
+    
+    // Authentication Tab (Only before sign-in)
+    @Published var authNavStack: [AuthStack] = []
     
     func reset() {
         self.activeTab = .home
@@ -36,6 +43,23 @@ class AppData: ObservableObject {
         self.myProfileNavStack.removeAll()
         self.myProfileActiveTab = .stats
         self.showEditProfile = false
+    }
+    
+    func goToUser(_ id: String, _ currentUserId: String? = nil) {
+        if let userId = currentUserId, userId == id {
+            self.activeTab = .myProfile
+            return
+        }
+        switch self.activeTab {
+        case .home:
+            self.homeNavStack.append(.userProfile(id: id))
+        case .map:
+            self.mapNavStack.append(.userProfile(id: id))
+        case .leaderboard:
+            self.leaderboardNavStack.append(.userProfile(id: id))
+        case .myProfile:
+            self.myProfileNavStack.append(.userProfile(id: id))
+        }
     }
 }
 

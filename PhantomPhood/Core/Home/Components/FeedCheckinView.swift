@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct FeedCheckinView: View {
-    let data: FeedItem
-    @ObservedObject var commentsViewModel: CommentsViewModel
+    private let data: FeedItem
+    @ObservedObject private var commentsViewModel: CommentsViewModel
     
-    @StateObject var reactionsViewModel: ReactionsViewModel
-    @State var reactions: ReactionsObject
+    @StateObject private var reactionsViewModel: ReactionsViewModel
+    @State private var reactions: ReactionsObject
     
     init(data: FeedItem, commentsViewModel: CommentsViewModel) {
         self.data = data
@@ -21,7 +21,7 @@ struct FeedCheckinView: View {
         self._reactions = State(wrappedValue: data.reactions)
     }
     
-    @ObservedObject var selectReactionsViewModel = SelectReactionsViewModel.shared
+    @ObservedObject private var selectReactionsViewModel = SelectReactionsViewModel.shared
     
     var body: some View {
         FeedItemTemplate(user: data.user, comments: data.comments, isActive: commentsViewModel.currentActivityId == data.id) {
@@ -177,7 +177,7 @@ struct FeedCheckinView: View {
         }
     }
     
-    func selectReaction(reaction: NewReaction) async {
+    private func selectReaction(reaction: NewReaction) async {
         do {
             let newReaction = try await reactionsViewModel.addReaction(type: reaction.type, reaction: reaction.reaction)
             reactions.user.append(UserReaction(_id: newReaction.id, reaction: newReaction.reaction, type: newReaction.type, createdAt: newReaction.createdAt))

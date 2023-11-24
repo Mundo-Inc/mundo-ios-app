@@ -241,7 +241,7 @@ struct PlaceView: View {
                                     .foregroundStyle(
                                         vm.activeTab == PlaceTab.allCases[i] ? Color.accentColor : Color.secondary
                                     )
-                                    .font(.footnote)
+                                    .font(.custom(style: .footnote))
                                     .bold()
                                     .controlSize(.small)
                                     .textCase(.uppercase)
@@ -273,6 +273,7 @@ struct PlaceView: View {
                         }
                     } else {
                         Text("Loading")
+                            .font(.custom(style: .title2))
                     }
                 }
                 .frame(maxWidth: .infinity)

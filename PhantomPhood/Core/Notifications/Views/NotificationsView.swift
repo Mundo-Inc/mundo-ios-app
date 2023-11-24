@@ -9,7 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct NotificationsView: View {
-    @StateObject var vm = NotificationsViewModel()
+    @StateObject private var vm = NotificationsViewModel()
     
     var body: some View {
         ZStack {
@@ -46,35 +46,14 @@ struct NotificationsView: View {
     }
     
     func notificationItem(_ data: Notification) -> some View {
-        HStack {
+        HStack(alignment: .top) {
             ZStack {
                 NavigationLink(value: HomeStack.userProfile(id: data.user.id)) {
                     EmptyView()
                 }
                 .buttonStyle(PlainButtonStyle())
                 
-                if !data.user.profileImage.isEmpty, let url = URL(string: data.user.profileImage) {
-                    KFImage.url(url)
-                        .placeholder {
-                            Circle()
-                                .foregroundStyle(Color.themePrimary)
-                                .overlay {
-                                    ProgressView()
-                                }
-                        }
-                        .loadDiskFileSynchronously()
-                        .cacheMemoryOnly()
-                        .fade(duration: 0.25)
-                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .contentShape(Circle())
-                        .clipShape(Circle())
-                } else {
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                }
-                
+                ProfileImage(data.user.profileImage, size: 44, cornerRadius: 10)
             }
             .frame(width: 44, height: 44)
             

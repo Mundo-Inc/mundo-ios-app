@@ -17,30 +17,23 @@ class LeaderboardViewModel: ObservableObject {
     
     var page: Int = 1
     
-    enum GetLeaderboardAction {
-        case refresh
-        case new
-    }
-    
     init() {
         Task {
             await fetchList(.refresh)
         }
     }
     
-    func fetchList(_ action: GetLeaderboardAction) async {
+    func fetchList(_ action: RefreshNewAction) async {
+        guard !isLoading else { return }
+        
+        self.isLoading = true
+        
         if action == .refresh {
             page = 1
         }
         
-        if isLoading {
-            return
-        }
-        
-        self.isLoading = true
         do {
             let data = try await dataManager.fetchLeaderboard(page: page)
-            
             if action == .refresh || self.list.isEmpty {
                 self.list = data
             } else {
@@ -54,7 +47,7 @@ class LeaderboardViewModel: ObservableObject {
         }
         self.isLoading = false
     }
-        
+    
     func loadMore(currentItem item: User) async {
         let thresholdIndex = list.index(list.endIndex, offsetBy: -5)
         if list.firstIndex(where: { $0.id == item.id }) == thresholdIndex {

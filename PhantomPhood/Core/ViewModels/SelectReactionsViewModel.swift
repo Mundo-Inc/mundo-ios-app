@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 @MainActor
-class SelectReactionsViewModel: ObservableObject {
+final class SelectReactionsViewModel: ObservableObject {
     static let shared = SelectReactionsViewModel()
     
     @Published var isPresented = false
@@ -17,7 +17,7 @@ class SelectReactionsViewModel: ObservableObject {
     
     private var cancellables: Set<AnyCancellable> = []
     
-    init() {
+    private init() {
         $isPresented
             .sink { newValue in
                 if !newValue {

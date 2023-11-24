@@ -9,12 +9,13 @@ import SwiftUI
 import MapKit
 
 struct MapView: View {
-    @EnvironmentObject private var appData: AppData
-    @StateObject private var vm = MapViewModel()
+    @ObservedObject private var appData = AppData.shared
+    
     @Environment(\.dismissSearch) var dismissSearch
     
-    @StateObject var searchViewModel = SearchViewModel()
-        
+    @StateObject private var vm = MapViewModel()
+    @StateObject private var searchViewModel = SearchViewModel()
+    
     var body: some View {
         NavigationStack(path: $appData.mapNavStack) {
             ZStack(alignment: .top) {
@@ -112,9 +113,6 @@ struct MapView: View {
     }
 }
 
-struct MapView_Previews: PreviewProvider {
-    static var previews: some View {
-        MapView()
-            .environmentObject(AppData())
-    }
+#Preview {
+    MapView()
 }

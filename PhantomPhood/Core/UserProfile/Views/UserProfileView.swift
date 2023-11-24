@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 enum UserProfileTab: String, Hashable, CaseIterable {
     case stats = "Stats"
@@ -21,7 +20,7 @@ struct UserProfileView: View {
     
     @StateObject private var vm: UserProfileViewModel
     @State private var activeTab: UserProfileTab = .stats
-        
+    
     init(id: String) {
         self.id = id
         self._vm = StateObject(wrappedValue: UserProfileViewModel(id: id))
@@ -47,46 +46,13 @@ struct UserProfileView: View {
             } else {
                 VStack {
                     HStack(spacing: 12) {
-                        if let user = vm.user, !user.profileImage.isEmpty, let imageURL = URL(string: user.profileImage) {
-                            KFImage.url(imageURL)
-                                .placeholder { progress in
-                                    RoundedRectangle(cornerRadius: 15)
-                                        .foregroundStyle(.tertiary)
-                                        .overlay {
-                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                .progressViewStyle(LinearProgressViewStyle())
-                                        }
-                                }
-                                .loadDiskFileSynchronously()
-                                .cacheMemoryOnly()
-                                .fade(duration: 0.5)
-                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 82, height: 82)
-                                .contentShape(Rectangle())
-                                .clipShape(.rect(cornerRadius: 15))
-                        } else {
-                            // No Image
-                            if vm.user == nil {
-                                RoundedRectangle(cornerRadius: 15)
-                                    .foregroundStyle(.tertiary)
-                                    .frame(width: 82, height: 82)
-                            } else {
-                                Image(systemName: "person.fill")
-                                    .font(.system(size: 50))
-                                    .foregroundStyle(Color.secondary)
-                                    .frame(width: 82, height: 82)
-                                    .background(Color.themeBG)
-                                    .clipShape(.rect(cornerRadius: 15))
-                            }
-                        }
+                        ProfileImage(vm.user?.profileImage, size: 82, cornerRadius: 15)
                         
                         VStack {
                             if (vm.user != nil && vm.user!.verified) {
                                 HStack {
                                     Text(vm.user?.name ?? "User Name")
-                                        .font(.title2)
+                                        .font(.custom(style: .title2))
                                         .bold()
                                     Image(systemName: "checkmark.seal")
                                         .foregroundStyle(.blue)
@@ -95,13 +61,13 @@ struct UserProfileView: View {
                                 
                             } else {
                                 Text(vm.user?.name ?? "User Name")
-                                    .font(.title2)
+                                    .font(.custom(style: .title2))
                                     .bold()
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             
                             Text("@\(vm.user?.username ?? "Loading")")
-                                .font(.footnote)
+                                .font(.custom(style: .footnote))
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
@@ -140,13 +106,13 @@ struct UserProfileView: View {
                             .controlSize(.small)
                             
                         }
+                        .redacted(reason: vm.user == nil ? .placeholder : [])
                         .frame(maxWidth: .infinity)
                     }
                     .padding(.horizontal)
                     .padding(.bottom)
-                    .redacted(reason: vm.user == nil ? .placeholder : [])
                     
-                    if let bio = vm.user?.bio, bio.count > 0 {
+                    if let bio = vm.user?.bio, !bio.isEmpty {
                         Text(bio)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .font(.custom(style: .footnote))

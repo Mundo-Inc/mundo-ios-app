@@ -8,17 +8,17 @@
 import SwiftUI
 
 struct UserProfileActivity: View {
-    @StateObject var vm: UserProfileActivityVM
+    @StateObject private var vm: UserProfileActivityVM
     
     init(userId: String) {
         self._vm = StateObject(wrappedValue: UserProfileActivityVM(userId: userId))
     }
     
-    @StateObject var commentsViewModel = CommentsViewModel()
-    @StateObject var mediasViewModel = MediasViewModel()
-    @State var showActions: Bool = false
+    @StateObject private var commentsViewModel = CommentsViewModel()
+    @StateObject private var mediasViewModel = MediasViewModel()
     
-    @State var reportId: String? = nil
+    @State private var showActions: Bool = false
+    @State private var reportId: String? = nil
     
     var body: some View {
         HStack {

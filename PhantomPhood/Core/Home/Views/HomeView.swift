@@ -8,18 +8,16 @@
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject var auth: Authentication
-    @EnvironmentObject private var appData: AppData
+    @ObservedObject private var auth = Authentication.shared
+    @ObservedObject private var appData = AppData.shared
     
-    @StateObject var searchViewModel = SearchViewModel()
-    
-    @State var showActions: Bool = false
-    
-    @State var reportId: String? = nil
+    @StateObject private var searchViewModel = SearchViewModel()
+    @State private var showActions: Bool = false
+    @State private var reportId: String? = nil
     
     // -
-    @StateObject var commentsViewModel = CommentsViewModel()
-    @StateObject var mediasViewModel = MediasViewModel()
+    @StateObject private var commentsViewModel = CommentsViewModel()
+    @StateObject private var mediasViewModel = MediasViewModel()
     
     var body: some View {
         NavigationStack(path: $appData.homeNavStack) {
@@ -231,11 +229,6 @@ struct HomeView: View {
     }
 }
 
-struct FeedView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView()
-            .environmentObject(AppData())
-            .environmentObject(Authentication())
-            .environmentObject(LocationManager())
-    }
+#Preview {
+    HomeView()
 }

@@ -125,7 +125,7 @@ struct CompleteTheUserInfoView: View {
                         .padding(.bottom)
                         
                         TextField("Full Name", text: $vm.name)
-                            .font(.title2)
+                            .font(.custom(style: .title2))
                             .keyboardType(.namePhonePad)
                             .focused($focusedField, equals: .name)
                             .textContentType(.name)
@@ -158,7 +158,7 @@ struct CompleteTheUserInfoView: View {
                         
                         VStack {
                             TextField("Username", text: $vm.username)
-                                .font(.title2)
+                                .font(.custom(style: .title2))
                                 .keyboardType(.default)
                                 .autocorrectionDisabled(true)
                                 .focused($focusedField, equals: .username)

@@ -8,7 +8,8 @@
 import Foundation
 import Combine
 
-class MediasViewModel: ObservableObject {
+@MainActor
+final class MediasViewModel: ObservableObject {
     @Published var show = false
     @Published var medias: [Media] = []
         

@@ -10,10 +10,10 @@ import Kingfisher
 
 struct FeedFollowingView: View {
     let data: FeedItem
-    @ObservedObject var commentsViewModel: CommentsViewModel
+    @ObservedObject private var commentsViewModel: CommentsViewModel
     
-    @StateObject var reactionsViewModel: ReactionsViewModel
-    @State var reactions: ReactionsObject
+    @StateObject private var reactionsViewModel: ReactionsViewModel
+    @State private var reactions: ReactionsObject
     
     init(data: FeedItem, commentsViewModel: CommentsViewModel) {
         self.data = data
@@ -62,35 +62,7 @@ struct FeedFollowingView: View {
             case .user(let user):
                 NavigationLink(value: HomeStack.userProfile(id: user.id)) {
                     HStack {
-                        ZStack {
-                            Circle()
-                                .frame(width: 54, height: 54)
-                                .foregroundStyle(.gray.opacity(0.8))
-                            
-                            if !user.profileImage.isEmpty, let url = URL(string: user.profileImage) {
-                                KFImage.url(url)
-                                    .placeholder {
-                                        Circle()
-                                            .foregroundStyle(Color.themePrimary)
-                                            .overlay {
-                                                ProgressView()
-                                            }
-                                    }
-                                    .loadDiskFileSynchronously()
-                                    .cacheMemoryOnly()
-                                    .fade(duration: 0.25)
-                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 50, height: 50)
-                                    .clipShape(Circle())
-                            } else {
-                                Image(systemName: "person.circle.fill")
-                                    .resizable()
-                                    .frame(width: 50, height: 50)
-                            }
-                        }
-                        
+                        ProfileImage(user.profileImage, size: 54)
                         
                         Spacer()
                         

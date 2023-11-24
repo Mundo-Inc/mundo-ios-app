@@ -21,7 +21,7 @@ struct AddReviewView: View {
     let serviceEmojis = ["😠", "😪", "🙂", "👌", "💖"]
     let atmosphereEmojis = ["😖", "😕", "🙂", "😉", "🤩"]
     
-    @StateObject var vm = AddReviewViewModel()
+    @StateObject private var vm = AddReviewViewModel()
     @FocusState var textFieldFocused
     
     var body: some View {

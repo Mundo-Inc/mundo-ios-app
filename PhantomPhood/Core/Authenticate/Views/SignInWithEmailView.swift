@@ -51,7 +51,7 @@ class SignInViewModel: ObservableObject {
 
 // MARK: - View
 struct SignInWithEmailView: View {
-    @ObservedObject var auth = Authentication.shared
+    @ObservedObject private var auth = Authentication.shared
     @Environment(\.dismiss) var dismiss
     
     @StateObject private var vm = SignInViewModel()

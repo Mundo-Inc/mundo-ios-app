@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct CommentsView: View {
     @ObservedObject var vm: CommentsViewModel
@@ -35,7 +34,7 @@ struct CommentsView: View {
     }
     
     @State var reportId: String? = nil
-            
+    
     var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 3)
@@ -46,17 +45,17 @@ struct CommentsView: View {
                 .fontWeight(.bold)
                 .padding(.top, 5)
             Divider()
-
+            
             if vm.comments.isEmpty && vm.isLoading {
                 ProgressView()
             } else {
                 if vm.comments.isEmpty {
                     VStack {
                         Text("No Comments yet")
-                            .font(.title2)
-
+                            .font(.custom(style: .title2))
+                        
                         Text("Start the conversation")
-                            .font(.caption)
+                            .font(.custom(style: .caption))
                             .foregroundStyle(.secondary)
                     }
                     .padding(.top)
@@ -65,41 +64,13 @@ struct CommentsView: View {
                         VStack {
                             HStack {
                                 Group {
-                                    if !comment.author.profileImage.isEmpty, let url = URL(string: comment.author.profileImage) {
-                                        KFImage.url(url)
-                                            .placeholder {
-                                                Circle()
-                                                    .frame(width: 44, height: 44)
-                                                    .foregroundStyle(Color.themePrimary)
-                                                    .overlay {
-                                                        ProgressView()
-                                                    }
-                                            }
-                                            .loadDiskFileSynchronously()
-                                            .cacheMemoryOnly()
-                                            .fade(duration: 0.25)
-                                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 44, height: 44)
-                                            .clipShape(Circle())
-                                            .overlay(alignment: .top) {
-                                                LevelView(level: comment.author.progress.level)
-                                                    .aspectRatio(contentMode: .fit)
-                                                    .frame(width: 24, height: 30)
-                                                    .offset(y: 28)
-                                            }
-                                    } else {
-                                        Image(systemName: "person.circle.fill")
-                                            .resizable()
-                                            .frame(width: 44, height: 44)
-                                            .overlay(alignment: .top) {
-                                                LevelView(level: comment.author.progress.level)
-                                                    .aspectRatio(contentMode: .fit)
-                                                    .frame(width: 24, height: 30)
-                                                    .offset(y: 28)
-                                            }
-                                    }
+                                    ProfileImage(comment.author.profileImage, size: 44, cornerRadius: 10)
+                                        .overlay(alignment: .top) {
+                                            LevelView(level: comment.author.progress.level)
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: 24, height: 30)
+                                                .offset(y: 28)
+                                        }
                                 }
                                 .onTapGesture(perform: {
                                     navigateToUserProfile(id: comment.author.id)
@@ -118,7 +89,7 @@ struct CommentsView: View {
                                             Spacer()
                                         }
                                         .frame(maxWidth: .infinity)
-
+                                        
                                         Text(comment.content)
                                             .font(.custom(style: .body))
                                             .multilineTextAlignment(.leading)
@@ -161,13 +132,13 @@ struct CommentsView: View {
                             } label: {
                                 Text("Report")
                             }
-
+                            
                         }
                     }
                     .listStyle(.plain)
                 }
             }
-                        
+            
             Spacer()
             
             Divider()
@@ -193,7 +164,7 @@ struct CommentsView: View {
                     .padding(.all, 9)
                 }.padding(.horizontal)
                 .padding(.vertical, 5)
-
+            
             
         }
         .padding(.top)

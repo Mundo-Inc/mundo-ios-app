@@ -12,7 +12,7 @@ struct UserProfileStats: View {
     @Binding var activeTab: UserProfileTab
     
     @ObservedObject var appData = AppData.shared
-        
+    
     func connectionNavigationHandler(type: UserConnectionsTab) -> any Hashable {
         switch appData.activeTab {
         case .home:
@@ -73,7 +73,7 @@ struct UserProfileStats: View {
                     .foregroundStyle(.primary)
                 }
             }
-                        
+            
             VStack {
                 Text("Level & Rankings")
                     .font(.custom(style: .headline))
@@ -96,7 +96,7 @@ struct UserProfileStats: View {
                         ProgressView(value: user == nil ? 0 : Double(user!.progress.xp) / Double(user!.progress.xp + user!.remainingXp))
                             .foregroundStyle(.secondary)
                             .progressViewStyle(.linear)
-                            
+                        
                         
                         HStack(spacing: 0) {
                             Text("\(user?.progress.xp ?? 1000)")

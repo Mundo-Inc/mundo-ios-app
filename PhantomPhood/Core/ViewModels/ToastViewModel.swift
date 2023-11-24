@@ -20,8 +20,9 @@ struct Toast: Identifiable {
 }
 
 @MainActor
-class ToastViewModel: ObservableObject {
+final class ToastViewModel: ObservableObject {
     static let shared = ToastViewModel()
+    private init() {}
     
     @Published private(set) var toasts: [Toast] = []
     

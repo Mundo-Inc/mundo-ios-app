@@ -6,52 +6,17 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct MyProfile: View {
-    @EnvironmentObject private var appData: AppData
-    @EnvironmentObject private var auth: Authentication
+    @ObservedObject private var appData = AppData.shared
+    @ObservedObject private var auth = Authentication.shared
     
     var body: some View {
         NavigationStack(path: $appData.myProfileNavStack) {
             ScrollView {
                 VStack {
                     HStack(spacing: 12) {
-                        if let user = auth.currentUser, !user.profileImage.isEmpty, let imageURL = URL(string: user.profileImage) {
-                            KFImage.url(imageURL)
-                                .placeholder { progress in
-                                    RoundedRectangle(cornerRadius: 15)
-                                        .foregroundStyle(.tertiary)
-                                        .overlay {
-                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                .progressViewStyle(LinearProgressViewStyle())
-                                        }
-                                }
-                                .loadDiskFileSynchronously()
-                                .cacheMemoryOnly()
-                                .fade(duration: 0.5)
-                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 82, height: 82)
-                                .contentShape(Rectangle())
-                                .clipShape(.rect(cornerRadius: 15))
-                        } else {
-                            // No Image
-                            if auth.currentUser == nil {
-                                RoundedRectangle(cornerRadius: 15)
-                                    .foregroundStyle(.tertiary)
-                                    .frame(width: 82, height: 82)
-                            } else {
-                                Image(systemName: "person.fill")
-                                    .font(.system(size: 50))
-                                    .foregroundStyle(Color.secondary)
-                                    .frame(width: 82, height: 82)
-                                    .background(Color.themeBG)
-                                    .clipShape(RoundedRectangle(cornerRadius: 15))
-                            }
-                            
-                        }
+                        ProfileImage(auth.currentUser?.profileImage, size: 82, cornerRadius: 15)
                         
                         VStack {
                             if (auth.currentUser != nil && auth.currentUser!.verified) {
@@ -82,18 +47,18 @@ struct MyProfile: View {
                                 Text("Edit Profile")
                                     .font(.custom(style: .footnote))
                                     .frame(maxWidth: .infinity)
-                                    
+                                
                             }
                             .buttonStyle(BorderedButtonStyle())
                             .controlSize(.small)
                         }
+                        .redacted(reason: auth.currentUser == nil ? .placeholder : [])
                         .frame(maxWidth: .infinity)
                     }
-                    .redacted(reason: auth.currentUser == nil ? .placeholder : [])
                     .padding(.horizontal)
                     .padding(.bottom)
-
-                    if let bio = auth.currentUser?.bio, bio.count > 0 {
+                    
+                    if let bio = auth.currentUser?.bio, !bio.isEmpty {
                         Text(bio)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .font(.custom(style: .footnote))
@@ -101,7 +66,7 @@ struct MyProfile: View {
                             .padding(.horizontal)
                             .padding(.bottom)
                     }
-
+                    
                     ScrollView(.horizontal) {
                         HStack {
                             Color.clear
@@ -220,6 +185,4 @@ struct MyProfile: View {
 
 #Preview {
     MyProfile()
-        .environmentObject(AppData())
-        .environmentObject(Authentication())
 }

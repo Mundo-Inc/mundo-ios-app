@@ -9,15 +9,15 @@ import SwiftUI
 import Kingfisher
 
 struct FeedReviewView: View {
-    let data: FeedItem
-    @ObservedObject var commentsViewModel: CommentsViewModel
-    @ObservedObject var mediasViewModel: MediasViewModel
+    private let data: FeedItem
+    @ObservedObject private var commentsViewModel: CommentsViewModel
+    @ObservedObject private var mediasViewModel: MediasViewModel
     
-    @StateObject var reactionsViewModel: ReactionsViewModel
-    @State var reactions: ReactionsObject
-    @State var showActions = false
+    @StateObject private var reactionsViewModel: ReactionsViewModel
+    @State private var reactions: ReactionsObject
+    @State private var showActions = false
     
-    @Binding var reportId: String?
+    @Binding private var reportId: String?
     
     init(data: FeedItem, commentsViewModel: CommentsViewModel, mediasViewModel: MediasViewModel, reportId: Binding<String?>) {
         self.data = data
@@ -28,9 +28,9 @@ struct FeedReviewView: View {
         self._reportId = reportId
     }
     
-    @ObservedObject var selectReactionsViewModel = SelectReactionsViewModel.shared
+    @ObservedObject private var selectReactionsViewModel = SelectReactionsViewModel.shared
     
-    func showMedia() {
+    private func showMedia() {
         switch data.resource {
         case .review(let feedReview):
             mediasViewModel.show(medias: feedReview.videos + feedReview.images)
@@ -39,7 +39,7 @@ struct FeedReviewView: View {
         }
     }
     
-    var starsView: some View {
+    private var starsView: some View {
         HStack(spacing: 0) {
             Image(systemName: "star.fill")
             Image(systemName: "star.fill")
@@ -306,7 +306,7 @@ struct FeedReviewView: View {
     }
     
     
-    func selectReaction(reaction: NewReaction) async {
+    private func selectReaction(reaction: NewReaction) async {
         do {
             let newReaction = try await reactionsViewModel.addReaction(type: reaction.type, reaction: reaction.reaction)
             reactions.user.append(UserReaction(_id: newReaction.id, reaction: newReaction.reaction, type: newReaction.type, createdAt: newReaction.createdAt))

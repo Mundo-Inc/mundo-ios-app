@@ -6,11 +6,11 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct FeedView: View {
     @ObservedObject var commentsViewModel: CommentsViewModel
     @ObservedObject var mediasViewModel: MediasViewModel
+    
     @StateObject var vm = FeedViewModel()
     
     @Binding var reportId: String?
@@ -35,39 +35,7 @@ struct FeedView: View {
                         }
                     
                     HStack(spacing: 15) {
-                        if let nabeel = vm.nabeel, !nabeel.profileImage.isEmpty, let imageURL = URL(string: nabeel.profileImage) {
-                            KFImage.url(imageURL)
-                                .placeholder {
-                                    RoundedRectangle(cornerRadius: 15)
-                                        .foregroundStyle(.tertiary)
-                                        .overlay {
-                                            ProgressView()
-                                        }
-                                }
-                                .loadDiskFileSynchronously()
-                                .cacheMemoryOnly()
-                                .fade(duration: 0.25)
-                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 100, height: 100)
-                                .contentShape(Rectangle())
-                                .clipShape(.rect(cornerRadius: 15))
-                        } else {
-                            // No Image
-                            if vm.nabeel == nil {
-                                RoundedRectangle(cornerRadius: 15)
-                                    .foregroundStyle(.tertiary)
-                                    .frame(width: 100, height: 100)
-                            } else {
-                                Image(systemName: "person.fill")
-                                    .font(.system(size: 50))
-                                    .foregroundStyle(Color.secondary)
-                                    .frame(width: 100, height: 100)
-                                    .background(Color.themeBG)
-                                    .clipShape(.rect(cornerRadius: 15))
-                            }
-                        }
+                        ProfileImage(vm.nabeel?.profileImage, size: 100, cornerRadius: 15)
                         
                         VStack {
                             VStack {
@@ -180,7 +148,6 @@ struct FeedView: View {
 #Preview {
     NavigationStack {
         FeedView(commentsViewModel: CommentsViewModel(), mediasViewModel: MediasViewModel(), reportId: .constant(nil))
-            .environmentObject(AppData())
             .environmentObject(SearchViewModel())
     }
 }

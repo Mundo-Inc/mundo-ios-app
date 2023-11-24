@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject private var appData: AppData
-    
-    @StateObject var selectReactionsViewModel = SelectReactionsViewModel.shared
+    @ObservedObject private var appData = AppData.shared
+    @ObservedObject private var selectReactionsViewModel = SelectReactionsViewModel.shared
     
     var body: some View {
         TabView(selection: $appData.activeTab) {
@@ -61,9 +60,6 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-            .environmentObject(AppData())
-    }
+#Preview {
+    ContentView()
 }

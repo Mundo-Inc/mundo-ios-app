@@ -105,7 +105,7 @@ class UserProfileViewModel: ObservableObject {
         }
         self.isLoading = false
     }
-
+    
     func unblock() async {
         self.isLoading = true
         do {

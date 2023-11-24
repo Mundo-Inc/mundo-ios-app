@@ -14,11 +14,13 @@ struct SettingsView: View {
     @ObservedObject private var auth = Authentication.shared
     @AppStorage("theme") var theme: String = ""
     
+    @State var isLoading = false
+    
     @State var showAccountDeleteWarning = false
     func deleteAccount() async {
         do {
             guard let token = await auth.getToken(), let user = auth.currentUser else { return }
-                        
+            
             let _ = try await apiManager.requestNoContent("/users/\(user.id)", method: .delete, token: token)
             
             toastViewModel.toast(.init(type: .success, title: "Success", message: "Your account has been deleted"))
@@ -70,7 +72,34 @@ struct SettingsView: View {
                 }
             }
             Section(header: Text("Security")) {
-                    Link("Change Password", destination: URL(string: "https://phantomphood.ai/reset-password")!)
+                Button {
+                    withAnimation {
+                        isLoading = true
+                    }
+                    if let user = auth.currentUser {
+                        auth.requestResetPassword(email: user.email.address) { result in
+                            withAnimation {
+                                isLoading = false
+                            }
+                            if result {
+                                ToastViewModel.shared.toast(.init(type: .success, title: "Email Sent", message: "Email sent"))
+                            } else {
+                                ToastViewModel.shared.toast(.init(type: .error, title: "Failed", message: "Something went wrong, please try again in couple minutes."))
+                            }
+                        }
+                    } else {
+                        withAnimation {
+                            isLoading = false
+                        }
+                    }
+                } label: {
+                    Label(
+                        title: { Text("Change Password") },
+                        icon: { Image(systemName: "ellipsis.rectangle.fill") }
+                    )
+                }
+                .disabled(isLoading)
+                .opacity(isLoading ? 0.5 : 1)
             }
             
             Section(header: Text("Account")) {

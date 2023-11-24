@@ -18,7 +18,7 @@ struct ReviewScores: Decodable {
 
 struct PlaceReview: Identifiable, Decodable {
     let _id: String
-    let scores: ReviewScores
+    let scores: ReviewScores?
     let content: String
     let images: [Media]
     let videos: [Media]

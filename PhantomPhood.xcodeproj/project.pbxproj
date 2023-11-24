@@ -41,6 +41,7 @@
 		0B46814D2AC5EAFB009C5EF9 /* FirstLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B46814C2AC5EAFB009C5EF9 /* FirstLoadingView.swift */; };
 		0B46814F2AC5EB6B009C5EF9 /* CircleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */; };
 		0B4681512AC61D49009C5EF9 /* FeedCheckinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4681502AC61D49009C5EF9 /* FeedCheckinView.swift */; };
+		0B47FDA12B11060600F39527 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B47FDA02B11060600F39527 /* AppRouter.swift */; };
 		0B51A8D42ACEC58400DA38DC /* MediasViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B51A8D32ACEC58400DA38DC /* MediasViewModel.swift */; };
 		0B51A8D62ACEC61000DA38DC /* MediasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B51A8D52ACEC61000DA38DC /* MediasView.swift */; };
 		0B6495532AB0A51F000E57AF /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6495522AB0A51F000E57AF /* Validator.swift */; };
@@ -199,6 +200,7 @@
 		0B46814C2AC5EAFB009C5EF9 /* FirstLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLoadingView.swift; sourceTree = "<group>"; };
 		0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleLabelView.swift; sourceTree = "<group>"; };
 		0B4681502AC61D49009C5EF9 /* FeedCheckinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCheckinView.swift; sourceTree = "<group>"; };
+		0B47FDA02B11060600F39527 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		0B51A8D32ACEC58400DA38DC /* MediasViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediasViewModel.swift; sourceTree = "<group>"; };
 		0B51A8D52ACEC61000DA38DC /* MediasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediasView.swift; sourceTree = "<group>"; };
 		0B6495522AB0A51F000E57AF /* Validator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validator.swift; sourceTree = "<group>"; };
@@ -494,6 +496,7 @@
 		0B6495582AB1FD04000E57AF /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				0B77EA492AAF871E00C8DF87 /* Models */,
 				0BCBC1952ACDFEC700992D8E /* ViewModels */,
 				0B77EA4C2AAF875D00C8DF87 /* Components */,
 				0B0183542AB3BEFB008E887F /* MyProfile */,
@@ -509,9 +512,6 @@
 				0B64955D2AB1FD8F000E57AF /* NotFound */,
 				0B6495592AB1FD16000E57AF /* Authenticate */,
 				0B46814C2AC5EAFB009C5EF9 /* FirstLoadingView.swift */,
-				0B35B7B22B0DFCE000822BA6 /* SignInGoogleHelper.swift */,
-				0B35B7B62B0E016900822BA6 /* SignInAppleHelper.swift */,
-				0BEF7A3B2B0EB2D4001532E7 /* OAuthViewModel.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -519,6 +519,9 @@
 		0B6495592AB1FD16000E57AF /* Authenticate */ = {
 			isa = PBXGroup;
 			children = (
+				0BEF7A3B2B0EB2D4001532E7 /* OAuthViewModel.swift */,
+				0B35B7B62B0E016900822BA6 /* SignInAppleHelper.swift */,
+				0B35B7B22B0DFCE000822BA6 /* SignInGoogleHelper.swift */,
 				0B64955B2AB1FD49000E57AF /* Views */,
 			);
 			path = Authenticate;
@@ -635,6 +638,7 @@
 				0B77EA592AAFDA1A00C8DF87 /* PhantomPhood.entitlements */,
 				0B77EA3A2AAF855500C8DF87 /* PhantomPhoodApp.swift */,
 				0B77EA3C2AAF855500C8DF87 /* ContentView.swift */,
+				0B47FDA02B11060600F39527 /* AppRouter.swift */,
 				0BB37E9B2ABA52C7009E1272 /* Shaders.metal */,
 				0B96D66B2AD2E73500612C27 /* LocationManager.swift */,
 				0BF81DC72ABE398400B8892E /* Fonts */,
@@ -642,7 +646,6 @@
 				0B6495582AB1FD04000E57AF /* Core */,
 				0B6495512AB0A4EF000E57AF /* Utils */,
 				0B77EA542AAFCA9700C8DF87 /* LottieFiles */,
-				0B77EA492AAF871E00C8DF87 /* Models */,
 				0B77EA3E2AAF855600C8DF87 /* Assets.xcassets */,
 				0BF81DC32ABE369500B8892E /* CustomFonts.swift */,
 				0B35B7A82B0D09EB00822BA6 /* GoogleService-Info.plist */,
@@ -664,10 +667,6 @@
 			isa = PBXGroup;
 			children = (
 				0BF5B4B02AB3782300DEC403 /* NavStacks */,
-				0B77EA5A2AAFE31300C8DF87 /* Authentication.swift */,
-				0B6495552AB10F5E000E57AF /* APIManager.swift */,
-				0BF5B49C2AB292D500DEC403 /* KeychainHelper.swift */,
-				0BF5B4BB2AB37B8200DEC403 /* AppData.swift */,
 				0B6A47C32ABC9806000CBDA3 /* FeedItem.swift */,
 				0B0E6D2D2ABB676300EC62EE /* Place.swift */,
 				0B0E6D332ABB872F00EC62EE /* Reaction.swift */,
@@ -796,12 +795,16 @@
 		0BCBC1952ACDFEC700992D8E /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				0B77EA5A2AAFE31300C8DF87 /* Authentication.swift */,
+				0BF5B4BB2AB37B8200DEC403 /* AppData.swift */,
+				0B6495552AB10F5E000E57AF /* APIManager.swift */,
 				0BCBC1912ACDF22100992D8E /* CommentsViewModel.swift */,
 				0B37ABFB2AD7408E00E8D4BC /* ToastViewModel.swift */,
 				0BE1E17B2AD5A38A00645AA0 /* SearchViewModel.swift */,
 				0B51A8D32ACEC58400DA38DC /* MediasViewModel.swift */,
 				0BC84A662AD0449300D723AA /* ReactionsViewModel.swift */,
 				0BC84A6C2AD08A6D00D723AA /* SelectReactionsViewModel.swift */,
+				0BF5B49C2AB292D500DEC403 /* KeychainHelper.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -1053,6 +1056,7 @@
 				0BAE47322ACC91DF001FBDAF /* PlaceReviewsView.swift in Sources */,
 				0B01836C2AB3C1AF008E887F /* MyProfileStack.swift in Sources */,
 				0BB805862AC203EB0074155D /* FeedReviewView.swift in Sources */,
+				0B47FDA12B11060600F39527 /* AppRouter.swift in Sources */,
 				0BEE152A2AB50A8800DF7211 /* ProfileStats.swift in Sources */,
 				0B997B632AC70E1A00579C9C /* Notification.swift in Sources */,
 				0BF5B4AE2AB375D500DEC403 /* MapView.swift in Sources */,
@@ -1279,7 +1283,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.30.1;
+				MARKETING_VERSION = 0.31.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1316,7 +1320,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.30.1;
+				MARKETING_VERSION = 0.31.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

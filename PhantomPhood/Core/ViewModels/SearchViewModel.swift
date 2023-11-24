@@ -52,7 +52,7 @@ enum SearchPlaceRegion {
 }
 
 @MainActor
-class SearchViewModel: ObservableObject {
+final class SearchViewModel: ObservableObject {
     private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     private let locationManager = LocationManager.shared

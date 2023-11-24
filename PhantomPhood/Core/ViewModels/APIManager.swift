@@ -7,8 +7,10 @@
 
 import Foundation
 
-class APIManager {
+final class APIManager {
     static let shared = APIManager()
+    
+    private init() {}
     
     // MARK: - Nested Types
     
@@ -52,7 +54,7 @@ class APIManager {
     // MARK: - Constants
     
 //    static let baseURL = "http://localhost:3020/api/v1"
-    static let baseURL = "https://phantomphood.ai/api/v1"
+    static let baseURL = "https://phantomphood.anoti/api/v1"
     
     // MARK: - Public Methods
     
