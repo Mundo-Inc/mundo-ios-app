@@ -57,9 +57,6 @@ struct ForYouView: View {
         .onDisappear {
             self.playId = nil
         }
-        .onChange(of: playId) { newValue in
-            print("playId changed to \(newValue ?? "nil")")
-        }
         .onAppear {
             if page.index >= 0 && vm.items.count >= page.index + 1 {
                 switch vm.items[page.index].resource {
