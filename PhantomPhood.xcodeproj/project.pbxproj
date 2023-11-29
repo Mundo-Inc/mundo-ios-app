@@ -69,6 +69,7 @@
 		0B77EA582AAFCDBD00C8DF87 /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77EA572AAFCDBD00C8DF87 /* LottieView.swift */; };
 		0B77EA5B2AAFE31300C8DF87 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77EA5A2AAFE31300C8DF87 /* Authentication.swift */; };
 		0B77EA632AB08EDE00C8DF87 /* NotFoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77EA622AB08EDE00C8DF87 /* NotFoundView.swift */; };
+		0B7DD5412B14DCC100D2EECB /* VideoPlayerVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7DD5402B14DCC100D2EECB /* VideoPlayerVM.swift */; };
 		0B83A0C52AF3F7EF0096780B /* UserProfileCheckins.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B83A0C42AF3F7EF0096780B /* UserProfileCheckins.swift */; };
 		0B83A0C72AF3F8110096780B /* UserProfileCheckinsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B83A0C62AF3F8110096780B /* UserProfileCheckinsVM.swift */; };
 		0B83A0C92AF4032D0096780B /* ProfileActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B83A0C82AF4032D0096780B /* ProfileActivity.swift */; };
@@ -228,6 +229,7 @@
 		0B77EA592AAFDA1A00C8DF87 /* PhantomPhood.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PhantomPhood.entitlements; sourceTree = "<group>"; };
 		0B77EA5A2AAFE31300C8DF87 /* Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
 		0B77EA622AB08EDE00C8DF87 /* NotFoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotFoundView.swift; sourceTree = "<group>"; };
+		0B7DD5402B14DCC100D2EECB /* VideoPlayerVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerVM.swift; sourceTree = "<group>"; };
 		0B83A0C42AF3F7EF0096780B /* UserProfileCheckins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileCheckins.swift; sourceTree = "<group>"; };
 		0B83A0C62AF3F8110096780B /* UserProfileCheckinsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileCheckinsVM.swift; sourceTree = "<group>"; };
 		0B83A0C82AF4032D0096780B /* ProfileActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileActivity.swift; sourceTree = "<group>"; };
@@ -798,6 +800,7 @@
 				0B77EA5A2AAFE31300C8DF87 /* Authentication.swift */,
 				0BF5B4BB2AB37B8200DEC403 /* AppData.swift */,
 				0B6495552AB10F5E000E57AF /* APIManager.swift */,
+				0B7DD5402B14DCC100D2EECB /* VideoPlayerVM.swift */,
 				0BCBC1912ACDF22100992D8E /* CommentsViewModel.swift */,
 				0B37ABFB2AD7408E00E8D4BC /* ToastViewModel.swift */,
 				0BE1E17B2AD5A38A00645AA0 /* SearchViewModel.swift */,
@@ -1124,6 +1127,7 @@
 				0B0E6D322ABB816F00EC62EE /* Checkin.swift in Sources */,
 				0BF17BA72AF2F93F00D87812 /* ProfileCheckins.swift in Sources */,
 				0B46814D2AC5EAFB009C5EF9 /* FirstLoadingView.swift in Sources */,
+				0B7DD5412B14DCC100D2EECB /* VideoPlayerVM.swift in Sources */,
 				0BF5B4B42AB3787200DEC403 /* Tab.swift in Sources */,
 				0BDBD3CC2ACB5FCD003B8D2D /* GoogleRatingView.swift in Sources */,
 				0B0183702AB3DE8A008E887F /* AuthStack.swift in Sources */,
@@ -1263,7 +1267,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PhantomPhood/PhantomPhood.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PhantomPhood/Preview Content\"";
 				DEVELOPMENT_TEAM = BNPN3KK5A7;
 				ENABLE_PREVIEWS = YES;
@@ -1283,7 +1287,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.31.0;
+				MARKETING_VERSION = 0.32.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1300,7 +1304,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PhantomPhood/PhantomPhood.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PhantomPhood/Preview Content\"";
 				DEVELOPMENT_TEAM = BNPN3KK5A7;
 				ENABLE_PREVIEWS = YES;
@@ -1320,7 +1324,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.31.0;
+				MARKETING_VERSION = 0.32.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

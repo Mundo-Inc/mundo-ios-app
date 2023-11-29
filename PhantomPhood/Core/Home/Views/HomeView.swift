@@ -19,6 +19,8 @@ struct HomeView: View {
     @StateObject private var commentsViewModel = CommentsViewModel()
     @StateObject private var mediasViewModel = MediasViewModel()
     
+    @Namespace private var namespace
+    
     var body: some View {
         NavigationStack(path: $appData.homeNavStack) {
             ZStack(alignment: .bottomTrailing) {
@@ -35,54 +37,62 @@ struct HomeView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         NavigationLink(value: HomeStack.notifications) {
-                            Image(systemName: "bell")
+                            Image(systemName: "envelope.fill")
+                                .font(.system(size: 16))
+                                .frame(width: 44, height: 44)
+                                .background(Circle().foregroundStyle(.black))
                         }
+                        .foregroundStyle(.white)
                     }
                     
                     ToolbarItem(placement: .principal) {
                         HStack(spacing: 0) {
-                            Button {
-                                withAnimation {
-                                    appData.homeActiveTab = .forYou
+                            ZStack {
+                                if appData.homeActiveTab == .forYou {
+                                    Capsule()
+                                        .matchedGeometryEffect(id: "selectedTab", in: namespace)
+                                        .foregroundStyle(Color.accentColor)
                                 }
-                            } label: {
-                                ZStack {
+
+                                Button {
+                                    withAnimation {
+                                        appData.homeActiveTab = .forYou
+                                    }
+                                } label: {
                                     Text(HomeTab.forYou.rawValue)
-                                        .overlay(alignment: .bottom) {
-                                            RoundedRectangle(cornerRadius: 2)
-                                                .foregroundStyle(.secondary)
-                                                .frame(height: 3)
-                                                .frame(maxWidth: appData.homeActiveTab != .forYou ? 0 : .infinity)
-                                                .offset(y: 5)
-                                                .animation(appData.homeActiveTab != .forYou ? .easeOut : .bouncy, value: appData.homeActiveTab)
-                                        }
-                                    
-                                    Text("Beta")
-                                        .font(.custom(style: .caption))
-                                        .foregroundStyle(.black)
-                                        .padding(.horizontal, 5)
-                                        .background(Capsule().foregroundStyle(.yellow).opacity(0.9))
-                                        .rotationEffect(.degrees(-10))
-                                        .offset(x: -25, y: -15)
+                                        .foregroundStyle(.white)
                                 }
+                                .frame(maxWidth: .infinity)
+                                
+                                Text("Beta")
+                                    .font(.custom(style: .caption))
+                                    .foregroundStyle(.black)
+                                    .padding(.horizontal, 5)
+                                    .background(Capsule().foregroundStyle(.yellow).opacity(0.9))
+                                    .rotationEffect(.degrees(-10))
+                                    .offset(x: -25, y: -15)
                             }
                             
-                            Button {
-                                withAnimation {
-                                    appData.homeActiveTab = .followings
+                            ZStack {
+                                if appData.homeActiveTab == .followings {
+                                    Capsule()
+                                        .matchedGeometryEffect(id: "selectedTab", in: namespace)
+                                        .foregroundStyle(Color.accentColor)
                                 }
-                            } label: {
-                                Text(HomeTab.followings.rawValue)
-                                    .overlay(alignment: .bottom) {
-                                        RoundedRectangle(cornerRadius: 2)
-                                            .foregroundStyle(.secondary)
-                                            .frame(height: 3)
-                                            .frame(maxWidth: appData.homeActiveTab != .followings ? 0 : .infinity)
-                                            .offset(y: 5)
-                                            .animation(appData.homeActiveTab != .followings ? .easeOut : .bouncy, value: appData.homeActiveTab)
+                                
+                                Button {
+                                    withAnimation {
+                                        appData.homeActiveTab = .followings
                                     }
+                                } label: {
+                                    Text(HomeTab.followings.rawValue)
+                                        .foregroundStyle(.white)
+                                }
+                                .frame(maxWidth: .infinity)
                             }
                         }
+                        .frame(width: 200, height: 32)
+                        .background(Capsule().foregroundStyle(.black))
                         .font(.custom(style: .headline))
                         .fontWeight(.semibold)
                         .foregroundStyle(.primary)

@@ -14,7 +14,6 @@ struct ForYouItem: View {
     private let data: FeedItem
     private let itemIndex: Int?
     @ObservedObject private var page: Page
-    @Binding private var isMute: Bool
     @ObservedObject private var commentsViewModel: CommentsViewModel
     private let parentGeometry: GeometryProxy?
     
@@ -22,21 +21,24 @@ struct ForYouItem: View {
     @StateObject private var reactionsViewModel: ReactionsViewModel
     @State private var reactions: ReactionsObject
     
-    @Binding var playId: String?
-    @State private var tabPage: String = ""
-    
+    @ObservedObject var videoPlayerVM: VideoPlayerVM
     @ObservedObject private var selectReactionsViewModel = SelectReactionsViewModel.shared
     
-    init(data: FeedItem, itemIndex: Int?, page: Page, isMute: Binding<Bool>, commentsViewModel: CommentsViewModel, parentGeometry: GeometryProxy?, playId: Binding<String?>) {
+    @State private var tabPage: String = ""
+    
+    @State private var videosState: [String:VideoPlayer.State] = [:]
+    
+    init(data: FeedItem, itemIndex: Int?, page: Page, commentsViewModel: CommentsViewModel, parentGeometry: GeometryProxy?) {
         self.data = data
         self.itemIndex = itemIndex
         self._page = ObservedObject(wrappedValue: page)
-        self._isMute = isMute
         self._commentsViewModel = ObservedObject(wrappedValue: commentsViewModel)
         self.parentGeometry = parentGeometry
         
         self._reactionsViewModel = StateObject(wrappedValue: ReactionsViewModel(activityId: data.id))
         self._reactions = State(wrappedValue: data.reactions)
+        
+        self._videoPlayerVM = ObservedObject(wrappedValue: VideoPlayerVM.shared)
         
         switch data.resource {
         case .review(let feedReview):
@@ -48,8 +50,12 @@ struct ForYouItem: View {
         default:
             break
         }
-        
-        self._playId = playId
+    }
+    
+    @State var isPlaying = true
+    
+    private var sortedReactions: [Reaction] {
+        Array(reactions.total.sorted { $0.count > $1.count }.prefix(5))
     }
     
     var body: some View {
@@ -62,12 +68,12 @@ struct ForYouItem: View {
                     .onChange(of: tabPage) { newTab in
                         if page.index == itemIndex {
                             if feedReview.videos.contains(where: { $0.id == newTab }) {
-                                playId = newTab
+                                videoPlayerVM.playId = newTab
                             } else {
-                                playId = nil
+                                videoPlayerVM.playId = nil
                             }
                         } else {
-                            playId = nil
+                            videoPlayerVM.playId = nil
                         }
                     }
                 
@@ -75,25 +81,33 @@ struct ForYouItem: View {
                     ZStack {
                         TabView(selection: $tabPage) {
                             ForEach(feedReview.videos) { video in
-                                if let url = URL(string: video.src) {
-                                    VideoPlayer(url: url, play: Binding(get: {
-                                        return (playId ?? "") == video.id
-                                    }, set: { value in
-                                        if !value {
-                                            playId = nil
-                                        } else {
-                                            playId = video.id
-                                        }
-                                    }))
-                                    .autoReplay(true)
-                                    .mute(isMute)
-                                    .onTapGesture {
-                                        withAnimation {
-                                            isMute = !isMute
+                                ZStack {
+                                    if let url = URL(string: video.src) {
+                                        VideoPlayer(url: url, play: playBinding(for: video.id))
+                                            .onStateChanged { state in
+                                                videosState.updateValue(state, forKey: video.id)
+                                            }
+                                            .autoReplay(true)
+                                            .mute(videoPlayerVM.isMute)
+                                            .onTapGesture {
+                                                withAnimation {
+                                                    videoPlayerVM.isMute = !videoPlayerVM.isMute
+                                                }
+                                            }
+                                    }
+                                    
+                                    if let state = videosState[video.id] {
+                                        switch state {
+                                        case .loading:
+                                            ProgressView()
+                                        case .error(let err):
+                                            Text("Something went wrong\n\(err.localizedDescription)")
+                                        default:
+                                            EmptyView()
                                         }
                                     }
-                                    .tag(video.id)
                                 }
+                                .tag(video.id)
                             }
                             
                             ForEach(feedReview.images) { image in
@@ -145,24 +159,34 @@ struct ForYouItem: View {
                             .contentShape(Rectangle())
                             .clipShape(Rectangle())
                     } else if let video = feedReview.videos.first {
-                        if let url = URL(string: video.src) {
-                            VideoPlayer(url: url, play: Binding(get: {
-                                return (playId ?? "") == video.id
-                            }, set: { value in
-                                if !value {
-                                    playId = nil
-                                } else {
-                                    playId = video.id
-                                }
-                            }))
-                            .autoReplay(true)
-                            .mute(isMute)
-                            .onTapGesture {
-                                withAnimation {
-                                    isMute = !isMute
+                        ZStack {
+                            if let url = URL(string: video.src) {
+                                VideoPlayer(url: url, play: playBinding(for: video.id))
+                                    .onStateChanged { state in
+                                        videosState.updateValue(state, forKey: video.id)
+                                    }
+                                    .autoReplay(true)
+                                    .mute(videoPlayerVM.isMute)
+                                    .onTapGesture {
+                                        withAnimation {
+                                            videoPlayerVM.isMute = !videoPlayerVM.isMute
+                                        }
+                                    }
+                            }
+                            
+                            if let state = videosState[video.id] {
+                                switch state {
+                                case .loading:
+                                    ProgressView()
+                                case .error(let err):
+                                    Text("Something went wrong\n\(err.localizedDescription)")
+                                default:
+                                    EmptyView()
                                 }
                             }
                         }
+                        .tag(video.id)
+                        
                     }
                 }
             default:
@@ -184,51 +208,62 @@ struct ForYouItem: View {
                     case .review(let feedReview):
                         HStack {
                             NavigationLink(value: HomeStack.userProfile(id: data.user.id)) {
-                                ZStack {
+                                VStack(spacing: -15) {
                                     ProfileImage(data.user.profileImage, size: 50)
                                     
                                     LevelView(level: data.user.progress.level)
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 24, height: 30)
-                                        .offset(y: 28)
                                 }
                             }
                             
                             VStack {
-                                Text(data.user.name)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                if let place = data.place {
-                                    NavigationLink(value: HomeStack.place(id: place.id)) {
-                                        HStack {
-                                            if let amenity = place.amenity {
-                                                Image(systemName: amenity.image)
-                                            } else {
-                                                Image(systemName: "fork.knife")
-                                            }
-                                            
-                                            Text(place.name)
-                                        }
+                                NavigationLink(value: HomeStack.userProfile(id: data.user.id)) {
+                                    Text(data.user.name)
+                                        .font(.custom(style: .headline))
+                                        .frame(height: 18)
                                         .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                                .foregroundStyle(.white)
+                                
+                                HStack {
+                                    if let place = data.place {
+                                        NavigationLink(value: HomeStack.place(id: place.id)) {
+                                            HStack {
+                                                if let amenity = place.amenity {
+                                                    Image(systemName: amenity.image)
+                                                } else {
+                                                    Image(systemName: "fork.knife")
+                                                }
+                                                
+                                                Text(place.name)
+                                            }
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
+                                        .foregroundStyle(.primary)
+                                    } else {
+                                        Text("-")
                                     }
-                                    .foregroundStyle(.primary)
-                                } else {
-                                    Text("-")
+                                    
+                                    Spacer()
+                                    
+                                    Text(DateFormatter.getPassedTime(from: data.createdAt))
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.secondary)
                                 }
                             }
                             .fontWeight(.semibold)
-                            
-                            Spacer()
-                            
-                            VStack {
-                                Text("")
-                            }
                         }
+                        .padding(.horizontal, 10)
+                        .padding(.top, 10)
+                        .padding(.bottom, 5)
+                        .background(Material.ultraThin.opacity(0.7))
+                        .clipShape(.rect(cornerRadius: 16))
                         .padding(.horizontal)
                         
                         Spacer()
                         
-                        if playId != nil && isMute {
+                        if videoPlayerVM.playId != nil && videoPlayerVM.isMute {
                             Image(systemName: "speaker.slash.fill")
                                 .foregroundStyle(.secondary)
                                 .font(.system(size: 24))
@@ -238,19 +273,22 @@ struct ForYouItem: View {
                         }
                         
                         VStack(spacing: 5) {
-                            HStack(spacing: 4) {
-                                ForEach(feedReview.videos) { vid in
-                                    Image(systemName: "video")
-                                        .animation(.easeInOut, value: tabPage)
-                                        .foregroundStyle(vid.id == tabPage ? Color.accentColor : Color.secondary)
+                            ScrollView(.horizontal) {
+                                HStack(spacing: 4) {
+                                    ForEach(feedReview.videos) { vid in
+                                        Image(systemName: "video")
+                                            .animation(.easeInOut, value: tabPage)
+                                            .foregroundStyle(vid.id == tabPage ? Color.accentColor : Color.secondary)
+                                    }
+                                    ForEach(feedReview.images) { img in
+                                        Image(systemName: "photo")
+                                            .foregroundStyle(img.id == tabPage ? Color.accentColor : Color.secondary)
+                                    }
                                 }
-                                ForEach(feedReview.images) { img in
-                                    Image(systemName: "photo")
-                                        .foregroundStyle(img.id == tabPage ? Color.accentColor : Color.secondary)
-                                }
+                                .font(.system(size: 14))
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            .font(.system(size: 14))
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .scrollIndicators(.hidden)
                             
                             if let overallScore = feedReview.scores.overall {
                                 HStack {
@@ -266,9 +304,9 @@ struct ForYouItem: View {
                                             .mask(starsView)
                                         }
                                     
-                                    Text("\(String(format: "%.0f", overallScore))/5")
+                                    Text("(\(String(format: "%.0f", overallScore))/5)")
                                         .font(.custom(style: .headline))
-                                        .foregroundStyle(Color.accentColor)
+                                        .foregroundStyle(.white)
                                     
                                     Spacer()
                                 }
@@ -277,13 +315,14 @@ struct ForYouItem: View {
                             Text(feedReview.content)
                                 .lineLimit(5)
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                .foregroundStyle(.white)
                         }
                         .padding(.vertical)
                         .padding(.horizontal)
                         .padding(.trailing, 52)
                         .padding(.trailing)
                         .background {
-                            LinearGradient(colors: [.clear, .black.opacity(0.1), .black.opacity(0.3), .black.opacity(0.3)], startPoint: .top, endPoint: .bottom)
+                            LinearGradient(colors: [.clear, .black.opacity(0.2), .black.opacity(0.4), .black.opacity(0.5), .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
                                 .allowsHitTesting(false)
                         }
                         
@@ -296,10 +335,10 @@ struct ForYouItem: View {
                 HStack {
                     Spacer()
                     
-                    VStack(spacing: 7) {
+                    VStack(spacing: 8) {
                         Spacer()
                         
-                        ForEach(reactions.total) { reaction in
+                        ForEach(sortedReactions) { reaction in
                             Group {
                                 if let selectedIndex = reactions.user.firstIndex(where: { $0.reaction == reaction.reaction }) {
                                     ForYouReactionLabel(reaction: reaction, isSelected: true) { _ in
@@ -336,7 +375,12 @@ struct ForYouItem: View {
                                     }
                                 }
                             }
-                            .frame(width: 70, height: 38)
+                            .frame(width: 70, height: 34)
+                        }
+                        
+                        if reactions.total.count > 5 {
+                            Text("+ \(reactions.total.count - 5)")
+                                .font(.custom(style: .caption))
                         }
                         
                         Button {
@@ -349,7 +393,7 @@ struct ForYouItem: View {
                             Capsule()
                                 .background(Capsule().foregroundStyle(.white.opacity(0.2)))
                                 .foregroundStyle(.ultraThinMaterial)
-                                .frame(width: 70, height: 38)
+                                .frame(width: 70, height: 34)
                                 .overlay {
                                     Image(.addReaction)
                                         .resizable()
@@ -365,7 +409,7 @@ struct ForYouItem: View {
                             Capsule()
                                 .background(Capsule().foregroundStyle(.white.opacity(0.2)))
                                 .foregroundStyle(.ultraThinMaterial)
-                                .frame(width: 70, height: 38)
+                                .frame(width: 70, height: 34)
                                 .overlay {
                                     Image(systemName: "bubble.left")
                                         .resizable()
@@ -406,6 +450,22 @@ struct ForYouItem: View {
             print("Error")
         }
     }
+    
+    private func playBinding(for videoId: String) -> Binding<Bool> {
+        Binding<Bool>(
+            get: {
+                return self.videoPlayerVM.playId == videoId
+            },
+            set: { isPlaying in
+                // Update the playId only if necessary to prevent unnecessary view refreshes
+                if isPlaying && self.videoPlayerVM.playId != videoId {
+                    self.videoPlayerVM.playId = videoId
+                } else if !isPlaying && self.videoPlayerVM.playId == videoId {
+                    self.videoPlayerVM.playId = nil
+                }
+            }
+        )
+    }
 }
 
 extension ForYouItem {
@@ -418,7 +478,7 @@ extension ForYouItem {
             Image(systemName: "star.fill")
         }
         .font(.system(size: 14))
-        .foregroundStyle(Color.themeBorder)
+        .foregroundStyle(Color.gray)
     }
 }
 
@@ -438,16 +498,16 @@ extension ForYouItem {
                 website: nil,
                 categories: ["restaurant"],
                 priceRange: 2,
-                scores: PlaceScores(overall: 5, drinkQuality: 3, foodQuality: 4, atmosphere: 5, service: 4, value: nil, phantom: 82),
+                scores: PlaceScores(overall: 4, drinkQuality: 3, foodQuality: 4, atmosphere: 5, service: 4, value: nil, phantom: 82),
                 reviewCount: 1
             ),
             activityType: .newReview,
             resourceType: .review,
             resource: .review(FeedReview(
                 _id: "64d2aa872c509f60b769037e",
-                scores: ReviewScores(overall: 5, drinkQuality: 3, foodQuality: 4, atmosphere: 5, service: 4, value: nil),
+                scores: ReviewScores(overall: 4, drinkQuality: 3, foodQuality: 4, atmosphere: 5, service: 4, value: nil),
                 content: "Cute vibe \nCozy atmosphere \nDelicious pancakes \nCool music \nHighly recommended ",
-                images: [Media(_id: "64d2aa872c509f60b7690379", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690370", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image)],
+                images: [Media(_id: "64d2aa872c509f60b7690389", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690370", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690371", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690372", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690373", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690374", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690375", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690376", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690377", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690378", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690379", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690390", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690321", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image), Media(_id: "64d2aa872c509f60b7690322", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/5e4bb644c11875b8a929b650ead98af7.jpg", caption: "", type: .image)],
                 videos: [Media(_id: "64d2aa782c509f60b7690376", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/2a667b01b413fd08fd00a60b2f5ba3e1.mp4", caption: "", type: .video)],
                 tags: [],
                 recommend: true,
@@ -463,7 +523,7 @@ extension ForYouItem {
             score: 574.8699489214853,
             weight: 1,
             reactions: ReactionsObject(
-                total: [Reaction(reaction: "❤️", type: .emoji, count: 2), Reaction(reaction: "👍", type: .emoji, count: 1), Reaction(reaction: "🥰", type: .emoji, count: 1)],
+                total: [Reaction(reaction: "❤️", type: .emoji, count: 2), Reaction(reaction: "👍", type: .emoji, count: 1), Reaction(reaction: "🥰", type: .emoji, count: 1), Reaction(reaction: "A", type: .emoji, count: 2), Reaction(reaction: "B", type: .emoji, count: 1), Reaction(reaction: "C", type: .emoji, count: 1), Reaction(reaction: "D", type: .emoji, count: 2), Reaction(reaction: "E", type: .emoji, count: 1), Reaction(reaction: "F", type: .emoji, count: 1)],
                 user: [UserReaction(_id: "64d35ef61eff94afe959dd9e", reaction: "❤️", type: .emoji, createdAt: "2023-08-09T09:40:06.866Z")]
             ),
             comments: [
@@ -472,9 +532,7 @@ extension ForYouItem {
         ),
         itemIndex: 2,
         page: Page.first(),
-        isMute: .constant(false),
         commentsViewModel: CommentsViewModel(),
-        parentGeometry: nil,
-        playId: .constant(nil)
+        parentGeometry: nil
     )
 }
