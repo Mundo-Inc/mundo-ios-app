@@ -56,20 +56,21 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         
-        if let messageID = userInfo[gcmMessageIDKey] {
-            print("Message ID: \(messageID)")
-        }
-        
-        completionHandler(UIBackgroundFetchResult.newData)
+        Messaging.messaging().appDidReceiveMessage(userInfo)
+        completionHandler(.noData)
     }
 }
 
 extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        // Get APN token
+        if let deviceToken = messaging.apnsToken {
+            let apnToken = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+            UserDefaults.standard.set(apnToken, forKey: "apnToken")
+        }
         
-        //        let deviceToken:[String: String] = ["token": fcmToken ?? ""]
-        
-        UserDefaults.standard.set(fcmToken, forKey: "deviceToken")
+        // Get FCM token
+        UserDefaults.standard.set(fcmToken, forKey: "fcmToken")
     }
 }
 
@@ -82,18 +83,14 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         let userInfo = notification.request.content.userInfo
         
-        if let messageID = userInfo[gcmMessageIDKey] {
-            print("Message ID: \(messageID)")
-        }
-        
-        print(userInfo)
+        Messaging.messaging().appDidReceiveMessage(userInfo)
         
         // Change this to your preferred presentation option
         completionHandler([[.banner, .badge, .sound]])
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        
+        Messaging.messaging().apnsToken = deviceToken;
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
@@ -105,11 +102,7 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         
-        if let messageID = userInfo[gcmMessageIDKey] {
-            print("Message ID from userNotificationCenter didReceive: \(messageID)")
-        }
-        
-        print(userInfo)
+        Messaging.messaging().appDidReceiveMessage(userInfo)
         
         completionHandler()
     }

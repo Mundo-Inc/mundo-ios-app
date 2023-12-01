@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct AppRouter: View {
+    @Environment(\.scenePhase) private var scenePhase
+    
     @ObservedObject private var auth = Authentication.shared
     @ObservedObject private var appData: AppData = AppData.shared
     @ObservedObject private var toastViewModel = ToastViewModel.shared
+    @ObservedObject private var appGeneralVM = AppGeneralVM.shared
     
     @AppStorage("theme") var theme: String = ""
     
@@ -88,6 +91,73 @@ struct AppRouter: View {
             .padding(.top)
         }
         .preferredColorScheme(theme == "" ? .none : theme == "dark" ? .dark : .light)
+        .fullScreenCover(isPresented: $appGeneralVM.showForceUpdate) {
+            ZStack {
+                if let appInfo = appGeneralVM.appInfo {
+                    VStack {
+                        Spacer()
+                        
+                        VStack {
+                            HStack {
+                                Image(systemName: "app")
+                                Text("App Version:")
+                                Spacer()
+                                Text(appGeneralVM.appVersion)
+                            }
+                            HStack {
+                                Image(systemName: "lessthan.circle")
+                                Text("Min Operational Version:")
+                                Spacer()
+                                Text(appInfo.minOperationalVersion)
+                            }
+                            HStack {
+                                Image(systemName: "app.fill")
+                                Text("Latest Version:")
+                                Spacer()
+                                Text(appInfo.latestAppVersion)
+                            }
+                        }
+                        .font(.custom(style: .caption))
+                        .foregroundStyle(.secondary)
+                        .alert("Update Required", isPresented: Binding(get: {
+                            true
+                        }, set: { _ in })) {
+                            if let url = URL(string: "https://apps.apple.com/app/phantom-phood/id6450897373") {
+                                Link(destination: url) {
+                                    Text("Update")
+                                        .frame(maxWidth: .infinity)
+                                        .font(.custom(style: .headline))
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .controlSize(.large)
+                            }
+                        } message: {
+                            Text(appInfo.message)
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+            }
+            .font(.custom(style: .body))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(alignment: .topTrailing) {
+                Image(.hangingPhantom)
+                    .resizable()
+                    .frame(width: 100, height: 191)
+                    .padding(.trailing)
+                    .ignoresSafeArea()
+            }
+        }
+        .onChange(of: scenePhase) { newScenePhase in
+            switch newScenePhase {
+            case .active:
+                Task {
+                    await appGeneralVM.checkVersion()
+                }
+            default:
+                break
+            }
+        }
         .onOpenURL { url in
             // return if not signed in
             guard auth.userSession != nil else { return }

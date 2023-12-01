@@ -18,7 +18,7 @@ struct FeedView: View {
     var body: some View {
         ZStack {
             Color.themeBG.ignoresSafeArea()
-
+            
             ScrollView {
                 if !vm.isLoading && vm.feedItems.isEmpty {
                     Text("Everyone starts somewhere! Why not with our rockstar CEO, Nabeel? 🎸")
@@ -95,7 +95,7 @@ struct FeedView: View {
                         .fullScreenCover(isPresented: $mediasViewModel.show, content: {
                             MediasView(vm: mediasViewModel)
                         })
-
+                    
                     LazyVStack(spacing: 20) {
                         ForEach(vm.feedItems) { item in
                             Group {

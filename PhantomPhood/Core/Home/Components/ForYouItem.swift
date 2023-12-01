@@ -36,7 +36,7 @@ struct ForYouItem: View {
         self.parentGeometry = parentGeometry
         
         self._reactionsViewModel = StateObject(wrappedValue: ReactionsViewModel(activityId: data.id))
-        self._reactions = State(wrappedValue: data.reactions)
+        self._reactions = State(wrappedValue: .init(total: data.reactions.total.sorted { $0.count > $1.count }, user: data.reactions.user))
         
         self._videoPlayerVM = ObservedObject(wrappedValue: VideoPlayerVM.shared)
         
@@ -50,12 +50,6 @@ struct ForYouItem: View {
         default:
             break
         }
-    }
-    
-    @State var isPlaying = true
-    
-    private var sortedReactions: [Reaction] {
-        Array(reactions.total.sorted { $0.count > $1.count }.prefix(5))
     }
     
     var body: some View {
@@ -321,9 +315,17 @@ struct ForYouItem: View {
                         .padding(.horizontal)
                         .padding(.trailing, 52)
                         .padding(.trailing)
+                        .frame(maxWidth: .infinity)
                         .background {
                             LinearGradient(colors: [.clear, .black.opacity(0.2), .black.opacity(0.4), .black.opacity(0.5), .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
                                 .allowsHitTesting(false)
+                        }
+                        .onTapGesture {
+                            ForYouInfoVM.shared.show(data) { reaction in
+                                Task {
+                                    await selectReaction(reaction: reaction)
+                                }
+                            }
                         }
                         
                     default:
@@ -338,7 +340,7 @@ struct ForYouItem: View {
                     VStack(spacing: 8) {
                         Spacer()
                         
-                        ForEach(sortedReactions) { reaction in
+                        ForEach(Array(reactions.total.prefix(5))) { reaction in
                             Group {
                                 if let selectedIndex = reactions.user.firstIndex(where: { $0.reaction == reaction.reaction }) {
                                     ForYouReactionLabel(reaction: reaction, isSelected: true) { _ in
@@ -528,7 +530,7 @@ extension ForYouItem {
             ),
             comments: [
                 Comment(_id: "64d4ee982c9a8ed008970ec3", content: "Hey @nabeel check this out", createdAt: "2023-08-10T14:05:12.743Z", updatedAt: "2023-08-10T14:05:12.743Z", author: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: [])), likes: 2, liked: true, mentions: [])
-            ]
+            ], commentsCount: 10
         ),
         itemIndex: 2,
         page: Page.first(),

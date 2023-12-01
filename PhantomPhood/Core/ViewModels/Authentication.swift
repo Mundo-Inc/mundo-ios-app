@@ -261,23 +261,27 @@ class Authentication: ObservableObject {
     }
     
     func setDeviceToken() async {
-        let deviceToken = UserDefaults.standard.string(forKey: "deviceToken")
+        let apnToken = UserDefaults.standard.string(forKey: "apnToken")
+        let fcmToken = UserDefaults.standard.string(forKey: "fcmToken")
         
-        guard let token = await getToken(), let currentUser, let deviceToken, !deviceToken.isEmpty else {
+        guard let token = await getToken(), let currentUser, let apnToken, !apnToken.isEmpty, let fcmToken, !fcmToken.isEmpty else {
             return
         }
         
         struct RequestBody: Encodable {
             let action = "deviceToken"
             let platform = "ios"
-            let token: String
+            let apnToken: String
+            let fcmToken: String
         }
         
         do {
-            let body = try apiManager.createRequestBody(RequestBody(token: deviceToken))
+            let body = try apiManager.createRequestBody(RequestBody(apnToken: apnToken, fcmToken: fcmToken))
             
             let _ = try await apiManager.requestNoContent("/users/\(currentUser.id)/settings", method: .put, body: body, token: token)
-            UserDefaults.standard.removeObject(forKey: "deviceToken")
+            
+            UserDefaults.standard.removeObject(forKey: "apnToken")
+            UserDefaults.standard.removeObject(forKey: "fcmToken")
         } catch {
             print("DEBUG: Couldn't send device token | Error: \(error.localizedDescription)")
         }

@@ -12,6 +12,8 @@ struct ForYouView: View {
     @ObservedObject var commentsViewModel: CommentsViewModel
     @StateObject var vm = ForYouViewModel()
     
+    @ObservedObject private var forYouInfoVM = ForYouInfoVM.shared
+    
     @ObservedObject var videoPlayerVM = VideoPlayerVM.shared
     @StateObject private var page: Page = .first()
     
@@ -26,36 +28,38 @@ struct ForYouView: View {
                         ForYouItem(data: item, itemIndex: vm.items.firstIndex(of: item), page: page, commentsViewModel: commentsViewModel, parentGeometry: geometry)
                             .gesture(
                                 DragGesture()
-                                .onChanged({ value in
-                                    if page.index == 0 && value.location.y > value.startLocation.y {
-                                        withAnimation {
-                                            draggedAmount = value.translation
-                                        }
-                                        if value.translation.height > geometry.safeAreaInsets.top {
-                                            if !vm.isLoading && readyToReferesh {
-                                                Task {
-                                                    await vm.getForYou(.refresh)
-                                                    if draggedAmount != .zero {
-                                                        readyToReferesh = false
-                                                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                                            self.readyToReferesh = true
+                                    .onChanged({ value in
+                                        if page.index == 0 && value.location.y > value.startLocation.y {
+                                            withAnimation {
+                                                draggedAmount = value.translation
+                                            }
+                                            if value.translation.height > geometry.safeAreaInsets.top + 60 {
+                                                if !vm.isLoading && readyToReferesh {
+                                                    Task {
+                                                        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                                                        await vm.getForYou(.refresh)
+                                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                                        if draggedAmount != .zero {
+                                                            readyToReferesh = false
+                                                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                                                self.readyToReferesh = true
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
                                         }
-                                    }
-                                })
-                                .onEnded({ value in
-                                    if draggedAmount != .zero {
-                                        withAnimation {
-                                            draggedAmount = .zero
+                                    })
+                                    .onEnded({ value in
+                                        if draggedAmount != .zero {
+                                            withAnimation {
+                                                draggedAmount = .zero
+                                            }
                                         }
-                                    }
-                                    readyToReferesh = true
-                                })
+                                        readyToReferesh = true
+                                    })
                             )
-                            .offset(y: draggedAmount.height * 1.4 < geometry.safeAreaInsets.top + 50 ? draggedAmount.height * 1.4 : geometry.safeAreaInsets.top + 50)
+                            .offset(y: draggedAmount.height < geometry.safeAreaInsets.top + 60 ? draggedAmount.height : geometry.safeAreaInsets.top + 60)
                     }
                     .singlePagination()
                     .pagingPriority(.simultaneous)
@@ -85,13 +89,25 @@ struct ForYouView: View {
                         }
                     })
                     .background(alignment: .top) {
-                        ProgressView(value: min(abs(draggedAmount.height) * 1.4, geometry.safeAreaInsets.top) , total: geometry.safeAreaInsets.top)
-                            .opacity((abs(draggedAmount.height) * 1.4 / geometry.safeAreaInsets.top) * 0.7 + 0.3)
+                        ProgressView(value: min(abs(draggedAmount.height), geometry.safeAreaInsets.top + 60), total: geometry.safeAreaInsets.top + 60)
+                            .opacity((abs(draggedAmount.height) / (geometry.safeAreaInsets.top + 60)) * 0.7 + 0.3)
                     }
                     .environment(\.colorScheme, .dark)
                 }
                 .ignoresSafeArea(edges: .top)
             })
+        }
+        .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {
+            forYouInfoVM.reset()
+        }) {
+            if #available(iOS 17.0, *) {
+                ForYouInfoView(commentsViewModel: commentsViewModel)
+                    .presentationBackground(.thinMaterial)
+                    .presentationDetents([.medium, .large])
+            } else {
+                ForYouInfoView(commentsViewModel: commentsViewModel)
+                    .presentationDetents([.medium, .large])
+            }
         }
         .toolbar(content: {
             ToolbarItem(placement: .topBarLeading) {

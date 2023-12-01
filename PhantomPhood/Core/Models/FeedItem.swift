@@ -63,14 +63,14 @@ struct FeedItem: Identifiable, Decodable, Equatable {
     let weight: Int
     let reactions: ReactionsObject
     let comments: [Comment]
-    
+    let commentsCount: Int
     
     enum CodingKeys: String, CodingKey {
-        case id, user, place, activityType, resourceType, resource, privacyType, createdAt, updatedAt, score, weight, reactions, comments
+        case id, user, place, activityType, resourceType, resource, privacyType, createdAt, updatedAt, score, weight, reactions, comments, commentsCount
     }
     
     // By Values
-    init(id: String, user: User, place: CompactPlace?, activityType: FeedItemActivityType, resourceType: FeedItemResourceType, resource: FeedItemResource, privacyType: PrivacyType, createdAt: String, updatedAt: String, score: Double, weight: Int, reactions: ReactionsObject, comments: [Comment]) {
+    init(id: String, user: User, place: CompactPlace?, activityType: FeedItemActivityType, resourceType: FeedItemResourceType, resource: FeedItemResource, privacyType: PrivacyType, createdAt: String, updatedAt: String, score: Double, weight: Int, reactions: ReactionsObject, comments: [Comment], commentsCount: Int) {
         self.id = id
         self.user = user
         self.place = place
@@ -84,6 +84,7 @@ struct FeedItem: Identifiable, Decodable, Equatable {
         self.weight = weight
         self.reactions = reactions
         self.comments = comments
+        self.commentsCount = commentsCount
     }
     
     // From Decoder
@@ -118,5 +119,6 @@ struct FeedItem: Identifiable, Decodable, Equatable {
         weight = try container.decode(Int.self, forKey: .weight)
         reactions = try container.decode(ReactionsObject.self, forKey: .reactions)
         comments = try container.decode([Comment].self, forKey: .comments)
+        commentsCount = try container.decode(Int.self, forKey: .commentsCount)
     }
 }

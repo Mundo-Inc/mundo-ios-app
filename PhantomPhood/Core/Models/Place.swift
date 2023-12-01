@@ -247,9 +247,9 @@ enum PlaceAmenity: String, Decodable {
         case .biergarten:
             "mug.fill"
         case .restaurant:
-            "fork.knife.circle.fill"
-        case .fast_food:
             "fork.knife"
+        case .fast_food:
+            "fork.knife.circle.fill"
         case .canteen:
             "chair.fill"
         case .ice_cream: // TODO: change Icon

@@ -15,6 +15,9 @@
 		0B01836A2AB3C179008E887F /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0183692AB3C179008E887F /* UserProfileView.swift */; };
 		0B01836C2AB3C1AF008E887F /* MyProfileStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B01836B2AB3C1AF008E887F /* MyProfileStack.swift */; };
 		0B0183702AB3DE8A008E887F /* AuthStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B01836F2AB3DE8A008E887F /* AuthStack.swift */; };
+		0B0253032B18CB24003702AF /* ForYouInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0253022B18CB24003702AF /* ForYouInfoView.swift */; };
+		0B0253052B18CE64003702AF /* PlaceIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0253042B18CE64003702AF /* PlaceIcon.swift */; };
+		0B0253072B18F284003702AF /* ForYouInfoVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0253062B18F284003702AF /* ForYouInfoVM.swift */; };
 		0B0E6D222ABB077B00EC62EE /* FeedItemTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D212ABB077B00EC62EE /* FeedItemTemplate.swift */; };
 		0B0E6D262ABB22ED00EC62EE /* FeedLevelUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D252ABB22ED00EC62EE /* FeedLevelUpView.swift */; };
 		0B0E6D282ABB242700EC62EE /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D272ABB242700EC62EE /* Comment.swift */; };
@@ -23,6 +26,7 @@
 		0B0E6D302ABB814F00EC62EE /* Review.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D2F2ABB814F00EC62EE /* Review.swift */; };
 		0B0E6D322ABB816F00EC62EE /* Checkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D312ABB816F00EC62EE /* Checkin.swift */; };
 		0B0E6D342ABB872F00EC62EE /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D332ABB872F00EC62EE /* Reaction.swift */; };
+		0B2BF8822B17AA8000C10A5E /* AppGeneralVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2BF8812B17AA8000C10A5E /* AppGeneralVM.swift */; };
 		0B2E98802AB907340013301D /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2E987F2AB907340013301D /* UIImage.swift */; };
 		0B35B7A52B0D095A00822BA6 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 0B35B7A42B0D095A00822BA6 /* GoogleSignIn */; };
 		0B35B7A72B0D095A00822BA6 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B35B7A62B0D095A00822BA6 /* GoogleSignInSwift */; };
@@ -179,6 +183,9 @@
 		0B0183692AB3C179008E887F /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
 		0B01836B2AB3C1AF008E887F /* MyProfileStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileStack.swift; sourceTree = "<group>"; };
 		0B01836F2AB3DE8A008E887F /* AuthStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStack.swift; sourceTree = "<group>"; };
+		0B0253022B18CB24003702AF /* ForYouInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForYouInfoView.swift; sourceTree = "<group>"; };
+		0B0253042B18CE64003702AF /* PlaceIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceIcon.swift; sourceTree = "<group>"; };
+		0B0253062B18F284003702AF /* ForYouInfoVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForYouInfoVM.swift; sourceTree = "<group>"; };
 		0B0E6D212ABB077B00EC62EE /* FeedItemTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedItemTemplate.swift; sourceTree = "<group>"; };
 		0B0E6D252ABB22ED00EC62EE /* FeedLevelUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLevelUpView.swift; sourceTree = "<group>"; };
 		0B0E6D272ABB242700EC62EE /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
@@ -187,6 +194,7 @@
 		0B0E6D2F2ABB814F00EC62EE /* Review.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Review.swift; sourceTree = "<group>"; };
 		0B0E6D312ABB816F00EC62EE /* Checkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkin.swift; sourceTree = "<group>"; };
 		0B0E6D332ABB872F00EC62EE /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
+		0B2BF8812B17AA8000C10A5E /* AppGeneralVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGeneralVM.swift; sourceTree = "<group>"; };
 		0B2E987F2AB907340013301D /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		0B35B7A82B0D09EB00822BA6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0B35B7AA2B0D14CA00822BA6 /* SignInOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInOptionsView.swift; sourceTree = "<group>"; };
@@ -465,6 +473,7 @@
 			isa = PBXGroup;
 			children = (
 				0B6A47C12ABC9157000CBDA3 /* FeedDataManager.swift */,
+				0B0253062B18F284003702AF /* ForYouInfoVM.swift */,
 				0B6A47C52ABC998A000CBDA3 /* FeedViewModel.swift */,
 				0BD1942C2B06681B00C1C35F /* ForYouViewModel.swift */,
 			);
@@ -703,6 +712,7 @@
 				0BE3118D2AC4842700CF9BA5 /* ReviewVideoView.swift */,
 				0B013EED2AB7559E003CB57F /* LevelView.swift */,
 				0B9307F22B0709F1005FA1C3 /* ProfileImage.swift */,
+				0B0253042B18CE64003702AF /* PlaceIcon.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -798,6 +808,7 @@
 			isa = PBXGroup;
 			children = (
 				0B77EA5A2AAFE31300C8DF87 /* Authentication.swift */,
+				0B2BF8812B17AA8000C10A5E /* AppGeneralVM.swift */,
 				0BF5B4BB2AB37B8200DEC403 /* AppData.swift */,
 				0B6495552AB10F5E000E57AF /* APIManager.swift */,
 				0B7DD5402B14DCC100D2EECB /* VideoPlayerVM.swift */,
@@ -836,6 +847,7 @@
 			isa = PBXGroup;
 			children = (
 				0BF5B4A82AB3758000DEC403 /* HomeView.swift */,
+				0B0253022B18CB24003702AF /* ForYouInfoView.swift */,
 				0BB37E9D2ABA6D84009E1272 /* FeedView.swift */,
 				0B4016742B046AA5000F1263 /* ForYouView.swift */,
 			);
@@ -1034,6 +1046,8 @@
 				0B013EF02AB78BA5003CB57F /* EditProfileView.swift in Sources */,
 				0B64C4CD2AB4CCA1009F0D43 /* DataCard.swift in Sources */,
 				0B01836A2AB3C179008E887F /* UserProfileView.swift in Sources */,
+				0B0253052B18CE64003702AF /* PlaceIcon.swift in Sources */,
+				0B0253032B18CB24003702AF /* ForYouInfoView.swift in Sources */,
 				0BC84A6B2AD071EE00D723AA /* SelectReactionsView.swift in Sources */,
 				0BA388952AD974A100C74880 /* MapView16.swift in Sources */,
 				0B0E6D282ABB242700EC62EE /* Comment.swift in Sources */,
@@ -1108,6 +1122,8 @@
 				0B83A0CB2AF403510096780B /* ProfileActivityVm.swift in Sources */,
 				0BB02DA42AD34B9E00F65822 /* AddReviewView.swift in Sources */,
 				0B6A47C62ABC998A000CBDA3 /* FeedViewModel.swift in Sources */,
+				0B0253072B18F284003702AF /* ForYouInfoVM.swift in Sources */,
+				0B2BF8822B17AA8000C10A5E /* AppGeneralVM.swift in Sources */,
 				0BF81DC62ABE36EB00B8892E /* Fonts.swift in Sources */,
 				0BC84A692AD06F8200D723AA /* WrappingHStack.swift in Sources */,
 				0B3B32DF2AF013DD00E1E0B0 /* Binding.swift in Sources */,
@@ -1267,7 +1283,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PhantomPhood/PhantomPhood.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"PhantomPhood/Preview Content\"";
 				DEVELOPMENT_TEAM = BNPN3KK5A7;
 				ENABLE_PREVIEWS = YES;
@@ -1304,7 +1320,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PhantomPhood/PhantomPhood.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"PhantomPhood/Preview Content\"";
 				DEVELOPMENT_TEAM = BNPN3KK5A7;
 				ENABLE_PREVIEWS = YES;
