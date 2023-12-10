@@ -53,7 +53,7 @@ final class APIManager {
     
     // MARK: - Constants
     
-//    static let baseURL = "http://localhost:3020/api/v1"
+    //    static let baseURL = "http://localhost:3020/api/v1"
     static let baseURL = "https://phantomphood.ai/api/v1"
     
     // MARK: - Public Methods
@@ -194,7 +194,8 @@ final class APIManager {
             throw APIError.decodingError(error)
         }
     }
-        
+    
+    @discardableResult
     func requestNoContent(
         _ endpoint: String,
         method: HTTPMethod = .get,
@@ -256,5 +257,4 @@ final class APIManager {
     func createRequestBody<T: Encodable>(_ data: T) throws -> Data {
         return try JSONEncoder().encode(data)
     }
-
 }

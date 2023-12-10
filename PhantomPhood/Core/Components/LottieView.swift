@@ -10,6 +10,7 @@ import Lottie
 
 enum LottieFiles: String {
     case welcome = "Welcome"
+    case processing = "Processing"
 }
 
 struct LottieView: UIViewRepresentable {

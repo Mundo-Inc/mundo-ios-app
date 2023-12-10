@@ -13,6 +13,8 @@ import Kingfisher
 struct AddReviewView: View {
     @ObservedObject var placeVM: PlaceViewModel
     
+    @ObservedObject var appData = AppData.shared
+    
     @Environment(\.dismiss) var dismiss
     
     let overallScoreEmojis = ["☹️", "😕", "🙂", "😊", "😊"]
@@ -22,6 +24,8 @@ struct AddReviewView: View {
     let atmosphereEmojis = ["😖", "😕", "🙂", "😉", "🤩"]
     
     @StateObject private var vm = AddReviewViewModel()
+    @StateObject private var pickerVM = PickerVM()
+    
     @FocusState var textFieldFocused
     
     var body: some View {
@@ -298,61 +302,19 @@ struct AddReviewView: View {
                             
                             ScrollView(.horizontal) {
                                 HStack {
-                                    ForEach(vm.mediaItemsState) { item in
+                                    ForEach(pickerVM.mediaItems) { item in
                                         switch item.state {
-                                        case .successImage(let image):
-                                            if item.isCompressed {
-                                                Image(uiImage: image)
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fill)
-                                                    .frame(width: 110, height: 140)
-                                                    .clipShape(.rect(cornerRadius: 10))
-                                            } else {
-                                                ZStack {
-                                                    Image(uiImage: image)
-                                                        .resizable()
-                                                        .aspectRatio(contentMode: .fill)
-                                                        .frame(width: 110, height: 140)
-                                                        .clipShape(.rect(cornerRadius: 10))
-                                                        .onAppear {
-                                                            vm.compress(item: item)
-                                                        }
-                                                    
+                                        case .empty:
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .foregroundStyle(Color.themePrimary)
+                                                .frame(width: 110, height: 140)
+                                                .overlay {
                                                     VStack {
-                                                        Text("Resizing")
+                                                        Text("Loading")
                                                             .font(.custom(style: .caption))
                                                         ProgressView()
                                                     }
                                                 }
-                                                .frame(width: 110, height: 140)
-                                            }
-                                        case .successMovie(let movie):
-                                            VStack {
-                                                if item.isCompressed {
-                                                    ReviewVideoView(url: movie.url, mute: true)
-                                                        .frame(width: 110, height: 140)
-                                                        .clipShape(.rect(cornerRadius: 10))
-                                                } else {
-                                                    ZStack {
-                                                        ReviewVideoView(url: movie.url, mute: true)
-                                                            .frame(width: 110, height: 140)
-                                                            .clipShape(.rect(cornerRadius: 10))
-                                                            .onAppear {
-                                                                vm.compress(item: item)
-                                                            }
-                                                        
-                                                        Color.black.opacity(0.5)
-                                                        
-                                                        VStack {
-                                                            Text("Resizing")
-                                                                .font(.custom(style: .caption))
-                                                            ProgressView()
-                                                        }
-                                                    }
-                                                    .clipShape(.rect(cornerRadius: 10))
-                                                }
-                                            }
-                                            .frame(width: 110, height: 140)
                                         case .loading:
                                             RoundedRectangle(cornerRadius: 10)
                                                 .foregroundStyle(Color.themePrimary)
@@ -364,8 +326,21 @@ struct AddReviewView: View {
                                                         ProgressView()
                                                     }
                                                 }
-                                        default:
-                                            Text("Error")
+                                        case .loaded(let mediaData):
+                                            switch mediaData {
+                                            case .image(let uiImage):
+                                                Image(uiImage: uiImage)
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fill)
+                                                    .frame(width: 110, height: 140)
+                                                    .clipShape(.rect(cornerRadius: 10))
+                                            case .movie(let url):
+                                                ReviewVideoView(url: url, mute: true)
+                                                    .frame(width: 110, height: 140)
+                                                    .clipShape(.rect(cornerRadius: 10))
+                                            }
+                                        case .failure(let error):
+                                            Text("Error: \(error.localizedDescription)")
                                                 .frame(width: 110, height: 140)
                                         }
                                     }
@@ -375,12 +350,12 @@ struct AddReviewView: View {
                             }
                             
                             PhotosPicker(
-                                selection: $vm.mediaSelection,
+                                selection: $pickerVM.selection,
                                 matching: .any(of: [.images, .videos]),
                                 photoLibrary: .shared()
                             ) {
                                 Label {
-                                    Text(vm.mediaSelection.isEmpty ? "Add Images/Videos" : "Edit Images/Videos")
+                                    Text(pickerVM.selection.isEmpty ? "Add Images/Videos" : "Edit Images/Videos")
                                 } icon: {
                                     Image(systemName: "photo.on.rectangle.fill")
                                 }
@@ -442,10 +417,9 @@ struct AddReviewView: View {
                             .buttonStyle(.bordered)
                         case .review:
                             Button {
-                                if let place = placeVM.place {
+                                if let place = placeVM.place, pickerVM.isReadyToSubmit {
                                     Task {
-                                        await vm.submit(place: place.id)
-                                        dismiss()
+                                        await vm.submit(place: place.id, mediaItems: pickerVM.mediaItems)
                                     }
                                 }
                             } label: {
@@ -458,13 +432,7 @@ struct AddReviewView: View {
                                 .padding(.horizontal)
                             }
                             .buttonStyle(.borderedProminent)
-                            .disabled(vm.isSubmitting || vm.mediaItemsState.reduce(false, { accumulator, item in
-                                if !item.isCompressed {
-                                    return true
-                                } else {
-                                    return accumulator
-                                }
-                            }))
+                            .disabled(vm.isSubmitting || !pickerVM.isReadyToSubmit)
                         }
                     }
                     .font(.custom(style: .body))
@@ -476,19 +444,55 @@ struct AddReviewView: View {
             }
             
             if vm.isSubmitting {
-                Color.black.opacity(0.7)
+                Color.themeBG
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea()
+                    .transition(.scale)
                     .overlay {
-                        ProgressView(
-                            "Submitting...",
-                            value: vm.mediaItemsState.count >= 1 ? max(
-                                Double((vm.imageUploads.count + vm.videoUploads.count) / vm.mediaItemsState.count),
-                                0.2
-                            ) : 0.9
-                        )
-                        .animation(.bouncy, value: vm.mediaItemsState.count >= 1 ? max(Double((vm.imageUploads.count + vm.videoUploads.count) / vm.mediaItemsState.count), 0.2) : 0.9)
-                        .progressViewStyle(LinearProgressViewStyle())
+                        VStack {
+                            Spacer()
+                            
+                            LottieView(file: .processing, loop: true)
+                                .frame(width: UIScreen.main.bounds.width * 0.7, height: UIScreen.main.bounds.width * 0.7)
+                            
+                            VStack(spacing: 30) {
+                                Text("**Review in progress:**\nCompressing and uploading your content.\nNot live yet – stay tuned!")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .multilineTextAlignment(.leading)
+                                    .foregroundStyle(.secondary)
+                                
+                                Text("Almost there! This may take a minute or two. 🚀 Feel free to explore - hit 'Home Page' or 'Place Info'. No need to wait here!")
+                                    .font(.caption)
+                                    .foregroundStyle(.tertiary)
+                                    .italic()
+                            }
+                            
+                            Spacer()
+                            
+                            HStack {
+                                Button {
+                                    dismiss()
+                                    
+                                    appData.activeTab = .home
+                                    appData.homeNavStack.removeAll()
+                                } label: {
+                                    Text("Home Page")
+                                        .frame(maxWidth: .infinity, alignment: .center)
+                                }
+                                .controlSize(.large)
+                                .buttonStyle(.borderedProminent)
+                                
+                                Button {
+                                    dismiss()
+                                } label: {
+                                    Text("Place Info")
+                                        .frame(maxWidth: .infinity, alignment: .center)
+                                }
+                                .controlSize(.large)
+                                .buttonStyle(.borderedProminent)
+                            }
+                        }
+                        .font(.custom(style: .body))
                         .padding(.horizontal)
                     }
             }
