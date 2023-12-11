@@ -38,7 +38,6 @@ struct PlaceOverviewView: View {
                             })
                     }
                 }
-                .redacted(reason: vm.place == nil ? .placeholder : [])
                 .frame(height: isMapCollapsed ? 140 : 400)
                 .overlay(alignment: .topLeading) {
                     if let address = place.location.address, isMapCollapsed {

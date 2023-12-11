@@ -263,21 +263,30 @@ struct PlaceView: View {
                         switch vm.activeTab {
                         case .overview:
                             PlaceOverviewView(vm: vm)
-                                .transition(.slide)
                         case .reviews:
                             PlaceReviewsView(placeId: id, vm: vm)
-                                .transition(.slide)
                         case .media:
                             PlaceMediaView(placeId: id, vm: vm)
-                                .transition(.slide)
                         }
                     } else {
-                        Text("Loading")
-                            .font(.custom(style: .title2))
+                        VStack {
+                            RoundedRectangle(cornerRadius: 15)
+                                .foregroundStyle(Color.themePrimary)
+                                .frame(height: 140)
+                            
+                            Text("****** *** ******")
+                                .font(.custom(style: .headline))
+                                .bold()
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .padding(.horizontal)
+                        .redacted(reason: .placeholder)
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.bottom)
+                .padding(.bottom, 60)
+                .transition(.slide)
             }
             .ignoresSafeArea(edges: .top)
             
@@ -367,6 +376,7 @@ struct PlaceView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             Text("Add a review to to this place")
                                 .font(.custom(style: .caption))
+                                .multilineTextAlignment(.leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }

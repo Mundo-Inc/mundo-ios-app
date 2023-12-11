@@ -194,6 +194,7 @@ struct HomeView: View {
                                 .font(.custom(style: .headline))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             Text("Check in to places that you go!")
+                                .multilineTextAlignment(.leading)
                                 .font(.custom(style: .caption))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
@@ -222,6 +223,7 @@ struct HomeView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             Text("Add a review to a place that you’ve been")
                                 .font(.custom(style: .caption))
+                                .multilineTextAlignment(.leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }

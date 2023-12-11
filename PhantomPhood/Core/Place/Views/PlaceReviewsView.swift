@@ -140,6 +140,7 @@ struct PlaceReviewsView: View {
                 }
                 .padding(.top)
             }
+            .redacted(reason: vm.place == nil ? .placeholder : [])
         }
         .sheet(isPresented: $commentsViewModel.showComments, content: {
             CommentsView(vm: commentsViewModel)

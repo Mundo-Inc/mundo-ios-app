@@ -13,6 +13,11 @@ import Kingfisher
 struct AddReviewView: View {
     @ObservedObject var placeVM: PlaceViewModel
     
+    init(placeVM: PlaceViewModel) {
+        self._placeVM = ObservedObject(wrappedValue: placeVM)
+        self._vm = StateObject(wrappedValue: AddReviewViewModel(placeVM: placeVM))
+    }
+    
     @ObservedObject var appData = AppData.shared
     
     @Environment(\.dismiss) var dismiss
@@ -23,7 +28,7 @@ struct AddReviewView: View {
     let serviceEmojis = ["😠", "😪", "🙂", "👌", "💖"]
     let atmosphereEmojis = ["😖", "😕", "🙂", "😉", "🤩"]
     
-    @StateObject private var vm = AddReviewViewModel()
+    @StateObject private var vm: AddReviewViewModel
     @StateObject private var pickerVM = PickerVM()
     
     @FocusState var textFieldFocused
@@ -444,57 +449,53 @@ struct AddReviewView: View {
             }
             
             if vm.isSubmitting {
-                Color.themeBG
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .ignoresSafeArea()
-                    .transition(.scale)
-                    .overlay {
-                        VStack {
-                            Spacer()
-                            
-                            LottieView(file: .processing, loop: true)
-                                .frame(width: UIScreen.main.bounds.width * 0.7, height: UIScreen.main.bounds.width * 0.7)
-                            
-                            VStack(spacing: 30) {
-                                Text("**Review in progress:**\nCompressing and uploading your content.\nNot live yet – stay tuned!")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .multilineTextAlignment(.leading)
-                                    .foregroundStyle(.secondary)
-                                
-                                Text("Almost there! This may take a minute or two. 🚀 Feel free to explore - hit 'Home Page' or 'Place Info'. No need to wait here!")
-                                    .font(.caption)
-                                    .foregroundStyle(.tertiary)
-                                    .italic()
-                            }
-                            
-                            Spacer()
-                            
-                            HStack {
-                                Button {
-                                    dismiss()
-                                    
-                                    appData.activeTab = .home
-                                    appData.homeNavStack.removeAll()
-                                } label: {
-                                    Text("Home Page")
-                                        .frame(maxWidth: .infinity, alignment: .center)
-                                }
-                                .controlSize(.large)
-                                .buttonStyle(.borderedProminent)
-                                
-                                Button {
-                                    dismiss()
-                                } label: {
-                                    Text("Place Info")
-                                        .frame(maxWidth: .infinity, alignment: .center)
-                                }
-                                .controlSize(.large)
-                                .buttonStyle(.borderedProminent)
-                            }
-                        }
-                        .font(.custom(style: .body))
-                        .padding(.horizontal)
+                VStack {
+                    Spacer()
+                    
+                    LottieView(file: .processing, loop: true)
+                        .frame(width: UIScreen.main.bounds.width * 0.7, height: UIScreen.main.bounds.width * 0.7)
+                    
+                    VStack(spacing: 30) {
+                        Text("**Review in progress:**\nCompressing and uploading your content.\nNot live yet – stay tuned!")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .multilineTextAlignment(.leading)
+                            .foregroundStyle(.secondary)
+                        
+                        Text("Almost there! This may take a minute or two. 🚀 Feel free to explore - hit 'Home Page' or 'Place Info'. No need to wait here!")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                            .italic()
                     }
+                    
+                    Spacer()
+                    
+                    HStack {
+                        Button {
+                            dismiss()
+                            
+                            appData.activeTab = .home
+                            appData.homeNavStack.removeAll()
+                        } label: {
+                            Text("Home Page")
+                                .frame(maxWidth: .infinity, alignment: .center)
+                        }
+                        .controlSize(.large)
+                        .buttonStyle(.borderedProminent)
+                        
+                        Button {
+                            dismiss()
+                        } label: {
+                            Text("Place Info")
+                                .frame(maxWidth: .infinity, alignment: .center)
+                        }
+                        .controlSize(.large)
+                        .buttonStyle(.borderedProminent)
+                    }
+                }
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                .font(.custom(style: .body))
+                .padding(.horizontal)
+                .background(Color.themeBG.ignoresSafeArea())
             }
         }
     }

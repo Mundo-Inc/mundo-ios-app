@@ -9,6 +9,11 @@ import Foundation
 
 @MainActor
 class AddReviewViewModel: ObservableObject {
+    private let placeVM: PlaceViewModel
+    init (placeVM: PlaceViewModel) {
+        self.placeVM = placeVM
+    }
+    
     enum Steps {
         case recommendation
         case scores
@@ -84,10 +89,17 @@ class AddReviewViewModel: ObservableObject {
                 body = try self.apiManager.createRequestBody(RequestBody(place: place, scores: .init(overall: self.overallScore, drinkQuality: self.drinkQuality, foodQuality: self.foodQuality, service: self.service, atmosphere: self.atmosphere, value: nil), content: self.reviewContent, recommend: self.isRecommended, images: [], videos: []))
             }
             
-            try await self.apiManager.requestNoContent("/reviews", method: .post, body: body, token: token)
-            
-            self.toastViewModel.toast(.init(type: .success, title: "Review", message: "We got your review 🙌🏻 Thanks!"))
+            do {
+                try await self.apiManager.requestNoContent("/reviews", method: .post, body: body, token: token)
+                
+                self.toastViewModel.toast(.init(type: .success, title: "Review", message: "We got your review 🙌🏻 Thanks!"))
+                self.placeVM.showAddReview = false
+            } catch {
+                self.toastViewModel.toast(.init(type: .error, title: "Review", message: "Couldn't submit your review :("))
+            }
             self.isSubmitting = false
+        }, onError: { error in
+            self.toastViewModel.toast(.init(type: .error, title: "Review", message: "Couldn't submit your review :("))
         }))
     }
 }

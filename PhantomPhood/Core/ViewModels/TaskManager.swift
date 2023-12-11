@@ -115,6 +115,10 @@ final class TaskManager: ObservableObject {
                 }
             }
             
+            guard !nextTask.medias.isEmpty else {
+                try await submitIfReady(taskId: nextTask.id)
+                return
+            }
             for media in nextTask.medias {
                 if case .uncompressed(let mediaItemData) = media {
                     switch mediaItemData.state {
