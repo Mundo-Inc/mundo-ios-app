@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @ObservedObject private var auth = Authentication.shared
     @ObservedObject private var appData = AppData.shared
+    @ObservedObject private var notificationsVM = NotificationsVM.shared
     
     @StateObject private var searchViewModel = SearchViewModel()
     @State private var showActions: Bool = false
@@ -41,6 +42,24 @@ struct HomeView: View {
                                 .font(.system(size: 16))
                                 .frame(width: 44, height: 44)
                                 .background(Circle().foregroundStyle(.black))
+                                .overlay(alignment: .topTrailing) {
+                                    if let unreadCount = notificationsVM.unreadCount, unreadCount > 0 {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .foregroundStyle(Color.accentColor)
+                                            .frame(minWidth: 16)
+                                            .frame(maxWidth: 26, maxHeight: 16)
+                                            .overlay {
+                                                Text(unreadCount > 99 ? "99+" : "\(unreadCount)")
+                                                    .font(.custom(style: .caption2))
+                                                    .foregroundStyle(Color.white)
+                                            }
+                                    }
+                                }
+                                .onAppear {
+                                    Task {
+                                        await notificationsVM.updateUnreadNotificationsCount()
+                                    }
+                                }
                         }
                         .foregroundStyle(.white)
                     }
@@ -133,13 +152,10 @@ struct HomeView: View {
                         .transition(.move(edge: .bottom))
                         .animation(.easeInOut, value: reportId)
                 }
-                
-                Color.clear
-                    .frame(width: 0, height: 0)
-                    .sheet(isPresented: $commentsViewModel.showComments, content: {
-                        CommentsView(vm: commentsViewModel)
-                    })
             }
+            .sheet(isPresented: $commentsViewModel.showComments, content: {
+                CommentsView(vm: commentsViewModel)
+            })
             .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
                 searchViewModel.tokens.removeAll()
                 searchViewModel.text = ""
@@ -164,10 +180,13 @@ struct HomeView: View {
                     UserProfileView(id: id)
                 case .userConnections(let userId, let initTab):
                     UserConnectionsView(userId: userId, activeTab: initTab)
+                case .userActivity(let id):
+                    UserActivityView(id: id)
                 }
             }
         }
         .environmentObject(searchViewModel)
+        .environmentObject(commentsViewModel)
         .sheet(isPresented: $showActions) {
             VStack {
                 RoundedRectangle(cornerRadius: 3)

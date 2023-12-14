@@ -8,21 +8,6 @@
 import Foundation
 import SwiftUI
 
-/*
- _id: true,
- name: true,
- otherNames: true,
- description: true,
- location: true,
- phone: true,
- website: true,
- categories: true,
- thumbnail: true,
- priceRange: true,
- scores: true,
- reviewCount: true,
- */
-
 struct PlaceScores: Decodable {
     let overall: Double?
     let drinkQuality: Double?

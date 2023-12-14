@@ -8,21 +8,19 @@
 import Foundation
 
 @MainActor
-class NotificationsViewModel: ObservableObject {
-    private let dataManager = NotificationsDataManager()
+final class NotificationsVM: ObservableObject {
+    static let shared = NotificationsVM()
+    
+    private init() {}
+    
+    private let dataManager = NotificationsDM()
     
     @Published var notifications: [Notification] = []
+    @Published var unreadCount: Int? = nil
     @Published var isLoading: Bool = false
     @Published var hasMore: Bool = true
     
     var page: Int = 1
-    
-    init() {
-        Task {
-            await getNotifications(.refresh)
-        }
-    }
-    
     
     enum GetNotificationAction {
         case refresh
@@ -60,6 +58,31 @@ class NotificationsViewModel: ObservableObject {
         let thresholdIndex = notifications.index(notifications.endIndex, offsetBy: -5)
         if notifications.firstIndex(where: { $0.id == item.id }) == thresholdIndex {
             await getNotifications(.new)
+        }
+    }
+    
+    func updateUnreadNotificationsCount() async {
+        do {
+            let data = try await dataManager.getNotifications(page: self.page, unread: true)
+            
+            self.unreadCount = data.data.total
+        } catch {
+            print(error)
+        }
+    }
+    
+    func seenNotifications() async {
+        do {
+            try await dataManager.markNotificationsAsRead()
+            
+            self.notifications = self.notifications.map({ notification in
+                var new = notification
+                new.readAt = DateFormatter.dateToString(date: Date())
+                return new
+            })
+            await updateUnreadNotificationsCount()
+        } catch {
+            print(error)
         }
     }
 }

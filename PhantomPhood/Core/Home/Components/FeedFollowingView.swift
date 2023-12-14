@@ -192,8 +192,6 @@ struct FeedFollowingView: View {
                 privacyType: .PUBLIC,
                 createdAt: "2023-08-08T20:50:15.916Z",
                 updatedAt: "2023-08-08T20:50:15.916Z",
-                score: 574.8699489214853,
-                weight: 1,
                 reactions: ReactionsObject(
                     total: [Reaction(reaction: "❤️", type: .emoji, count: 2), Reaction(reaction: "👍", type: .emoji, count: 1), Reaction(reaction: "🥰", type: .emoji, count: 1)],
                     user: [UserReaction(_id: "64d35ef61eff94afe959dd9e", reaction: "❤️", type: .emoji, createdAt: "2023-08-09T09:40:06.866Z")]

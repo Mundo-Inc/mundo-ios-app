@@ -7,8 +7,8 @@
 
 import Foundation
 
-class FeedDataManager {
-    let apiManager = APIManager.shared
+final class FeedDM {
+    private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
     enum FeedType: String {

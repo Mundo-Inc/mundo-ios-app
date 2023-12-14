@@ -27,3 +27,18 @@ extension MKPointOfInterestCategory {
         }
     }
 }
+
+extension MKCoordinateRegion {
+    
+    /// Returns northEast and southWest coordinates from MKCoordinateRegion
+    var boundariesNESW: (NE: CLLocationCoordinate2D, SW: CLLocationCoordinate2D) {
+        let center = self.center
+        let halfLatDelta = self.span.latitudeDelta / 2.0
+        let halfLonDelta = self.span.longitudeDelta / 2.0
+
+        let northEast = CLLocationCoordinate2D(latitude: center.latitude + halfLatDelta, longitude: center.longitude + halfLonDelta)
+        let southWest = CLLocationCoordinate2D(latitude: center.latitude - halfLatDelta, longitude: center.longitude - halfLonDelta)
+
+        return (northEast, southWest)
+    }
+}

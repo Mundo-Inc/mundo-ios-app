@@ -45,4 +45,3 @@ func distanceFromMe(lat: Double, lng: Double, unit: DistanceUnit = .kilometers) 
         return nil
     }
 }
-

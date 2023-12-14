@@ -9,11 +9,30 @@ import SwiftUI
 import Kingfisher
 
 struct NotificationsView: View {
-    @StateObject private var vm = NotificationsViewModel()
+    @ObservedObject private var vm = NotificationsVM.shared
+    @ObservedObject private var appData = AppData.shared
     
     var body: some View {
         ZStack {
-            Color.themeBG.ignoresSafeArea()
+            Color.themeBG
+                .ignoresSafeArea()
+                .onAppear {
+                    Task {
+                        await vm.getNotifications(.refresh)
+                    }
+                }
+            
+            if !vm.notifications.isEmpty {
+                Color.clear
+                    .frame(width: 0, height: 0)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            Task {
+                                await vm.seenNotifications()
+                            }
+                        }
+                    }
+            }
             
             List {
                 ForEach(vm.notifications) { notification in
@@ -33,80 +52,117 @@ struct NotificationsView: View {
                 }
             }
             .listStyle(.inset)
-            .navigationTitle("Notifications")
-            .toolbar(content: {
-                ToolbarItem {
-                    if vm.isLoading {
-                        ProgressView()
-                            .transition(.opacity)
-                    }
-                }
-            })
         }
+        .navigationTitle("Notifications")
+        .toolbar(content: {
+            ToolbarItem {
+                if vm.isLoading {
+                    ProgressView()
+                        .transition(.opacity)
+                }
+            }
+        })
     }
     
     func notificationItem(_ data: Notification) -> some View {
         HStack(alignment: .top) {
-            ZStack {
-                NavigationLink(value: HomeStack.userProfile(id: data.user.id)) {
-                    EmptyView()
+            ProfileImage(data.user.profileImage, size: 44, cornerRadius: 10)
+                .frame(width: 44, height: 44)
+                .onTapGesture {
+                    appData.homeNavStack.append(HomeStack.userProfile(id: data.user.id))
                 }
-                .buttonStyle(PlainButtonStyle())
-                
-                ProfileImage(data.user.profileImage, size: 44, cornerRadius: 10)
-            }
-            .frame(width: 44, height: 44)
             
-            VStack {
-                Group {
-                    switch data.type {
-                    case .reaction:
-                        Text(data.user.name)
-                            .bold()
-                        Text(data.content)
-                    case .comment:
-                        Text(data.user.name)
-                            .bold()
-                        +
-                        Text(" Commented on your activity.")
-                        
-                        Text(data.content)
-                    case .follow:
-                        Text(data.user.name)
-                            .bold()
-                        Text(data.content)
-                    case .comment_mention:
-                        Text(data.user.name)
-                            .bold()
-                        +
-                        Text(" Mentioned you in a comment.")
-                        
-                        Text(data.content)
-                    case .review_mention:
-                        Text(data.user.name)
-                            .bold()
-                        +
-                        Text(" Mentioned you in a review.")
-                        
-                        Text(data.content)
-                    case .xp:
-                        Text(data.user.name)
-                            .bold()
-                        Text("Got \(data.content) XP")
-                    case .level_up:
-                        Text(data.user.name)
-                            .bold()
-                        Text("Leveled Up")
+            HStack(alignment: .top) {
+                VStack(spacing: 5) {
+                    Group {
+                        switch data.type {
+                        case .reaction:
+                            Text(data.user.name)
+                                .bold()
+                                .frame(minHeight: 20)
+                            Text(data.content)
+                                .frame(minHeight: 18)
+                        case .comment:
+                            Group {
+                                Text(data.user.name)
+                                    .bold()
+                                +
+                                Text(" Commented on your activity.")
+                            }
+                            .frame(minHeight: 20)
+                            
+                            Text(data.content)
+                                .frame(minHeight: 18)
+                        case .follow:
+                            Text(data.user.name)
+                                .bold()
+                                .frame(minHeight: 20)
+                            
+                            Text(data.content)
+                                .frame(minHeight: 18)
+                        case .comment_mention:
+                            Group {
+                                Text(data.user.name)
+                                    .bold()
+                                +
+                                Text(" Mentioned you in a comment.")
+                            }
+                            .frame(minHeight: 20)
+                            
+                            Text(data.content)
+                                .frame(minHeight: 18)
+                        case .review_mention:
+                            Group {
+                                Text(data.user.name)
+                                    .bold()
+                                +
+                                Text(" Mentioned you in a review.")
+                            }
+                            .frame(minHeight: 20)
+                            
+                            Text(data.content)
+                                .frame(minHeight: 18)
+                        case .xp:
+                            Text(data.user.name)
+                                .bold()
+                                .frame(minHeight: 20)
+                            
+                            Text("Got \(data.content) XP")
+                                .frame(minHeight: 18)
+                        case .level_up:
+                            Text(data.user.name)
+                                .bold()
+                                .frame(minHeight: 20)
+                            
+                            Text("Leveled Up")
+                                .frame(minHeight: 18)
+                        }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .font(.custom(style: .caption))
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
-            Text(DateFormatter.getPassedTime(from: data.createdAt))
                 .font(.custom(style: .caption))
-                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                
+                HStack {
+                    if data.readAt == nil {
+                        Circle()
+                            .frame(width: 6, height: 6)
+                            .shadow(color: Color.accentColor, radius: 2)
+                            .foregroundStyle(Color.accentColor)
+                            .transition(AnyTransition.scale.animation(.easeInOut(duration: 0.2)))
+                    }
+                    
+                    Text(DateFormatter.getPassedTime(from: data.createdAt))
+                        .font(.custom(style: .caption))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .background(Color.clear)
+            .onTapGesture {
+                if let activity = data.activity {
+                    appData.homeNavStack.append(HomeStack.userActivity(id: activity))
+                }
+            }
         }
     }
 }

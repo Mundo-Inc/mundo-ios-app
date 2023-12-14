@@ -17,10 +17,73 @@ struct MapView17: View {
     @State var selection: MapFeature? = nil
     
     @State var selectedMapItem: MKMapItem? = nil
-            
+    
+    @State var throttle = Throttle(interval: 2)
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             Map(position: $position, selection: $selection) {
+                ForEach(mapVM.mapClusterActiviteis.clustered) { clusteredActivities in
+                    Annotation("Activities", coordinate: clusteredActivities.coordinate) {
+                        HStack(spacing: 4) {
+                            Image(.activity)
+                                .foregroundStyle(Color.accentColor)
+                            
+                            Text("\(clusteredActivities.count)")
+                                .foregroundStyle(.primary)
+                        }
+                        .font(.custom(style: .body))
+                        .fontWeight(.medium)
+                        .padding(.all, 5)
+                        .padding(.trailing, 5)
+                        .background {
+                            RoundedRectangle(cornerRadius: 14)
+                                .foregroundStyle(Color.themeBG)
+                        }
+                    }
+                    .annotationTitles(.hidden)
+                }
+                
+                ForEach(mapVM.mapClusterActiviteis.solo) { activity in
+                    Annotation("Activity", coordinate: activity.locationCoordinate) {
+                        NavigationLink(value: MapStack.place(id: activity.placeId)) {
+                            HStack(spacing: -10) {
+                                ForEach(activity.activities.data.indices, id: \.self) { index in
+                                    if index < 3 {
+                                        ProfileImage(activity.activities.data[index].profileImage, size: 30)
+                                            .overlay(alignment: .bottomLeading) {
+                                                if activity.activities.data[index].checkinsCount > 1 || activity.activities.data[index].reviewsCount > 1 {
+                                                    ZStack {
+                                                        Circle()
+                                                            .frame(width: 15, height: 15)
+                                                            .foregroundStyle(Color.black)
+                                                        
+                                                        Text("\(activity.activities.data[index].checkinsCount + activity.activities.data[index].reviewsCount)")
+                                                            .font(.custom(style: .caption2))
+                                                            .foregroundStyle(Color.white)
+                                                    }
+                                                    .frame(width: 15, height: 15)
+                                                }
+                                            }
+                                    }
+                                }
+                                if activity.activities.data.count > 3 {
+                                    Text("+\(max(activity.activities.data.count - 3, 0))")
+                                        .padding(.leading, 12)
+                                }
+                            }
+                            .font(.custom(style: .body))
+                            .fontWeight(.medium)
+                            .padding(.all, 5)
+                            .background {
+                                RoundedRectangle(cornerRadius: 14)
+                                    .foregroundStyle(Color.themeBG)
+                            }
+                        }
+                    }
+                    .annotationTitles(.hidden)
+                }
+                
                 if let searchResults = mapVM.searchResults, !searchResults.isEmpty {
                     ForEach(searchResults, id: \.self) { item in
                         Annotation(item.name ?? "Unknown", coordinate: item.placemark.coordinate) {
@@ -80,8 +143,17 @@ struct MapView17: View {
             .mapControls {
                 MapUserLocationButton()
             }
+            .onMapCameraChange(frequency: .continuous, { mapCameraUpdateContext in
+                mapVM.updateClusters(region: mapCameraUpdateContext.region)
+                guard !mapVM.isActiviteisLoading else { return }
+                throttle.call {
+                    Task {
+                        await mapVM.updateGeoActivities(for: mapCameraUpdateContext.region)
+                    }
+                }
+            })
             .zIndex(1)
-
+            
             
             if let item = self.selectedMapItem {
                 VStack {
@@ -254,178 +326,6 @@ struct MapView17: View {
                 .animation(.bouncy, value: selectedMapItem)
                 .zIndex(2)
             }
-            
-//            if let item = self.selection {
-//                VStack {
-//                    HStack {
-//                        HStack {
-//                            if let image = item.image {
-//                                image
-//                                    .renderingMode(.template)
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fit)
-//                                    .foregroundStyle(item.backgroundColor ?? .secondary)
-//                                    .frame(height: 32)
-//                            }
-//                            
-//                            VStack {
-//                                Text(item.title ?? "Unknown")
-//                                    .lineLimit(1)
-//                                    .font(.custom(style: .headline))
-//                                    .frame(maxWidth: .infinity, alignment: .leading)
-//                                    .padding(.top)
-//                                
-//                                Group {
-//                                    if let distance = distanceFromMe(lat: item.coordinate.latitude, lng: item.coordinate.longitude, unit: .miles) {
-//                                        Text("\(String(format: "%.1f", distance)) Miles away")
-//                                    } else {
-//                                        Text("- Miles away")
-//                                    }
-//                                }
-//                                .frame(maxWidth: .infinity, alignment: .leading)
-//                                .font(.custom(style: .caption))
-//                            }
-//                            
-//                        }
-//                        
-//                        Button {
-//                            withAnimation {
-//                                self.selection = nil
-//                            }
-//                        } label: {
-//                            Image(systemName: "xmark")
-//                                .padding()
-//                        }
-//                    }
-//                    .padding(.leading, 8)
-//
-//                    VStack {
-//                        if let place = mapVM.selectedPlaceData {
-//                            HStack {
-//                                Text("\(place.reviewCount) Reviews")
-//                                
-//                                if let phantomScore = place.scores.phantom {
-//                                    Divider()
-//                                        .frame(maxHeight: 10)
-//                                    Text("👻 \(String(format: "%.0f", phantomScore))")
-//                                }
-//                                
-//                                if let priceRange = place.priceRange {
-//                                    Divider()
-//                                        .frame(maxHeight: 10)
-//                                    Text(String(repeating: "$", count: priceRange))
-//                                }
-//                            }
-//                            .font(.custom(style: .body))
-//                            .frame(maxWidth: .infinity, alignment: .leading)
-//                            
-//                            if !place.media.isEmpty {
-//                                ScrollView(.horizontal) {
-//                                    HStack {
-//                                        ForEach(place.media) { media in
-//                                            if let url = URL(string: media.src) {
-//                                                KFImage.url(url)
-//                                                    .placeholder {
-//                                                        RoundedRectangle(cornerRadius: 15)
-//                                                            .frame(width: 90, height: 120)
-//                                                            .foregroundStyle(Color.themePrimary.opacity(0.4))
-//                                                            .overlay {
-//                                                                ProgressView()
-//                                                            }
-//                                                    }
-//                                                    .loadDiskFileSynchronously()
-//                                                    .cacheMemoryOnly()
-//                                                    .fade(duration: 0.25)
-//                                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-//                                                    .resizable()
-//                                                    .aspectRatio(contentMode: .fill)
-//                                                    .contentShape(RoundedRectangle(cornerRadius: 15))
-//                                                    .clipShape(RoundedRectangle(cornerRadius: 15))
-//                                                    .frame(width: 90, height: 120)
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                                .scrollIndicators(.hidden)
-//                            } else {
-//                                if let thumbnail = place.thumbnail, let url = URL(string: thumbnail) {
-//                                    KFImage.url(url)
-//                                        .placeholder {
-//                                            RoundedRectangle(cornerRadius: 15)
-//                                                .frame(maxWidth: .infinity)
-//                                                .frame(height: 120)
-//                                                .foregroundStyle(Color.themePrimary.opacity(0.4))
-//                                                .overlay {
-//                                                    ProgressView()
-//                                                }
-//                                        }
-//                                        .loadDiskFileSynchronously()
-//                                        .cacheMemoryOnly()
-//                                        .fade(duration: 0.25)
-//                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-//                                        .resizable()
-//                                        .aspectRatio(contentMode: .fill)
-//                                        .frame(maxWidth: .infinity)
-//                                        .frame(height: 120)
-//                                        .contentShape(RoundedRectangle(cornerRadius: 15))
-//                                        .clipShape(RoundedRectangle(cornerRadius: 15))
-//                                } else {
-//                                    Text("No images found")
-//                                }
-//                            }
-//                        } else {
-//                            HStack {
-//                                Text("... Reviews")
-//                                Divider()
-//                                    .frame(maxHeight: 10)
-//                                Text("Score")
-//                                Divider()
-//                                    .frame(maxHeight: 10)
-//                                Text("Price")
-//                            }
-//                            .font(.custom(style: .body))
-//                            .frame(maxWidth: .infinity, alignment: .leading)
-//                            .redacted(reason: .placeholder)
-//                            
-//                            ScrollView(.horizontal) {
-//                                HStack {
-//                                    RoundedRectangle(cornerRadius: 15)
-//                                        .frame(width: 90, height: 120)
-//                                    RoundedRectangle(cornerRadius: 15)
-//                                        .frame(width: 90, height: 120)
-//                                    RoundedRectangle(cornerRadius: 15)
-//                                        .frame(width: 90, height: 120)
-//                                    RoundedRectangle(cornerRadius: 15)
-//                                        .frame(width: 90, height: 120)
-//                                    RoundedRectangle(cornerRadius: 15)
-//                                        .frame(width: 90, height: 120)
-//                                }
-//                            }
-//                            .scrollIndicators(.hidden)
-//                        }
-//                        
-//                    }
-//                    .padding(.horizontal)
-//                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-//                    .onTapGesture {
-//                        if let place = mapVM.selectedPlaceData {
-//                            appData.mapNavStack.append(.place(id: place.id))
-//                        } else {
-//                            if let title = item.title {
-//                                appData.mapNavStack.append(.placeMapPlace(mapPlace: MapPlace(coordinate: item.coordinate, title: title)))
-//                            }
-//                        }
-//                    }
-//                }
-//                .background(.thinMaterial)
-//                .clipShape(.rect(cornerRadius: 15))
-//                .frame(maxHeight: 240)
-//                .padding(.horizontal)
-//                .padding(.bottom)
-//                .transition(.move(edge: .bottom))
-//                .animation(.bouncy, value: selection)
-//                .zIndex(2)
-//            }
         }
         .onChange(of: selection) { newValue in
             if let item = newValue {

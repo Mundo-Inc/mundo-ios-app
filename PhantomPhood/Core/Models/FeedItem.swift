@@ -59,18 +59,16 @@ struct FeedItem: Identifiable, Decodable, Equatable {
     let privacyType: PrivacyType
     let createdAt: String
     let updatedAt: String
-    let score: Double
-    let weight: Int
     let reactions: ReactionsObject
     let comments: [Comment]
     let commentsCount: Int
     
     enum CodingKeys: String, CodingKey {
-        case id, user, place, activityType, resourceType, resource, privacyType, createdAt, updatedAt, score, weight, reactions, comments, commentsCount
+        case id, user, place, activityType, resourceType, resource, privacyType, createdAt, updatedAt, reactions, comments, commentsCount
     }
     
     // By Values
-    init(id: String, user: User, place: CompactPlace?, activityType: FeedItemActivityType, resourceType: FeedItemResourceType, resource: FeedItemResource, privacyType: PrivacyType, createdAt: String, updatedAt: String, score: Double, weight: Int, reactions: ReactionsObject, comments: [Comment], commentsCount: Int) {
+    init(id: String, user: User, place: CompactPlace?, activityType: FeedItemActivityType, resourceType: FeedItemResourceType, resource: FeedItemResource, privacyType: PrivacyType, createdAt: String, updatedAt: String, reactions: ReactionsObject, comments: [Comment], commentsCount: Int) {
         self.id = id
         self.user = user
         self.place = place
@@ -80,8 +78,6 @@ struct FeedItem: Identifiable, Decodable, Equatable {
         self.privacyType = privacyType
         self.createdAt = createdAt
         self.updatedAt = updatedAt
-        self.score = score
-        self.weight = weight
         self.reactions = reactions
         self.comments = comments
         self.commentsCount = commentsCount
@@ -115,8 +111,6 @@ struct FeedItem: Identifiable, Decodable, Equatable {
         privacyType = try container.decode(PrivacyType.self, forKey: .privacyType)
         createdAt = try container.decode(String.self, forKey: .createdAt)
         updatedAt = try container.decode(String.self, forKey: .updatedAt)
-        score = try container.decode(Double.self, forKey: .score)
-        weight = try container.decode(Int.self, forKey: .weight)
         reactions = try container.decode(ReactionsObject.self, forKey: .reactions)
         comments = try container.decode([Comment].self, forKey: .comments)
         commentsCount = try container.decode(Int.self, forKey: .commentsCount)

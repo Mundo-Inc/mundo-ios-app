@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 class ForYouViewModel: ObservableObject {
-    let dataManager = FeedDataManager()
+    let dataManager = FeedDM()
     
     @Published var items: [FeedItem] = []
     @Published var isLoading: Bool = false

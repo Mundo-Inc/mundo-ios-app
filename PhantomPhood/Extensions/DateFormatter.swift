@@ -44,4 +44,10 @@ extension DateFormatter {
             return "just now"
         }
     }
+    
+    static func dateToString(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+        return dateFormatter.string(from: date)
+    }
 }

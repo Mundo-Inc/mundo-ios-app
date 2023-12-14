@@ -20,7 +20,6 @@ struct MapView16: View {
     @State private var centerCoordinate = CLLocationCoordinate2D()
     //    @State var coordinateRegion: MKCoordinateRegion = MKCoordinateRegion(center: .init(latitude: 40.7250, longitude: -74.002), span: .init(latitudeDelta: 0.1, longitudeDelta: 0.1))
     
-    @MainActor
     init(mapVM: MapViewModel) {
         self._mapVM = ObservedObject(wrappedValue: mapVM)
         if let location = locationManager.location {
@@ -28,6 +27,8 @@ struct MapView16: View {
             //            self._coordinateRegion = State(wrappedValue: MKCoordinateRegion(center: .init(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude), span: .init(latitudeDelta: 0.05, longitudeDelta: 0.05)))
         }
     }
+    
+    @State var throttle = Throttle(interval: 2)
     
     func buildAnnotations(from mapItems: [MKMapItem]) -> [MKPointAnnotation] {
         return mapItems.map { mapItem in

@@ -21,7 +21,7 @@ struct Notification: Decodable, Identifiable {
     let _id: String
     let user: User
     let type: NotificationType
-    let readAt: String?
+    var readAt: String?
     let sent: Bool
     let failReason: String?
     let importance: Int

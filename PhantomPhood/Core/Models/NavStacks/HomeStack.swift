@@ -19,6 +19,7 @@ enum HomeStack: Hashable {
     case place(id: String, action: PlaceAction? = nil)
     case placeMapPlace(mapPlace: MapPlace, action: PlaceAction? = nil)
     case userConnections(userId: String, initTab: UserConnectionsTab)
+    case userActivity(id: String)
     
     func hash(into hasher: inout Hasher) {
         switch self {
@@ -39,6 +40,9 @@ enum HomeStack: Hashable {
             hasher.combine("userConnections")
             hasher.combine(userId)
             hasher.combine(tab)
+        case .userActivity(let id):
+            hasher.combine("userActivity")
+            hasher.combine(id)
         }
     }
 }

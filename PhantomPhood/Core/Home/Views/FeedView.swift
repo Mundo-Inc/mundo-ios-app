@@ -17,7 +17,8 @@ struct FeedView: View {
     
     var body: some View {
         ZStack {
-            Color.themeBG.ignoresSafeArea()
+            Color.themeBG
+                .ignoresSafeArea()
             
             ScrollView {
                 if !vm.isLoading && vm.feedItems.isEmpty {

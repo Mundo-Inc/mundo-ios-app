@@ -53,7 +53,7 @@ final class SignInWithAppleHelper: NSObject {
     
     @MainActor
     func startSignInWithAppleFlow(viewController: UIViewController? = nil, completion: @escaping (Result<SignInWithAppleResult, Error>) -> Void) {
-        guard let topVC = viewController ?? topViewController() else {
+        guard let topVC = viewController ?? UIApplication.shared.topViewController() else {
             completion(.failure(URLError(.cannotConnectToHost)))
             return
         }
@@ -172,25 +172,6 @@ private extension SignInWithAppleHelper {
         }
         return currentNonce
     }
-    
-    @MainActor
-    private func topViewController(controller: UIViewController? = nil) -> UIViewController? {
-        let controller = controller ?? UIApplication.shared.keyWindow?.rootViewController
-        
-        if let navigationController = controller as? UINavigationController {
-            return topViewController(controller: navigationController.visibleViewController)
-        }
-        if let tabController = controller as? UITabBarController {
-            if let selected = tabController.selectedViewController {
-                return topViewController(controller: selected)
-            }
-        }
-        if let presented = controller?.presentedViewController {
-            return topViewController(controller: presented)
-        }
-        return controller
-    }
-    
 }
 
 extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
