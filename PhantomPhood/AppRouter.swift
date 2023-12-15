@@ -159,9 +159,15 @@ struct AppRouter: View {
             }
         }
         .onOpenURL { url in
-            // return if not signed in
-            guard auth.userSession != nil else { return }
-            
+            handleIncomingURL(url)
+        }
+    }
+    
+    private func handleIncomingURL(_ url: URL) {
+        // return if not signed in
+        guard auth.userSession != nil, let scheme = url.scheme else { return }
+        
+        if scheme == "phantom" {
             let string = url.absoluteString.replacingOccurrences(of: "phantom://", with: "")
             let components = string.components(separatedBy: "/")
             
@@ -245,7 +251,27 @@ struct AppRouter: View {
                     }
                 }
             }
+        } else if scheme == "https" {
+            let string = url.absoluteString.replacingOccurrences(of: "https://phantomphood.ai/", with: "")
+            let components = string.components(separatedBy: "/")
             
+            guard let type = components.first, components.endIndex >= 1 else { return }
+            
+            let id = components[1]
+            
+            appData.activeTab = .home
+            appData.homeNavStack.removeAll()
+            
+            switch type {
+            case "place":
+                appData.homeNavStack.append(HomeStack.place(id: id))
+            case "user":
+                appData.homeNavStack.append(HomeStack.userProfile(id: id))
+            case "activity":
+                appData.homeNavStack.append(HomeStack.userActivity(id: id))
+            default:
+                break
+            }
         }
     }
 }

@@ -20,6 +20,8 @@ struct MapView17: View {
     
     @State var throttle = Throttle(interval: 2)
     
+    @State var selectedMapActivity: MapActivity? = nil
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             Map(position: $position, selection: $selection) {
@@ -46,39 +48,40 @@ struct MapView17: View {
                 
                 ForEach(mapVM.mapClusterActiviteis.solo) { activity in
                     Annotation("Activity", coordinate: activity.locationCoordinate) {
-                        NavigationLink(value: MapStack.place(id: activity.placeId)) {
-                            HStack(spacing: -10) {
-                                ForEach(activity.activities.data.indices, id: \.self) { index in
-                                    if index < 3 {
-                                        ProfileImage(activity.activities.data[index].profileImage, size: 30)
-                                            .overlay(alignment: .bottomLeading) {
-                                                if activity.activities.data[index].checkinsCount > 1 || activity.activities.data[index].reviewsCount > 1 {
-                                                    ZStack {
-                                                        Circle()
-                                                            .frame(width: 15, height: 15)
-                                                            .foregroundStyle(Color.black)
-                                                        
-                                                        Text("\(activity.activities.data[index].checkinsCount + activity.activities.data[index].reviewsCount)")
-                                                            .font(.custom(style: .caption2))
-                                                            .foregroundStyle(Color.white)
-                                                    }
-                                                    .frame(width: 15, height: 15)
+                        HStack(spacing: -10) {
+                            ForEach(activity.activities.data.indices, id: \.self) { index in
+                                if index < 3 {
+                                    ProfileImage(activity.activities.data[index].profileImage, size: 30)
+                                        .overlay(alignment: .bottomLeading) {
+                                            if activity.activities.data[index].checkinsCount > 1 || activity.activities.data[index].reviewsCount > 1 {
+                                                ZStack {
+                                                    Circle()
+                                                        .frame(width: 15, height: 15)
+                                                        .foregroundStyle(Color.black)
+                                                    
+                                                    Text("\(activity.activities.data[index].checkinsCount + activity.activities.data[index].reviewsCount)")
+                                                        .font(.custom(style: .caption2))
+                                                        .foregroundStyle(Color.white)
                                                 }
+                                                .frame(width: 15, height: 15)
                                             }
-                                    }
-                                }
-                                if activity.activities.data.count > 3 {
-                                    Text("+\(max(activity.activities.data.count - 3, 0))")
-                                        .padding(.leading, 12)
+                                        }
                                 }
                             }
-                            .font(.custom(style: .body))
-                            .fontWeight(.medium)
-                            .padding(.all, 5)
-                            .background {
-                                RoundedRectangle(cornerRadius: 14)
-                                    .foregroundStyle(Color.themeBG)
+                            if activity.activities.data.count > 3 {
+                                Text("+\(max(activity.activities.data.count - 3, 0))")
+                                    .padding(.leading, 12)
                             }
+                        }
+                        .font(.custom(style: .body))
+                        .fontWeight(.medium)
+                        .padding(.all, 5)
+                        .background {
+                            RoundedRectangle(cornerRadius: 14)
+                                .foregroundStyle(Color.themeBG)
+                        }
+                        .onTapGesture {
+                            selectedMapActivity = activity
                         }
                     }
                     .annotationTitles(.hidden)
@@ -119,6 +122,11 @@ struct MapView17: View {
                 
                 UserAnnotation()
             }
+            .sheet(isPresented: Binding(optionalValue: $selectedMapActivity), content: {
+                MapActivityView(mapActivity: $selectedMapActivity)
+                    .presentationBackground(.thinMaterial)
+                    .presentationDetents([.height(320), .large])
+            })
             .mapFeatureSelectionDisabled({ item in
                 if let pointOfInterestCategory = item.pointOfInterestCategory {
                     switch pointOfInterestCategory {

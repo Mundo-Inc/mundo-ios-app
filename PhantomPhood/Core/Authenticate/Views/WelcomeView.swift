@@ -13,7 +13,7 @@ struct WelcomeView: View {
     
     var body: some View {
         ZStack {
-            Color("Background").ignoresSafeArea()
+            Color(.themeBG).ignoresSafeArea()
             
             NavigationStack(path: $appData.authNavStack) {
                 VStack {
