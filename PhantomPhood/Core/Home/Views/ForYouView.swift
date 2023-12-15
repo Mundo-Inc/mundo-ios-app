@@ -97,19 +97,19 @@ struct ForYouView: View {
                     .environment(\.colorScheme, .dark)
                 }
                 .ignoresSafeArea(edges: .top)
-                .onChange(of: appData.tappedTwice, perform: { tapped in
-                    if tapped {
+                .onChange(of: appData.tappedTwice) { tapped in
+                    if tapped == .home {
                         withAnimation {
                             page.update(.moveToFirst)
                         }
-                        appData.tappedTwice = false
+                        appData.tappedTwice = nil
                         if !vm.isLoading {
                             Task {
                                 await vm.getForYou(.refresh)
                             }
                         }
                     }
-                })
+                }
             })
         }
         .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {

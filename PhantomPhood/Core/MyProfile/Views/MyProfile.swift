@@ -181,14 +181,14 @@ struct MyProfile: View {
                         UserConnectionsView(userId: userId, activeTab: initTab)
                     }
                 }
-                .onChange(of: appData.tappedTwice, perform: { tapped in
-                    if tapped {
+                .onChange(of: appData.tappedTwice) { tapped in
+                    if tapped == .myProfile {
                         withAnimation {
                             proxy.scrollTo(1)
                         }
-                        appData.tappedTwice = false
+                        appData.tappedTwice = nil
                     }
-                })
+                }
             }
         }
     }

@@ -158,7 +158,6 @@
 		0BF17BA92AF2FAA500D87812 /* ProfileCheckinsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF17BA82AF2FAA500D87812 /* ProfileCheckinsVM.swift */; };
 		0BF17BAB2AF2FDE800D87812 /* GeneralTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF17BAA2AF2FDE800D87812 /* GeneralTypes.swift */; };
 		0BF5B49D2AB292D500DEC403 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF5B49C2AB292D500DEC403 /* KeychainHelper.swift */; };
-		0BF5B4A42AB34DD300DEC403 /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF5B4A32AB34DD300DEC403 /* ColorExtensions.swift */; };
 		0BF5B4A62AB353CB00DEC403 /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF5B4A52AB353CB00DEC403 /* TextField.swift */; };
 		0BF5B4A92AB3758000DEC403 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF5B4A82AB3758000DEC403 /* HomeView.swift */; };
 		0BF5B4AE2AB375D500DEC403 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF5B4AD2AB375D500DEC403 /* MapView.swift */; };
@@ -333,7 +332,6 @@
 		0BF17BA82AF2FAA500D87812 /* ProfileCheckinsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCheckinsVM.swift; sourceTree = "<group>"; };
 		0BF17BAA2AF2FDE800D87812 /* GeneralTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralTypes.swift; sourceTree = "<group>"; };
 		0BF5B49C2AB292D500DEC403 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
-		0BF5B4A32AB34DD300DEC403 /* ColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
 		0BF5B4A52AB353CB00DEC403 /* TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
 		0BF5B4A82AB3758000DEC403 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		0BF5B4AD2AB375D500DEC403 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
@@ -533,7 +531,6 @@
 		0B6495572AB1EB46000E57AF /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				0BF5B4A32AB34DD300DEC403 /* ColorExtensions.swift */,
 				0BE3C8872B261DB40048F2A6 /* PhotosPickerItem.swift */,
 				0B2E987F2AB907340013301D /* UIImage.swift */,
 				0BF81DC52ABE36EB00B8892E /* Fonts.swift */,
@@ -1206,7 +1203,6 @@
 				0BDBD3CA2ACB32B7003B8D2D /* PhantomScoreView.swift in Sources */,
 				0BA388932AD96D7100C74880 /* MapView17.swift in Sources */,
 				0B0E6D342ABB872F00EC62EE /* Reaction.swift in Sources */,
-				0BF5B4A42AB34DD300DEC403 /* ColorExtensions.swift in Sources */,
 				0BB37E9A2ABA0CD6009E1272 /* MapViewModel.swift in Sources */,
 				0BEF7A3E2B0EB60F001532E7 /* CompleteTheUserInfoView.swift in Sources */,
 				0BC84A672AD0449300D723AA /* ReactionsViewModel.swift in Sources */,
@@ -1361,7 +1357,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.34.0;
+				MARKETING_VERSION = 0.34.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1398,7 +1394,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.34.0;
+				MARKETING_VERSION = 0.34.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

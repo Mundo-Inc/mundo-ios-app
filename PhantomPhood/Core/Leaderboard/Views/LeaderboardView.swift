@@ -104,17 +104,17 @@ struct LeaderboardView: View {
                                 await vm.fetchList(.refresh)
                             }
                         }
-                        .onChange(of: appData.tappedTwice, perform: { tapped in
-                            if tapped {
+                        .onChange(of: appData.tappedTwice) { tapped in
+                            if tapped == .leaderboard {
                                 withAnimation {
                                     proxy.scrollTo(1)
                                 }
-                                appData.tappedTwice = false
+                                appData.tappedTwice = nil
                                 Task {
                                     await vm.fetchList(.refresh)
                                 }
                             }
-                        })
+                        }
                     }
                 }
                 .navigationTitle("Leaderboard")

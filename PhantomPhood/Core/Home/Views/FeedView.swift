@@ -149,14 +149,19 @@ struct FeedView: View {
                         }
                     }
                 }
-                .onChange(of: appData.tappedTwice, perform: { tapped in
-                    if tapped {
+                .onChange(of: appData.tappedTwice) { tapped in
+                    if tapped == .home {
                         withAnimation {
                             proxy.scrollTo(1)
                         }
-                        appData.tappedTwice = false
+                        appData.tappedTwice = nil
+                        Task {
+                            if !vm.isLoading {
+                                await vm.getFeed(.refresh)
+                            }
+                        }
                     }
-                })
+                }
             }
         }
     }

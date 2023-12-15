@@ -33,7 +33,7 @@ final class AppData: ObservableObject {
     // Authentication Tab (Only before sign-in)
     @Published var authNavStack: [AuthStack] = []
     
-    @Published var tappedTwice: Bool = false
+    @Published var tappedTwice: Tab? = nil
     
     var tabViewSelectionHandler: Binding<Tab> {
         Binding {
@@ -45,25 +45,25 @@ final class AppData: ObservableObject {
                     if !self.homeNavStack.isEmpty {
                         self.homeNavStack.removeLast()
                     } else {
-                        self.tappedTwice = true
+                        self.tappedTwice = $0
                     }
                 case .map:
                     if !self.mapNavStack.isEmpty {
                         self.mapNavStack.removeLast()
                     } else {
-                        self.tappedTwice = true
+                        self.tappedTwice = $0
                     }
                 case .leaderboard:
                     if !self.leaderboardNavStack.isEmpty {
                         self.leaderboardNavStack.removeLast()
                     } else {
-                        self.tappedTwice = true
+                        self.tappedTwice = $0
                     }
                 case .myProfile:
                     if !self.myProfileNavStack.isEmpty {
                         self.myProfileNavStack.removeLast()
                     } else {
-                        self.tappedTwice = true
+                        self.tappedTwice = $0
                     }
                 }
             }
