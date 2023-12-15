@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct NotificationsView: View {
     @ObservedObject private var vm = NotificationsVM.shared
@@ -66,101 +65,102 @@ struct NotificationsView: View {
     
     func notificationItem(_ data: Notification) -> some View {
         HStack(alignment: .top) {
-            ProfileImage(data.user.profileImage, size: 44, cornerRadius: 10)
-                .frame(width: 44, height: 44)
-                .onTapGesture {
-                    appData.homeNavStack.append(HomeStack.userProfile(id: data.user.id))
-                }
-            
-            HStack(alignment: .top) {
-                VStack(spacing: 5) {
-                    Group {
-                        switch data.type {
-                        case .reaction:
-                            Text(data.user.name)
-                                .bold()
-                                .frame(minHeight: 20)
-                            Text(data.content)
-                                .frame(minHeight: 18)
-                        case .comment:
-                            Group {
-                                Text(data.user.name)
-                                    .bold()
-                                +
-                                Text(" Commented on your activity.")
-                            }
-                            .frame(minHeight: 20)
-                            
-                            Text(data.content)
-                                .frame(minHeight: 18)
-                        case .follow:
-                            Text(data.user.name)
-                                .bold()
-                                .frame(minHeight: 20)
-                            
-                            Text(data.content)
-                                .frame(minHeight: 18)
-                        case .comment_mention:
-                            Group {
-                                Text(data.user.name)
-                                    .bold()
-                                +
-                                Text(" Mentioned you in a comment.")
-                            }
-                            .frame(minHeight: 20)
-                            
-                            Text(data.content)
-                                .frame(minHeight: 18)
-                        case .review_mention:
-                            Group {
-                                Text(data.user.name)
-                                    .bold()
-                                +
-                                Text(" Mentioned you in a review.")
-                            }
-                            .frame(minHeight: 20)
-                            
-                            Text(data.content)
-                                .frame(minHeight: 18)
-                        case .xp:
-                            Text(data.user.name)
-                                .bold()
-                                .frame(minHeight: 20)
-                            
-                            Text("Got \(data.content) XP")
-                                .frame(minHeight: 18)
-                        case .level_up:
-                            Text(data.user.name)
-                                .bold()
-                                .frame(minHeight: 20)
-                            
-                            Text("Leveled Up")
-                                .frame(minHeight: 18)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .font(.custom(style: .caption))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                HStack {
-                    if data.readAt == nil {
-                        Circle()
-                            .frame(width: 6, height: 6)
-                            .shadow(color: Color.accentColor, radius: 2)
-                            .foregroundStyle(Color.accentColor)
-                            .transition(AnyTransition.scale.animation(.easeInOut(duration: 0.2)))
-                    }
-                    
-                    Text(DateFormatter.getPassedTime(from: data.createdAt))
-                        .font(.custom(style: .caption))
-                        .foregroundStyle(.secondary)
-                }
+            Button {
+                appData.homeNavStack.append(HomeStack.userProfile(id: data.user.id))
+            } label: {
+                ProfileImage(data.user.profileImage, size: 44, cornerRadius: 10)
+                    .frame(width: 44, height: 44)
             }
-            .background(Color.clear)
-            .onTapGesture {
+            
+            Button {
                 if let activity = data.activity {
                     appData.homeNavStack.append(HomeStack.userActivity(id: activity))
+                }
+            } label: {
+                HStack(alignment: .top) {
+                    VStack(spacing: 5) {
+                        Group {
+                            switch data.type {
+                            case .reaction:
+                                Text(data.user.name)
+                                    .bold()
+                                    .frame(minHeight: 20)
+                                Text(data.content)
+                                    .frame(minHeight: 18)
+                            case .comment:
+                                Group {
+                                    Text(data.user.name)
+                                        .bold()
+                                    +
+                                    Text(" Commented on your activity.")
+                                }
+                                .frame(minHeight: 20)
+                                
+                                Text(data.content)
+                                    .frame(minHeight: 18)
+                            case .follow:
+                                Text(data.user.name)
+                                    .bold()
+                                    .frame(minHeight: 20)
+                                
+                                Text(data.content)
+                                    .frame(minHeight: 18)
+                            case .comment_mention:
+                                Group {
+                                    Text(data.user.name)
+                                        .bold()
+                                    +
+                                    Text(" Mentioned you in a comment.")
+                                }
+                                .frame(minHeight: 20)
+                                
+                                Text(data.content)
+                                    .frame(minHeight: 18)
+                            case .review_mention:
+                                Group {
+                                    Text(data.user.name)
+                                        .bold()
+                                    +
+                                    Text(" Mentioned you in a review.")
+                                }
+                                .frame(minHeight: 20)
+                                
+                                Text(data.content)
+                                    .frame(minHeight: 18)
+                            case .xp:
+                                Text(data.user.name)
+                                    .bold()
+                                    .frame(minHeight: 20)
+                                
+                                Text("Got \(data.content) XP")
+                                    .frame(minHeight: 18)
+                            case .level_up:
+                                Text(data.user.name)
+                                    .bold()
+                                    .frame(minHeight: 20)
+                                
+                                Text("Leveled Up")
+                                    .frame(minHeight: 18)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .font(.custom(style: .caption))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    HStack {
+                        if data.readAt == nil {
+                            Circle()
+                                .frame(width: 6, height: 6)
+                                .shadow(color: Color.accentColor, radius: 2)
+                                .foregroundStyle(Color.accentColor)
+                                .transition(AnyTransition.scale.animation(.easeInOut(duration: 0.2)))
+                        }
+                        
+                        Text(DateFormatter.getPassedTime(from: data.createdAt))
+                            .font(.custom(style: .caption))
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
         }

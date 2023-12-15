@@ -7,36 +7,10 @@
 
 import SwiftUI
 
-// MARK: - Data Manager
-class SignInDataManager {
-    
-    // MARK: - Nested Types
-    struct ServerError: Codable {
-        let success: Bool
-        let error: ErrorRes
-        
-        struct ErrorRes: Codable {
-            let message: String
-        }
-    }
-    
-    // MARK: - API Manager
-    
-    private let apiManager = APIManager.shared
-    
-    
-    // MARK: - Public Methods
-    func checkUsername(_ username: String) async throws -> HTTPURLResponse {
-        let response = try await apiManager.requestNoContent("/users/username-availability/\(username)")
-        return response
-    }
-    
-}
-
 // MARK: - ViewModel
 @MainActor
 class SignInViewModel: ObservableObject {
-    private let dataManager = SignUpWithPasswordDataManager()
+    private let dataManager = SignUpWithPasswordDM()
     
     @Published var isLoading = false
     
@@ -208,19 +182,20 @@ struct SignInWithEmailView: View {
             Spacer()
             
             Button {
-                withAnimation {
-                    vm.isLoading = true
-                }
                 Task {
+                    withAnimation {
+                        vm.isLoading = true
+                    }
                     let result = await auth.signin(email: vm.email, password: vm.password)
                     if let error = result.error, !result.success {
                         withAnimation {
                             vm.error = error
                         }
                     }
-                }
-                withAnimation {
-                    vm.isLoading = false
+                    withAnimation {
+                        vm.isLoading = false
+                    }
+
                 }
             } label: {
                 HStack(spacing: 5) {

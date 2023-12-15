@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileActivity: View {
-    @StateObject private var vm = ProfileActivityVm()
+    @StateObject private var vm = ProfileActivityVM()
     @StateObject private var commentsViewModel = CommentsViewModel()
     @StateObject private var mediasViewModel = MediasViewModel()
     
@@ -22,7 +22,7 @@ struct ProfileActivity: View {
             Spacer()
             
             Picker("Filter", selection: $vm.activityType) {
-                ForEach(ProfileActivityVm.FeedItemActivityType.allCases, id: \.self) { item in
+                ForEach(ProfileActivityVM.FeedItemActivityType.allCases, id: \.self) { item in
                     Text(item.title).tag(item.rawValue)
                 }
             }

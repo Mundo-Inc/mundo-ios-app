@@ -11,7 +11,7 @@ import Foundation
 class UserProfileViewModel: ObservableObject {
     private let id: String
     
-    private let dataManager = UserProfileDataManager()
+    private let dataManager = UserProfileDM()
     private let toastManager = ToastViewModel.shared
     
     @Published private(set) var isLoading = false

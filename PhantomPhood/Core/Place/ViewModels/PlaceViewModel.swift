@@ -20,7 +20,7 @@ class PlaceViewModel: ObservableObject {
     private(set) var id: String? = nil
     private let action: PlaceAction?
     
-    private let dataManager = PlaceDataManager()
+    private let dataManager = PlaceDM()
     private let toastViewModel = ToastViewModel.shared
     
     @Published var showActions: Bool = false

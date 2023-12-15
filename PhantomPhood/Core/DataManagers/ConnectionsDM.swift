@@ -1,5 +1,5 @@
 //
-//  ConnectionsDataManager.swift
+//  ConnectionsDM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 10/31/23.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ConnectionsDataManager {
+class ConnectionsDM {
     private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     

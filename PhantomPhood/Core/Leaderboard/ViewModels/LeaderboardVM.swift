@@ -1,5 +1,5 @@
 //
-//  LeaderboardViewModel.swift
+//  LeaderboardVM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 9/29/23.
@@ -8,8 +8,8 @@
 import Foundation
 
 @MainActor
-class LeaderboardViewModel: ObservableObject {
-    private let dataManager = LeaderboardDataManager()
+class LeaderboardVM: ObservableObject {
+    private let dataManager = LeaderboardDM()
     
     @Published private(set) var isLoading = false
     @Published private(set) var list: [User] = []

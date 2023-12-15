@@ -1,5 +1,5 @@
 //
-//  FeedDataManager.swift
+//  FeedDM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 21.09.2023.

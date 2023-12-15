@@ -10,9 +10,9 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var selectReactionsViewModel = SelectReactionsViewModel.shared
-    
+        
     var body: some View {
-        TabView(selection: $appData.activeTab) {
+        TabView(selection: appData.tabViewSelectionHandler) {
             HomeView()
                 .tabItem {
                     Label {

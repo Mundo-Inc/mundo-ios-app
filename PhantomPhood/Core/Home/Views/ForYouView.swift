@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftUIPager
 
 struct ForYouView: View {
+    @ObservedObject var appData = AppData.shared
+    
     @ObservedObject var commentsViewModel: CommentsViewModel
     @StateObject var vm = ForYouViewModel()
     
@@ -95,6 +97,19 @@ struct ForYouView: View {
                     .environment(\.colorScheme, .dark)
                 }
                 .ignoresSafeArea(edges: .top)
+                .onChange(of: appData.tappedTwice, perform: { tapped in
+                    if tapped {
+                        withAnimation {
+                            page.update(.moveToFirst)
+                        }
+                        appData.tappedTwice = false
+                        if !vm.isLoading {
+                            Task {
+                                await vm.getForYou(.refresh)
+                            }
+                        }
+                    }
+                })
             })
         }
         .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {

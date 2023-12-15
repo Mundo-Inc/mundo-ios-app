@@ -1,5 +1,5 @@
 //
-//  LeaderboardDataManager.swift
+//  LeaderboardDM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 9/29/23.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class LeaderboardDataManager {
+class LeaderboardDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
         

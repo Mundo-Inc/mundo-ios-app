@@ -27,7 +27,7 @@ class UserProfileActivityVM: ObservableObject {
     private let auth = Authentication.shared
     private let apiManager = APIManager.shared
     
-    @Published var activityType: ProfileActivityVm.FeedItemActivityType = .all
+    @Published var activityType: ProfileActivityVM.FeedItemActivityType = .all
     @Published var isLoading = false
     @Published var data: [FeedItem]? = nil
     @Published var total: Int? = nil

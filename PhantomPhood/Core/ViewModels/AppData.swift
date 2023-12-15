@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 final class AppData: ObservableObject {
     static var shared = AppData()
@@ -31,6 +32,45 @@ final class AppData: ObservableObject {
     
     // Authentication Tab (Only before sign-in)
     @Published var authNavStack: [AuthStack] = []
+    
+    @Published var tappedTwice: Bool = false
+    
+    var tabViewSelectionHandler: Binding<Tab> {
+        Binding {
+            self.activeTab
+        } set: {
+            if $0 == self.activeTab {
+                switch self.activeTab {
+                case .home:
+                    if !self.homeNavStack.isEmpty {
+                        self.homeNavStack.removeLast()
+                    } else {
+                        self.tappedTwice = true
+                    }
+                case .map:
+                    if !self.mapNavStack.isEmpty {
+                        self.mapNavStack.removeLast()
+                    } else {
+                        self.tappedTwice = true
+                    }
+                case .leaderboard:
+                    if !self.leaderboardNavStack.isEmpty {
+                        self.leaderboardNavStack.removeLast()
+                    } else {
+                        self.tappedTwice = true
+                    }
+                case .myProfile:
+                    if !self.myProfileNavStack.isEmpty {
+                        self.myProfileNavStack.removeLast()
+                    } else {
+                        self.tappedTwice = true
+                    }
+                }
+            }
+            self.activeTab = $0
+        }
+
+    }
     
     func reset() {
         self.activeTab = .home

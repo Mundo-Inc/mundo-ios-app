@@ -11,7 +11,7 @@ struct LeaderboardView: View {
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var auth = Authentication.shared
     
-    @StateObject private var vm = LeaderboardViewModel()
+    @StateObject private var vm = LeaderboardVM()
     
     var body: some View {
         NavigationStack(path: $appData.leaderboardNavStack) {
@@ -54,50 +54,67 @@ struct LeaderboardView: View {
                     
                     Divider()
                     
-                    ScrollView {
-                        LazyVStack {
-                            ForEach(vm.list.indices, id: \.self) { index in
-                                NavigationLink(value: LeaderboardStack.userProfile(id: vm.list[index].id)) {
-                                    HStack {
-                                        Text("#\(index + 1)")
-                                            .font(.custom(style: .headline))
-                                            .foregroundStyle(.secondary)
-                                            .frame(minWidth: 40)
-                                        
-                                        ProfileImage(vm.list[index].profileImage, size: 36, cornerRadius: 10)
-                                        
-                                        LevelView(level: vm.list[index].progress.level)
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(width: 28, height: 36)
-                                        
-                                        Text(vm.list[index].name)
-                                            .font(.custom(style: .subheadline))
-                                            .bold()
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        
-                                        Text("\(vm.list[index].progress.xp)")
-                                            .font(.custom(style: .caption))
-                                            .foregroundStyle(.secondary)
-                                    }
-                                    .padding(.horizontal)
-                                    .onAppear {
-                                        if !vm.isLoading {
-                                            Task {
-                                                await vm.loadMore(currentItem: vm.list[index])
+                    ScrollViewReader { proxy in
+                        ScrollView {
+                            Color.clear
+                                .frame(width: 0, height: 0)
+                                .id(1)
+                            
+                            LazyVStack {
+                                ForEach(vm.list.indices, id: \.self) { index in
+                                    NavigationLink(value: LeaderboardStack.userProfile(id: vm.list[index].id)) {
+                                        HStack {
+                                            Text("#\(index + 1)")
+                                                .font(.custom(style: .headline))
+                                                .foregroundStyle(.secondary)
+                                                .frame(minWidth: 40)
+                                            
+                                            ProfileImage(vm.list[index].profileImage, size: 36, cornerRadius: 10)
+                                            
+                                            LevelView(level: vm.list[index].progress.level)
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: 28, height: 36)
+                                            
+                                            Text(vm.list[index].name)
+                                                .font(.custom(style: .subheadline))
+                                                .bold()
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                            
+                                            Text("\(vm.list[index].progress.xp)")
+                                                .font(.custom(style: .caption))
+                                                .foregroundStyle(.secondary)
+                                        }
+                                        .padding(.horizontal)
+                                        .onAppear {
+                                            if !vm.isLoading {
+                                                Task {
+                                                    await vm.loadMore(currentItem: vm.list[index])
+                                                }
                                             }
                                         }
                                     }
+                                    .foregroundStyle(auth.currentUser?.id == vm.list[index].id ? Color.accentColor : Color.primary)
+                                    
+                                    Divider()
                                 }
-                                .foregroundStyle(auth.currentUser?.id == vm.list[index].id ? Color.accentColor : Color.primary)
-                                
-                                Divider()
                             }
                         }
-                    }
-                    .refreshable {
-                        Task {
-                            await vm.fetchList(.refresh)
+                        .refreshable {
+                            Task {
+                                await vm.fetchList(.refresh)
+                            }
                         }
+                        .onChange(of: appData.tappedTwice, perform: { tapped in
+                            if tapped {
+                                withAnimation {
+                                    proxy.scrollTo(1)
+                                }
+                                appData.tappedTwice = false
+                                Task {
+                                    await vm.fetchList(.refresh)
+                                }
+                            }
+                        })
                     }
                 }
                 .navigationTitle("Leaderboard")

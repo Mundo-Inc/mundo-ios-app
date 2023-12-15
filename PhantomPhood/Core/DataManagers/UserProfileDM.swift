@@ -1,5 +1,5 @@
 //
-//  UserProfileDataManager.swift
+//  UserProfileDM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 9/29/23.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class UserProfileDataManager {
+class UserProfileDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     

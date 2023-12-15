@@ -12,7 +12,7 @@ import Combine
 class CompleteTheUserInfoVM: ObservableObject {
     private let apiManager = APIManager.shared
     @ObservedObject var auth = Authentication.shared
-    private let dataManager = SignUpWithPasswordDataManager()
+    private let dataManager = SignUpWithPasswordDM()
     
     @Published var step = 0
     @Published var direction = 1

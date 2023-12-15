@@ -1,5 +1,5 @@
 //
-//  NotificationsDataManager.swift
+//  NotificationsDM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 9/29/23.

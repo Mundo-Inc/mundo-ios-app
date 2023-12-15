@@ -11,7 +11,7 @@ import MapKit
 
 @MainActor
 class MapViewModel: ObservableObject {
-    private let placeDM = PlaceDataManager()
+    private let placeDM = PlaceDM()
     private let mapDM = MapDM()
     
     @Published var isLoading = false

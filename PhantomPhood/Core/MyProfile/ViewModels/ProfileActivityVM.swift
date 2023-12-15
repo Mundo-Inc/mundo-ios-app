@@ -1,5 +1,5 @@
 //
-//  ProfileActivityVm.swift
+//  ProfileActivityVM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 11/2/23.
@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 @MainActor
-class ProfileActivityVm: ObservableObject {
+class ProfileActivityVM: ObservableObject {
     private let auth = Authentication.shared
     private let apiManager = APIManager.shared
     

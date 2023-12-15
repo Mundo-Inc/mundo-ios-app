@@ -8,10 +8,9 @@
 import SwiftUI
 import Combine
 
-class SignUpWithPasswordDataManager {
+class SignUpWithPasswordDM {
     
     // MARK: - Nested Types
-    
     struct ServerError: Codable {
         let success: Bool
         let error: ErrorRes
@@ -27,7 +26,6 @@ class SignUpWithPasswordDataManager {
     
     
     // MARK: - Public Methods
-    
     func checkUsername(_ username: String) async throws -> HTTPURLResponse {
         let response = try await apiManager.requestNoContent("/users/username-availability/\(username)")
         return response
@@ -37,7 +35,7 @@ class SignUpWithPasswordDataManager {
 
 @MainActor
 class SignUpWithPasswordVM: ObservableObject {
-    private let dataManager = SignUpWithPasswordDataManager()
+    private let dataManager = SignUpWithPasswordDM()
     
     @Published var step = 0
     @Published var direction = 1

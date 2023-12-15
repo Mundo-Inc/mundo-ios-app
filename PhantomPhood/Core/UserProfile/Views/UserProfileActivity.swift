@@ -27,7 +27,7 @@ struct UserProfileActivity: View {
             Spacer()
             
             Picker("Filter", selection: $vm.activityType) {
-                ForEach(ProfileActivityVm.FeedItemActivityType.allCases, id: \.self) { item in
+                ForEach(ProfileActivityVM.FeedItemActivityType.allCases, id: \.self) { item in
                     Text(item.title).tag(item.rawValue)
                 }
             }

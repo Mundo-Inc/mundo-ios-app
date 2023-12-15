@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 class MyConnectionsViewModel: ObservableObject {
-    private let dataManager = ConnectionsDataManager()
+    private let dataManager = ConnectionsDM()
     private let auth = Authentication.shared
     
     @Published var isLoading: Bool = false
@@ -29,7 +29,7 @@ class MyConnectionsViewModel: ObservableObject {
         case new
     }
     
-    func getConnections(type: ConnectionsDataManager.UserConnectionType, requestType: RequestType) async {
+    func getConnections(type: ConnectionsDM.UserConnectionType, requestType: RequestType) async {
         guard let userId = auth.currentUser?.id, !isLoading else { return }
         
         isLoading = true
@@ -88,7 +88,7 @@ class MyConnectionsViewModel: ObservableObject {
         isLoading = false
     }
     
-    func loadMore(type: ConnectionsDataManager.UserConnectionType, currentItem: UserConnection) async {
+    func loadMore(type: ConnectionsDM.UserConnectionType, currentItem: UserConnection) async {
         var thresholdIndex: Int
         switch type {
         case .followings:

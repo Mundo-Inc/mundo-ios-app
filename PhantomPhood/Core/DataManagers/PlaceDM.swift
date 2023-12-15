@@ -1,5 +1,5 @@
 //
-//  PlaceDataManager.swift
+//  PlaceDM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 10/1/23.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import MapKit
 
-class PlaceDataManager {
+class PlaceDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
