@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject private var appData = AppData.shared
-    @ObservedObject private var selectReactionsViewModel = SelectReactionsViewModel.shared
+    @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
         
     var body: some View {
         TabView(selection: appData.tabViewSelectionHandler) {
@@ -55,7 +55,12 @@ struct ContentView: View {
                 .tag(Tab.myProfile)
         }
         .sheet(isPresented: $selectReactionsViewModel.isPresented, content: {
-            SelectReactionsView()
+            if #available(iOS 17.0, *) {
+                SelectReactionsView()
+                    .presentationBackground(.thinMaterial)
+            } else {
+                SelectReactionsView()
+            }
         })
         .onAppear {
             ContactsService.shared.tryToSyncContacts()

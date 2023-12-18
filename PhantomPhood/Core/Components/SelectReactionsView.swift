@@ -7,137 +7,76 @@
 
 import SwiftUI
 
-struct NewReaction: Identifiable {
-    let reaction: String
-    let type: ReactionType
-    var id: String {
-        reaction + type.rawValue
-    }
-}
-
-private let emojiList: [NewReaction] = [
-    NewReaction(reaction: "👍", type: .emoji),
-    NewReaction(reaction: "❤️", type: .emoji),
-    NewReaction(reaction: "😍", type: .emoji),
-    NewReaction(reaction: "🤣", type: .emoji),
-    NewReaction(reaction: "😛", type: .emoji),
-    NewReaction(reaction: "💅", type: .emoji),
-    NewReaction(reaction: "🫡", type: .emoji),
-    NewReaction(reaction: "💦", type: .emoji),
-    NewReaction(reaction: "😮", type: .emoji),
-    NewReaction(reaction: "✈️", type: .emoji),
-    NewReaction(reaction: "🏡", type: .emoji),
-    NewReaction(reaction: "👀", type: .emoji),
-    NewReaction(reaction: "🤙", type: .emoji),
-    NewReaction(reaction: "🧐", type: .emoji),
-    NewReaction(reaction: "🥺", type: .emoji),
-    NewReaction(reaction: "🤖", type: .emoji),
-    NewReaction(reaction: "🧠", type: .emoji),
-    NewReaction(reaction: "🙏🏻", type: .emoji),
-    NewReaction(reaction: "💵", type: .emoji),
-    NewReaction(reaction: "💄", type: .emoji),
-    NewReaction(reaction: "🫦", type: .emoji),
-    NewReaction(reaction: "👋🏻", type: .emoji),
-    NewReaction(reaction: "🥲", type: .emoji),
-    NewReaction(reaction: "💰", type: .emoji),
-    NewReaction(reaction: "💸", type: .emoji),
-    NewReaction(reaction: "💩", type: .emoji),
-    NewReaction(reaction: "😬", type: .emoji),
-    NewReaction(reaction: "😎", type: .emoji),
-    NewReaction(reaction: "🚀", type: .emoji),
-    NewReaction(reaction: "🥰", type: .emoji),
-    NewReaction(reaction: "🤩", type: .emoji),
-    NewReaction(reaction: "🎉", type: .emoji),
-    NewReaction(reaction: "🤮", type: .emoji),
-    NewReaction(reaction: "👎", type: .emoji),
-    NewReaction(reaction: "🔥", type: .emoji),
-    NewReaction(reaction: "😃", type: .emoji),
-    NewReaction(reaction: "🤑", type: .emoji),
-    NewReaction(reaction: "🤌", type: .emoji),
-    NewReaction(reaction: "🍻", type: .emoji),
-    NewReaction(reaction: "😑", type: .emoji),
-    NewReaction(reaction: "😕", type: .emoji)
-]
-
 struct SelectReactionsView: View {
-    @ObservedObject private var vm = SelectReactionsViewModel.shared
+    @ObservedObject private var vm = SelectReactionsVM.shared
+    @ObservedObject private var emojiesVM = EmojiesVM.shared
     
-    enum Tab {
-        case emoji
-        case special
-    }
-    
-    @State var selectedTab: Tab = .emoji
+    @State var selectedTab: EmojiesManager.EmojiCategory = .common
+    @State var isAnimating = true
     
     var body: some View {
-        VStack {
-            HStack {
-                Button {
-                    withAnimation {
-                        selectedTab = .emoji
+        VStack(spacing: 0) {
+            VStack {
+                HStack {
+                    ForEach(EmojiesManager.EmojiCategory.allCases.indices, id: \.self) { index in
+                        Button {
+                            withAnimation {
+                                selectedTab = EmojiesManager.EmojiCategory.allCases[index]
+                            }
+                        } label: {
+                            Image(systemName: EmojiesManager.EmojiCategory.allCases[index].icon)
+                                .font(.system(size: 20))
+                                .padding(.all, 8)
+                        }
+                        .foregroundStyle(selectedTab == EmojiesManager.EmojiCategory.allCases[index] ? Color.accentColor : Color.secondary)
+                        
+                        if index + 1 <= EmojiesManager.EmojiCategory.allCases.count {
+                            Divider()
+                                .frame(maxHeight: 24)
+                        }
                     }
-                } label: {
-                    Text("Emoji")
-                        .foregroundStyle(selectedTab == .emoji ? Color.accentColor : Color.secondary)
-                        .frame(maxWidth: .infinity)
                 }
+                .font(.custom(style: .subheadline))
+                .fontWeight(.semibold)
                 
                 Divider()
-                    .frame(maxHeight: 20)
-                
-                Button {
-                    withAnimation {
-                        selectedTab = .special
-                    }
-                } label: {
-                    Text("Special")
-                        .foregroundStyle(selectedTab == .special ? Color.accentColor : Color.secondary)
-                        .frame(maxWidth: .infinity)
-                }
             }
-            .font(.custom(style: .subheadline))
-            .fontWeight(.semibold)
-            .padding(.top)
-            
-            Divider()
             
             TabView(selection: $selectedTab) {
-                ScrollView {
-                    LazyVGrid(columns: [
-                        GridItem(.adaptive(minimum: 36, maximum: 42)),
-                    ], spacing: 16, content: {
-                        ForEach(emojiList) { emoji in
-                            Button {
-                                vm.onSelect?(emoji)
-                                vm.isPresented = false
-                            } label: {
-                                Text(emoji.reaction)
-                                    .font(.system(size: 26))
+                ForEach(EmojiesManager.EmojiCategory.allCases, id: \.self) { category in
+                    ScrollView {
+                        LazyVGrid(columns: [
+                            GridItem(.adaptive(minimum: 36, maximum: 42)),
+                        ], spacing: 16, content: {
+                            ForEach(emojiesVM.getEmojies(category: category)) { emoji in
+                                Button {
+                                    vm.onSelect?(emoji)
+                                    vm.isPresented = false
+                                } label: {
+                                    Emoji(emoji, isAnimating: $isAnimating, size: 72)
+                                }
                             }
-                        }
-                    })
-                    .padding()
-                }
-                .tag(Tab.emoji)
-                
-                ScrollView {
-                    Text("No Special reactions available")
-                        .font(.custom(style: .subheadline))
-                        .foregroundStyle(.secondary)
+                        })
                         .padding()
-                }
-                .onTapGesture {
-                    withAnimation {
-                        selectedTab = .emoji
                     }
+                    .tag(category)
                 }
-                .tag(Tab.special)
-                    
             }
+            .ignoresSafeArea()
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         }
         .padding(.top)
-        .presentationDetents([.height(250), .large])
+        .presentationDetents([.height(300), .large])
+        .onAppear {
+            if !isAnimating {
+                isAnimating = true
+            }
+        }
+        .onDisappear {
+            if isAnimating {
+                isAnimating = false
+            }
+        }
     }
 }
 

@@ -28,7 +28,7 @@ struct FeedReviewView: View {
         self._reportId = reportId
     }
     
-    @ObservedObject private var selectReactionsViewModel = SelectReactionsViewModel.shared
+    @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
     
     private func showMedia() {
         switch data.resource {
@@ -37,18 +37,6 @@ struct FeedReviewView: View {
         default:
             return
         }
-    }
-    
-    private var starsView: some View {
-        HStack(spacing: 0) {
-            Image(systemName: "star.fill")
-            Image(systemName: "star.fill")
-            Image(systemName: "star.fill")
-            Image(systemName: "star.fill")
-            Image(systemName: "star.fill")
-        }
-        .font(.system(size: 14))
-        .foregroundStyle(Color.themeBorder)
     }
     
     var body: some View {
@@ -165,17 +153,7 @@ struct FeedReviewView: View {
                                     .font(.custom(style: .headline))
                                     .foregroundStyle(.primary)
                                 
-                                starsView
-                                    .overlay {
-                                        GeometryReader(content: { geometry in
-                                            ZStack(alignment: .leading) {
-                                                Rectangle()
-                                                    .foregroundStyle(.yellow)
-                                                    .frame(width: (overallScore / 5) * geometry.size.width)
-                                            }
-                                        })
-                                        .mask(starsView)
-                                    }
+                                StarRating(score: overallScore, activeColor: .yellow)
                                 
                                 Spacer()
                             }
@@ -306,9 +284,9 @@ struct FeedReviewView: View {
     }
     
     
-    private func selectReaction(reaction: NewReaction) async {
+    private func selectReaction(reaction: EmojiesManager.Emoji) async {
         do {
-            let newReaction = try await reactionsViewModel.addReaction(type: reaction.type, reaction: reaction.reaction)
+            let newReaction = try await reactionsViewModel.addReaction(type: .emoji, reaction: reaction.symbol)
             reactions.user.append(UserReaction(_id: newReaction.id, reaction: newReaction.reaction, type: newReaction.type, createdAt: newReaction.createdAt))
             if reactions.total.contains(where: { $0.reaction == newReaction.reaction }) {
                 reactions.total = reactions.total.map({ item in

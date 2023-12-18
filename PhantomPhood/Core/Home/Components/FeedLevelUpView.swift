@@ -21,7 +21,7 @@ struct FeedLevelUpView: View {
         self._reactions = State(wrappedValue: data.reactions)
     }
     
-    @ObservedObject var selectReactionsViewModel = SelectReactionsViewModel.shared
+    @ObservedObject var selectReactionsViewModel = SelectReactionsVM.shared
     
     // For shader
     private let startDate = Date()
@@ -178,9 +178,9 @@ struct FeedLevelUpView: View {
         }
     }
     
-    func selectReaction(reaction: NewReaction) async {
+    func selectReaction(reaction: EmojiesManager.Emoji) async {
         do {
-            let newReaction = try await reactionsViewModel.addReaction(type: reaction.type, reaction: reaction.reaction)
+            let newReaction = try await reactionsViewModel.addReaction(type: .emoji, reaction: reaction.symbol)
             reactions.user.append(UserReaction(_id: newReaction.id, reaction: newReaction.reaction, type: newReaction.type, createdAt: newReaction.createdAt))
             if reactions.total.contains(where: { $0.reaction == newReaction.reaction }) {
                 reactions.total = reactions.total.map({ item in

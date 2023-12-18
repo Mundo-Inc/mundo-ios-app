@@ -36,18 +36,54 @@ struct CommentsView: View {
     @State var reportId: String? = nil
     
     var body: some View {
-        VStack {
-            RoundedRectangle(cornerRadius: 3)
-                .frame(width: 30, height: 3)
-                .foregroundStyle(.tertiary)
-            Text("Comments")
-                .font(.custom(style: .subheadline))
-                .fontWeight(.bold)
-                .padding(.top, 5)
-            Divider()
-            
+        VStack(spacing: 0) {
             if vm.comments.isEmpty && vm.isLoading {
-                ProgressView()
+                List(0..<1) { _ in
+                    HStack(alignment: .top) {
+                        VStack(spacing: -15) {
+                            ProfileImage("", size: 44, cornerRadius: 10)
+                            
+                            LevelView(level: 20)
+                                .frame(width: 24, height: 30)
+                                .clipShape(.rect(cornerRadius: 5))
+                        }
+                        .redacted(reason: .placeholder)
+                        
+                        HStack {
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Text(String(repeating: "A", count: 8))
+                                        .font(.custom(style: .body))
+                                        .bold()
+                                        .foregroundStyle(.primary)
+                                    Text("2h")
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.secondary)
+                                    Spacer()
+                                }
+                                .frame(maxWidth: .infinity)
+                                
+                                Text(String(repeating: "A", count: 22))
+                                    .font(.custom(style: .body))
+                                    .multilineTextAlignment(.leading)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .redacted(reason: .placeholder)
+                            
+                            VStack {
+                                Image(systemName: "heart")
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(Color.secondary)
+                                Text("10")
+                                    .font(.custom(style: .callout))
+                                    .foregroundStyle(.secondary)
+                                    .redacted(reason: .placeholder)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
+                .frame(maxHeight: .infinity)
             } else {
                 if vm.comments.isEmpty {
                     VStack {
@@ -59,63 +95,61 @@ struct CommentsView: View {
                             .foregroundStyle(.secondary)
                     }
                     .padding(.top)
+                    
+                    Spacer()
                 } else {
                     List(vm.comments) { comment in
-                        VStack {
-                            HStack {
-                                Group {
-                                    ProfileImage(comment.author.profileImage, size: 44, cornerRadius: 10)
-                                        .overlay(alignment: .top) {
-                                            LevelView(level: comment.author.progress.level)
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: 24, height: 30)
-                                                .offset(y: 28)
-                                        }
-                                }
-                                .onTapGesture(perform: {
-                                    navigateToUserProfile(id: comment.author.id)
-                                })
+                        HStack(alignment: .top) {
+                            VStack(spacing: -15) {
+                                ProfileImage(comment.author.profileImage, size: 44, cornerRadius: 10)
                                 
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        HStack {
-                                            Text(comment.author.name)
-                                                .font(.custom(style: .body))
-                                                .bold()
-                                                .foregroundStyle(.primary)
-                                            Text(DateFormatter.getPassedTime(from: comment.createdAt))
-                                                .font(.custom(style: .caption))
-                                                .foregroundStyle(.secondary)
-                                            Spacer()
-                                        }
-                                        .frame(maxWidth: .infinity)
-                                        
-                                        Text(comment.content)
+                                LevelView(level: comment.author.progress.level)
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 24, height: 30)
+                            }
+                            .onTapGesture(perform: {
+                                navigateToUserProfile(id: comment.author.id)
+                            })
+                            
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    HStack {
+                                        Text(comment.author.name)
                                             .font(.custom(style: .body))
-                                            .multilineTextAlignment(.leading)
+                                            .bold()
+                                            .foregroundStyle(.primary)
+                                        Text(DateFormatter.getPassedTime(from: comment.createdAt))
+                                            .font(.custom(style: .caption))
+                                            .foregroundStyle(.secondary)
+                                        Spacer()
                                     }
                                     .frame(maxWidth: .infinity)
                                     
-                                    VStack {
-                                        Image(systemName: comment.liked ? "heart.fill" : "heart")
-                                            .font(.system(size: 16))
-                                            .foregroundStyle(comment.liked ? Color.accentColor : Color.secondary)
-                                        Text("\(comment.likes)")
-                                            .font(.custom(style: .callout))
-                                            .foregroundStyle(.secondary)
-                                    }
-                                    .animation(.easeInOut, value: vm.isSubmitting)
-                                    .opacity(vm.isSubmitting ? 0.6 : 1)
-                                    .onTapGesture(perform: {
-                                        if !vm.isSubmitting {
-                                            Task {
-                                                await vm.updateCommentLike(id: comment.id, action: comment.liked ? .remove : .add)
-                                            }
-                                        }
-                                    })
+                                    Text(comment.content)
+                                        .font(.custom(style: .body))
+                                        .multilineTextAlignment(.leading)
                                 }
                                 .frame(maxWidth: .infinity)
+                                
+                                VStack {
+                                    Image(systemName: comment.liked ? "heart.fill" : "heart")
+                                        .font(.system(size: 16))
+                                        .foregroundStyle(comment.liked ? Color.accentColor : Color.secondary)
+                                    Text("\(comment.likes)")
+                                        .font(.custom(style: .callout))
+                                        .foregroundStyle(.secondary)
+                                }
+                                .animation(.easeInOut, value: vm.isSubmitting)
+                                .opacity(vm.isSubmitting ? 0.6 : 1)
+                                .onTapGesture(perform: {
+                                    if !vm.isSubmitting {
+                                        Task {
+                                            await vm.updateCommentLike(id: comment.id, action: comment.liked ? .remove : .add)
+                                        }
+                                    }
+                                })
                             }
+                            .frame(maxWidth: .infinity)
                         }
                         .onAppear {
                             if !vm.isLoading && vm.comments.count > 9 && (vm.comments.firstIndex(where: { cm in cm.id == comment.id }) ?? 0) + 4 >= vm.comments.count {
@@ -135,18 +169,16 @@ struct CommentsView: View {
                             
                         }
                     }
-                    .listStyle(.plain)
+                    .frame(maxHeight: .infinity)
                 }
             }
-            
-            Spacer()
             
             Divider()
             
             TextField("Add a comment", text: $vm.commentContent, axis: .vertical)
                 .lineLimit(1...4)
-                .padding(.all, 8)
-                .padding(.trailing, 35)
+                .padding(.all, 10)
+                .padding(.trailing, 37)
                 .background {
                     RoundedRectangle(cornerRadius: 10)
                         .foregroundStyle(Color.themePrimary)
@@ -161,16 +193,14 @@ struct CommentsView: View {
                     }
                     .opacity(vm.isSubmitting ? 0.6 : 1)
                     .disabled(vm.isSubmitting)
-                    .padding(.all, 9)
+                    .padding(.all, 11)
                 }.padding(.horizontal)
-                .padding(.vertical, 5)
-            
-            
+                .padding(.vertical, 10)
         }
-        .padding(.top)
         .sheet(isPresented: Binding(optionalValue: $reportId)) {
             ReportView(id: $reportId, type: .comment)
         }
+        .presentationDetents([.medium, .large])
     }
 }
 

@@ -18,18 +18,6 @@ struct GoogleRatingView: View {
         self.isLoading = isLoading
     }
     
-    var starsView: some View {
-        HStack(spacing: 0) {
-            Image(systemName: "star.fill")
-            Image(systemName: "star.fill")
-            Image(systemName: "star.fill")
-            Image(systemName: "star.fill")
-            Image(systemName: "star.fill")
-        }
-        .font(.system(size: 14))
-        .foregroundStyle(Color.themeBorder)
-    }
-    
     var body: some View {
         ZStack {
             Color(.ratingsBG)
@@ -38,17 +26,7 @@ struct GoogleRatingView: View {
             
             HStack {
                 VStack(alignment: .leading) {
-                    starsView
-                        .overlay {
-                            GeometryReader(content: { geometry in
-                                ZStack(alignment: .leading) {
-                                    Rectangle()
-                                        .foregroundStyle(.yellow)
-                                        .frame(width: ((rating != nil && rating! > 0 ? rating! : 0) / 5) * geometry.size.width)
-                                }
-                            })
-                            .mask(starsView)
-                        }
+                    StarRating(score: (rating != nil ? rating! : 0), activeColor: .yellow)
                     
                     Spacer()
                     

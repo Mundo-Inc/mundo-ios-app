@@ -16,14 +16,14 @@ struct ForYouItem: View {
     private let itemIndex: Int?
     @ObservedObject private var page: Page
     @ObservedObject private var commentsViewModel: CommentsViewModel
-    private let parentGeometry: GeometryProxy?
+    let parentGeometry: GeometryProxy?
     
     
     @StateObject private var reactionsViewModel: ReactionsViewModel
     @State private var reactions: ReactionsObject
     
     @ObservedObject var videoPlayerVM: VideoPlayerVM
-    @ObservedObject private var selectReactionsViewModel = SelectReactionsViewModel.shared
+    @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
     
     @State private var tabPage: String = ""
     
@@ -320,17 +320,7 @@ struct ForYouItem: View {
                             
                             if let overallScore = feedReview.scores.overall {
                                 HStack {
-                                    starsView
-                                        .overlay {
-                                            GeometryReader(content: { geometry in
-                                                ZStack(alignment: .leading) {
-                                                    Rectangle()
-                                                        .foregroundStyle(Color.accentColor)
-                                                        .frame(width: (overallScore / 5) * geometry.size.width)
-                                                }
-                                            })
-                                            .mask(starsView)
-                                        }
+                                    StarRating(score: overallScore)
                                     
                                     Text("(\(String(format: "%.0f", overallScore))/5)")
                                         .font(.custom(style: .headline))
@@ -434,7 +424,7 @@ struct ForYouItem: View {
                                     Image(.addReaction)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(height: 26)
+                                        .frame(height: 24)
                                         .foregroundStyle(.white)
                                 }
                         }
@@ -450,7 +440,7 @@ struct ForYouItem: View {
                                     Image(systemName: "bubble.left")
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(height: 22)
+                                        .frame(height: 24)
                                         .foregroundStyle(.white)
                                 }
                         }
@@ -468,9 +458,9 @@ struct ForYouItem: View {
         .frame(maxWidth: .infinity)
     }
     
-    func selectReaction(reaction: NewReaction) async {
+    func selectReaction(reaction: EmojiesManager.Emoji) async {
         do {
-            let newReaction = try await reactionsViewModel.addReaction(type: reaction.type, reaction: reaction.reaction)
+            let newReaction = try await reactionsViewModel.addReaction(type: .emoji, reaction: reaction.symbol)
             reactions.user.append(UserReaction(_id: newReaction.id, reaction: newReaction.reaction, type: newReaction.type, createdAt: newReaction.createdAt))
             if reactions.total.contains(where: { $0.reaction == newReaction.reaction }) {
                 reactions.total = reactions.total.map({ item in
@@ -501,20 +491,6 @@ struct ForYouItem: View {
                 }
             }
         )
-    }
-}
-
-extension ForYouItem {
-    private var starsView: some View {
-        HStack(spacing: 0) {
-            Image(systemName: "star.fill")
-            Image(systemName: "star.fill")
-            Image(systemName: "star.fill")
-            Image(systemName: "star.fill")
-            Image(systemName: "star.fill")
-        }
-        .font(.system(size: 14))
-        .foregroundStyle(Color.gray)
     }
 }
 

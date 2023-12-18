@@ -21,7 +21,7 @@ struct FeedCheckinView: View {
         self._reactions = State(wrappedValue: data.reactions)
     }
     
-    @ObservedObject private var selectReactionsViewModel = SelectReactionsViewModel.shared
+    @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
     
     var body: some View {
         FeedItemTemplate(user: data.user, comments: data.comments, isActive: commentsViewModel.currentActivityId == data.id) {
@@ -177,9 +177,9 @@ struct FeedCheckinView: View {
         }
     }
     
-    private func selectReaction(reaction: NewReaction) async {
+    private func selectReaction(reaction: EmojiesManager.Emoji) async {
         do {
-            let newReaction = try await reactionsViewModel.addReaction(type: reaction.type, reaction: reaction.reaction)
+            let newReaction = try await reactionsViewModel.addReaction(type: .emoji, reaction: reaction.symbol)
             reactions.user.append(UserReaction(_id: newReaction.id, reaction: newReaction.reaction, type: newReaction.type, createdAt: newReaction.createdAt))
             if reactions.total.contains(where: { $0.reaction == newReaction.reaction }) {
                 reactions.total = reactions.total.map({ item in

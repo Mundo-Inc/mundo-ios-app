@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ForYouInfoView: View {
     @ObservedObject var commentsViewModel: CommentsViewModel
-    @ObservedObject var selectReactionsViewModel = SelectReactionsViewModel.shared
+    @ObservedObject var selectReactionsViewModel = SelectReactionsVM.shared
     
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var vm = ForYouInfoVM.shared
@@ -241,46 +241,9 @@ private struct ScoreItem: View {
                     }
                 }
             
-            starsView
-                .overlay {
-                    GeometryReader(content: { geometry in
-                        ZStack(alignment: .leading) {
-                            Rectangle()
-                                .foregroundStyle(Color.accentColor)
-                                .frame(width: (show ? score / 5 : 0) * geometry.size.width)
-                                .animation(.easeIn(duration: 1), value: show)
-                        }
-                    })
-                    .mask(starsView)
-                }
+            
+            StarRating(score: score, size: 16, show: show)
         }
-    }
-    
-    private var starsView: some View {
-        HStack(spacing: 0) {
-            Image(systemName: "star.fill")
-                .rotationEffect(show ? .zero : .degrees(-72))
-                .opacity(show ? 1 : 0)
-                .animation(.bouncy(duration: 0.6), value: show)
-            Image(systemName: "star.fill")
-                .rotationEffect(show ? .zero : .degrees(-72))
-                .opacity(show ? 1 : 0)
-                .animation(.bouncy(duration: 0.6).delay(0.1), value: show)
-            Image(systemName: "star.fill")
-                .rotationEffect(show ? .zero : .degrees(-72))
-                .opacity(show ? 1 : 0)
-                .animation(.bouncy(duration: 0.6).delay(0.2), value: show)
-            Image(systemName: "star.fill")
-                .rotationEffect(show ? .zero : .degrees(-72))
-                .opacity(show ? 1 : 0)
-                .animation(.bouncy(duration: 0.6).delay(0.3), value: show)
-            Image(systemName: "star.fill")
-                .rotationEffect(show ? .zero : .degrees(-72))
-                .opacity(show ? 1 : 0)
-                .animation(.bouncy(duration: 0.6).delay(0.4), value: show)
-        }
-        .font(.system(size: 16))
-        .foregroundStyle(Color.gray)
     }
 }
 

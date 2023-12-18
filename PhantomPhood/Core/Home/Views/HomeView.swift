@@ -82,14 +82,6 @@ struct HomeView: View {
                                         .foregroundStyle(.white)
                                 }
                                 .frame(maxWidth: .infinity)
-                                
-                                Text("Beta")
-                                    .font(.custom(style: .caption))
-                                    .foregroundStyle(.black)
-                                    .padding(.horizontal, 5)
-                                    .background(Capsule().foregroundStyle(.yellow).opacity(0.9))
-                                    .rotationEffect(.degrees(-10))
-                                    .offset(x: -25, y: -15)
                             }
                             
                             ZStack {

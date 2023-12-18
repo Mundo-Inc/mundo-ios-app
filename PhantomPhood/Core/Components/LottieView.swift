@@ -15,13 +15,22 @@ enum LottieFiles: String {
 
 struct LottieView: UIViewRepresentable {
     private let animationView = LottieAnimationView()
-    let file: LottieFiles
+    let file: String
     var loop: Bool? = nil
+    
+    init(file: LottieFiles, loop: Bool? = nil) {
+        self.file = file.rawValue
+        self.loop = loop
+    }
+    init(fileName: String, loop: Bool? = nil) {
+        self.file = fileName
+        self.loop = loop
+    }
     
     func makeUIView(context: UIViewRepresentableContext<LottieView>) -> UIView {
         let view = UIView()
         
-        let animation = LottieAnimation.named(file.rawValue)
+        let animation = LottieAnimation.named(file)
         animationView.animation = animation
         animationView.contentMode = .scaleAspectFit
         animationView.play()

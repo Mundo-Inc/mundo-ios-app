@@ -26,12 +26,13 @@ struct ReactionLabel: View {
                 Text(String(reaction.count))
                     .font(.custom(style: .body))
             } icon: {
-                Text(reaction.reaction)
+                Emoji(reaction: reaction, isAnimating: Binding(get: {
+                    isSelected
+                }, set: { _ in }), size: 18)
             }
             .padding(.all, 5)
             .padding(.trailing, 5)
             .background(isSelected ? Color.accentColor.opacity(0.3) : Color.themePrimary)
-            .font(.system(size: 18))
             .overlay {
                 RoundedRectangle(cornerRadius: 25)
                     .stroke(isSelected ? Color.accentColor : Color.themePrimary, lineWidth: 2)
@@ -58,8 +59,9 @@ struct ForYouReactionLabel: View {
             onPress?(isSelected)
         } label: {
             HStack {
-                Text(reaction.reaction)
-                    .font(.system(size: 20))
+                Emoji(reaction: reaction, isAnimating: Binding(get: {
+                    isSelected
+                }, set: { _ in }), size: 24)
                 
                 Text(String(reaction.count))
                     .font(.custom(style: .body))
