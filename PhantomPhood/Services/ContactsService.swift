@@ -11,6 +11,8 @@ import Contacts
 final class ContactsService {
     static let shared = ContactsService()
     
+    private init() {}
+    
     private let store = CNContactStore()
     
     /// Request access to the user's contacts

@@ -9,6 +9,7 @@ import SwiftUI
 import Kingfisher
 import VideoPlayer
 import SwiftUIPager
+import CoreMedia
 
 struct ForYouItem: View {
     private let data: FeedItem
@@ -52,6 +53,9 @@ struct ForYouItem: View {
         }
     }
     
+    @State private var time: CMTime = .zero
+    @State private var currentVideoTotalDuration: Double = .zero
+    
     var body: some View {
         ZStack {
             Color.themePrimary
@@ -77,9 +81,15 @@ struct ForYouItem: View {
                             ForEach(feedReview.videos) { video in
                                 ZStack {
                                     if let url = URL(string: video.src) {
-                                        VideoPlayer(url: url, play: playBinding(for: video.id))
+                                        VideoPlayer(url: url, play: playBinding(for: video.id), time: $time)
                                             .onStateChanged { state in
                                                 videosState.updateValue(state, forKey: video.id)
+                                                switch state {
+                                                case .playing(let totalDuration):
+                                                    currentVideoTotalDuration = totalDuration
+                                                default:
+                                                    break
+                                                }
                                             }
                                             .autoReplay(true)
                                             .mute(videoPlayerVM.isMute)
@@ -99,6 +109,15 @@ struct ForYouItem: View {
                                         default:
                                             EmptyView()
                                         }
+                                    }
+                                }
+                                .overlay(alignment: .bottomLeading) {
+                                    if !time.seconds.isZero, !currentVideoTotalDuration.isZero {
+                                        Rectangle()
+                                            .animation(.linear, value: time.seconds)
+                                            .frame(height: 2)
+                                            .frame(width: UIScreen.main.bounds.width * (time.seconds / currentVideoTotalDuration))
+                                            .foregroundStyle(.white)
                                     }
                                 }
                                 .tag(video.id)
@@ -155,9 +174,15 @@ struct ForYouItem: View {
                     } else if let video = feedReview.videos.first {
                         ZStack {
                             if let url = URL(string: video.src) {
-                                VideoPlayer(url: url, play: playBinding(for: video.id))
+                                VideoPlayer(url: url, play: playBinding(for: video.id), time: $time)
                                     .onStateChanged { state in
                                         videosState.updateValue(state, forKey: video.id)
+                                        switch state {
+                                        case .playing(let totalDuration):
+                                            currentVideoTotalDuration = totalDuration
+                                        default:
+                                            break
+                                        }
                                     }
                                     .autoReplay(true)
                                     .mute(videoPlayerVM.isMute)
@@ -177,6 +202,15 @@ struct ForYouItem: View {
                                 default:
                                     EmptyView()
                                 }
+                            }
+                        }
+                        .overlay(alignment: .bottomLeading) {
+                            if !time.seconds.isZero, !currentVideoTotalDuration.isZero {
+                                Rectangle()
+                                    .animation(.linear, value: time.seconds)
+                                    .frame(height: 2)
+                                    .frame(width: UIScreen.main.bounds.width * (time.seconds / currentVideoTotalDuration))
+                                    .foregroundStyle(.white)
                             }
                         }
                         .tag(video.id)
