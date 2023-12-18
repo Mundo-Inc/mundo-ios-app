@@ -57,6 +57,9 @@ struct ContentView: View {
         .sheet(isPresented: $selectReactionsViewModel.isPresented, content: {
             SelectReactionsView()
         })
+        .onAppear {
+            ContactsService.shared.tryToSyncContacts()
+        }
     }
 }
 

@@ -65,12 +65,11 @@ struct NotificationsView: View {
     
     func notificationItem(_ data: Notification) -> some View {
         HStack(alignment: .top) {
-            Button {
-                appData.homeNavStack.append(HomeStack.userProfile(id: data.user.id))
-            } label: {
-                ProfileImage(data.user.profileImage, size: 44, cornerRadius: 10)
-                    .frame(width: 44, height: 44)
-            }
+            ProfileImage(data.user.profileImage, size: 44, cornerRadius: 10)
+                .frame(width: 44, height: 44)
+                .onTapGesture {
+                    appData.homeNavStack.append(HomeStack.userProfile(id: data.user.id))
+                }
             
             Button {
                 if let activity = data.activity {

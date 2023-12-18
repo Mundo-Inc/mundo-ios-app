@@ -103,6 +103,7 @@
 		0B997B6A2AC7377C00579C9C /* UserProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B692AC7377C00579C9C /* UserProfileViewModel.swift */; };
 		0B997B6E2AC7381700579C9C /* UserProfileDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B6D2AC7381700579C9C /* UserProfileDM.swift */; };
 		0B997B702AC74BFA00579C9C /* UserProfileStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B6F2AC74BFA00579C9C /* UserProfileStats.swift */; };
+		0B9EF2812B302E1D0025F464 /* ContactsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9EF2802B302E1D0025F464 /* ContactsService.swift */; };
 		0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA0383E2AF24C96000A2B33 /* UserConnectionsView.swift */; };
 		0BA038412AF24CE6000A2B33 /* UserConnectionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA038402AF24CE6000A2B33 /* UserConnectionsViewModel.swift */; };
 		0BA388932AD96D7100C74880 /* MapView17.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA388922AD96D7100C74880 /* MapView17.swift */; };
@@ -278,6 +279,7 @@
 		0B997B692AC7377C00579C9C /* UserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewModel.swift; sourceTree = "<group>"; };
 		0B997B6D2AC7381700579C9C /* UserProfileDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileDM.swift; sourceTree = "<group>"; };
 		0B997B6F2AC74BFA00579C9C /* UserProfileStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileStats.swift; sourceTree = "<group>"; };
+		0B9EF2802B302E1D0025F464 /* ContactsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsService.swift; sourceTree = "<group>"; };
 		0BA0383E2AF24C96000A2B33 /* UserConnectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionsView.swift; sourceTree = "<group>"; };
 		0BA038402AF24CE6000A2B33 /* UserConnectionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionsViewModel.swift; sourceTree = "<group>"; };
 		0BA388922AD96D7100C74880 /* MapView17.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView17.swift; sourceTree = "<group>"; };
@@ -686,6 +688,7 @@
 				0B47FDA02B11060600F39527 /* AppRouter.swift */,
 				0BB37E9B2ABA52C7009E1272 /* Shaders.metal */,
 				0B96D66B2AD2E73500612C27 /* LocationManager.swift */,
+				0B9EF27F2B302E070025F464 /* Services */,
 				0B3E73CF2B29F7990092072F /* Protocols */,
 				0BF81DC72ABE398400B8892E /* Fonts */,
 				0B6495572AB1EB46000E57AF /* Extensions */,
@@ -789,6 +792,14 @@
 				0B83A0CE2AF434090096780B /* UserProfileActivityVM.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		0B9EF27F2B302E070025F464 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				0B9EF2802B302E1D0025F464 /* ContactsService.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		0BA038392AF24C47000A2B33 /* UserConnections */ = {
@@ -1143,6 +1154,7 @@
 				0B997B6E2AC7381700579C9C /* UserProfileDM.swift in Sources */,
 				0B985AE32AC9AFCA00019A06 /* PlaceViewModel.swift in Sources */,
 				0B77EA3B2AAF855500C8DF87 /* PhantomPhoodApp.swift in Sources */,
+				0B9EF2812B302E1D0025F464 /* ContactsService.swift in Sources */,
 				0B77EA582AAFCDBD00C8DF87 /* LottieView.swift in Sources */,
 				0B695D792AF131FB00C11870 /* MyConnections.swift in Sources */,
 				0B83A0C92AF4032D0096780B /* ProfileActivity.swift in Sources */,
@@ -1349,6 +1361,7 @@
 				INFOPLIST_FILE = PhantomPhood/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Phantom Phood";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_NSContactsUsageDescription = "This helps you and others to find people to follow and helps you connect and interact with people you already follow. Your contacts will be synced and securely stored in Phantom Phood's servers.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app requires your device location to be able to show the nearest places to you and to personalize suggestions";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app requires your device location to be able to show the nearest places to you and to personalize suggestions";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -1386,6 +1399,7 @@
 				INFOPLIST_FILE = PhantomPhood/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Phantom Phood";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_NSContactsUsageDescription = "This helps you and others to find people to follow and helps you connect and interact with people you already follow. Your contacts will be synced and securely stored in Phantom Phood's servers.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app requires your device location to be able to show the nearest places to you and to personalize suggestions";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app requires your device location to be able to show the nearest places to you and to personalize suggestions";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
