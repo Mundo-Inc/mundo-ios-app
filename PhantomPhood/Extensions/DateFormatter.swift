@@ -50,4 +50,16 @@ extension DateFormatter {
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
         return dateFormatter.string(from: date)
     }
+
+    static func dateToShortString(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMM yyyy"
+        return dateFormatter.string(from: date)
+    }
+
+    static func stringToDate(dateString: String) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+        return dateFormatter.date(from: dateString)
+    }
 }

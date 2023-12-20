@@ -37,7 +37,7 @@ struct ProfileStats: View {
                         )
                     }
                     .foregroundStyle(.primary)
-
+                    
                     Spacer()
                     
                     NavigationLink(value: MyProfileStack.myConnections(initTab: .followings)) {
@@ -58,7 +58,7 @@ struct ProfileStats: View {
                     .foregroundStyle(.primary)
                 }
             }
-                        
+            
             VStack {
                 Text("Level & Rankings")
                     .font(.custom(style: .headline))
@@ -81,7 +81,7 @@ struct ProfileStats: View {
                         ProgressView(value: auth.currentUser == nil ? 0 : Double(auth.currentUser!.progress.xp) / Double(auth.currentUser!.progress.xp + auth.currentUser!.remainingXp))
                             .foregroundStyle(.secondary)
                             .progressViewStyle(.linear)
-                            
+                        
                         
                         HStack(spacing: 0) {
                             Text("\(auth.currentUser?.progress.xp ?? 1000)")
@@ -169,10 +169,7 @@ struct ProfileStats: View {
             }
             
             Spacer()
-
-            
         }
-
         .padding()
     }
 }

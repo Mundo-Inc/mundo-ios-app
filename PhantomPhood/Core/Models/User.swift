@@ -51,8 +51,14 @@ struct UserProgress: Codable {
     let achievements: [UserAchievments]
 }
 
-struct UserAchievments: Codable {
+struct UserAchievments: Codable, Identifiable {
+    let _id: String
     let type: String
+    let createdAt: String
+    
+    var id: String {
+        self._id
+    }
 }
 
 struct UserConnection: Identifiable, Decodable {

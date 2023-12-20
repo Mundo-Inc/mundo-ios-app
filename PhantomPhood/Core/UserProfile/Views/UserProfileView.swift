@@ -175,13 +175,8 @@ struct UserProfileView: View {
                         switch activeTab {
                         case .stats:
                             UserProfileStats(user: vm.user, activeTab: $activeTab)
-                            
                         case .achievements:
-                            VStack {
-                                Text("No Achievements yet")
-                                    .font(.custom(style: .headline))
-                            }
-                            .frame(maxWidth: .infinity)
+                            UserProfileAchievements(user: vm.user)
                         case .activity:
                             UserProfileActivity(userId: id)
                         case .checkins:

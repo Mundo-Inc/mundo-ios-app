@@ -22,6 +22,16 @@ struct MapView17: View {
     
     @State var selectedMapActivity: MapActivity? = nil
     
+    init(mapVM: MapViewModel) {
+        self.mapVM = mapVM
+        
+        if let region = MapCameraPosition.userLocation(fallback: .automatic).region {
+            Task {
+                await mapVM.updateGeoActivities(for: region)
+            }
+        }
+    }
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             Map(position: $position, selection: $selection) {
@@ -333,6 +343,13 @@ struct MapView17: View {
                 .transition(.move(edge: .bottom))
                 .animation(.bouncy, value: selectedMapItem)
                 .zIndex(2)
+            }
+        }
+        .toolbar {
+            if mapVM.isActiviteisLoading {
+                ToolbarItem(placement: .topBarLeading) {
+                    ProgressView()
+                }
             }
         }
         .onChange(of: selection) { newValue in

@@ -124,11 +124,7 @@ struct MyProfile: View {
                             case .stats:
                                 ProfileStats()
                             case .achievements:
-                                VStack {
-                                    Text("No Achievements yet")
-                                        .font(.custom(style: .headline))
-                                }
-                                .frame(maxWidth: .infinity)
+                                ProfileAchievements()
                             case .activity:
                                 ProfileActivity()
                             case .checkins:

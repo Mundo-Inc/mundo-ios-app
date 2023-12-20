@@ -30,6 +30,22 @@ struct MapActivityView: View {
         self.isLoading = false
     }
     
+    var checkins: [MapActivity.ActivitiesData]? {
+        if let mapActivity {
+            return mapActivity.activities.data.filter({ $0.checkinsCount > 0 })
+        } else {
+            return nil
+        }
+    }
+    
+    var reviews: [MapActivity.ActivitiesData]? {
+        if let mapActivity {
+            return mapActivity.activities.data.filter({ $0.reviewsCount > 0 })
+        } else {
+            return nil
+        }
+    }
+    
     var body: some View {
         VStack {
             HStack {
@@ -111,24 +127,24 @@ struct MapActivityView: View {
             
             Divider()
             
-            if let mapActivity {
+            if mapActivity != nil {
                 VStack {
-                    if mapActivity.activities.data.filter({ $0.checkinsCount > 0 }).count > 0 {
+                    if let checkins, checkins.count > 0 {
                         HStack {
                             Text("Checked In By")
                                 .frame(width: 125, alignment: .leading)
                             
                             HStack(spacing: -10) {
-                                ForEach(mapActivity.activities.data.filter({ $0.checkinsCount > 0 }).indices, id: \.self) { index in
-                                    ProfileImage(mapActivity.activities.data[index].profileImage, size: 30)
+                                ForEach(checkins.indices, id: \.self) { index in
+                                    ProfileImage(checkins[index].profileImage, size: 30)
                                         .overlay(alignment: .bottomLeading) {
-                                            if mapActivity.activities.data[index].checkinsCount > 1 {
+                                            if checkins[index].checkinsCount > 1 {
                                                 ZStack {
                                                     Circle()
                                                         .frame(width: 15, height: 15)
                                                         .foregroundStyle(Color.black)
                                                     
-                                                    Text("\(mapActivity.activities.data[index].checkinsCount)")
+                                                    Text("\(checkins[index].checkinsCount)")
                                                         .font(.custom(style: .caption2))
                                                         .foregroundStyle(Color.white)
                                                 }
@@ -142,22 +158,22 @@ struct MapActivityView: View {
                         }
                     }
                     
-                    if mapActivity.activities.data.filter({ $0.reviewsCount > 0 }).count > 0 {
+                    if let reviews, reviews.count > 0 {
                         HStack {
                             Text("Reviewed By")
                                 .frame(width: 125, alignment: .leading)
                             
                             HStack(spacing: -10) {
-                                ForEach(mapActivity.activities.data.filter({ $0.reviewsCount > 0 }).indices, id: \.self) { index in
-                                    ProfileImage(mapActivity.activities.data[index].profileImage, size: 30)
+                                ForEach(reviews.indices, id: \.self) { index in
+                                    ProfileImage(reviews[index].profileImage, size: 30)
                                         .overlay(alignment: .bottomLeading) {
-                                            if mapActivity.activities.data[index].reviewsCount > 1 {
+                                            if reviews[index].reviewsCount > 1 {
                                                 ZStack {
                                                     Circle()
                                                         .frame(width: 15, height: 15)
                                                         .foregroundStyle(Color.black)
                                                     
-                                                    Text("\(mapActivity.activities.data[index].reviewsCount)")
+                                                    Text("\(reviews[index].reviewsCount)")
                                                         .font(.custom(style: .caption2))
                                                         .foregroundStyle(Color.white)
                                                 }

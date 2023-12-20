@@ -90,11 +90,11 @@ struct CommentsView: View {
                         Text("No Comments yet")
                             .font(.custom(style: .title2))
                         
-                        Text("Start the conversation")
+                        Text("Be the first")
                             .font(.custom(style: .caption))
                             .foregroundStyle(.secondary)
                     }
-                    .padding(.top)
+                    .padding(.top, 60)
                     
                     Spacer()
                 } else {

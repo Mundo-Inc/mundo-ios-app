@@ -31,6 +31,10 @@
 		0B226F5D2B32E13C0036B8BE /* EmojiesVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B226F5C2B32E13C0036B8BE /* EmojiesVM.swift */; };
 		0B226F612B331FF10036B8BE /* ForYouItemPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B226F602B331FF10036B8BE /* ForYouItemPlaceholder.swift */; };
 		0B226F632B3325350036B8BE /* StarRating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B226F622B3325350036B8BE /* StarRating.swift */; };
+		0B226F652B3354860036B8BE /* AchievementsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B226F642B3354860036B8BE /* AchievementsManager.swift */; };
+		0B226F672B33589C0036B8BE /* ProfileAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B226F662B33589C0036B8BE /* ProfileAchievements.swift */; };
+		0B226F692B3359F40036B8BE /* Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B226F682B3359F40036B8BE /* Achievement.swift */; };
+		0B226F6B2B336B170036B8BE /* UserProfileAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B226F6A2B336B170036B8BE /* UserProfileAchievements.swift */; };
 		0B2BF8822B17AA8000C10A5E /* AppGeneralVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2BF8812B17AA8000C10A5E /* AppGeneralVM.swift */; };
 		0B2E98802AB907340013301D /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2E987F2AB907340013301D /* UIImage.swift */; };
 		0B30218F2B3208D200827889 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0B30218E2B3208D200827889 /* SDWebImageSwiftUI */; };
@@ -315,6 +319,10 @@
 		0B226F5C2B32E13C0036B8BE /* EmojiesVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiesVM.swift; sourceTree = "<group>"; };
 		0B226F602B331FF10036B8BE /* ForYouItemPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForYouItemPlaceholder.swift; sourceTree = "<group>"; };
 		0B226F622B3325350036B8BE /* StarRating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarRating.swift; sourceTree = "<group>"; };
+		0B226F642B3354860036B8BE /* AchievementsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsManager.swift; sourceTree = "<group>"; };
+		0B226F662B33589C0036B8BE /* ProfileAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAchievements.swift; sourceTree = "<group>"; };
+		0B226F682B3359F40036B8BE /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
+		0B226F6A2B336B170036B8BE /* UserProfileAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileAchievements.swift; sourceTree = "<group>"; };
 		0B2BF8812B17AA8000C10A5E /* AppGeneralVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGeneralVM.swift; sourceTree = "<group>"; };
 		0B2E987F2AB907340013301D /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		0B3021922B32094100827889 /* 1f192.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = 1f192.gif; sourceTree = "<group>"; };
@@ -614,6 +622,7 @@
 				0BEE15292AB50A8800DF7211 /* ProfileStats.swift */,
 				0BF17BA62AF2F93F00D87812 /* ProfileCheckins.swift */,
 				0B83A0C82AF4032D0096780B /* ProfileActivity.swift */,
+				0B226F662B33589C0036B8BE /* ProfileAchievements.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -681,6 +690,7 @@
 				0B997B6F2AC74BFA00579C9C /* UserProfileStats.swift */,
 				0B83A0C42AF3F7EF0096780B /* UserProfileCheckins.swift */,
 				0B83A0CC2AF433D50096780B /* UserProfileActivity.swift */,
+				0B226F6A2B336B170036B8BE /* UserProfileAchievements.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1061,6 +1071,7 @@
 				0B0253042B18CE64003702AF /* PlaceIcon.swift */,
 				0BB0C9582B30B3EF0013DEAE /* Emoji.swift */,
 				0B226F622B3325350036B8BE /* StarRating.swift */,
+				0B226F682B3359F40036B8BE /* Achievement.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1108,6 +1119,7 @@
 			children = (
 				0B9EF2802B302E1D0025F464 /* ContactsService.swift */,
 				0B0D11FF2B316F41002A094A /* EmojiesManager.swift */,
+				0B226F642B3354860036B8BE /* AchievementsManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1498,6 +1510,7 @@
 				0B3E73CC2B29E9E00092072F /* Throttle.swift in Sources */,
 				0BAE473A2ACC9A20001FBDAF /* PlaceReviewView.swift in Sources */,
 				0B13543A2B2CC7EA0076FF40 /* MapActivityView.swift in Sources */,
+				0B226F652B3354860036B8BE /* AchievementsManager.swift in Sources */,
 				0B83A0C72AF3F8110096780B /* UserProfileCheckinsVM.swift in Sources */,
 				0B37ABFC2AD7408E00E8D4BC /* ToastViewModel.swift in Sources */,
 				0BCD57DD2B28AE4600A1C914 /* UIApplication.swift in Sources */,
@@ -1556,6 +1569,7 @@
 				0B985AE12AC9AFC200019A06 /* PlaceDM.swift in Sources */,
 				0BC84A6D2AD08A6D00D723AA /* SelectReactionsVM.swift in Sources */,
 				0B96D66C2AD2E73500612C27 /* LocationManager.swift in Sources */,
+				0B226F672B33589C0036B8BE /* ProfileAchievements.swift in Sources */,
 				0BA038412AF24CE6000A2B33 /* UserConnectionsViewModel.swift in Sources */,
 				0B6495532AB0A51F000E57AF /* Validator.swift in Sources */,
 				0BC84A6F2AD0A83900D723AA /* PlaceMediaView.swift in Sources */,
@@ -1624,6 +1638,7 @@
 				0B77EA632AB08EDE00C8DF87 /* NotFoundView.swift in Sources */,
 				0B384FA52B2B57B200C98245 /* UserActivityView.swift in Sources */,
 				0BDBD3C82ACB0E8B003B8D2D /* PlaceOverviewView.swift in Sources */,
+				0B226F692B3359F40036B8BE /* Achievement.swift in Sources */,
 				0B35B7AB2B0D14CA00822BA6 /* SignInOptionsView.swift in Sources */,
 				0B8AA3CB2AFE8817008284F5 /* MapKit.swift in Sources */,
 				0BF5B4B22AB3784300DEC403 /* HomeStack.swift in Sources */,
@@ -1642,6 +1657,7 @@
 				0BB37E9A2ABA0CD6009E1272 /* MapViewModel.swift in Sources */,
 				0BEF7A3E2B0EB60F001532E7 /* CompleteTheUserInfoView.swift in Sources */,
 				0BC84A672AD0449300D723AA /* ReactionsViewModel.swift in Sources */,
+				0B226F6B2B336B170036B8BE /* UserProfileAchievements.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1794,7 +1810,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.37.0;
+				MARKETING_VERSION = 0.38.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1832,7 +1848,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.37.0;
+				MARKETING_VERSION = 0.38.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
