@@ -219,25 +219,18 @@ struct FeedReviewView: View {
                         }
                     }
                 } label: {
-                    Image(systemName: "face.dashed")
-                        .font(.system(size: 20))
-                        .overlay(alignment: .topTrailing) {
-                            Color.themeBG
-                                .frame(width: 12, height: 12)
-                                .overlay {
-                                    Image(systemName: "plus")
-                                        .font(.system(size: 12))
-                                }
-                                .offset(x: 4, y: -4)
-                        }
-                    
+                    Image(.addReaction)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 26)
                 }
                 
                 Button {
                     commentsViewModel.showComments(activityId: data.id)
                 } label: {
                     Image(systemName: "bubble.left")
-                        .font(.system(size: 20))
+                        .font(.system(size: 22))
+                        .frame(height: 26)
                 }
                 .padding(.horizontal, 5)
                 
