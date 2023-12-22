@@ -17,7 +17,6 @@ struct HomeView: View {
     @State private var reportId: String? = nil
     
     // -
-    @StateObject private var commentsViewModel = CommentsViewModel()
     @StateObject private var mediasViewModel = MediasViewModel()
     
     @Namespace private var namespace
@@ -26,10 +25,10 @@ struct HomeView: View {
         NavigationStack(path: $appData.homeNavStack) {
             ZStack(alignment: .bottomTrailing) {
                 TabView(selection: $appData.homeActiveTab) {
-                    ForYouView(commentsViewModel: commentsViewModel)
+                    ForYouView()
                         .tag(HomeTab.forYou)
                     
-                    FeedView(commentsViewModel: commentsViewModel, mediasViewModel: mediasViewModel, reportId: $reportId)
+                    FeedView(mediasViewModel: mediasViewModel, reportId: $reportId)
                         .tag(HomeTab.followings)
                 }
                 .ignoresSafeArea()
@@ -145,9 +144,6 @@ struct HomeView: View {
                         .animation(.easeInOut, value: reportId)
                 }
             }
-            .sheet(isPresented: $commentsViewModel.showComments, content: {
-                CommentsView(vm: commentsViewModel)
-            })
             .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
                 searchViewModel.tokens.removeAll()
                 searchViewModel.text = ""
@@ -157,28 +153,34 @@ struct HomeView: View {
                         appData.homeNavStack.append(HomeStack.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title), action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
                     }
                 } onUserSelect: { user in
-                    appData.homeNavStack.append(HomeStack.userProfile(id: user.id))
+                    appData.homeNavStack.append(HomeStack.userProfile(userId: user.id))
                 }
             }
             .navigationDestination(for: HomeStack.self) { link in
                 switch link {
                 case .notifications:
                     NotificationsView()
-                case .place(let id, let action):
-                    PlaceView(id: id, action: action)
                 case .placeMapPlace(let mapPlace, let action):
                     PlaceView(mapPlace: mapPlace, action: action)
+                case .userActivity(let id):
+                    UserActivityView(id: id)
+                    
+                    // Common
+                    
+                case .place(let id, let action):
+                    PlaceView(id: id, action: action)
                 case .userProfile(let id):
                     UserProfileView(id: id)
                 case .userConnections(let userId, let initTab):
                     UserConnectionsView(userId: userId, activeTab: initTab)
-                case .userActivity(let id):
-                    UserActivityView(id: id)
+                case .userActivities(let userId, let activityType):
+                    ProfileActivitiesView(userId: userId, activityType: activityType)
+                case .userCheckins(let userId):
+                    ProfileCheckins(userId: userId)
                 }
             }
         }
         .environmentObject(searchViewModel)
-        .environmentObject(commentsViewModel)
         .sheet(isPresented: $showActions) {
             VStack {
                 RoundedRectangle(cornerRadius: 3)

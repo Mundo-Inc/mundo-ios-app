@@ -6,10 +6,9 @@
 //
 
 import Foundation
-import Combine
 
 @MainActor
-class ProfileActivityVM: ObservableObject {
+class ProfileActivitiesVM: ObservableObject {
     private let auth = Authentication.shared
     private let apiManager = APIManager.shared
     
@@ -45,34 +44,44 @@ class ProfileActivityVM: ObservableObject {
         }
     }
 
-        
-    @Published var activityType: FeedItemActivityType = .all
+    @Published var activityType: FeedItemActivityType
+    @Published var isactivityTypePresented = false
     @Published var isLoading = false
-    @Published var data: [FeedItem]? = nil
+    @Published var data: [FeedItem] = []
     @Published var total: Int? = nil
     
-    private var cancellable = [AnyCancellable]()
+    private let userId: UserIdEnum?
     
-    init() {
-        $activityType
-            .sink { newValue in
-                Task {
-                    await self.getActivities(.refresh)
-                }
-            }
-            .store(in: &cancellable)
+    init(userId: UserIdEnum?, activityType: FeedItemActivityType) {
+        self.userId = userId
+        self.activityType = activityType
+        
+        Task {
+            await self.getActivities(.refresh)
+        }
     }
     
     var page = 1
     
     func getActivities(_ type: RefreshNewAction) async {
-        guard let token = await auth.getToken(), let uid = auth.currentUser?.id else { return }
+        var uid: String?
+        
+        switch userId {
+        case .currentUser:
+            uid = auth.currentUser?.id
+        case .withId(let theId):
+            uid = theId
+        case nil:
+            uid = nil
+        }
+        
+        guard let token = await auth.getToken(), let uid else { return }
         
         if type == .refresh {
             self.page = 1
             self.total = nil
         } else {
-            if let data, let total, data.count >= total {
+            if let total, data.count >= total {
                 return
             }
         }
@@ -93,11 +102,7 @@ class ProfileActivityVM: ObservableObject {
                 case .refresh:
                     self.data = data.data
                 case .new:
-                    if self.data != nil {
-                        self.data!.append(contentsOf: data.data)
-                    } else {
-                        self.data = data.data
-                    }
+                    self.data.append(contentsOf: data.data)
                 }
                 
                 self.total = data.total
@@ -111,11 +116,9 @@ class ProfileActivityVM: ObservableObject {
     }
     
     func loadMore(currentItem item: FeedItem) async {
-        if let data {
-            let thresholdIndex = data.index(data.endIndex, offsetBy: -5)
-            if data.firstIndex(where: { $0.id == item.id }) == thresholdIndex {
-                await getActivities(.new)
-            }
+        let thresholdIndex = data.index(data.endIndex, offsetBy: -5)
+        if data.firstIndex(where: { $0.id == item.id }) == thresholdIndex {
+            await getActivities(.new)
         }
     }
 }

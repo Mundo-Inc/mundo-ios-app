@@ -11,7 +11,7 @@ import SwiftUIPager
 struct ForYouView: View {
     @ObservedObject var appData = AppData.shared
     
-    @ObservedObject var commentsViewModel: CommentsViewModel
+    @ObservedObject var commentsViewModel = CommentsViewModel.shared
     @StateObject var vm = ForYouViewModel()
     
     @ObservedObject private var forYouInfoVM = ForYouInfoVM.shared
@@ -28,7 +28,7 @@ struct ForYouView: View {
                 ZStack {
                     if !vm.items.isEmpty {
                         Pager(page: page, data: vm.items) { item in
-                            ForYouItem(data: item, itemIndex: vm.items.firstIndex(of: item), page: page, commentsViewModel: commentsViewModel, parentGeometry: geometry)
+                            ForYouItem(data: item, itemIndex: vm.items.firstIndex(of: item), page: page, parentGeometry: geometry)
                                 .gesture(
                                     DragGesture()
                                         .onChanged({ value in
@@ -120,11 +120,11 @@ struct ForYouView: View {
             forYouInfoVM.reset()
         }) {
             if #available(iOS 17.0, *) {
-                ForYouInfoView(commentsViewModel: commentsViewModel)
+                ForYouInfoView()
                     .presentationBackground(.thinMaterial)
                     .presentationDetents([.medium, .large])
             } else {
-                ForYouInfoView(commentsViewModel: commentsViewModel)
+                ForYouInfoView()
                     .presentationDetents([.medium, .large])
             }
         }
@@ -158,5 +158,5 @@ struct ForYouView: View {
 }
 
 #Preview {
-    ForYouView(commentsViewModel: CommentsViewModel())
+    ForYouView()
 }

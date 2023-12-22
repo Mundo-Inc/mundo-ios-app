@@ -62,7 +62,7 @@ struct LeaderboardView: View {
                             
                             LazyVStack {
                                 ForEach(vm.list.indices, id: \.self) { index in
-                                    NavigationLink(value: LeaderboardStack.userProfile(id: vm.list[index].id)) {
+                                    NavigationLink(value: LeaderboardStack.userProfile(userId: vm.list[index].id)) {
                                         HStack {
                                             Text("#\(index + 1)")
                                                 .font(.custom(style: .headline))
@@ -120,10 +120,18 @@ struct LeaderboardView: View {
                 .navigationTitle("Leaderboard")
                 .navigationDestination(for: LeaderboardStack.self) { link in
                     switch link {
+                        // Common
+                        
+                    case .place(let id, let action):
+                        PlaceView(id: id, action: action)
                     case .userProfile(let id):
                         UserProfileView(id: id)
                     case .userConnections(let userId, let initTab):
                         UserConnectionsView(userId: userId, activeTab: initTab)
+                    case .userActivities(let userId, let activityType):
+                        ProfileActivitiesView(userId: userId, activityType: activityType)
+                    case .userCheckins(let userId):
+                        ProfileCheckins(userId: userId)
                     }
                 }
             }

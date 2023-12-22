@@ -6,38 +6,32 @@
 //
 
 import Foundation
-import Combine
 
 @MainActor
 final class CommentsViewModel: ObservableObject {
+    static let shared = CommentsViewModel()
+    
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     private let toastViewModel = ToastViewModel.shared
     
     @Published var currentActivityId: String? = nil
     
-    @Published var showComments = false
     @Published var commentContent = ""
     @Published var comments: [Comment] = []
     @Published var isLoading = false
     @Published var isSubmitting = false
     
-    private var cancellables: Set<AnyCancellable> = []
+    private init() {}
     
-    init() {
-        $showComments
-            .sink { newValue in
-                if !newValue {
-                    self.comments.removeAll()
-                    self.commentsPage = 1
-                    self.currentActivityId = nil
-                }
-            }
-            .store(in: &cancellables)
+    /// Reset comments when the comments view is dismissed
+    func onDismiss() {
+        self.comments.removeAll()
+        self.commentsPage = 1
     }
-
+    
     var commentsPage = 1
-
+    
     func getComments(activityId: String) async {
         if isLoading { return }
         guard let token = await auth.getToken() else { return }
@@ -65,7 +59,6 @@ final class CommentsViewModel: ObservableObject {
     
     func showComments(activityId: String) {
         currentActivityId = activityId
-        showComments = true
         Task {
             await getComments(activityId: activityId)
         }
@@ -75,9 +68,8 @@ final class CommentsViewModel: ObservableObject {
         guard
             let activityID = self.currentActivityId,
             let token = await auth.getToken(),
-            !activityID.isEmpty && self.showComments && !self.isSubmitting
+            !activityID.isEmpty && !self.isSubmitting
         else { return }
-        
         
         struct RequestBody: Encodable {
             let content: String

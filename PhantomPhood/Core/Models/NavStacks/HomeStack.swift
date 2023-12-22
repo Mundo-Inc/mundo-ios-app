@@ -15,34 +15,49 @@ enum PlaceAction: Hashable {
 
 enum HomeStack: Hashable {
     case notifications
-    case userProfile(id: String)
-    case place(id: String, action: PlaceAction? = nil)
     case placeMapPlace(mapPlace: MapPlace, action: PlaceAction? = nil)
-    case userConnections(userId: String, initTab: UserConnectionsTab)
     case userActivity(id: String)
+    
+    // Common General
+    case place(id: String, action: PlaceAction? = nil)
+    // Common User
+    case userProfile(userId: String)
+    case userConnections(userId: String, initTab: UserConnectionsTab)
+    case userActivities(userId: UserIdEnum, activityType: ProfileActivitiesVM.FeedItemActivityType = .all)
+    case userCheckins(userId: UserIdEnum)
     
     func hash(into hasher: inout Hasher) {
         switch self {
         case .notifications:
             hasher.combine("notifications")
-        case .userProfile(let id):
-            hasher.combine("userProfile")
-            hasher.combine(id)
-        case .place(let id, let action):
-            hasher.combine("place")
-            hasher.combine(id)
-            hasher.combine(action)
         case .placeMapPlace(let mapPlace, let action):
             hasher.combine("place")
             hasher.combine(mapPlace)
             hasher.combine(action)
+        case .userActivity(let id):
+            hasher.combine("userActivity")
+            hasher.combine(id)
+            
+            // Common
+            
+        case .place(let id, let action):
+            hasher.combine("place")
+            hasher.combine(id)
+            hasher.combine(action)
+        case .userProfile(let userId):
+            hasher.combine("userProfile")
+            hasher.combine(userId)
         case .userConnections(let userId, let tab):
             hasher.combine("userConnections")
             hasher.combine(userId)
             hasher.combine(tab)
-        case .userActivity(let id):
-            hasher.combine("userActivity")
-            hasher.combine(id)
+        case .userActivities(let userId, let activityType):
+            hasher.combine("userActivities")
+            hasher.combine(userId)
+            hasher.combine(activityType)
+        case .userCheckins(let userId):
+            hasher.combine("userCheckins")
+            hasher.combine(userId)
         }
     }
 }

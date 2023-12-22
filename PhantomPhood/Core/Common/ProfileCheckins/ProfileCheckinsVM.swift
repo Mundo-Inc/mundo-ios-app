@@ -16,10 +16,46 @@ class ProfileCheckinsVM: ObservableObject {
     @Published var checkins: [Checkin]? = nil
     @Published var total: Int? = nil
     
+    @Published var displayMode: DisplayModeEnum = .map
+    enum DisplayModeEnum: String, CaseIterable {
+        case map = "Map"
+        case list = "List"
+        
+        var systemImage: String {
+            switch self {
+            case .map:
+                return "map.fill"
+            case .list:
+                return "list.dash"
+            }
+        }
+    }
+    
     var page = 1
     
+    private let userId: UserIdEnum?
+    
+    init(userId: UserIdEnum?) {
+        self.userId = userId
+        
+        Task {
+            await self.getCheckins(type: .refresh)
+        }
+    }
+    
     func getCheckins(type: RefreshNewAction) async {
-        guard let token = await auth.getToken(), let uid = auth.currentUser?.id else { return }
+        var uid: String?
+        
+        switch userId {
+        case .currentUser:
+            uid = auth.currentUser?.id
+        case .withId(let theId):
+            uid = theId
+        case nil:
+            uid = nil
+        }
+        
+        guard let token = await auth.getToken(), let uid else { return }
         
         if type == .refresh {
             self.page = 1

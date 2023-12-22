@@ -17,7 +17,6 @@ struct PlaceReviewsView: View {
         self._placeReviewsViewModel = StateObject(wrappedValue: PlaceReviewsViewModel(placeId: placeId))
     }
     
-    @StateObject var commentsViewModel = CommentsViewModel()
     @StateObject var mediasViewModel = MediasViewModel()
     
     var body: some View {
@@ -131,7 +130,7 @@ struct PlaceReviewsView: View {
                     
                     if let place = vm.place, !place.reviews.isEmpty {
                         ForEach(place.reviews) { review in
-                            PlaceReviewView(review: review, place: place, commentsViewModel: commentsViewModel, mediasViewModel: mediasViewModel, reportId: $vm.reportId)
+                            PlaceReviewView(review: review, place: place, mediasViewModel: mediasViewModel, reportId: $vm.reportId)
                                 .padding(.horizontal)
                             
                             Divider()
@@ -142,9 +141,6 @@ struct PlaceReviewsView: View {
             }
             .redacted(reason: vm.place == nil ? .placeholder : [])
         }
-        .sheet(isPresented: $commentsViewModel.showComments, content: {
-            CommentsView(vm: commentsViewModel)
-        })
         .fullScreenCover(isPresented: $mediasViewModel.show, content: {
             MediasView(vm: mediasViewModel)
         })

@@ -70,3 +70,21 @@ struct UserConnection: Identifiable, Decodable {
         self._id
     }
 }
+
+enum UserIdEnum: Hashable, Equatable {
+    case currentUser
+    case withId(String)
+
+    var id: String? {
+        switch self {
+        case .currentUser:
+            return nil
+        case .withId(let id):
+            return id
+        }
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}

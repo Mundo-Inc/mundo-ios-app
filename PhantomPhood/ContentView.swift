@@ -10,7 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
-        
+    @ObservedObject private var commentsViewModel = CommentsViewModel.shared
+    
     var body: some View {
         TabView(selection: appData.tabViewSelectionHandler) {
             HomeView()
@@ -61,6 +62,11 @@ struct ContentView: View {
             } else {
                 SelectReactionsView()
             }
+        })
+        .sheet(isPresented: Binding(optionalValue: $commentsViewModel.currentActivityId), onDismiss: {
+            commentsViewModel.onDismiss()
+        }, content: {
+            CommentsView()
         })
         .onAppear {
             ContactsService.shared.tryToSyncContacts()

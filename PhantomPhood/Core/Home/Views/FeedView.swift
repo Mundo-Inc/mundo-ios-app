@@ -10,7 +10,7 @@ import SwiftUI
 struct FeedView: View {
     @ObservedObject var appData = AppData.shared
     
-    @ObservedObject var commentsViewModel: CommentsViewModel
+    @ObservedObject var commentsViewModel = CommentsViewModel.shared
     @ObservedObject var mediasViewModel: MediasViewModel
     
     @StateObject var vm = FeedViewModel()
@@ -109,13 +109,13 @@ struct FeedView: View {
                                 Group {
                                     switch item.activityType {
                                     case .levelUp:
-                                        FeedLevelUpView(data: item, commentsViewModel: commentsViewModel)
+                                        FeedLevelUpView(data: item)
                                     case .following:
-                                        FeedFollowingView(data: item, commentsViewModel: commentsViewModel)
+                                        FeedFollowingView(data: item)
                                     case .newReview:
-                                        FeedReviewView(data: item, commentsViewModel: commentsViewModel, mediasViewModel: mediasViewModel, reportId: $reportId)
+                                        FeedReviewView(data: item, mediasViewModel: mediasViewModel, reportId: $reportId)
                                     case .newCheckin:
-                                        FeedCheckinView(data: item, commentsViewModel: commentsViewModel)
+                                        FeedCheckinView(data: item)
                                     default:
                                         Text(item.activityType.rawValue)
                                     }
@@ -169,7 +169,7 @@ struct FeedView: View {
 
 #Preview {
     NavigationStack {
-        FeedView(commentsViewModel: CommentsViewModel(), mediasViewModel: MediasViewModel(), reportId: .constant(nil))
+        FeedView(mediasViewModel: MediasViewModel(), reportId: .constant(nil))
             .environmentObject(SearchViewModel())
     }
 }

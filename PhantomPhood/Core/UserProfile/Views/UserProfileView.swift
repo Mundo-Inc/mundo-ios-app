@@ -10,8 +10,7 @@ import SwiftUI
 enum UserProfileTab: String, Hashable, CaseIterable {
     case stats = "Stats"
     case achievements = "Acheivements"
-    case activity = "Activity"
-    case checkins = "Checkins"
+    case lists = "Lists"
 }
 
 
@@ -121,41 +120,57 @@ struct UserProfileView: View {
                             .padding(.bottom)
                     }
                     
-                    ScrollView(.horizontal) {
-                        HStack {
-                            Color.clear
-                                .frame(width: 0)
-                                .padding(.leading)
-                            
-                            ForEach(UserProfileTab.allCases.indices, id: \.self) { i in
-                                Button {
-                                    withAnimation {
-                                        activeTab = UserProfileTab.allCases[i]
-                                    }
-                                } label: {
-                                    Text(UserProfileTab.allCases[i].rawValue)
-                                        .font(.custom(style: .footnote))
-                                        .bold()
-                                        .textCase(.uppercase)
-                                        .padding(.vertical, 5)
-                                        .frame(maxWidth: .infinity, alignment: .center)
-                                }
-                                .foregroundStyle(
-                                    activeTab == UserProfileTab.allCases[i] ? Color.accentColor : Color.secondary
-                                )
-                                .padding(i == 0 ? .trailing : i == UserProfileTab.allCases.count - 1 ? .leading : .horizontal)
-                                
-                                if i != UserProfileTab.allCases.count - 1 {
-                                    Divider()
-                                }
+                    
+                    HStack {
+                        Button {
+                            withAnimation {
+                                activeTab = .stats
                             }
-                            
-                            Color.clear
-                                .frame(width: 0)
+                        } label: {
+                            Text(UserProfileTab.stats.rawValue)
+                                .padding(.leading)
+                                .padding(.vertical, 5)
+                        }
+                        .foregroundStyle(
+                            activeTab == UserProfileTab.stats ? Color.accentColor : Color.secondary
+                        )
+                        
+                        Spacer()
+                        Divider()
+                        
+                        Button {
+                            withAnimation {
+                                activeTab = .achievements
+                            }
+                        } label: {
+                            Text(UserProfileTab.achievements.rawValue)
+                                .padding(.vertical, 5)
+                                .padding(.horizontal)
+                        }
+                        .foregroundStyle(
+                            activeTab == UserProfileTab.achievements ? Color.accentColor : Color.secondary
+                        )
+                        
+                        Divider()
+                        Spacer()
+                        
+                        Button {
+                            withAnimation {
+                                activeTab = .lists
+                            }
+                        } label: {
+                            Text(UserProfileTab.lists.rawValue)
+                                .padding(.vertical, 5)
                                 .padding(.trailing)
                         }
+                        .foregroundStyle(
+                            activeTab == UserProfileTab.lists ? Color.accentColor : Color.secondary
+                        )
                     }
-                    .scrollIndicators(.hidden)
+                    .font(.custom(style: .footnote))
+                    .bold()
+                    .textCase(.uppercase)
+                    .padding(.horizontal)
                     .padding(.bottom, 10)
                 }
                 .frame(maxWidth: .infinity)
@@ -169,7 +184,6 @@ struct UserProfileView: View {
                         )
                 }
                 
-                
                 VStack {
                     Group {
                         switch activeTab {
@@ -177,10 +191,12 @@ struct UserProfileView: View {
                             UserProfileStats(user: vm.user, activeTab: $activeTab)
                         case .achievements:
                             UserProfileAchievements(user: vm.user)
-                        case .activity:
-                            UserProfileActivity(userId: id)
-                        case .checkins:
-                            UserProfileCheckins(userId: id)
+                        case .lists:
+                            VStack {
+                                Text("No Lists")
+                            }
+                            .font(.custom(style: .headline))
+                            .frame(maxWidth: .infinity)
                         }
                     }
                 }

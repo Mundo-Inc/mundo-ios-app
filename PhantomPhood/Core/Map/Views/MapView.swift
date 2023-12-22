@@ -67,7 +67,7 @@ struct MapView: View {
                                 appData.mapNavStack.append(MapStack.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title), action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
                             }
                         } onUserSelect: { user in
-                            appData.mapNavStack.append(MapStack.userProfile(id: user.id))
+                            appData.mapNavStack.append(MapStack.userProfile(userId: user.id))
                         } header: {
                             if !searchViewModel.placeSearchResults.isEmpty {
                                 Button {
@@ -98,14 +98,21 @@ struct MapView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: MapStack.self) { link in
                 switch link {
-                case .place(let id, let action):
-                    PlaceView(id: id, action: action)
                 case .placeMapPlace(let mapPlace, let action):
                     PlaceView(mapPlace: mapPlace, action: action)
+                    
+                    // Common
+                    
+                case .place(let id, let action):
+                    PlaceView(id: id, action: action)
                 case .userProfile(let id):
                     UserProfileView(id: id)
                 case .userConnections(let userId, let initTab):
                     UserConnectionsView(userId: userId, activeTab: initTab)
+                case .userActivities(let userId, let activityType):
+                    ProfileActivitiesView(userId: userId, activityType: activityType)
+                case .userCheckins(let userId):
+                    ProfileCheckins(userId: userId)
                 }
             }
         }

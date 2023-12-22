@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ForYouInfoView: View {
-    @ObservedObject var commentsViewModel: CommentsViewModel
+    @ObservedObject var commentsViewModel = CommentsViewModel.shared
     @ObservedObject var selectReactionsViewModel = SelectReactionsVM.shared
     
     @Environment(\.dismiss) private var dismiss
@@ -248,5 +248,5 @@ private struct ScoreItem: View {
 }
 
 #Preview {
-    ForYouInfoView(commentsViewModel: CommentsViewModel())
+    ForYouInfoView()
 }

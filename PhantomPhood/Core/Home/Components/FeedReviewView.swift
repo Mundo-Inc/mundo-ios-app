@@ -10,7 +10,7 @@ import Kingfisher
 
 struct FeedReviewView: View {
     private let data: FeedItem
-    @ObservedObject private var commentsViewModel: CommentsViewModel
+    @ObservedObject private var commentsViewModel = CommentsViewModel.shared
     @ObservedObject private var mediasViewModel: MediasViewModel
     
     @StateObject private var reactionsViewModel: ReactionsViewModel
@@ -19,9 +19,8 @@ struct FeedReviewView: View {
     
     @Binding private var reportId: String?
     
-    init(data: FeedItem, commentsViewModel: CommentsViewModel, mediasViewModel: MediasViewModel, reportId: Binding<String?>) {
+    init(data: FeedItem, mediasViewModel: MediasViewModel, reportId: Binding<String?>) {
         self.data = data
-        self._commentsViewModel = ObservedObject(wrappedValue: commentsViewModel)
         self._mediasViewModel = ObservedObject(wrappedValue: mediasViewModel)
         self._reactionsViewModel = StateObject(wrappedValue: ReactionsViewModel(activityId: data.id))
         self._reactions = State(wrappedValue: data.reactions)
@@ -352,7 +351,6 @@ struct FeedReviewView: View {
                     Comment(_id: "64d4ee982c9a8ed008970ec3", content: "Hey @nabeel check this out", createdAt: "2023-08-10T14:05:12.743Z", updatedAt: "2023-08-10T14:05:12.743Z", author: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: [])), likes: 2, liked: true, mentions: [])
                 ], commentsCount: 10
             ),
-            commentsViewModel: CommentsViewModel(),
             mediasViewModel: MediasViewModel(), reportId: .constant(nil)
         )
     }

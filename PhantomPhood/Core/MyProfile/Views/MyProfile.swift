@@ -68,41 +68,56 @@ struct MyProfile: View {
                                 .padding(.bottom)
                         }
                         
-                        ScrollView(.horizontal) {
-                            HStack {
-                                Color.clear
-                                    .frame(width: 0)
-                                    .padding(.leading)
-                                
-                                ForEach(MyProfileActiveTab.allCases.indices, id: \.self) { i in
-                                    Button {
-                                        withAnimation {
-                                            appData.myProfileActiveTab = MyProfileActiveTab.allCases[i]
-                                        }
-                                    } label: {
-                                        Text(MyProfileActiveTab.allCases[i].rawValue)
-                                            .font(.custom(style: .footnote))
-                                            .bold()
-                                            .textCase(.uppercase)
-                                            .padding(.vertical, 5)
-                                            .frame(maxWidth: .infinity, alignment: .center)
-                                    }
-                                    .foregroundStyle(
-                                        appData.myProfileActiveTab == MyProfileActiveTab.allCases[i] ? Color.accentColor : Color.secondary
-                                    )
-                                    .padding(i == 0 ? .trailing : i == MyProfileActiveTab.allCases.count - 1 ? .leading : .horizontal)
-                                    
-                                    if i != MyProfileActiveTab.allCases.count - 1 {
-                                        Divider()
-                                    }
+                        HStack {
+                            Button {
+                                withAnimation {
+                                    appData.myProfileActiveTab = .stats
                                 }
-                                
-                                Color.clear
-                                    .frame(width: 0)
+                            } label: {
+                                Text(MyProfileActiveTab.stats.rawValue)
+                                    .padding(.leading)
+                                    .padding(.vertical, 5)
+                            }
+                            .foregroundStyle(
+                                appData.myProfileActiveTab == MyProfileActiveTab.stats ? Color.accentColor : Color.secondary
+                            )
+                            
+                            Spacer()
+                            Divider()
+                            
+                            Button {
+                                withAnimation {
+                                    appData.myProfileActiveTab = .achievements
+                                }
+                            } label: {
+                                Text(MyProfileActiveTab.achievements.rawValue)
+                                    .padding(.vertical, 5)
+                                    .padding(.horizontal)
+                            }
+                            .foregroundStyle(
+                                appData.myProfileActiveTab == MyProfileActiveTab.achievements ? Color.accentColor : Color.secondary
+                            )
+                            
+                            Divider()
+                            Spacer()
+                            
+                            Button {
+                                withAnimation {
+                                    appData.myProfileActiveTab = .lists
+                                }
+                            } label: {
+                                Text(MyProfileActiveTab.lists.rawValue)
+                                    .padding(.vertical, 5)
                                     .padding(.trailing)
                             }
+                            .foregroundStyle(
+                                appData.myProfileActiveTab == MyProfileActiveTab.lists ? Color.accentColor : Color.secondary
+                            )
                         }
-                        .scrollIndicators(.hidden)
+                        .font(.custom(style: .footnote))
+                        .bold()
+                        .textCase(.uppercase)
+                        .padding(.horizontal)
                         .padding(.bottom, 10)
                     }
                     .frame(maxWidth: .infinity)
@@ -125,10 +140,12 @@ struct MyProfile: View {
                                 ProfileStats()
                             case .achievements:
                                 ProfileAchievements()
-                            case .activity:
-                                ProfileActivity()
-                            case .checkins:
-                                ProfileCheckins()
+                            case .lists:
+                                VStack {
+                                    Text("No Lists")
+                                }
+                                .font(.custom(style: .headline))
+                                .frame(maxWidth: .infinity)
                             }
                         }
                     }
@@ -147,16 +164,21 @@ struct MyProfile: View {
                     await auth.updateUserInfo()
                 }
                 .frame(maxHeight: .infinity)
-                .background(
+                .background {
                     VStack {
                         Color.themePrimary.ignoresSafeArea()
                         Color.themeBG.ignoresSafeArea()
                     }
-                        .frame(maxHeight: .infinity)
-                )
+                    .frame(maxHeight: .infinity)
+                }
                 .navigationTitle("My Profile")
                 .toolbar {
-                    HStack {
+                    if let url = URL(string: "https://phantomphood.ai/") {
+                        ToolbarItem(placement: .topBarLeading) {
+                            ShareLink("Phantom Phood", item: url, subject: Text("Join us on a journey of taste with Phantom Phood"), message: Text("Explore new dining experiences with Phantom Phood. A social platform for foodies to rate and review restaurants. Connect with others and share your culinary finds."))
+                        }
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
                         NavigationLink(value: MyProfileStack.settings) {
                             Image(systemName: "gear")
                         }
@@ -167,14 +189,21 @@ struct MyProfile: View {
                     switch link {
                     case .settings:
                         SettingsView()
+                    case .myConnections(let initTab):
+                        MyConnections(activeTab: initTab)
+                        
+                        // Common
+                        
                     case .place(let id, let action):
                         PlaceView(id: id, action: action)
                     case .userProfile(let id):
                         UserProfileView(id: id)
-                    case .myConnections(let initTab):
-                        MyConnections(activeTab: initTab)
                     case .userConnections(let userId, let initTab):
                         UserConnectionsView(userId: userId, activeTab: initTab)
+                    case .userActivities(let userId, let activityType):
+                        ProfileActivitiesView(userId: userId, activityType: activityType)
+                    case .userCheckins(let userId):
+                        ProfileCheckins(userId: userId)
                     }
                 }
                 .onChange(of: appData.tappedTwice) { tapped in

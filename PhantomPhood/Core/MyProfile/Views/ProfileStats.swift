@@ -125,46 +125,42 @@ struct ProfileStats: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack {
-                    DataCard(
-                        icon: "quote.bubble.fill",
-                        iconColor: LinearGradient(colors: [
-                            Color(red: 0.56, green: 0.92, blue: 0.64),
-                            Color(red: 0.56, green: 0.92, blue: 0.64),
-                            Color(red: 0.93, green: 0.79, blue: 0.43)
-                        ], startPoint: .topLeading, endPoint: .bottomTrailing),
-                        iconBackground: LinearGradient(colors: [
-                            Color(red: 0.55, green: 0.99, blue: 0.48).opacity(0.2),
-                            Color(red: 0.94, green: 1, blue: 0.19).opacity(0.2)
-                        ], startPoint: .leading, endPoint: .trailing),
-                        title: "Reviews",
-                        value: auth.currentUser?.reviewsCount
-                    )
-                    .onTapGesture {
-                        withAnimation {
-                            appData.myProfileActiveTab = .activity
-                        }
+                    NavigationLink(value: MyProfileStack.userActivities(userId: .currentUser, activityType: .newReview)) {
+                        DataCard(
+                            icon: "quote.bubble.fill",
+                            iconColor: LinearGradient(colors: [
+                                Color(red: 0.56, green: 0.92, blue: 0.64),
+                                Color(red: 0.56, green: 0.92, blue: 0.64),
+                                Color(red: 0.93, green: 0.79, blue: 0.43)
+                            ], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            iconBackground: LinearGradient(colors: [
+                                Color(red: 0.55, green: 0.99, blue: 0.48).opacity(0.2),
+                                Color(red: 0.94, green: 1, blue: 0.19).opacity(0.2)
+                            ], startPoint: .leading, endPoint: .trailing),
+                            title: "Reviews",
+                            value: auth.currentUser?.reviewsCount
+                        )
                     }
+                    .foregroundStyle(.primary)
                     
                     Spacer()
                     
-                    DataCard(
-                        icon: "mappin.and.ellipse",
-                        iconColor: LinearGradient(colors: [
-                            Color(red: 1, green: 0.75, blue: 0.1),
-                            Color(red: 1, green: 0.25, blue: 0.5)
-                        ], startPoint: .topLeading, endPoint: .bottomTrailing),
-                        iconBackground: LinearGradient(colors: [
-                            Color(red: 1, green: 0.75, blue: 0.1).opacity(0.15),
-                            Color(red: 1, green: 0.25, blue: 0.5).opacity(0.15)
-                        ], startPoint: .topLeading, endPoint: .bottomTrailing),
-                        title: "Checkins",
-                        value: auth.currentUser?.totalCheckins
-                    )
-                    .onTapGesture {
-                        withAnimation {
-                            appData.myProfileActiveTab = .checkins
-                        }
+                    NavigationLink(value: MyProfileStack.userCheckins(userId: .currentUser)) {
+                        DataCard(
+                            icon: "mappin.and.ellipse",
+                            iconColor: LinearGradient(colors: [
+                                Color(red: 1, green: 0.75, blue: 0.1),
+                                Color(red: 1, green: 0.25, blue: 0.5)
+                            ], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            iconBackground: LinearGradient(colors: [
+                                Color(red: 1, green: 0.75, blue: 0.1).opacity(0.15),
+                                Color(red: 1, green: 0.25, blue: 0.5).opacity(0.15)
+                            ], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            title: "Check-ins",
+                            value: auth.currentUser?.totalCheckins
+                        )
                     }
+                    .foregroundStyle(.primary)
                 }
             }
             

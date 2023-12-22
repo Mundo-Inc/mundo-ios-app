@@ -68,7 +68,7 @@ struct NotificationsView: View {
             ProfileImage(data.user.profileImage, size: 44, cornerRadius: 10)
                 .frame(width: 44, height: 44)
                 .onTapGesture {
-                    appData.homeNavStack.append(HomeStack.userProfile(id: data.user.id))
+                    appData.homeNavStack.append(HomeStack.userProfile(userId: data.user.id))
                 }
             
             Button {

@@ -14,8 +14,6 @@ struct DataCard: View {
     let title: String
     let value: Any?
     
-    
-    
     var body: some View {
         HStack(spacing: 7) {
             Image(systemName: icon)

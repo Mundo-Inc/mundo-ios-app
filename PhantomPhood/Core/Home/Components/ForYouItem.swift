@@ -15,7 +15,7 @@ struct ForYouItem: View {
     private let data: FeedItem
     private let itemIndex: Int?
     @ObservedObject private var page: Page
-    @ObservedObject private var commentsViewModel: CommentsViewModel
+    @ObservedObject private var commentsViewModel = CommentsViewModel.shared
     let parentGeometry: GeometryProxy?
     
     
@@ -29,11 +29,10 @@ struct ForYouItem: View {
     
     @State private var videosState: [String:VideoPlayer.State] = [:]
     
-    init(data: FeedItem, itemIndex: Int?, page: Page, commentsViewModel: CommentsViewModel, parentGeometry: GeometryProxy?) {
+    init(data: FeedItem, itemIndex: Int?, page: Page, parentGeometry: GeometryProxy?) {
         self.data = data
         self.itemIndex = itemIndex
         self._page = ObservedObject(wrappedValue: page)
-        self._commentsViewModel = ObservedObject(wrappedValue: commentsViewModel)
         self.parentGeometry = parentGeometry
         
         self._reactionsViewModel = StateObject(wrappedValue: ReactionsViewModel(activityId: data.id))
@@ -235,7 +234,7 @@ struct ForYouItem: View {
                     switch data.resource {
                     case .review(let feedReview):
                         HStack {
-                            NavigationLink(value: HomeStack.userProfile(id: data.user.id)) {
+                            NavigationLink(value: HomeStack.userProfile(userId: data.user.id)) {
                                 VStack(spacing: -15) {
                                     ProfileImage(data.user.profileImage, size: 50)
                                     
@@ -246,7 +245,7 @@ struct ForYouItem: View {
                             }
                             
                             VStack {
-                                NavigationLink(value: HomeStack.userProfile(id: data.user.id)) {
+                                NavigationLink(value: HomeStack.userProfile(userId: data.user.id)) {
                                     Text(data.user.name)
                                         .font(.custom(style: .headline))
                                         .frame(height: 18)
@@ -437,11 +436,17 @@ struct ForYouItem: View {
                                 .foregroundStyle(.ultraThinMaterial)
                                 .frame(width: 70, height: 34)
                                 .overlay {
-                                    Image(systemName: "bubble.left")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 24)
-                                        .foregroundStyle(.white)
+                                    HStack {
+                                        if data.commentsCount > 0 {
+                                            Text("\(data.commentsCount)")
+                                                .font(.custom(style: .body))
+                                        }
+                                        Image(systemName: "bubble.left")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                    }
+                                    .frame(height: 20)
+                                    .foregroundStyle(.white)
                                 }
                         }
                         .padding(.horizontal, 5)
@@ -542,7 +547,6 @@ struct ForYouItem: View {
         ),
         itemIndex: 2,
         page: Page.first(),
-        commentsViewModel: CommentsViewModel(),
         parentGeometry: nil
     )
 }

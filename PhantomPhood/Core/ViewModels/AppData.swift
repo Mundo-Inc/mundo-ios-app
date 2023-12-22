@@ -92,13 +92,13 @@ final class AppData: ObservableObject {
         }
         switch self.activeTab {
         case .home:
-            self.homeNavStack.append(.userProfile(id: id))
+            self.homeNavStack.append(.userProfile(userId: id))
         case .map:
-            self.mapNavStack.append(.userProfile(id: id))
+            self.mapNavStack.append(.userProfile(userId: id))
         case .leaderboard:
-            self.leaderboardNavStack.append(.userProfile(id: id))
+            self.leaderboardNavStack.append(.userProfile(userId: id))
         case .myProfile:
-            self.myProfileNavStack.append(.userProfile(id: id))
+            self.myProfileNavStack.append(.userProfile(userId: id))
         }
     }
 }

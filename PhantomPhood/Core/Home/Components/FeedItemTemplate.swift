@@ -100,7 +100,7 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
         VStack(spacing: 0) {
             HStack {
                 VStack {
-                    NavigationLink(value: HomeStack.userProfile(id: user.id)) {
+                    NavigationLink(value: HomeStack.userProfile(userId: user.id)) {
                         ProfileImage(user.profileImage, size: 44)
                             .overlay(alignment: .top) {
                                 LevelView(level: user.progress.level)

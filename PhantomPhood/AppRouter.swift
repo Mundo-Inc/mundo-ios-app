@@ -198,7 +198,7 @@ struct AppRouter: View {
                             appData.homeNavStack.append(.notifications)
                         case "user":
                             if let id = getKeyValue("id", string: string) {
-                                appData.homeNavStack.append(.userProfile(id: id.lowercased()))
+                                appData.homeNavStack.append(.userProfile(userId: id.lowercased()))
                             }
                         case "place":
                             if let id = getKeyValue("id", string: string) {
@@ -212,7 +212,7 @@ struct AppRouter: View {
                         switch navRawValue {
                         case "user":
                             if let id = getKeyValue("id", string: string) {
-                                appData.mapNavStack.append(.userProfile(id: id.lowercased()))
+                                appData.mapNavStack.append(.userProfile(userId: id.lowercased()))
                             }
                         case "place":
                             if let id = getKeyValue("id", string: string) {
@@ -226,7 +226,7 @@ struct AppRouter: View {
                         switch navRawValue {
                         case "user":
                             if let id = getKeyValue("id", string: string) {
-                                appData.leaderboardNavStack.append(.userProfile(id: id.lowercased()))
+                                appData.leaderboardNavStack.append(.userProfile(userId: id.lowercased()))
                             }
                         default:
                             break
@@ -236,7 +236,7 @@ struct AppRouter: View {
                         switch navRawValue {
                         case "user":
                             if let id = getKeyValue("id", string: string) {
-                                appData.myProfileNavStack.append(.userProfile(id: id.lowercased()))
+                                appData.myProfileNavStack.append(.userProfile(userId: id.lowercased()))
                             }
                         case "place":
                             if let id = getKeyValue("id", string: string) {
@@ -269,7 +269,7 @@ struct AppRouter: View {
             case "place":
                 appData.homeNavStack.append(HomeStack.place(id: id))
             case "user":
-                appData.homeNavStack.append(HomeStack.userProfile(id: id))
+                appData.homeNavStack.append(HomeStack.userProfile(userId: id))
             case "activity":
                 appData.homeNavStack.append(HomeStack.userActivity(id: id))
             default:

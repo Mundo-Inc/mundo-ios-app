@@ -9,14 +9,13 @@ import SwiftUI
 
 struct FeedCheckinView: View {
     private let data: FeedItem
-    @ObservedObject private var commentsViewModel: CommentsViewModel
+    @ObservedObject private var commentsViewModel = CommentsViewModel.shared
     
     @StateObject private var reactionsViewModel: ReactionsViewModel
     @State private var reactions: ReactionsObject
     
-    init(data: FeedItem, commentsViewModel: CommentsViewModel) {
+    init(data: FeedItem) {
         self.data = data
-        self._commentsViewModel = ObservedObject(wrappedValue: commentsViewModel)
         self._reactionsViewModel = StateObject(wrappedValue: ReactionsViewModel(activityId: data.id))
         self._reactions = State(wrappedValue: data.reactions)
     }

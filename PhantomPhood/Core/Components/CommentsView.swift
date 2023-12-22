@@ -8,27 +8,27 @@
 import SwiftUI
 
 struct CommentsView: View {
-    @ObservedObject var vm: CommentsViewModel
+    @ObservedObject private var vm = CommentsViewModel.shared
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var auth = Authentication.shared
     
     @Environment(\.dismiss) var dismiss
     
-    func navigateToUserProfile(id: String) {
-        if let userId = auth.currentUser?.id, userId == id {
+    func navigateToUserProfile(userId: String) {
+        if let currentUserId = auth.currentUser?.id, currentUserId == userId {
             appData.activeTab = .myProfile
             dismiss()
             return
         }
         switch appData.activeTab {
         case .home:
-            appData.homeNavStack.append(.userProfile(id: id))
+            appData.homeNavStack.append(.userProfile(userId: userId))
         case .map:
-            appData.mapNavStack.append(.userProfile(id: id))
+            appData.mapNavStack.append(.userProfile(userId: userId))
         case .leaderboard:
-            appData.leaderboardNavStack.append(.userProfile(id: id))
+            appData.leaderboardNavStack.append(.userProfile(userId: userId))
         case .myProfile:
-            appData.myProfileNavStack.append(.userProfile(id: id))
+            appData.myProfileNavStack.append(.userProfile(userId: userId))
         }
         dismiss()
     }
@@ -108,7 +108,7 @@ struct CommentsView: View {
                                     .frame(width: 24, height: 30)
                             }
                             .onTapGesture(perform: {
-                                navigateToUserProfile(id: comment.author.id)
+                                navigateToUserProfile(userId: comment.author.id)
                             })
                             
                             HStack {
@@ -205,5 +205,5 @@ struct CommentsView: View {
 }
 
 #Preview {
-    CommentsView(vm: CommentsViewModel())
+    CommentsView()
 }
