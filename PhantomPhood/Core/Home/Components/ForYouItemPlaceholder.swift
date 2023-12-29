@@ -44,6 +44,7 @@ struct ForYouItemPlaceholder: View {
                                         Image(systemName: "fork.knife")
                                         
                                         Text("Place Name")
+                                            .lineLimit(1)
                                     }
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .foregroundStyle(.primary)

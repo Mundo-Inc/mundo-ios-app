@@ -128,21 +128,21 @@ struct ForYouView: View {
                     .presentationDetents([.medium, .large])
             }
         }
-        .toolbar(content: {
+        .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 if vm.isLoading {
                     ProgressView()
                 }
             }
-        })
+        }
         .onDisappear {
             if videoPlayerVM.playId != nil {
                 videoPlayerVM.playId = nil
             }
         }
-        .onAppear {
-            if page.index >= 0 && vm.items.count >= page.index + 1 {
-                switch vm.items[page.index].resource {
+        .onChange(of: vm.items.count) { count in
+            if count > 0 && page.index == 0, let firstItem = vm.items.first {
+                switch firstItem.resource {
                 case .review(let feedReview):
                     if let first = feedReview.videos.first, videoPlayerVM.playId != first.id {
                         videoPlayerVM.playId = first.id

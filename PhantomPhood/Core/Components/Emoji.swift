@@ -38,7 +38,6 @@ struct Emoji: View {
                     .scaledToFit()
             } else {
                 Text(emoji.symbol)
-                    .font(.custom("Noto Color Emoji", size: size * 0.5))
             }
         }
         .frame(maxWidth: size, maxHeight: size)

@@ -29,37 +29,16 @@ struct ProfileCheckins: View {
         }
     }
     
-    // Only used on iOS 16
-    @State private var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 0, longitude: 0), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
-    
     var body: some View {
         ZStack {
             if let checkins = vm.checkins, !checkins.isEmpty {
                 if vm.displayMode == .map {
                     Group {
                         if #available(iOS 17.0, *) {
-                            Map {
-                                ForEach(checkins) { checkin in
-                                    Marker(checkin.place.name, coordinate: CLLocationCoordinate2D(latitude: checkin.place.location.geoLocation.lat, longitude: checkin.place.location.geoLocation.lng))
-                                }
-                            }
+                            CheckinsMap17(checkins: checkins)
                         } else {
-                            Map(
-                                coordinateRegion: $mapRegion,
-                                annotationItems: checkins.map({ checkin in
-                                    MapLocation(name: checkin.place.name, coordinate: CLLocationCoordinate2D(latitude: checkin.place.location.geoLocation.lat, longitude: checkin.place.location.geoLocation.lng))
-                                }),
-                                annotationContent: { location in
-                                    MapMarker(coordinate: location.coordinate)
-                                }
-                            )
-                            .onAppear(perform: {
-                                if let last = checkins.last {
-                                    mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: last.place.location.geoLocation.lat, longitude: last.place.location.geoLocation.lng), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-                                }
-                            })
+                            CheckinsMap16(checkins: checkins)
                         }
-                        
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -134,6 +113,116 @@ struct ProfileCheckins: View {
                     }
                 }
             }
+        }
+    }
+}
+
+@available(iOS 17.0, *)
+fileprivate struct CheckinsMap17: View {
+    let checkins: [Checkin]
+    
+    @ObservedObject private var appDate = AppData.shared
+    
+    @State var position: MapCameraPosition = .userLocation(fallback: .automatic)
+    
+    func placeNavigationHandler(placeId: String) -> any Hashable {
+        switch appDate.activeTab {
+        case .home:
+            return HomeStack.place(id: placeId)
+        case .map:
+            return MapStack.place(id: placeId)
+        case .leaderboard:
+            return LeaderboardStack.place(id: placeId)
+        case .myProfile:
+            return MyProfileStack.place(id: placeId)
+        }
+    }
+    
+    @State var scale: CGFloat = 1
+    
+    var body: some View {
+        Map(position: $position) {
+            ForEach(checkins) { checkin in
+                Annotation(checkin.place.name, coordinate: CLLocationCoordinate2D(latitude: checkin.place.location.geoLocation.lat, longitude: checkin.place.location.geoLocation.lng)) {
+                    NavigationLink(value: placeNavigationHandler(placeId: checkin.place.id)) {
+                        Circle()
+                            .foregroundStyle(Color.accentColor)
+                            .frame(width: 30, height: 30)
+                            .overlay {
+                                ZStack {
+                                    Circle()
+                                        .stroke(Color.themePrimary)
+                                    
+                                    Image(systemName: "mappin")
+                                        .foregroundStyle(.white)
+                                }
+                            }
+                            .scaleEffect(scale)
+                    }
+                }
+            }
+        }
+        .onMapCameraChange(frequency: .continuous, { mapCameraUpdateContext in
+            let scaleValue = 1.0 / mapCameraUpdateContext.region.span.latitudeDelta
+            scale = scaleValue > 1 ? 1 : scaleValue < 0.4 ? 0.4 : scaleValue
+        })
+    }
+}
+
+fileprivate struct CheckinsMap16: View {
+    let checkins: [Checkin]
+    
+    @ObservedObject private var appDate = AppData.shared
+    
+    @State private var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 0, longitude: 0), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
+    
+    func placeNavigationHandler(placeId: String) -> any Hashable {
+        switch appDate.activeTab {
+        case .home:
+            return HomeStack.place(id: placeId)
+        case .map:
+            return MapStack.place(id: placeId)
+        case .leaderboard:
+            return LeaderboardStack.place(id: placeId)
+        case .myProfile:
+            return MyProfileStack.place(id: placeId)
+        }
+    }
+    
+    @State var scale: CGFloat = 1
+    
+    var body: some View {
+        Map(
+            coordinateRegion: $mapRegion,
+            annotationItems: checkins,
+            annotationContent: { checkin in
+                MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: checkin.place.location.geoLocation.lat, longitude: checkin.place.location.geoLocation.lng)) {
+                    NavigationLink(value: placeNavigationHandler(placeId: checkin.place.id)) {
+                        Circle()
+                            .foregroundStyle(Color.accentColor)
+                            .frame(width: 30, height: 30)
+                            .overlay {
+                                ZStack {
+                                    Circle()
+                                        .stroke(Color.themePrimary)
+                                    
+                                    Image(systemName: "mappin")
+                                        .foregroundStyle(.white)
+                                }
+                            }
+                            .scaleEffect(scale)
+                    }
+                }
+            }
+        )
+        .onAppear {
+            if let last = checkins.last {
+                mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: last.place.location.geoLocation.lat, longitude: last.place.location.geoLocation.lng), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+            }
+        }
+        .onChange(of: mapRegion.span.latitudeDelta) { value in
+            let scaleValue = 1.0 / value
+            scale = scaleValue > 1 ? 1 : scaleValue < 0.4 ? 0.4 : scaleValue
         }
     }
 }

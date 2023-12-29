@@ -968,10 +968,10 @@
 			children = (
 				0BF5B4AF2AB377C600DEC403 /* Info.plist */,
 				0B77EA592AAFDA1A00C8DF87 /* PhantomPhood.entitlements */,
+				0BB37E9B2ABA52C7009E1272 /* Shaders.metal */,
 				0B77EA3A2AAF855500C8DF87 /* PhantomPhoodApp.swift */,
 				0B77EA3C2AAF855500C8DF87 /* ContentView.swift */,
 				0B47FDA02B11060600F39527 /* AppRouter.swift */,
-				0BB37E9B2ABA52C7009E1272 /* Shaders.metal */,
 				0B96D66B2AD2E73500612C27 /* LocationManager.swift */,
 				0B9EF27F2B302E070025F464 /* Services */,
 				0B3E73CF2B29F7990092072F /* Protocols */,

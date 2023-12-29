@@ -264,6 +264,7 @@ struct ForYouItem: View {
                                                 }
                                                 
                                                 Text(place.name)
+                                                    .lineLimit(1)
                                             }
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                         }

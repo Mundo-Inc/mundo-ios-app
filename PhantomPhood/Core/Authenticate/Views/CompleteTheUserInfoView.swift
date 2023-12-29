@@ -80,7 +80,6 @@ class CompleteTheUserInfoVM: ObservableObject {
             await auth.updateUserInfo()
         }
     }
-    
 }
 
 struct CompleteTheUserInfoView: View {
@@ -260,17 +259,16 @@ struct CompleteTheUserInfoView: View {
                             vm.step -= 1
                         }
                     } else {
+                        auth.signout()
                         vm.direction = 1
                     }
                 } label: {
-                    Text(vm.step == 0 ? "-" : "Back")
+                    Text(vm.step == 0 ? "Cancel" : "Back")
                         .font(.custom(style: .subheadline))
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderless)
                 .controlSize(.large)
-                .allowsHitTesting(vm.step == 0 ? false : true)
-                .opacity(vm.step == 0 ? 0 : 1)
                 
                 Button {
                     var proceed = true
