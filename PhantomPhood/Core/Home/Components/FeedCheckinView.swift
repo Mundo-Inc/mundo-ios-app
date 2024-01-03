@@ -49,7 +49,7 @@ struct FeedCheckinView: View {
             case .checkin(let checkin):
                 if let place = data.place {
                     VStack {
-                        NavigationLink(value: HomeStack.place(id: place.id)) {
+                        NavigationLink(value: AppRoute.place(id: place.id)) {
                             HStack {
                                 Image(systemName: "checkmark.diamond.fill")
                                     .font(.system(size: 36))

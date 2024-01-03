@@ -36,7 +36,7 @@ struct HomeView: View {
                 .background(Color.themeBG)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        NavigationLink(value: HomeStack.notifications) {
+                        NavigationLink(value: AppRoute.notifications) {
                             Image(systemName: "envelope.fill")
                                 .font(.system(size: 16))
                                 .frame(width: 44, height: 44)
@@ -150,25 +150,35 @@ struct HomeView: View {
             }) {
                 SearchView(vm: searchViewModel) { place in
                     if let title = place.name {
-                        appData.homeNavStack.append(HomeStack.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title), action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
+                        appData.homeNavStack.append(AppRoute.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title), action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
                     }
                 } onUserSelect: { user in
-                    appData.homeNavStack.append(HomeStack.userProfile(userId: user.id))
+                    appData.homeNavStack.append(AppRoute.userProfile(userId: user.id))
                 }
             }
-            .navigationDestination(for: HomeStack.self) { link in
+            .navigationDestination(for: AppRoute.self) { link in
                 switch link {
                 case .notifications:
                     NotificationsView()
-                case .placeMapPlace(let mapPlace, let action):
-                    PlaceView(mapPlace: mapPlace, action: action)
                 case .userActivity(let id):
                     UserActivityView(id: id)
                     
-                    // Common
+                    // Place
                     
                 case .place(let id, let action):
                     PlaceView(id: id, action: action)
+                case .placeMapPlace(let mapPlace, let action):
+                    PlaceView(mapPlace: mapPlace, action: action)
+                    
+                    // My Profile
+                    
+                case .settings:
+                    SettingsView()
+                case .myConnections(let initTab):
+                    MyConnections(activeTab: initTab)
+                    
+                    // User
+                    
                 case .userProfile(let id):
                     UserProfileView(id: id)
                 case .userConnections(let userId, let initTab):

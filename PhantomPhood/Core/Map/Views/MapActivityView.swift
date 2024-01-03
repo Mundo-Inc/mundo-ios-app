@@ -78,7 +78,7 @@ struct MapActivityView: View {
             .onTapGesture {
                 if let mapActivity {
                     dismiss()
-                    appData.mapNavStack.append(MapStack.place(id: mapActivity.id))
+                    appData.mapNavStack.append(AppRoute.place(id: mapActivity.id))
                 }
             }
             
@@ -121,7 +121,7 @@ struct MapActivityView: View {
             .onTapGesture {
                 if let mapActivity {
                     dismiss()
-                    appData.mapNavStack.append(MapStack.place(id: mapActivity.id))
+                    appData.mapNavStack.append(AppRoute.place(id: mapActivity.id))
                 }
             }
             

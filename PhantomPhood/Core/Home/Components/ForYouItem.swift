@@ -234,7 +234,7 @@ struct ForYouItem: View {
                     switch data.resource {
                     case .review(let feedReview):
                         HStack {
-                            NavigationLink(value: HomeStack.userProfile(userId: data.user.id)) {
+                            NavigationLink(value: AppRoute.userProfile(userId: data.user.id)) {
                                 VStack(spacing: -15) {
                                     ProfileImage(data.user.profileImage, size: 50)
                                     
@@ -245,7 +245,7 @@ struct ForYouItem: View {
                             }
                             
                             VStack {
-                                NavigationLink(value: HomeStack.userProfile(userId: data.user.id)) {
+                                NavigationLink(value: AppRoute.userProfile(userId: data.user.id)) {
                                     Text(data.user.name)
                                         .font(.custom(style: .headline))
                                         .frame(height: 18)
@@ -255,7 +255,7 @@ struct ForYouItem: View {
                                 
                                 HStack {
                                     if let place = data.place {
-                                        NavigationLink(value: HomeStack.place(id: place.id)) {
+                                        NavigationLink(value: AppRoute.place(id: place.id)) {
                                             HStack {
                                                 if let amenity = place.amenity {
                                                     Image(systemName: amenity.image)

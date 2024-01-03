@@ -180,23 +180,35 @@ struct MyProfile: View {
                         }
                     }
                     ToolbarItem(placement: .topBarTrailing) {
-                        NavigationLink(value: MyProfileStack.settings) {
+                        NavigationLink(value: AppRoute.settings) {
                             Image(systemName: "gear")
                         }
                     }
                 }
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationDestination(for: MyProfileStack.self) { link in
+                .navigationDestination(for: AppRoute.self) { link in
                     switch link {
+                    case .notifications:
+                        NotificationsView()
+                    case .userActivity(let id):
+                        UserActivityView(id: id)
+                        
+                        // Place
+                        
+                    case .place(let id, let action):
+                        PlaceView(id: id, action: action)
+                    case .placeMapPlace(let mapPlace, let action):
+                        PlaceView(mapPlace: mapPlace, action: action)
+                        
+                        // My Profile
+                        
                     case .settings:
                         SettingsView()
                     case .myConnections(let initTab):
                         MyConnections(activeTab: initTab)
                         
-                        // Common
+                        // User
                         
-                    case .place(let id, let action):
-                        PlaceView(id: id, action: action)
                     case .userProfile(let id):
                         UserProfileView(id: id)
                     case .userConnections(let userId, let initTab):

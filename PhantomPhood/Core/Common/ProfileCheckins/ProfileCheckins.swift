@@ -16,19 +16,6 @@ struct ProfileCheckins: View {
         self._vm = StateObject(wrappedValue: ProfileCheckinsVM(userId: userId))
     }
     
-    func placeNavigationHandler(placeId: String) -> any Hashable {
-        switch appDate.activeTab {
-        case .home:
-            return HomeStack.place(id: placeId)
-        case .map:
-            return MapStack.place(id: placeId)
-        case .leaderboard:
-            return LeaderboardStack.place(id: placeId)
-        case .myProfile:
-            return MyProfileStack.place(id: placeId)
-        }
-    }
-    
     var body: some View {
         ZStack {
             if let checkins = vm.checkins, !checkins.isEmpty {
@@ -43,7 +30,7 @@ struct ProfileCheckins: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     List(checkins) { item in
-                        NavigationLink(value: placeNavigationHandler(placeId: item.place.id)) {
+                        NavigationLink(value: AppRoute.place(id: item.place.id)) {
                             VStack(spacing: 10) {
                                 HStack {
                                     Text(item.place.name)
@@ -124,27 +111,14 @@ fileprivate struct CheckinsMap17: View {
     @ObservedObject private var appDate = AppData.shared
     
     @State var position: MapCameraPosition = .userLocation(fallback: .automatic)
-    
-    func placeNavigationHandler(placeId: String) -> any Hashable {
-        switch appDate.activeTab {
-        case .home:
-            return HomeStack.place(id: placeId)
-        case .map:
-            return MapStack.place(id: placeId)
-        case .leaderboard:
-            return LeaderboardStack.place(id: placeId)
-        case .myProfile:
-            return MyProfileStack.place(id: placeId)
-        }
-    }
-    
+        
     @State var scale: CGFloat = 1
     
     var body: some View {
         Map(position: $position) {
             ForEach(checkins) { checkin in
                 Annotation(checkin.place.name, coordinate: CLLocationCoordinate2D(latitude: checkin.place.location.geoLocation.lat, longitude: checkin.place.location.geoLocation.lng)) {
-                    NavigationLink(value: placeNavigationHandler(placeId: checkin.place.id)) {
+                    NavigationLink(value: AppRoute.place(id: checkin.place.id)) {
                         Circle()
                             .foregroundStyle(Color.accentColor)
                             .frame(width: 30, height: 30)
@@ -176,19 +150,6 @@ fileprivate struct CheckinsMap16: View {
     
     @State private var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 0, longitude: 0), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
     
-    func placeNavigationHandler(placeId: String) -> any Hashable {
-        switch appDate.activeTab {
-        case .home:
-            return HomeStack.place(id: placeId)
-        case .map:
-            return MapStack.place(id: placeId)
-        case .leaderboard:
-            return LeaderboardStack.place(id: placeId)
-        case .myProfile:
-            return MyProfileStack.place(id: placeId)
-        }
-    }
-    
     @State var scale: CGFloat = 1
     
     var body: some View {
@@ -197,7 +158,7 @@ fileprivate struct CheckinsMap16: View {
             annotationItems: checkins,
             annotationContent: { checkin in
                 MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: checkin.place.location.geoLocation.lat, longitude: checkin.place.location.geoLocation.lng)) {
-                    NavigationLink(value: placeNavigationHandler(placeId: checkin.place.id)) {
+                    NavigationLink(value: AppRoute.place(id: checkin.place.id)) {
                         Circle()
                             .foregroundStyle(Color.accentColor)
                             .frame(width: 30, height: 30)

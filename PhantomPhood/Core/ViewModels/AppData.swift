@@ -16,17 +16,17 @@ final class AppData: ObservableObject {
     @Published var activeTab: Tab = .home
     
     // Map Tab
-    @Published var mapNavStack: [MapStack] = []
+    @Published var mapNavStack: [AppRoute] = []
     
     // Leaderboard Tab
-    @Published var leaderboardNavStack: [LeaderboardStack] = []
+    @Published var leaderboardNavStack: [AppRoute] = []
     
     // Home Tab
-    @Published var homeNavStack: [HomeStack] = []
+    @Published var homeNavStack: [AppRoute] = []
     @Published var homeActiveTab: HomeTab = .forYou
     
     // My Profile Tab
-    @Published var myProfileNavStack: [MyProfileStack] = []
+    @Published var myProfileNavStack: [AppRoute] = []
     @Published var myProfileActiveTab: MyProfileActiveTab = .stats
     @Published var showEditProfile: Bool = false
     
@@ -69,7 +69,6 @@ final class AppData: ObservableObject {
             }
             self.activeTab = $0
         }
-
     }
     
     func reset() {

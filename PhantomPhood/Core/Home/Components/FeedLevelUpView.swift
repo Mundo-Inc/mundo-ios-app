@@ -57,7 +57,7 @@ struct FeedLevelUpView: View {
         } content: {
             switch data.resource {
             case .user(let user):
-                NavigationLink(value: HomeStack.userProfile(userId: user.id)) {
+                NavigationLink(value: AppRoute.userProfile(userId: user.id)) {
                     HStack {
                         ProfileImage(user.profileImage, size: 54)
                         

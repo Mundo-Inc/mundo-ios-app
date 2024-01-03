@@ -21,7 +21,7 @@ struct ProfileStats: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack {
-                    NavigationLink(value: MyProfileStack.myConnections(initTab: .followers)) {
+                    NavigationLink(value: AppRoute.myConnections(initTab: .followers)) {
                         DataCard(
                             icon: "person.3.fill",
                             iconColor: LinearGradient(colors: [
@@ -40,7 +40,7 @@ struct ProfileStats: View {
                     
                     Spacer()
                     
-                    NavigationLink(value: MyProfileStack.myConnections(initTab: .followings)) {
+                    NavigationLink(value: AppRoute.myConnections(initTab: .followings)) {
                         DataCard(
                             icon: "person.2.fill",
                             iconColor: LinearGradient(colors: [
@@ -125,7 +125,7 @@ struct ProfileStats: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack {
-                    NavigationLink(value: MyProfileStack.userActivities(userId: .currentUser, activityType: .newReview)) {
+                    NavigationLink(value: AppRoute.userActivities(userId: .currentUser, activityType: .newReview)) {
                         DataCard(
                             icon: "quote.bubble.fill",
                             iconColor: LinearGradient(colors: [
@@ -145,7 +145,7 @@ struct ProfileStats: View {
                     
                     Spacer()
                     
-                    NavigationLink(value: MyProfileStack.userCheckins(userId: .currentUser)) {
+                    NavigationLink(value: AppRoute.userCheckins(userId: .currentUser)) {
                         DataCard(
                             icon: "mappin.and.ellipse",
                             iconColor: LinearGradient(colors: [

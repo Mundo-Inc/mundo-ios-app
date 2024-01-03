@@ -127,7 +127,7 @@ fileprivate struct UserCard: View {
     let connection: UserConnection
     
     var body: some View {
-        NavigationLink(value: MyProfileStack.userProfile(userId: connection.user.id)) {
+        NavigationLink(value: AppRoute.userProfile(userId: connection.user.id)) {
             HStack {
                 ProfileImage(connection.user.profileImage, size: 46, cornerRadius: 10)
                 

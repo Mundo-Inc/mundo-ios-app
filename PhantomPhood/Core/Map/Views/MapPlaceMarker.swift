@@ -11,7 +11,7 @@ struct MapPlaceMarker: View {
     let place: RegionPlace
     
     var body: some View {
-        NavigationLink(value: MapStack.place(id: place.id)) {
+        NavigationLink(value: AppRoute.place(id: place.id)) {
             ZStack {
                 Image(.mapMarkerBG)
                     .resizable()

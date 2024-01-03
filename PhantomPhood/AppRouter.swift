@@ -267,11 +267,11 @@ struct AppRouter: View {
             
             switch type {
             case "place":
-                appData.homeNavStack.append(HomeStack.place(id: id))
+                appData.homeNavStack.append(AppRoute.place(id: id))
             case "user":
-                appData.homeNavStack.append(HomeStack.userProfile(userId: id))
+                appData.homeNavStack.append(AppRoute.userProfile(userId: id))
             case "activity":
-                appData.homeNavStack.append(HomeStack.userActivity(id: id))
+                appData.homeNavStack.append(AppRoute.userActivity(id: id))
             default:
                 break
             }

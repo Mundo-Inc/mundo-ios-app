@@ -13,45 +13,6 @@ struct UserProfileStats: View {
     
     @ObservedObject var appData = AppData.shared
     
-    func connectionNavigationHandler(type: UserConnectionsTab) -> any Hashable {
-        switch appData.activeTab {
-        case .home:
-            return HomeStack.userConnections(userId: user?.id ?? "", initTab: type)
-        case .map:
-            return MapStack.userConnections(userId: user?.id ?? "", initTab: type)
-        case .leaderboard:
-            return LeaderboardStack.userConnections(userId: user?.id ?? "", initTab: type)
-        case .myProfile:
-            return MyProfileStack.userConnections(userId: user?.id ?? "", initTab: type)
-        }
-    }
-    
-    func userActivitiesNavigationHandler(activityType: ProfileActivitiesVM.FeedItemActivityType) -> any Hashable {
-        switch appData.activeTab {
-        case .home:
-            return HomeStack.userActivities(userId: UserIdEnum.withId(user?.id ?? ""), activityType: activityType)
-        case .map:
-            return MapStack.userActivities(userId: UserIdEnum.withId(user?.id ?? ""), activityType: activityType)
-        case .leaderboard:
-            return LeaderboardStack.userActivities(userId: UserIdEnum.withId(user?.id ?? ""), activityType: activityType)
-        case .myProfile:
-            return MyProfileStack.userActivities(userId: UserIdEnum.withId(user?.id ?? ""), activityType: activityType)
-        }
-    }
-    
-    func userCheckinsNavigationHandler() -> any Hashable {
-        switch appData.activeTab {
-        case .home:
-            return HomeStack.userCheckins(userId: UserIdEnum.withId(user?.id ?? ""))
-        case .map:
-            return MapStack.userCheckins(userId: UserIdEnum.withId(user?.id ?? ""))
-        case .leaderboard:
-            return LeaderboardStack.userCheckins(userId: UserIdEnum.withId(user?.id ?? ""))
-        case .myProfile:
-            return MyProfileStack.userCheckins(userId: UserIdEnum.withId(user?.id ?? ""))
-        }
-    }
-    
     var body: some View {
         VStack(spacing: 30) {
             VStack {
@@ -62,7 +23,7 @@ struct UserProfileStats: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack {
-                    NavigationLink(value: connectionNavigationHandler(type: .followers)) {
+                    NavigationLink(value: AppRoute.userConnections(userId: user?.id ?? "", initTab: .followers)) {
                         DataCard(
                             icon: "person.3.fill",
                             iconColor: LinearGradient(colors: [
@@ -81,7 +42,7 @@ struct UserProfileStats: View {
                     
                     Spacer()
                     
-                    NavigationLink(value: connectionNavigationHandler(type: .followings)) {
+                    NavigationLink(value: AppRoute.userConnections(userId: user?.id ?? "", initTab: .followings)) {
                         DataCard(
                             icon: "person.2.fill",
                             iconColor: LinearGradient(colors: [
@@ -164,7 +125,7 @@ struct UserProfileStats: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack {
-                    NavigationLink(value: userActivitiesNavigationHandler(activityType: .newReview)) {
+                    NavigationLink(value: AppRoute.userActivities(userId: UserIdEnum.withId(user?.id ?? ""), activityType: .newReview)) {
                         DataCard(
                             icon: "quote.bubble.fill",
                             iconColor: LinearGradient(colors: [
@@ -184,7 +145,7 @@ struct UserProfileStats: View {
                     
                     Spacer()
                     
-                    NavigationLink(value: userCheckinsNavigationHandler()) {
+                    NavigationLink(value: AppRoute.userCheckins(userId: UserIdEnum.withId(user?.id ?? ""))) {
                         DataCard(
                             icon: "mappin.and.ellipse",
                             iconColor: LinearGradient(colors: [
