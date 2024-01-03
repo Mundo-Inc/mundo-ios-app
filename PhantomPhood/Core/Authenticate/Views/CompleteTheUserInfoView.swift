@@ -323,7 +323,6 @@ struct CompleteTheUserInfoView: View {
                     }
                     .font(.custom(style: .subheadline))
                     .frame(maxWidth: .infinity)
-                    
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)

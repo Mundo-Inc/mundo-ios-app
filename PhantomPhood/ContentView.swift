@@ -57,10 +57,10 @@ struct ContentView: View {
         }
         .sheet(isPresented: $selectReactionsViewModel.isPresented, content: {
             if #available(iOS 17.0, *) {
-                SelectReactionsView()
+                SelectReactionsView(vm: selectReactionsViewModel)
                     .presentationBackground(.thinMaterial)
             } else {
-                SelectReactionsView()
+                SelectReactionsView(vm: selectReactionsViewModel)
             }
         })
         .sheet(isPresented: Binding(optionalValue: $commentsViewModel.currentActivityId), onDismiss: {

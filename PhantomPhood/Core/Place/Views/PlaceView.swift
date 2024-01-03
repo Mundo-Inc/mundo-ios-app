@@ -151,38 +151,31 @@ struct PlaceView: View {
                         .padding(.leading)
                         .offset(y: 30)
                     
-//                    Button {
-//                        
-//                    } label: {
-//                        Label {
-//                            Text("Add to list")
-//                                .foregroundStyle(Color.white)
-//                        } icon: {
-//                            Image(systemName: "star.square.on.square.fill")
-//                                .foregroundStyle(Color.white)
-//                        }
-//                        .padding(.horizontal, 12)
-//                        .padding(.vertical, 8)
-//                        .overlay {
-//                            ZStack {
-//                                Color.black.opacity(0.7)
-//                                Text("Coming Soon")
-//                            }
-//                        }
-//                    }
-//                    .disabled(true) // TODO:
-//                    .font(.custom(style: .subheadline))
-//                    .background(Color.accentColor)
-//                    .clipShape(.rect(cornerRadius: 5))
-//                    .padding(.all, 2)
-//                    .background(Color.themeBG)
-//                    .clipShape(.rect(cornerRadius: 6))
-//                    .foregroundStyle(.primary)
-//                    .frame(height: 40)
-//                    .padding(.trailing)
-//                    .offset(y: 20)
-//                    .redacted(reason: vm.place == nil ? .placeholder : [])
-//                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                    Button {
+                        
+                    } label: {
+                        Label {
+                            Text("Add to list")
+                                .foregroundStyle(Color.white)
+                        } icon: {
+                            Image(systemName: "star.square.on.square.fill")
+                                .foregroundStyle(Color.white)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                    }
+                    .font(.custom(style: .subheadline))
+                    .background(Color.accentColor)
+                    .clipShape(.rect(cornerRadius: 5))
+                    .padding(.all, 2)
+                    .background(Color.themeBG)
+                    .clipShape(.rect(cornerRadius: 6))
+                    .foregroundStyle(.primary)
+                    .frame(height: 40)
+                    .padding(.trailing)
+                    .offset(y: 20)
+                    .redacted(reason: vm.place == nil ? .placeholder : [])
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 }
                 
                 Spacer()

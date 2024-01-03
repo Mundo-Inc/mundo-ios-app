@@ -9,9 +9,15 @@ import Foundation
 import SwiftUI
 
 enum TextFieldSize: CGFloat {
-    case small = 7
-    case medium = 11
-    case large = 14
+    /// 38 points
+    case small = 38
+
+    /// 46 points
+    /// - Default size
+    case medium = 46
+
+    /// 52 points
+    case large = 52
 }
 
 
@@ -24,19 +30,13 @@ struct FilledTextFieldViewModifier: ViewModifier {
             .font(.custom(style: .headline))
             .fontWeight(.regular)
             .padding(.leading, paddingLeading)
-            .padding(.vertical, size.rawValue)
+            .frame(height: size.rawValue)
             .background(Color.themePrimary)
             .cornerRadius(8)
     }
 }
 
-extension TextField {
-    func withFilledStyle(size: TextFieldSize = .medium, paddingLeading: CGFloat? = nil) -> some View {
-        modifier(FilledTextFieldViewModifier(size: size, paddingLeading: paddingLeading))
-    }
-}
-
-extension SecureField {
+extension View {
     func withFilledStyle(size: TextFieldSize = .medium, paddingLeading: CGFloat? = nil) -> some View {
         modifier(FilledTextFieldViewModifier(size: size, paddingLeading: paddingLeading))
     }

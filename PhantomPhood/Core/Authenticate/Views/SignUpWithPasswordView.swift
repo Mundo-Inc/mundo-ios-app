@@ -138,9 +138,12 @@ struct SignUpWithPasswordView: View {
                             Spacer()
                             
                             Image(.ghost)
-                        }.padding(.bottom)
+                        }
+                        .padding(.bottom)
                         
                         TextField("Email", text: $vm.email)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled(true)
                             .font(.custom(style: .title2))
                             .keyboardType(.emailAddress)
                             .textContentType(UITextContentType.emailAddress)

@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "LoadingImage.png",
+      "filename" : "ErrorLoadingImage.png",
       "idiom" : "universal",
       "scale" : "1x"
     },

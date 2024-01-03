@@ -276,7 +276,7 @@ struct FeedReviewView: View {
     }
     
     
-    private func selectReaction(reaction: EmojiesManager.Emoji) async {
+    private func selectReaction(reaction: EmojisManager.Emoji) async {
         do {
             let newReaction = try await reactionsViewModel.addReaction(type: .emoji, reaction: reaction.symbol)
             reactions.user.append(UserReaction(_id: newReaction.id, reaction: newReaction.reaction, type: newReaction.type, createdAt: newReaction.createdAt))

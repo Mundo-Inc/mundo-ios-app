@@ -38,8 +38,4 @@ extension Font {
             return Font.custom(italic ? CustomFonts.poppinsItalic.rawValue : CustomFonts.poppinsRegular.rawValue, size: style.rawValue, relativeTo: .caption2)
         }
     }
-    
-    static func emoji(size: CGFloat = 20) -> Font {
-        Font.custom("Noto Color Emoji", size: size)
-    }
 }

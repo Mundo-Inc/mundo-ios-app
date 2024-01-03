@@ -24,7 +24,7 @@ final class ForYouInfoVM: ObservableObject {
     
     @Published var data: FeedItem? = nil
     @Published var followAction: FollowAction? = nil
-    var handleAddReaction: (EmojiesManager.Emoji) -> Void = { _ in }
+    var handleAddReaction: (EmojisManager.Emoji) -> Void = { _ in }
     
     @Published var isLoadingFollowState = false
     
@@ -67,7 +67,7 @@ final class ForYouInfoVM: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func show(_ feedItem: FeedItem, handleAddReaction: @escaping (_ reaction: EmojiesManager.Emoji) -> Void) {
+    func show(_ feedItem: FeedItem, handleAddReaction: @escaping (_ reaction: EmojisManager.Emoji) -> Void) {
         self.data = feedItem
         self.handleAddReaction = handleAddReaction
     }

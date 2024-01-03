@@ -14,7 +14,7 @@ struct AppRouter: View {
     @ObservedObject private var appData: AppData = AppData.shared
     @ObservedObject private var toastViewModel = ToastViewModel.shared
     @ObservedObject private var appGeneralVM = AppGeneralVM.shared
-    @ObservedObject private var emojiesVM = EmojiesVM.shared
+    @ObservedObject private var emojisVM = EmojisVM.shared
     
     @AppStorage("theme") var theme: String = ""
     
@@ -31,7 +31,7 @@ struct AppRouter: View {
     var body: some View {
         ZStack {
             if auth.userSession != nil {
-                if let user = auth.currentUser, !emojiesVM.list.isEmpty {
+                if let user = auth.currentUser, !emojisVM.list.isEmpty {
                     if user.accepted_eula != nil {
                         ContentView()
                     } else {

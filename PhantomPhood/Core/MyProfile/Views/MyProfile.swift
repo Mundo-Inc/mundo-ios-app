@@ -57,7 +57,6 @@ struct MyProfile: View {
                             .frame(maxWidth: .infinity)
                         }
                         .padding(.horizontal)
-                        .padding(.bottom)
                         
                         if let bio = auth.currentUser?.bio, !bio.isEmpty {
                             Text(bio)
@@ -65,18 +64,21 @@ struct MyProfile: View {
                                 .font(.custom(style: .footnote))
                                 .multilineTextAlignment(.leading)
                                 .padding(.horizontal)
-                                .padding(.bottom)
+                                .padding(.top)
                         }
                         
                         HStack {
+                            Divider()
+                                .opacity(0)
+                            
                             Button {
                                 withAnimation {
                                     appData.myProfileActiveTab = .stats
                                 }
                             } label: {
                                 Text(MyProfileActiveTab.stats.rawValue)
+                                    .padding(.vertical)
                                     .padding(.leading)
-                                    .padding(.vertical, 5)
                             }
                             .foregroundStyle(
                                 appData.myProfileActiveTab == MyProfileActiveTab.stats ? Color.accentColor : Color.secondary
@@ -84,6 +86,7 @@ struct MyProfile: View {
                             
                             Spacer()
                             Divider()
+                                .frame(maxHeight: 20)
                             
                             Button {
                                 withAnimation {
@@ -91,14 +94,14 @@ struct MyProfile: View {
                                 }
                             } label: {
                                 Text(MyProfileActiveTab.achievements.rawValue)
-                                    .padding(.vertical, 5)
-                                    .padding(.horizontal)
+                                    .padding()
                             }
                             .foregroundStyle(
                                 appData.myProfileActiveTab == MyProfileActiveTab.achievements ? Color.accentColor : Color.secondary
                             )
                             
                             Divider()
+                                .frame(maxHeight: 20)
                             Spacer()
                             
                             Button {
@@ -107,18 +110,20 @@ struct MyProfile: View {
                                 }
                             } label: {
                                 Text(MyProfileActiveTab.lists.rawValue)
-                                    .padding(.vertical, 5)
+                                    .padding(.vertical)
                                     .padding(.trailing)
                             }
                             .foregroundStyle(
                                 appData.myProfileActiveTab == MyProfileActiveTab.lists ? Color.accentColor : Color.secondary
                             )
+                            
+                            Divider()
+                                .opacity(0)
                         }
                         .font(.custom(style: .footnote))
                         .bold()
                         .textCase(.uppercase)
                         .padding(.horizontal)
-                        .padding(.bottom, 10)
                     }
                     .frame(maxWidth: .infinity)
                     .background {
@@ -141,11 +146,7 @@ struct MyProfile: View {
                             case .achievements:
                                 ProfileAchievements()
                             case .lists:
-                                VStack {
-                                    Text("No Lists")
-                                }
-                                .font(.custom(style: .headline))
-                                .frame(maxWidth: .infinity)
+                                MyProfileListsView()
                             }
                         }
                     }

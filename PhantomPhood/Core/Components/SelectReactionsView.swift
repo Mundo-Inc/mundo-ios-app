@@ -8,29 +8,29 @@
 import SwiftUI
 
 struct SelectReactionsView: View {
-    @ObservedObject private var vm = SelectReactionsVM.shared
-    @ObservedObject private var emojiesVM = EmojiesVM.shared
+    @ObservedObject var vm: SelectReactionsVM
+    @ObservedObject private var emojisVM = EmojisVM.shared
     
-    @State var selectedTab: EmojiesManager.EmojiCategory = .common
+    @State var selectedTab: EmojisManager.EmojiCategory = .common
     @State var isAnimating = true
     
     var body: some View {
         VStack(spacing: 0) {
             VStack {
                 HStack {
-                    ForEach(EmojiesManager.EmojiCategory.allCases.indices, id: \.self) { index in
+                    ForEach(EmojisManager.EmojiCategory.allCases.indices, id: \.self) { index in
                         Button {
                             withAnimation {
-                                selectedTab = EmojiesManager.EmojiCategory.allCases[index]
+                                selectedTab = EmojisManager.EmojiCategory.allCases[index]
                             }
                         } label: {
-                            Image(systemName: EmojiesManager.EmojiCategory.allCases[index].icon)
+                            Image(systemName: EmojisManager.EmojiCategory.allCases[index].icon)
                                 .font(.system(size: 20))
                                 .padding(.all, 8)
                         }
-                        .foregroundStyle(selectedTab == EmojiesManager.EmojiCategory.allCases[index] ? Color.accentColor : Color.secondary)
+                        .foregroundStyle(selectedTab == EmojisManager.EmojiCategory.allCases[index] ? Color.accentColor : Color.secondary)
                         
-                        if index + 1 <= EmojiesManager.EmojiCategory.allCases.count {
+                        if index + 1 <= EmojisManager.EmojiCategory.allCases.count {
                             Divider()
                                 .frame(maxHeight: 24)
                         }
@@ -43,12 +43,12 @@ struct SelectReactionsView: View {
             }
             
             TabView(selection: $selectedTab) {
-                ForEach(EmojiesManager.EmojiCategory.allCases, id: \.self) { category in
+                ForEach(EmojisManager.EmojiCategory.allCases, id: \.self) { category in
                     ScrollView {
                         LazyVGrid(columns: [
                             GridItem(.adaptive(minimum: 36, maximum: 42)),
                         ], spacing: 16, content: {
-                            ForEach(emojiesVM.getEmojies(category: category)) { emoji in
+                            ForEach(emojisVM.getEmojis(category: category)) { emoji in
                                 Button {
                                     vm.onSelect?(emoji)
                                     vm.isPresented = false
@@ -81,5 +81,5 @@ struct SelectReactionsView: View {
 }
 
 #Preview {
-    SelectReactionsView()
+    SelectReactionsView(vm: SelectReactionsVM())
 }

@@ -117,7 +117,7 @@ struct ForYouItemPlaceholder: View {
                             
                             Text("😍")
                         }
-                        .font(.emoji(size: 18))
+                        .font(.system(size: 18))
                         .foregroundStyle(.white)
                         .padding(.vertical, 6)
                         .frame(maxWidth: .infinity)

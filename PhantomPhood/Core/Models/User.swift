@@ -45,6 +45,23 @@ struct UserProfile: Identifiable, Decodable {
     }
 }
 
+struct CompactUser: Identifiable, Decodable {
+    let _id: String
+    let name: String
+    let username: String
+    let verified: Bool
+    let profileImage: String
+    let progress: CompactUserProgress
+    
+    var id: String {
+        self._id
+    }
+    
+    struct CompactUserProgress: Decodable {
+        let level: Int
+    }
+}
+
 struct UserProgress: Codable {
     let xp: Int
     let level: Int
