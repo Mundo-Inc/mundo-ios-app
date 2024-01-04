@@ -19,7 +19,7 @@ struct NotificationResource {
 
 struct Notification: Decodable, Identifiable {
     let _id: String
-    let user: User
+    let user: CompactUser
     let type: NotificationType
     var readAt: String?
     let sent: Bool

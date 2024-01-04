@@ -12,7 +12,6 @@ struct User: Identifiable, Decodable {
     let name: String
     let username: String
     let bio: String
-    let coins: Int
     let verified: Bool
     let profileImage: String
     let progress: UserProgress
@@ -27,7 +26,6 @@ struct UserProfile: Identifiable, Decodable {
     let name: String
     let username: String
     let bio: String
-    let coins: Int
     let remainingXp: Int
     let verified: Bool
     let profileImage: String

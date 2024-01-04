@@ -10,7 +10,7 @@ import Foundation
 struct Checkin: Identifiable, Decodable {
     let _id: String
     let createdAt: String
-    let user: User
+    let user: CompactUser
     let place: BriefPlace
     
     var id: String {
@@ -21,7 +21,7 @@ struct Checkin: Identifiable, Decodable {
 struct FeedCheckin: Identifiable, Decodable {
     let _id: String
     let createdAt: String
-    let user: User
+    let user: CompactUser
     let place: BriefPlace
     let totalCheckins: Int
     

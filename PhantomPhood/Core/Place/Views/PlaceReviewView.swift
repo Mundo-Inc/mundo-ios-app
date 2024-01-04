@@ -259,17 +259,15 @@ struct PlaceReviewView: View {
                 createdAt: "2023-09-21T04:40:55.129+00:00",
                 updatedAt: "2023-09-21T04:40:57.442+00:00",
                 userActivityId: "650bc9579baae711358b2319",
-                writer: User(
+                writer: CompactUser(
                     _id: "64b5a0bad66d45323e935bda",
                     name: "Ross Ahya",
                     username: "RossAhya",
-                    bio: "",
-                    coins: 49,
                     verified: false,
                     profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/profile.jpg",
-                    progress: .init(xp: 127, level: 2, achievements: [])
+                    progress: .init(level: 2)
                 ),
-                comments: [Comment(_id: "650d0a189baae711358b3cd4", content: "These look deliciousss", createdAt: "2023-09-22T03:29:28.386+00:00", updatedAt: "2023-09-22T03:29:28.386+00:00", author: User(_id: "645e7f843abeb74ee6248ced", name: "Nabeel", username: "naboohoo", bio: "Im all about the GAINZ 🔥 thats why i eat 🍔", coins: 1503, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/profile.jpg", progress: .init(xp: 2207, level: 7, achievements: [])), likes: 0, liked: false, mentions: [])],
+                comments: [Comment(_id: "650d0a189baae711358b3cd4", content: "These look deliciousss", createdAt: "2023-09-22T03:29:28.386+00:00", updatedAt: "2023-09-22T03:29:28.386+00:00", author: CompactUser(_id: "645e7f843abeb74ee6248ced", name: "Nabeel", username: "naboohoo", verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/profile.jpg", progress: .init(level: 7)), likes: 0, liked: false, mentions: [])],
                 reactions: ReactionsObject(total: [], user: [])
             ),
             place: Place(_id: "645c1d1ab41f8e12a0d166bc", name: "Eleven Madison Park", amenity: .cafe, otherNames: [], description: "Eleven Madison Park embodies an urbane sophistication serving Chef Daniel Humm's modern, sophisticated French cuisine that emphasizes purity, simplicity and seasonal flavors and ingredients.  Daniel's delicate and precise cooking style is experienced through a constantly evolving menu. The restaurant's dramatically high ceilings and magnificent art deco dining room offer guests lush views of historic Madison Square Park and the Flatiron building. In addition to the main dining room, guests may also enjoy wine, beer, and cocktails, as well as an extensive bar menu in the restaurant's bar and Flatiron Lounge.\n\nIn November 2008, Eleven Madison Park was designated Grand Chef Relais & Châteaux, joining the ranks of one of the world's most exclusive associations of hotels and gourmet restaurants. In 2009, Eleven Madison Park received a Four Star Review from The New York Times. The restaurant was also awarded one Michelin star.", location: PlaceLocation(geoLocation: PlaceLocation.GeoLocation(lng: 40.7416907417333, lat: -73.9872074872255), address: "11 Madison Ave", city: "New York", state: "NY", country: "US", zip: "10010"), thumbnail: "https://s3-media1.fl.yelpcdn.com/bphoto/s_H7gm_Hwmz--O6bo1iU-A/o.jpg", phone: "+12128890905", website: "http://www.elevenmadisonpark.com/menus/", categories: ["newamerican", "french", "cocktailbars"], priceRange: 4, scores: PlaceScores(overall: 3.808333333333333, drinkQuality: 4.363636363636363, foodQuality: 3.9342105263157894, atmosphere: 4.205882352941177, service: 4.196428571428571, value: 2.4025974025974026, phantom: 76.41102086767721), reviewCount: 120, reviews: [], thirdParty: Place.ThirdPartyResults(google: nil, yelp: nil), media: []), mediasViewModel: MediasViewModel(), reportId: .constant(nil))

@@ -28,7 +28,7 @@ struct PlaceReview: Identifiable, Decodable {
     let createdAt: String
     let updatedAt: String
     let userActivityId: String?
-    let writer: User
+    let writer: CompactUser
     let comments: [Comment]
     let reactions: ReactionsObject
     
@@ -50,7 +50,7 @@ struct FeedReview: Identifiable, Decodable {
     let createdAt: String
     let updatedAt: String
     let userActivityId: String?
-    let writer: User
+    let writer: CompactUser
     
     var id: String {
         self._id

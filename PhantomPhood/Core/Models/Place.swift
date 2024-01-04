@@ -51,7 +51,7 @@ struct MediaWithUser: Identifiable, Decodable {
     let src: String
     let caption: String?
     let type: MediaType
-    let user: User?
+    let user: CompactUser?
     // TODO: When we remove third party media we can change this to not-optional
     
     var id: String {

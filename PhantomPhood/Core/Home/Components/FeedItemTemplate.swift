@@ -77,11 +77,11 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
     let header: () -> Header
     let content: () -> Content
     let footer: () -> Footer
-    let user: User
+    let user: CompactUser
     let isActive: Bool
     
     init(
-        user: User,
+        user: CompactUser,
         comments: [Comment] = [],
         isActive: Bool = false,
         @ViewBuilder header: @escaping () -> Header,
@@ -164,15 +164,13 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
 #Preview {
     ScrollView {
         FeedItemTemplate(
-            user: User(
+            user: CompactUser(
                 _id: "TEST_USER_ID",
                 name: "Dwayne",
                 username: "DwayneTheRock",
-                bio: "This is test bio",
-                coins: 40,
                 verified: true,
                 profileImage: "",
-                progress: .init(xp: 2400, level: 7, achievements: [])
+                progress: .init(level: 7)
             ),
             comments: [
                 Comment(
@@ -180,15 +178,13 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                     content: "This is the comment body let's see what happens if this exceeds two lines",
                     createdAt: "2023-09-19T20:06:45.214Z",
                     updatedAt: "2023-09-19T20:06:45.214Z",
-                    author: User(
+                    author: CompactUser(
                         _id: "TEST_USER_ID",
                         name: "Dwayne",
                         username: "DwayneTheRock",
-                        bio: "This is test bio",
-                        coins: 40,
                         verified: true,
                         profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-                        progress: .init(xp: 2400, level: 7, achievements: [])
+                        progress: .init(level: 7)
                     ),
                     likes: 4,
                     liked: true,
@@ -202,15 +198,13 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
         }
         
         FeedItemTemplate(
-            user: User(
+            user: CompactUser(
                 _id: "TEST_USER_ID",
                 name: "Dwayne",
                 username: "DwayneTheRock",
-                bio: "This is test bio",
-                coins: 40,
                 verified: true,
                 profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-                progress: .init(xp: 2400, level: 52, achievements: [])
+                progress: .init(level: 52)
             ),
             comments: [
                 Comment(
@@ -218,15 +212,13 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
                     content: "This is the comment body let's see what happens if this exceeds two lines",
                     createdAt: "2023-09-19T20:06:45.214Z",
                     updatedAt: "2023-09-19T20:06:45.214Z",
-                    author: User(
+                    author: CompactUser(
                         _id: "TEST_USER_ID",
                         name: "Dwayne",
                         username: "DwayneTheRock",
-                        bio: "This is test bio",
-                        coins: 40,
                         verified: true,
                         profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-                        progress: .init(xp: 2400, level: 80, achievements: [])
+                        progress: .init(level: 80)
                     ),
                     likes: 4,
                     liked: true,

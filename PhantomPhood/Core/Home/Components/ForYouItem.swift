@@ -504,7 +504,7 @@ struct ForYouItem: View {
     ForYouItem(
         data: FeedItem(
             id: "64d2aa872c509f60b7690386",
-            user: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: [])),
+            user: CompactUser(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(level: 3)),
             place: CompactPlace(
                 _id: "64d2a0c62c509f60b768f572",
                 name: "Lavender",
@@ -533,7 +533,7 @@ struct ForYouItem: View {
                 createdAt: "2023-08-08T20:50:15.905Z",
                 updatedAt: "2023-08-08T20:50:17.297Z",
                 userActivityId: "64d2aa872c509f60b7690386",
-                writer: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: []))
+                writer: CompactUser(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(level: 3))
             )),
             privacyType: .PUBLIC,
             createdAt: "2023-08-08T20:50:15.916Z",
@@ -543,7 +543,7 @@ struct ForYouItem: View {
                 user: [UserReaction(_id: "64d35ef61eff94afe959dd9e", reaction: "❤️", type: .emoji, createdAt: "2023-08-09T09:40:06.866Z")]
             ),
             comments: [
-                Comment(_id: "64d4ee982c9a8ed008970ec3", content: "Hey @nabeel check this out", createdAt: "2023-08-10T14:05:12.743Z", updatedAt: "2023-08-10T14:05:12.743Z", author: User(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", bio: "Test Bio", coins: 9, verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(xp: 520, level: 3, achievements: [])), likes: 2, liked: true, mentions: [])
+                Comment(_id: "64d4ee982c9a8ed008970ec3", content: "Hey @nabeel check this out", createdAt: "2023-08-10T14:05:12.743Z", updatedAt: "2023-08-10T14:05:12.743Z", author: CompactUser(_id: "64d29e412c509f60b768f240", name: "Kia", username: "TheKia", verified: true, profileImage: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg", progress: .init(level: 3)), likes: 2, liked: true, mentions: [])
             ], commentsCount: 10
         ),
         itemIndex: 2,

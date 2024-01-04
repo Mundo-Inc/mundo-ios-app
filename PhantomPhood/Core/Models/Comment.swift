@@ -17,7 +17,7 @@ struct Comment: Decodable, Identifiable {
     let content: String
     let createdAt: String
     let updatedAt: String
-    let author: User
+    let author: CompactUser
     let likes: Int
     let liked: Bool
     let mentions: [UserMentions]?

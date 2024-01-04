@@ -30,7 +30,7 @@ enum FeedItemResource: Decodable {
     case place(CompactPlace)
     case review(FeedReview)
     case checkin(FeedCheckin)
-    case user(User)
+    case user(CompactUser)
 //    case reaction
 //    case achievement
 }
@@ -51,7 +51,7 @@ struct FeedItem: Identifiable, Decodable, Equatable {
     }
     
     let id: String
-    let user: User
+    let user: CompactUser
     let place: CompactPlace?
     let activityType: FeedItemActivityType
     let resourceType: FeedItemResourceType
@@ -68,7 +68,7 @@ struct FeedItem: Identifiable, Decodable, Equatable {
     }
     
     // By Values
-    init(id: String, user: User, place: CompactPlace?, activityType: FeedItemActivityType, resourceType: FeedItemResourceType, resource: FeedItemResource, privacyType: PrivacyType, createdAt: String, updatedAt: String, reactions: ReactionsObject, comments: [Comment], commentsCount: Int) {
+    init(id: String, user: CompactUser, place: CompactPlace?, activityType: FeedItemActivityType, resourceType: FeedItemResourceType, resource: FeedItemResource, privacyType: PrivacyType, createdAt: String, updatedAt: String, reactions: ReactionsObject, comments: [Comment], commentsCount: Int) {
         self.id = id
         self.user = user
         self.place = place
@@ -88,7 +88,7 @@ struct FeedItem: Identifiable, Decodable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         id = try container.decode(String.self, forKey: .id)
-        user = try container.decode(User.self, forKey: .user)
+        user = try container.decode(CompactUser.self, forKey: .user)
         place = try container.decodeIfPresent(CompactPlace.self, forKey: .place)
         activityType = try container.decode(FeedItemActivityType.self, forKey: .activityType)
         resourceType = try container.decode(FeedItemResourceType.self, forKey: .resourceType)
@@ -104,7 +104,7 @@ struct FeedItem: Identifiable, Decodable, Equatable {
             let value = try container.decode(FeedCheckin.self, forKey: .resource)
             resource = .checkin(value)
         case .user:
-            let value = try container.decode(User.self, forKey: .resource)
+            let value = try container.decode(CompactUser.self, forKey: .resource)
             resource = .user(value)
         }
         
