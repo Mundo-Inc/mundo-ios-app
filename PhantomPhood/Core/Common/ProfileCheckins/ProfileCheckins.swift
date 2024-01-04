@@ -110,8 +110,8 @@ fileprivate struct CheckinsMap17: View {
     
     @ObservedObject private var appDate = AppData.shared
     
-    @State var position: MapCameraPosition = .userLocation(fallback: .automatic)
-        
+    @State var position: MapCameraPosition = .automatic
+    
     @State var scale: CGFloat = 1
     
     var body: some View {

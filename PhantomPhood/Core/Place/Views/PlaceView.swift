@@ -152,7 +152,9 @@ struct PlaceView: View {
                         .offset(y: 30)
                     
                     Button {
-                        
+                        withAnimation {
+                            vm.isAddToListPresented = true
+                        }
                     } label: {
                         Label {
                             Text("Add to list")
@@ -313,6 +315,15 @@ struct PlaceView: View {
                 ReportView(id: $vm.reportId, type: .review)
                     .transition(.move(edge: .bottom))
                     .animation(.easeInOut, value: vm.reportId)
+            }
+            
+            if let place = vm.place, vm.isAddToListPresented {
+                AddToListView(placeId: place.id, placeName: place.name) {
+                    withAnimation {
+                        vm.isAddToListPresented = false
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .toolbarBackground(.hidden, for: .automatic)

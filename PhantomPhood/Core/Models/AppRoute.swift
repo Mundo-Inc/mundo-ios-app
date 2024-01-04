@@ -26,6 +26,8 @@ enum AppRoute: Hashable {
     case userActivities(userId: UserIdEnum, activityType: ProfileActivitiesVM.FeedItemActivityType = .all)
     case userCheckins(userId: UserIdEnum)
     
+    case placesList(listId: String)
+    
     func hash(into hasher: inout Hasher) {
         switch self {
         case .notifications:
@@ -67,6 +69,10 @@ enum AppRoute: Hashable {
         case .userCheckins(let userId):
             hasher.combine("userCheckins")
             hasher.combine(userId)
+            
+        case .placesList(let listId):
+            hasher.combine("placesList")
+            hasher.combine(listId)
         }
     }
 }

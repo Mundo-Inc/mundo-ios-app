@@ -96,8 +96,8 @@ struct MapView: View {
             })
             .navigationTitle("Explore")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: AppRoute.self) { link in
-                switch link {
+            .navigationDestination(for: AppRoute.self) { route in
+                switch route {
                 case .notifications:
                     NotificationsView()
                 case .userActivity(let id):
@@ -127,6 +127,9 @@ struct MapView: View {
                     ProfileActivitiesView(userId: userId, activityType: activityType)
                 case .userCheckins(let userId):
                     ProfileCheckins(userId: userId)
+                    
+                case .placesList(let listId):
+                    PlacesListView(listId: listId)
                 }
             }
         }

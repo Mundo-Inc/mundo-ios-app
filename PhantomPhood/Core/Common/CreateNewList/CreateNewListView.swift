@@ -155,10 +155,10 @@ struct CreateNewListView: View {
                                         })
                                     })) {
                                         Text("Can Edit")
-                                            .tag(CreateNewListVM.CollaboratorAccess.edit)
+                                            .tag(ListCollaboratorAccess.edit)
                                         
                                         Text("Can View")
-                                            .tag(CreateNewListVM.CollaboratorAccess.view)
+                                            .tag(ListCollaboratorAccess.view)
                                     }
                                 }
                             }
@@ -225,7 +225,7 @@ struct CreateNewListView: View {
                 }, onCancel: {
                     vm.showAddListCollaborators = false
                 })
-                    .presentationBackground(.thinMaterial)
+                .presentationBackground(.thinMaterial)
             } else {
                 AddListCollaboratorView(onSelect: { user in
                     if !vm.collaborators.contains(where: { $0.user.id == user.id }) {

@@ -22,7 +22,7 @@ final class CreateNewListVM: ObservableObject {
     
     @Published var name: String = ""
     @Published var icon: EmojisManager.Emoji = .init(symbol: "❤️", title: "Heart", keywords: [], categories: [], isAnimated: true, unicode: "2764_fe0f")
-    @Published var collaborators: [Collaborator] = []
+    @Published var collaborators: [ListCollaborator] = []
     @Published var isPublic: Bool = true
     
     var isReadyToSubmit: Bool {
@@ -43,22 +43,9 @@ final class CreateNewListVM: ObservableObject {
             
             self.onSuccess(list)
         } catch {
+            print(error)
             self.onCancel()
         }
         self.isLoading = false
-    }
-    
-    enum CollaboratorAccess: String {
-        case edit = "edit"
-        case view = "view"
-    }
-    
-    struct Collaborator: Identifiable {
-        let user: CompactUser
-        let access: CollaboratorAccess
-        
-        var id: String {
-            self.user.id
-        }
     }
 }

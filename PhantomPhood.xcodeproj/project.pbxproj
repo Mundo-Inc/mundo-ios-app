@@ -33,6 +33,8 @@
 		0B226F692B3359F40036B8BE /* Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B226F682B3359F40036B8BE /* Achievement.swift */; };
 		0B226F6B2B336B170036B8BE /* UserProfileAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B226F6A2B336B170036B8BE /* UserProfileAchievements.swift */; };
 		0B2BF8822B17AA8000C10A5E /* AppGeneralVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2BF8812B17AA8000C10A5E /* AppGeneralVM.swift */; };
+		0B2D20E92B4632D600D4F0C1 /* UserProfileListsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2D20E82B4632D600D4F0C1 /* UserProfileListsVM.swift */; };
+		0B2D20EB2B46334C00D4F0C1 /* UserProfileListsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2D20EA2B46334C00D4F0C1 /* UserProfileListsView.swift */; };
 		0B2E98802AB907340013301D /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2E987F2AB907340013301D /* UIImage.swift */; };
 		0B30218F2B3208D200827889 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0B30218E2B3208D200827889 /* SDWebImageSwiftUI */; };
 		0B3021EC2B32094400827889 /* 1f192.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0B3021922B32094100827889 /* 1f192.gif */; };
@@ -206,6 +208,10 @@
 		0B9C02602B4465E3000C4774 /* AddListCollaboratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9C025F2B4465E3000C4774 /* AddListCollaboratorView.swift */; };
 		0B9C02622B4468B3000C4774 /* AddListCollaboratorVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9C02612B4468B3000C4774 /* AddListCollaboratorVM.swift */; };
 		0B9C02642B458F76000C4774 /* AppRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9C02632B458F76000C4774 /* AppRoute.swift */; };
+		0B9C026A2B45A1F0000C4774 /* PlacesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9C02692B45A1F0000C4774 /* PlacesListView.swift */; };
+		0B9C026C2B45A3A0000C4774 /* PlacesListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9C026B2B45A3A0000C4774 /* PlacesListVM.swift */; };
+		0B9C026F2B45C267000C4774 /* AddToListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9C026E2B45C267000C4774 /* AddToListView.swift */; };
+		0B9C02712B45C275000C4774 /* AddToListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9C02702B45C275000C4774 /* AddToListVM.swift */; };
 		0B9EF2812B302E1D0025F464 /* ContactsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9EF2802B302E1D0025F464 /* ContactsService.swift */; };
 		0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA0383E2AF24C96000A2B33 /* UserConnectionsView.swift */; };
 		0BA038412AF24CE6000A2B33 /* UserConnectionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA038402AF24CE6000A2B33 /* UserConnectionsViewModel.swift */; };
@@ -320,6 +326,8 @@
 		0B226F682B3359F40036B8BE /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
 		0B226F6A2B336B170036B8BE /* UserProfileAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileAchievements.swift; sourceTree = "<group>"; };
 		0B2BF8812B17AA8000C10A5E /* AppGeneralVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGeneralVM.swift; sourceTree = "<group>"; };
+		0B2D20E82B4632D600D4F0C1 /* UserProfileListsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileListsVM.swift; sourceTree = "<group>"; };
+		0B2D20EA2B46334C00D4F0C1 /* UserProfileListsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileListsView.swift; sourceTree = "<group>"; };
 		0B2E987F2AB907340013301D /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		0B3021922B32094100827889 /* 1f192.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = 1f192.gif; sourceTree = "<group>"; };
 		0B3021932B32094100827889 /* 1f60f.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = 1f60f.gif; sourceTree = "<group>"; };
@@ -483,6 +491,10 @@
 		0B9C025F2B4465E3000C4774 /* AddListCollaboratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListCollaboratorView.swift; sourceTree = "<group>"; };
 		0B9C02612B4468B3000C4774 /* AddListCollaboratorVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListCollaboratorVM.swift; sourceTree = "<group>"; };
 		0B9C02632B458F76000C4774 /* AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoute.swift; sourceTree = "<group>"; };
+		0B9C02692B45A1F0000C4774 /* PlacesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesListView.swift; sourceTree = "<group>"; };
+		0B9C026B2B45A3A0000C4774 /* PlacesListVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesListVM.swift; sourceTree = "<group>"; };
+		0B9C026E2B45C267000C4774 /* AddToListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToListView.swift; sourceTree = "<group>"; };
+		0B9C02702B45C275000C4774 /* AddToListVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToListVM.swift; sourceTree = "<group>"; };
 		0B9EF2802B302E1D0025F464 /* ContactsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsService.swift; sourceTree = "<group>"; };
 		0BA0383E2AF24C96000A2B33 /* UserConnectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionsView.swift; sourceTree = "<group>"; };
 		0BA038402AF24CE6000A2B33 /* UserConnectionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionsViewModel.swift; sourceTree = "<group>"; };
@@ -686,6 +698,7 @@
 				0B0183692AB3C179008E887F /* UserProfileView.swift */,
 				0B997B6F2AC74BFA00579C9C /* UserProfileStats.swift */,
 				0B226F6A2B336B170036B8BE /* UserProfileAchievements.swift */,
+				0B2D20EA2B46334C00D4F0C1 /* UserProfileListsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -872,6 +885,7 @@
 		0B6495582AB1FD04000E57AF /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				0B9C02672B45A1D7000C4774 /* PlacesList */,
 				0BF10B902B35D0AB00522E60 /* Common */,
 				0BCD57E32B28B35700A1C914 /* DataManagers */,
 				0B77EA492AAF871E00C8DF87 /* Models */,
@@ -1100,8 +1114,27 @@
 			isa = PBXGroup;
 			children = (
 				0B997B692AC7377C00579C9C /* UserProfileViewModel.swift */,
+				0B2D20E82B4632D600D4F0C1 /* UserProfileListsVM.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		0B9C02672B45A1D7000C4774 /* PlacesList */ = {
+			isa = PBXGroup;
+			children = (
+				0B9C026B2B45A3A0000C4774 /* PlacesListVM.swift */,
+				0B9C02692B45A1F0000C4774 /* PlacesListView.swift */,
+			);
+			path = PlacesList;
+			sourceTree = "<group>";
+		};
+		0B9C026D2B45C258000C4774 /* AddToList */ = {
+			isa = PBXGroup;
+			children = (
+				0B9C026E2B45C267000C4774 /* AddToListView.swift */,
+				0B9C02702B45C275000C4774 /* AddToListVM.swift */,
+			);
+			path = AddToList;
 			sourceTree = "<group>";
 		};
 		0B9EF27F2B302E070025F464 /* Services */ = {
@@ -1206,6 +1239,7 @@
 		0BF10B902B35D0AB00522E60 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				0B9C026D2B45C258000C4774 /* AddToList */,
 				0B547D832B3F3D1C002C6336 /* CreateNewList */,
 				0BF10B922B35D9DD00522E60 /* ProfileCheckins */,
 				0BF10B912B35D0B100522E60 /* ProfileActivities */,
@@ -1522,6 +1556,7 @@
 				0BCBC1902ACDEDDE00992D8E /* PlaceReviewsViewModel.swift in Sources */,
 				0B0E6D222ABB077B00EC62EE /* FeedItemTemplate.swift in Sources */,
 				0B4016752B046AA5000F1263 /* ForYouView.swift in Sources */,
+				0B9C026F2B45C267000C4774 /* AddToListView.swift in Sources */,
 				0BEC8C862AB7B08600B94AFC /* EditProfileViewModel.swift in Sources */,
 				0BF81DC02ABDF00300B8892E /* DateFormatter.swift in Sources */,
 				0B547D852B3F3D3B002C6336 /* CreateNewListVM.swift in Sources */,
@@ -1562,9 +1597,11 @@
 				0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */,
 				0BE1E17C2AD5A38A00645AA0 /* SearchViewModel.swift in Sources */,
 				0BB37E9E2ABA6D84009E1272 /* FeedView.swift in Sources */,
+				0B9C02712B45C275000C4774 /* AddToListVM.swift in Sources */,
 				0BAE47322ACC91DF001FBDAF /* PlaceReviewsView.swift in Sources */,
 				0B86F9372B4433CB00DD4C85 /* EmojisVM.swift in Sources */,
 				0B9C02602B4465E3000C4774 /* AddListCollaboratorView.swift in Sources */,
+				0B2D20EB2B46334C00D4F0C1 /* UserProfileListsView.swift in Sources */,
 				0BB805862AC203EB0074155D /* FeedReviewView.swift in Sources */,
 				0B47FDA12B11060600F39527 /* AppRouter.swift in Sources */,
 				0BEE152A2AB50A8800DF7211 /* ProfileStats.swift in Sources */,
@@ -1628,6 +1665,7 @@
 				0B2BF8822B17AA8000C10A5E /* AppGeneralVM.swift in Sources */,
 				0BF81DC62ABE36EB00B8892E /* Fonts.swift in Sources */,
 				0B384FA72B2B591000C98245 /* UserActivityDM.swift in Sources */,
+				0B9C026C2B45A3A0000C4774 /* PlacesListVM.swift in Sources */,
 				0BC84A692AD06F8200D723AA /* WrappingHStack.swift in Sources */,
 				0BCD57E72B28BAC300A1C914 /* MapActivity.swift in Sources */,
 				0B3B32DF2AF013DD00E1E0B0 /* Binding.swift in Sources */,
@@ -1635,6 +1673,7 @@
 				0BF0A7872AD874520058BAE9 /* MapPlaceMarker.swift in Sources */,
 				0BF5B4BC2AB37B8200DEC403 /* AppData.swift in Sources */,
 				0B0183642AB3C0C0008E887F /* PlaceView.swift in Sources */,
+				0B9C026A2B45A1F0000C4774 /* PlacesListView.swift in Sources */,
 				0B46814F2AC5EB6B009C5EF9 /* CircleLabelView.swift in Sources */,
 				0B64C4C92AB4BDC6009F0D43 /* SettingsView.swift in Sources */,
 				0BF10B942B35DB2300522E60 /* ProfileCheckins.swift in Sources */,
@@ -1648,6 +1687,7 @@
 				0B35B7AB2B0D14CA00822BA6 /* SignInOptionsView.swift in Sources */,
 				0B8AA3CB2AFE8817008284F5 /* MapKit.swift in Sources */,
 				0B0E6D322ABB816F00EC62EE /* Checkin.swift in Sources */,
+				0B2D20E92B4632D600D4F0C1 /* UserProfileListsVM.swift in Sources */,
 				0B46814D2AC5EAFB009C5EF9 /* FirstLoadingView.swift in Sources */,
 				0B7DD5412B14DCC100D2EECB /* VideoPlayerVM.swift in Sources */,
 				0BF5B4B42AB3787200DEC403 /* Tab.swift in Sources */,
@@ -1814,7 +1854,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.39.2;
+				MARKETING_VERSION = 0.40.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1852,7 +1892,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.39.2;
+				MARKETING_VERSION = 0.40.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

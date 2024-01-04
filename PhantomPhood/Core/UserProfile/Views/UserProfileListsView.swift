@@ -1,14 +1,18 @@
 //
-//  MyProfileListsView.swift
+//  UserProfileListsView.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 12/29/23.
+//  Created by Kia Abdi on 1/4/24.
 //
 
 import SwiftUI
 
-struct MyProfileListsView: View {
-    @StateObject private var vm = MyProfileListsVM()
+struct UserProfileListsView: View {
+    @StateObject private var vm: UserProfileListsVM
+    
+    init(user: UserProfile) {
+        self._vm = StateObject(wrappedValue: UserProfileListsVM(userId: user.id))
+    }
     
     @State var isAnimating = true
     
@@ -160,7 +164,7 @@ fileprivate struct ListItemPlaceholder: View {
             }
             
             Label {
-                Text("1")
+                Text("2")
                     .font(.custom(style: .title2))
                     .redacted(reason: .placeholder)
             } icon: {
@@ -174,8 +178,4 @@ fileprivate struct ListItemPlaceholder: View {
         .background(.themePrimary)
         .clipShape(.rect(cornerRadius: 16))
     }
-}
-
-#Preview {
-    MyProfileListsView()
 }

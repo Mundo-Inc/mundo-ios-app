@@ -137,7 +137,6 @@ struct MyProfile: View {
                     }
                     .id(1)
                     
-                    
                     VStack {
                         Group {
                             switch appData.myProfileActiveTab {
@@ -186,8 +185,8 @@ struct MyProfile: View {
                     }
                 }
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationDestination(for: AppRoute.self) { link in
-                    switch link {
+                .navigationDestination(for: AppRoute.self) { route in
+                    switch route {
                     case .notifications:
                         NotificationsView()
                     case .userActivity(let id):
@@ -217,6 +216,9 @@ struct MyProfile: View {
                         ProfileActivitiesView(userId: userId, activityType: activityType)
                     case .userCheckins(let userId):
                         ProfileCheckins(userId: userId)
+                        
+                    case .placesList(let listId):
+                        PlacesListView(listId: listId)
                     }
                 }
                 .onChange(of: appData.tappedTwice) { tapped in

@@ -1,14 +1,14 @@
 //
-//  MyProfileListsVM.swift
+//  UserProfileListsVM.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 12/29/23.
+//  Created by Kia Abdi on 1/4/24.
 //
 
 import Foundation
 
 @MainActor
-final class MyProfileListsVM: ObservableObject {
+final class UserProfileListsVM: ObservableObject {
     private let dataManager = ListsDM()
     private let auth = Authentication.shared
     
@@ -16,19 +16,19 @@ final class MyProfileListsVM: ObservableObject {
     @Published var isLoading: Bool = false
     
     @Published var isAddListPresented = false
+    let userId: String
     
-    init() {
+    init(userId: String) {
+        self.userId = userId
         Task {
             await fetchLists()
         }
     }
     
     func fetchLists() async {
-        guard let uid = auth.currentUser?.id else { return }
-        
         self.isLoading = true
         do {
-            let data = try await dataManager.getUserLists(forUserId: uid)
+            let data = try await dataManager.getUserLists(forUserId: self.userId)
             
             self.lists = data
         } catch {

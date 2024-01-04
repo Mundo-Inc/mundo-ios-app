@@ -23,6 +23,7 @@ class PlaceViewModel: ObservableObject {
     private let dataManager = PlaceDM()
     private let toastViewModel = ToastViewModel.shared
     
+    @Published var isAddToListPresented: Bool = false
     @Published var showActions: Bool = false
     
     @Published private(set) var isLoading = false
@@ -35,7 +36,7 @@ class PlaceViewModel: ObservableObject {
     @Published var prevActiveTab: PlaceTab = .overview
     
     @Published var reportId: String? = nil
-
+    
     
     init(id: String, action: PlaceAction? = nil) {
         self.id = id
@@ -89,64 +90,64 @@ class PlaceViewModel: ObservableObject {
         }
     }
     
-//    init(mapItem: MKMapItem, action: PlaceAction? = nil) {
-//        self.action = action
-//        
-//        Task {
-//            do {
-//                let data = try await dataManager.fetch(mapItem: mapItem)
-//                self.id = data.id
-//                self.place = data
-//                
-//                switch action {
-//                case .checkin:
-//                    Task {
-//                        await self.checkin()
-//                    }
-//                case .addReview:
-//                    self.activeTab = .reviews
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                        self.showAddReview = true
-//                    }
-//                case nil:
-//                    break
-//                }
-//            } catch {
-//                print(error)
-//                self.error = error.localizedDescription
-//            }
-//        }
-//    }
-//    
-//    @available(iOS 17.0, *)
-//    init(mapFeature: MapFeature, action: PlaceAction? = nil) {
-//        self.action = action
-//        
-//        Task {
-//            do {
-//                let data = try await dataManager.fetch(mapFeature: mapFeature)
-//                self.id = data.id
-//                self.place = data
-//                
-//                switch action {
-//                case .checkin:
-//                    Task {
-//                        await self.checkin()
-//                    }
-//                case .addReview:
-//                    self.activeTab = .reviews
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                        self.showAddReview = true
-//                    }
-//                case nil:
-//                    break
-//                }
-//            } catch {
-//                print(error)
-//                self.error = error.localizedDescription
-//            }
-//        }
-//    }
+    //    init(mapItem: MKMapItem, action: PlaceAction? = nil) {
+    //        self.action = action
+    //
+    //        Task {
+    //            do {
+    //                let data = try await dataManager.fetch(mapItem: mapItem)
+    //                self.id = data.id
+    //                self.place = data
+    //
+    //                switch action {
+    //                case .checkin:
+    //                    Task {
+    //                        await self.checkin()
+    //                    }
+    //                case .addReview:
+    //                    self.activeTab = .reviews
+    //                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+    //                        self.showAddReview = true
+    //                    }
+    //                case nil:
+    //                    break
+    //                }
+    //            } catch {
+    //                print(error)
+    //                self.error = error.localizedDescription
+    //            }
+    //        }
+    //    }
+    //
+    //    @available(iOS 17.0, *)
+    //    init(mapFeature: MapFeature, action: PlaceAction? = nil) {
+    //        self.action = action
+    //
+    //        Task {
+    //            do {
+    //                let data = try await dataManager.fetch(mapFeature: mapFeature)
+    //                self.id = data.id
+    //                self.place = data
+    //
+    //                switch action {
+    //                case .checkin:
+    //                    Task {
+    //                        await self.checkin()
+    //                    }
+    //                case .addReview:
+    //                    self.activeTab = .reviews
+    //                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+    //                        self.showAddReview = true
+    //                    }
+    //                case nil:
+    //                    break
+    //                }
+    //            } catch {
+    //                print(error)
+    //                self.error = error.localizedDescription
+    //            }
+    //        }
+    //    }
     
     func fetchData() async {
         if let id {

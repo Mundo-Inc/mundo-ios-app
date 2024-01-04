@@ -156,8 +156,8 @@ struct HomeView: View {
                     appData.homeNavStack.append(AppRoute.userProfile(userId: user.id))
                 }
             }
-            .navigationDestination(for: AppRoute.self) { link in
-                switch link {
+            .navigationDestination(for: AppRoute.self) { route in
+                switch route {
                 case .notifications:
                     NotificationsView()
                 case .userActivity(let id):
@@ -187,6 +187,9 @@ struct HomeView: View {
                     ProfileActivitiesView(userId: userId, activityType: activityType)
                 case .userCheckins(let userId):
                     ProfileCheckins(userId: userId)
+                    
+                case .placesList(let listId):
+                    PlacesListView(listId: listId)
                 }
             }
         }
