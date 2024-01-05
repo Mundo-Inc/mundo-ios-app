@@ -146,7 +146,7 @@ struct PlacesListView: View {
             .redacted(reason: vm.list == nil ? .placeholder : [])
         }
         .toolbar {
-            if let list = vm.list, let currentUser = auth.currentUser, list.collaborators.contains(where: { $0.user.id == currentUser.id && $0.access == .edit }) {
+            if let list = vm.list, let currentUser = auth.currentUser, list.owner.id == currentUser.id {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         vm.deleteListConfirmation = true
@@ -156,6 +156,7 @@ struct PlacesListView: View {
                 }
             }
         }
+        .toolbarBackground(.hidden)
         .onDisappear {
             self.isAnimating = false
         }

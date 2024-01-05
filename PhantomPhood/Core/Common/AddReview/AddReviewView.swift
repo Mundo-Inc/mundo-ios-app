@@ -11,14 +11,8 @@ import AVKit
 import Kingfisher
 
 struct AddReviewView: View {
-    @ObservedObject var placeVM: PlaceViewModel
-    
-    init(placeVM: PlaceViewModel) {
-        self._placeVM = ObservedObject(wrappedValue: placeVM)
-        self._vm = StateObject(wrappedValue: AddReviewViewModel(placeVM: placeVM))
-    }
-    
     @ObservedObject var appData = AppData.shared
+    @ObservedObject var vm = AddReviewVM.shared
     
     @Environment(\.dismiss) var dismiss
     
@@ -28,14 +22,13 @@ struct AddReviewView: View {
     let serviceEmojis = ["😠", "😪", "🙂", "👌", "💖"]
     let atmosphereEmojis = ["😖", "😕", "🙂", "😉", "🤩"]
     
-    @StateObject private var vm: AddReviewViewModel
     @StateObject private var pickerVM = PickerVM()
     
     @FocusState var textFieldFocused
     
     var body: some View {
         ZStack {
-            if let place = placeVM.place {
+            if let place = vm.place {
                 VStack {
                     HStack {
                         Button {
@@ -422,9 +415,9 @@ struct AddReviewView: View {
                             .buttonStyle(.bordered)
                         case .review:
                             Button {
-                                if let place = placeVM.place, pickerVM.isReadyToSubmit {
+                                if pickerVM.isReadyToSubmit {
                                     Task {
-                                        await vm.submit(place: place.id, mediaItems: pickerVM.mediaItems)
+                                        await vm.submit(mediaItems: pickerVM.mediaItems)
                                     }
                                 }
                             } label: {
@@ -444,8 +437,8 @@ struct AddReviewView: View {
                     .padding(.horizontal)
                     .padding(.bottom)
                 }
-            } else {
-                EmptyView()
+            } else if let error = vm.error {
+                Text(error)
             }
             
             if vm.isSubmitting {
@@ -503,6 +496,6 @@ struct AddReviewView: View {
 
 #Preview {
     NavigationStack {
-        AddReviewView(placeVM: PlaceViewModel(id: "645c1d1ab41f8e12a0d166bc"))
+        AddReviewView()
     }
 }

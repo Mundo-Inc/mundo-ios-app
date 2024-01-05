@@ -57,6 +57,8 @@ final class SearchViewModel: ObservableObject {
     private let auth = Authentication.shared
     private let locationManager = LocationManager.shared
     
+    var mapRegion: MKCoordinateRegion? = nil
+    
     @Published var showSearch = false
     @Published var searchPlaceRegion: SearchPlaceRegion = .global
     @Published var text = ""
@@ -119,6 +121,8 @@ final class SearchViewModel: ObservableObject {
             var theRegion: MKCoordinateRegion
             if let region {
                 theRegion = region
+            } else if let mapRegion {
+                theRegion = mapRegion
             } else {
                 theRegion = locationManager.region
             }

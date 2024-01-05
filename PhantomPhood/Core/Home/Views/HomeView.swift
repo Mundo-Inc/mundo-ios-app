@@ -12,9 +12,13 @@ struct HomeView: View {
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var notificationsVM = NotificationsVM.shared
     
-    @StateObject private var searchViewModel = SearchViewModel()
-    @State private var showActions: Bool = false
+//    @StateObject private var searchViewModel = SearchViewModel()
+//    @State private var showActions: Bool = false
     @State private var reportId: String? = nil
+    
+    /// Used for pull to referesh - Percentage
+    @State private var draggedAmount: Double = .zero
+    private let dragAmountToRefresh: Double = 200.0
     
     // -
     @StateObject private var mediasViewModel = MediasViewModel()
@@ -25,7 +29,7 @@ struct HomeView: View {
         NavigationStack(path: $appData.homeNavStack) {
             ZStack(alignment: .bottomTrailing) {
                 TabView(selection: $appData.homeActiveTab) {
-                    ForYouView()
+                    ForYouView(draggedAmount: $draggedAmount, dragAmountToRefresh: dragAmountToRefresh)
                         .tag(HomeTab.forYou)
                     
                     FeedView(mediasViewModel: mediasViewModel, reportId: $reportId)
@@ -106,37 +110,22 @@ struct HomeView: View {
                         .font(.custom(style: .headline))
                         .fontWeight(.semibold)
                         .foregroundStyle(.primary)
+                        .opacity(1.0 - min(draggedAmount * 2, 1))
+                        .offset(y: draggedAmount * 20)
+                        .background {
+                            HStack {
+                                Text("Drag down to referesh")
+                                Image(systemName: "menubar.arrow.down.rectangle")
+                            }
+                            .font(.custom(style: .caption))
+                            .opacity(draggedAmount <= 1/3 ? 0 : abs((draggedAmount - 1/3) * 3/2))
+                        }
+                        .offset(y: draggedAmount * 20)
                     }
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(.hidden, for: .automatic)
                 .navigationBarTitleDisplayMode(.inline)
-                
-                Button {
-                    showActions = true
-                } label: {
-                    Circle()
-                        .foregroundStyle(Color.clear)
-                        .frame(width: 52, height: 52)
-                        .overlay {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .foregroundStyle(Color.accentColor)
-                                    .rotationEffect(.degrees(45))
-                                
-                                Image(systemName: "plus")
-                                    .font(.system(size: 28))
-                                    .foregroundStyle(.white)
-                            }
-                        }
-                        .rotationEffect(showActions ? .degrees(135) : .zero)
-                        .scaleEffect(showActions ? 2 : 1)
-                        .opacity(showActions ? 0 : 1)
-                        .offset(y: showActions ? 50 : 0)
-                        .animation(.bouncy, value: showActions)
-                        .padding(.trailing)
-                        .padding(.bottom)
-                }
                 
                 if reportId != nil {
                     ReportView(id: $reportId, type: .review)
@@ -144,18 +133,18 @@ struct HomeView: View {
                         .animation(.easeInOut, value: reportId)
                 }
             }
-            .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
-                searchViewModel.tokens.removeAll()
-                searchViewModel.text = ""
-            }) {
-                SearchView(vm: searchViewModel) { place in
-                    if let title = place.name {
-                        appData.homeNavStack.append(AppRoute.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title), action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
-                    }
-                } onUserSelect: { user in
-                    appData.homeNavStack.append(AppRoute.userProfile(userId: user.id))
-                }
-            }
+//            .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
+//                searchViewModel.tokens.removeAll()
+//                searchViewModel.text = ""
+//            }) {
+//                SearchView(vm: searchViewModel) { place in
+//                    if let title = place.name {
+//                        appData.homeNavStack.append(AppRoute.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title), action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
+//                    }
+//                } onUserSelect: { user in
+//                    appData.homeNavStack.append(AppRoute.userProfile(userId: user.id))
+//                }
+//            }
             .navigationDestination(for: AppRoute.self) { route in
                 switch route {
                 case .notifications:
@@ -193,77 +182,77 @@ struct HomeView: View {
                 }
             }
         }
-        .environmentObject(searchViewModel)
-        .sheet(isPresented: $showActions) {
-            VStack {
-                RoundedRectangle(cornerRadius: 3)
-                    .frame(width: 30, height: 3)
-                    .padding(.top)
-                    .foregroundStyle(.tertiary)
-                
-                Spacer()
-                
-                Button {
-                    showActions = false
-                    searchViewModel.scope = .places
-                    searchViewModel.tokens = [.checkin]
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        searchViewModel.showSearch = true
-                    }
-                } label: {
-                    HStack {
-                        Image(systemName: "checkmark.diamond")
-                            .font(.system(size: 32))
-                        
-                        VStack {
-                            Text("Check-in")
-                                .font(.custom(style: .headline))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Check in to places that you go!")
-                                .multilineTextAlignment(.leading)
-                                .font(.custom(style: .caption))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                    .padding()
-                    .background(Color.themePrimary)
-                    .clipShape(.rect(cornerRadius: 15))
-                }
-                .foregroundStyle(.primary)
-                
-                Button {
-                    searchViewModel.scope = .places
-                    searchViewModel.tokens = [.addReview]
-                    showActions = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        searchViewModel.showSearch = true
-                    }
-                } label: {
-                    HStack {
-                        Image(systemName: "star.bubble")
-                            .font(.system(size: 32))
-                        
-                        VStack {
-                            Text("Review")
-                                .font(.custom(style: .headline))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Add a review to a place that you’ve been")
-                                .font(.custom(style: .caption))
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                    .padding()
-                    .background(Color.themePrimary)
-                    .clipShape(.rect(cornerRadius: 15))
-                }
-                .foregroundStyle(.primary)
-                
-                Spacer()
-            }
-            .padding(.horizontal)
-            .presentationDetents([.height(250)])
-        }
+//        .environmentObject(searchViewModel)
+//        .sheet(isPresented: $showActions) {
+//            VStack {
+//                RoundedRectangle(cornerRadius: 3)
+//                    .frame(width: 30, height: 3)
+//                    .padding(.top)
+//                    .foregroundStyle(.tertiary)
+//                
+//                Spacer()
+//                
+//                Button {
+//                    showActions = false
+//                    searchViewModel.scope = .places
+//                    searchViewModel.tokens = [.checkin]
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//                        searchViewModel.showSearch = true
+//                    }
+//                } label: {
+//                    HStack {
+//                        Image(systemName: "checkmark.diamond")
+//                            .font(.system(size: 32))
+//                        
+//                        VStack {
+//                            Text("Check-in")
+//                                .font(.custom(style: .headline))
+//                                .frame(maxWidth: .infinity, alignment: .leading)
+//                            Text("Check in to places that you go!")
+//                                .multilineTextAlignment(.leading)
+//                                .font(.custom(style: .caption))
+//                                .frame(maxWidth: .infinity, alignment: .leading)
+//                        }
+//                    }
+//                    .padding()
+//                    .background(Color.themePrimary)
+//                    .clipShape(.rect(cornerRadius: 15))
+//                }
+//                .foregroundStyle(.primary)
+//                
+//                Button {
+//                    searchViewModel.scope = .places
+//                    searchViewModel.tokens = [.addReview]
+//                    showActions = false
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//                        searchViewModel.showSearch = true
+//                    }
+//                } label: {
+//                    HStack {
+//                        Image(systemName: "star.bubble")
+//                            .font(.system(size: 32))
+//                        
+//                        VStack {
+//                            Text("Review")
+//                                .font(.custom(style: .headline))
+//                                .frame(maxWidth: .infinity, alignment: .leading)
+//                            Text("Add a review to a place that you’ve been")
+//                                .font(.custom(style: .caption))
+//                                .multilineTextAlignment(.leading)
+//                                .frame(maxWidth: .infinity, alignment: .leading)
+//                        }
+//                    }
+//                    .padding()
+//                    .background(Color.themePrimary)
+//                    .clipShape(.rect(cornerRadius: 15))
+//                }
+//                .foregroundStyle(.primary)
+//                
+//                Spacer()
+//            }
+//            .padding(.horizontal)
+//            .presentationDetents([.height(250)])
+//        }
     }
 }
 

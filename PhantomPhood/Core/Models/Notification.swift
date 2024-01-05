@@ -20,7 +20,7 @@ struct NotificationResource {
 struct Notification: Decodable, Identifiable {
     let _id: String
     let user: CompactUser
-    let type: NotificationType
+    let type: String
     var readAt: String?
     let sent: Bool
     let failReason: String?
@@ -37,14 +37,20 @@ struct Notification: Decodable, Identifiable {
     var id: String {
         self._id
     }
+
+    var isKnownType: Bool {
+        NotificationType.allCases.map { $0.rawValue }.contains(self.type)
+    }
 }
 
-enum NotificationType: String, Decodable {
+enum NotificationType: String, Decodable, CaseIterable {
     case reaction = "REACTION"
     case comment = "COMMENT"
     case follow = "FOLLOW"
     case comment_mention = "COMMENT_MENTION"
     case review_mention = "REVIEW_MENTION"
+    case following_checkin = "FOLLOWING_CHECKIN"
+    case following_review = "FOLLOWING_REVIEW"
     case xp = "XP"
     case level_up = "LEVEL_UP"
 }

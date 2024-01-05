@@ -11,6 +11,8 @@ import Kingfisher
 
 @available(iOS 17.0, *)
 struct MapView17: View {
+    @EnvironmentObject var searchVM: SearchViewModel
+    
     @ObservedObject var appData = AppData.shared
     @ObservedObject var mapVM: MapViewModel
     @State var position: MapCameraPosition = .userLocation(fallback: .automatic)
@@ -31,6 +33,8 @@ struct MapView17: View {
             }
         }
     }
+    
+    @State var scale: CGFloat = 1
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -108,8 +112,9 @@ struct MapView17: View {
                                 }
                             }
                             .frame(width: 36, height: 36)
-                            .background(Color.themePrimary.opacity(0.3))
+                            .background(Color("PhantomColor").opacity(0.4))
                             .clipShape(Circle())
+                            .scaleEffect(scale)
                             .onTapGesture {
                                 Task {
                                     if let category = item.pointOfInterestCategory {
@@ -162,6 +167,11 @@ struct MapView17: View {
                 MapUserLocationButton()
             }
             .onMapCameraChange(frequency: .continuous, { mapCameraUpdateContext in
+                searchVM.mapRegion = mapCameraUpdateContext.region
+                
+                let scaleValue = 1.0 / (mapCameraUpdateContext.region.span.latitudeDelta * 2)
+                scale = scaleValue > 1 ? 1 : scaleValue < 0.4 ? 0.4 : scaleValue
+                
                 mapVM.updateClusters(region: mapCameraUpdateContext.region)
                 guard !mapVM.isActiviteisLoading else { return }
                 throttle.call {

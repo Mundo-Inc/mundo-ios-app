@@ -13,12 +13,21 @@ enum Tab: String, CaseIterable {
     case leaderboard = "Leaderboard"
     case myProfile = "MyProfile"
     
-    var icon: String {
+    var imageName: String {
         switch self {
-        case .home: return "house"
-        case .map: return "globe.americas.fill"
-        case .leaderboard: return "crown"
-        case .myProfile: return "person.crop.circle"
+        case .home: return "Home"
+        case .map: return "Explore"
+        case .leaderboard: return "Leaderboard"
+        case .myProfile: return "Profile"
+        }
+    }
+    
+    var title: String {
+        switch self {
+        case .home: return "Home"
+        case .map: return "Explore"
+        case .leaderboard: return "Leaderboard"
+        case .myProfile: return "Profile"
         }
     }
     

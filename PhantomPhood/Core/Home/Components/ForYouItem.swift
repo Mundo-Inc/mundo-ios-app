@@ -339,6 +339,7 @@ struct ForYouItem: View {
                         .padding(.horizontal)
                         .padding(.trailing, 52)
                         .padding(.trailing)
+                        .padding(.bottom)
                         .frame(maxWidth: .infinity)
                         .background {
                             LinearGradient(colors: [.clear, .black.opacity(0.2), .black.opacity(0.4), .black.opacity(0.5), .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)

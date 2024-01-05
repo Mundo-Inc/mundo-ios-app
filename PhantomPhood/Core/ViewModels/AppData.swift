@@ -100,6 +100,48 @@ final class AppData: ObservableObject {
             self.myProfileNavStack.append(.userProfile(userId: id))
         }
     }
+    
+    func visiblePlaceId() -> String? {
+        switch self.activeTab {
+        case .home:
+            if let route = self.homeNavStack.last {
+                switch route {
+                case .place(let placeId, _):
+                    return placeId
+                default:
+                    return nil
+                }
+            }
+        case .map:
+            if let route = self.mapNavStack.last {
+                switch route {
+                case .place(let placeId, _):
+                    return placeId
+                default:
+                    return nil
+                }
+            }
+        case .leaderboard:
+            if let route = self.leaderboardNavStack.last {
+                switch route {
+                case .place(let placeId, _):
+                    return placeId
+                default:
+                    return nil
+                }
+            }
+        case .myProfile:
+            if let route = self.myProfileNavStack.last {
+                switch route {
+                case .place(let placeId, _):
+                    return placeId
+                default:
+                    return nil
+                }
+            }
+        }
+        return nil
+    }
 }
 
 enum HomeTab: String {

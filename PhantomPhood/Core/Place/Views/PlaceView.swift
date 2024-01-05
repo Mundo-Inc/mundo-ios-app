@@ -10,17 +10,13 @@ import MapKit
 import Kingfisher
 
 struct PlaceView: View {
-    let action: PlaceAction?
-    
     @StateObject private var vm: PlaceViewModel
     
     init(id: String, action: PlaceAction? = nil) {
-        self.action = action
         self._vm = StateObject(wrappedValue: PlaceViewModel(id: id, action: action))
     }
     
     init(mapPlace: MapPlace, action: PlaceAction? = nil) {
-        self.action = action
         self._vm = StateObject(wrappedValue: PlaceViewModel(mapPlace: mapPlace, action: action))
     }
     
@@ -285,32 +281,6 @@ struct PlaceView: View {
             }
             .ignoresSafeArea(edges: .top)
             
-            Button {
-                vm.showActions = true
-            } label: {
-                Circle()
-                    .foregroundStyle(Color.clear)
-                    .frame(width: 52, height: 52)
-                    .overlay {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 12)
-                                .foregroundStyle(Color.accentColor)
-                                .rotationEffect(.degrees(45))
-                            
-                            Image(systemName: "plus")
-                                .font(.system(size: 28))
-                                .foregroundStyle(.white)
-                        }
-                    }
-                    .rotationEffect(vm.showActions ? .degrees(135) : .zero)
-                    .scaleEffect(vm.showActions ? 2 : 1)
-                    .opacity(vm.showActions ? 0 : 1)
-                    .offset(y: vm.showActions ? 50 : 0)
-                    .animation(.bouncy, value: vm.showActions)
-                    .padding(.trailing)
-                    .padding(.bottom)
-            }
-            
             if vm.reportId != nil {
                 ReportView(id: $vm.reportId, type: .review)
                     .transition(.move(edge: .bottom))
@@ -333,74 +303,6 @@ struct PlaceView: View {
                     ShareLink(place.name, item: url, subject: Text(place.name), message: Text("Check out \(place.name) on Phantom Phood"))
                 }
             }
-        }
-        .fullScreenCover(isPresented: $vm.showAddReview) {
-            AddReviewView(placeVM: vm)
-        }
-        .sheet(isPresented: $vm.showActions) {
-            VStack {
-                RoundedRectangle(cornerRadius: 3)
-                    .frame(width: 30, height: 3)
-                    .padding(.top)
-                    .foregroundStyle(.tertiary)
-                
-                Spacer()
-                
-                Button {
-                    Task {
-                        await vm.checkin()
-                    }
-                    vm.showActions = false
-                } label: {
-                    HStack {
-                        Image(systemName: "checkmark.diamond")
-                            .font(.system(size: 32))
-                        
-                        VStack {
-                            Text("Check-in")
-                                .font(.custom(style: .headline))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Check in to here")
-                                .font(.custom(style: .caption))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                    .padding()
-                    .background(Color.themePrimary)
-                    .clipShape(.rect(cornerRadius: 15))
-                }
-                .foregroundStyle(.primary)
-                
-                Button {
-                    vm.showActions = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        vm.showAddReview = true
-                    }
-                } label: {
-                    HStack {
-                        Image(systemName: "star.bubble")
-                            .font(.system(size: 32))
-                        
-                        VStack {
-                            Text("Review")
-                                .font(.custom(style: .headline))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Add a review to to this place")
-                                .font(.custom(style: .caption))
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                    .padding()
-                    .background(Color.themePrimary)
-                    .clipShape(.rect(cornerRadius: 15))
-                }
-                .foregroundStyle(.primary)
-                
-                Spacer()
-            }
-            .padding(.horizontal)
-            .presentationDetents([.height(250)])
         }
     }
 }

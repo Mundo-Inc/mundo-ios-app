@@ -1,0 +1,98 @@
+//
+//  MainTabBarView.swift
+//  PhantomPhood
+//
+//  Created by Kia Abdi on 1/4/24.
+//
+
+import SwiftUI
+
+struct MainTabBarView: View {
+    @ObservedObject private var auth = Authentication.shared
+    @Binding var selection: Tab
+    @Binding var showActions: Bool
+    
+    var body: some View {
+        HStack {
+            tabView(tab: .home)
+            
+            tabView(tab: .map)
+            
+            Button {
+                showActions.toggle()
+            } label: {
+                Circle()
+                    .foregroundStyle(Color.clear)
+                    .frame(width: 48, height: 48)
+                    .overlay {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 12)
+                                .foregroundStyle(showActions ? Color.gray : Color.accentColor)
+                                .rotationEffect(.degrees(45))
+                            
+                            Image(systemName: "plus")
+                                .font(.system(size: 28))
+                                .foregroundStyle(.white)
+                        }
+                    }
+            }
+            .rotationEffect(showActions ? .degrees(135) : .zero)
+            .offset(y: -26)
+            .animation(.bouncy, value: showActions)
+            
+            tabView(tab: .leaderboard)
+            
+            myProfileView()
+        }
+        .padding(.top, 8)
+        .background(.ultraThinMaterial)
+        .ignoresSafeArea(.all, edges: .bottom)
+    }
+}
+
+extension MainTabBarView {
+    private func tabView(tab: Tab) -> some View {
+        VStack(spacing: 3) {
+            Image(tab.imageName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 30, height: 30)
+            Text(tab.title)
+                .font(.custom(style: .caption2))
+                .fontWeight(.medium)
+        }
+        .foregroundStyle(self.selection == tab ? Color.accentColor : Color.secondary)
+        .frame(maxWidth: .infinity)
+        .onTapGesture {
+            self.selection = tab
+        }
+    }
+    
+    private func myProfileView() -> some View {
+        VStack(spacing: 3) {
+            if let currentUser = auth.currentUser {
+                ProfileImage(currentUser.profileImage, size: 30, cornerRadius: 15)
+            } else {
+                Image(Tab.myProfile.imageName)
+                    .font(.system(size: 22))
+                    .frame(width: 30, height: 30)
+            }
+            Text(Tab.myProfile.title)
+                .font(.custom(style: .caption2))
+                .fontWeight(.medium)
+        }
+        .foregroundStyle(self.selection == Tab.myProfile ? Color.accentColor : Color.secondary)
+        .frame(maxWidth: .infinity)
+        .onTapGesture {
+            self.selection = Tab.myProfile
+        }
+    }
+}
+
+#Preview {
+    VStack {
+        Spacer()
+        
+        MainTabBarView(selection: .constant(.home), showActions: .constant(false))
+    }
+}

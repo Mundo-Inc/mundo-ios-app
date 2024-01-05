@@ -19,8 +19,10 @@ struct ForYouView: View {
     @ObservedObject var videoPlayerVM = VideoPlayerVM.shared
     @StateObject private var page: Page = .first()
     
-    @State private var draggedAmount: CGSize = .zero
+    @Binding var draggedAmount: Double
+    let dragAmountToRefresh: Double
     @State private var readyToReferesh = true
+    @State private var haptic = false
     
     var body: some View {
         ZStack {
@@ -29,43 +31,49 @@ struct ForYouView: View {
                     if !vm.items.isEmpty {
                         Pager(page: page, data: vm.items) { item in
                             ForYouItem(data: item, itemIndex: vm.items.firstIndex(of: item), page: page, parentGeometry: geometry)
-                                .gesture(
-                                    DragGesture()
-                                        .onChanged({ value in
-                                            if page.index == 0 && value.location.y > value.startLocation.y {
-                                                withAnimation {
-                                                    draggedAmount = value.translation
-                                                }
-                                                if value.translation.height > geometry.safeAreaInsets.top + 60 {
-                                                    if !vm.isLoading && readyToReferesh {
-                                                        Task {
-                                                            UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                                                            await vm.getForYou(.refresh)
-                                                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                                            if draggedAmount != .zero {
-                                                                readyToReferesh = false
-                                                                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                                                    self.readyToReferesh = true
-                                                                }
+                                .if((vm.items.first?.id ?? "NoID") == item.id, transform: { view in
+                                    view
+                                        .gesture(
+                                            DragGesture()
+                                                .onChanged({ value in
+                                                    if page.index == 0 && value.location.y > value.startLocation.y {
+                                                        draggedAmount = min(abs(value.translation.height) / dragAmountToRefresh, 1)
+                                                        
+                                                        if value.translation.height > dragAmountToRefresh {
+                                                            if !self.haptic {
+                                                                UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                                                                self.haptic = true
+                                                            }
+                                                        } else {
+                                                            self.haptic = false
+                                                        }
+                                                    }
+                                                })
+                                                .onEnded({ value in
+                                                    if value.translation.height > dragAmountToRefresh {
+                                                        if !vm.isLoading && readyToReferesh {
+                                                            Task {
+                                                                UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                                                                await vm.getForYou(.refresh)
+                                                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                                             }
                                                         }
                                                     }
-                                                }
-                                            }
-                                        })
-                                        .onEnded({ value in
-                                            if draggedAmount != .zero {
-                                                withAnimation {
-                                                    draggedAmount = .zero
-                                                }
-                                            }
-                                            readyToReferesh = true
-                                        })
-                                )
-                                .offset(y: draggedAmount.height < geometry.safeAreaInsets.top + 60 ? draggedAmount.height : geometry.safeAreaInsets.top + 60)
+                                                    
+                                                    if draggedAmount != .zero {
+                                                        withAnimation {
+                                                            draggedAmount = .zero
+                                                        }
+                                                    }
+                                                    readyToReferesh = true
+                                                })
+                                        )
+                                        .blur(radius: draggedAmount < 0.1 ? 0 : draggedAmount * 8)
+                                })
                         }
                         .singlePagination()
                         .pagingPriority(.simultaneous)
+//                        .delaysTouches(false)
                         .bounces(false)
                         .vertical()
                         .onPageChanged({ pageIndex in
@@ -91,9 +99,9 @@ struct ForYouView: View {
                                 }
                             }
                         })
-                        .background(alignment: .top) {
-                            ProgressView(value: min(abs(draggedAmount.height), geometry.safeAreaInsets.top + 60), total: geometry.safeAreaInsets.top + 60)
-                                .opacity((abs(draggedAmount.height) / (geometry.safeAreaInsets.top + 60)) * 0.7 + 0.3)
+                        .overlay(alignment: .top) {
+                            ProgressView(value: draggedAmount)
+                                .opacity(draggedAmount < 0.1 ? 0 : draggedAmount * 0.5 + 0.5)
                         }
                         .environment(\.colorScheme, .dark)
                     } else {
@@ -116,6 +124,8 @@ struct ForYouView: View {
                 }
             })
         }
+        
+        
         .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {
             forYouInfoVM.reset()
         }) {
@@ -140,6 +150,21 @@ struct ForYouView: View {
                 videoPlayerVM.playId = nil
             }
         }
+        .onAppear {
+            if !vm.items.isEmpty, vm.items.endIndex >= page.index {
+                let item = vm.items[page.index]
+                switch item.resource {
+                case .review(let feedReview):
+                    if let first = feedReview.videos.first, videoPlayerVM.playId != first.id {
+                        videoPlayerVM.playId = first.id
+                    } else if videoPlayerVM.playId != nil {
+                        videoPlayerVM.playId = nil
+                    }
+                default:
+                    break
+                }
+            }
+        }
         .onChange(of: vm.items.count) { count in
             if count > 0 && page.index == 0, let firstItem = vm.items.first {
                 switch firstItem.resource {
@@ -158,5 +183,5 @@ struct ForYouView: View {
 }
 
 #Preview {
-    ForYouView()
+    ForYouView(draggedAmount: .constant(.zero), dragAmountToRefresh: 250)
 }

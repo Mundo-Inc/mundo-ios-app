@@ -22,15 +22,13 @@ class PlaceViewModel: ObservableObject {
     
     private let dataManager = PlaceDM()
     private let toastViewModel = ToastViewModel.shared
+    private let addReviewVM = AddReviewVM.shared
     
     @Published var isAddToListPresented: Bool = false
-    @Published var showActions: Bool = false
     
     @Published private(set) var isLoading = false
     @Published private(set) var place: Place?
     @Published private(set) var error: String?
-    
-    @Published var showAddReview = false
     
     @Published var activeTab: PlaceTab = .overview
     @Published var prevActiveTab: PlaceTab = .overview
@@ -50,7 +48,11 @@ class PlaceViewModel: ObservableObject {
         case .addReview:
             self.activeTab = .reviews
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.showAddReview = true
+                if let place = self.place {
+                    self.addReviewVM.present(place: place)
+                } else {
+                    self.addReviewVM.present(placeId: id)
+                }
             }
         case nil:
             break
@@ -78,7 +80,7 @@ class PlaceViewModel: ObservableObject {
                 case .addReview:
                     self.activeTab = .reviews
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        self.showAddReview = true
+                        self.addReviewVM.present(place: data)
                     }
                 case nil:
                     break

@@ -80,13 +80,7 @@ struct NotificationsView: View {
                     VStack(spacing: 5) {
                         Group {
                             switch data.type {
-                            case .reaction:
-                                Text(data.user.name)
-                                    .bold()
-                                    .frame(minHeight: 20)
-                                Text(data.content)
-                                    .frame(minHeight: 18)
-                            case .comment:
+                            case NotificationType.comment.rawValue:
                                 Group {
                                     Text(data.user.name)
                                         .bold()
@@ -97,14 +91,7 @@ struct NotificationsView: View {
                                 
                                 Text(data.content)
                                     .frame(minHeight: 18)
-                            case .follow:
-                                Text(data.user.name)
-                                    .bold()
-                                    .frame(minHeight: 20)
-                                
-                                Text(data.content)
-                                    .frame(minHeight: 18)
-                            case .comment_mention:
+                            case NotificationType.comment_mention.rawValue:
                                 Group {
                                     Text(data.user.name)
                                         .bold()
@@ -115,7 +102,7 @@ struct NotificationsView: View {
                                 
                                 Text(data.content)
                                     .frame(minHeight: 18)
-                            case .review_mention:
+                            case NotificationType.review_mention.rawValue:
                                 Group {
                                     Text(data.user.name)
                                         .bold()
@@ -126,20 +113,29 @@ struct NotificationsView: View {
                                 
                                 Text(data.content)
                                     .frame(minHeight: 18)
-                            case .xp:
+                            case NotificationType.xp.rawValue:
                                 Text(data.user.name)
                                     .bold()
                                     .frame(minHeight: 20)
                                 
                                 Text("Got \(data.content) XP")
                                     .frame(minHeight: 18)
-                            case .level_up:
+                            case NotificationType.level_up.rawValue:
                                 Text(data.user.name)
                                     .bold()
                                     .frame(minHeight: 20)
                                 
                                 Text("Leveled Up")
                                     .frame(minHeight: 18)
+                            default:
+                                if !data.content.isEmpty {
+                                    Text(data.user.name)
+                                        .bold()
+                                        .frame(minHeight: 20)
+                                    
+                                    Text(data.content)
+                                        .frame(minHeight: 18)
+                                }
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)

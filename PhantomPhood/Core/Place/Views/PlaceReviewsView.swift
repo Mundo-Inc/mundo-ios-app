@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PlaceReviewsView: View {
     @ObservedObject var vm: PlaceViewModel
+    @ObservedObject var addReviewVM = AddReviewVM.shared
     
     @StateObject var placeReviewsViewModel: PlaceReviewsViewModel
     
@@ -111,14 +112,15 @@ struct PlaceReviewsView: View {
                         Spacer()
                         
                         Button {
-                            vm.showAddReview = true
+                            if let place = vm.place {
+                                addReviewVM.present(place: place)
+                            }
                         } label: {
                             Label(
                                 title: { Text("Add Review") },
                                 icon: { Image(systemName: "text.bubble.rtl") }
                             )
                         }
-                        .disabled(vm.showAddReview)
                         .buttonStyle(.bordered)
                         .controlSize(.small)
                     }

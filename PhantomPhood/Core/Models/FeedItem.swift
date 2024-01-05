@@ -22,8 +22,8 @@ enum FeedItemResourceType: String, Decodable {
     case review = "Review"
     case checkin = "Checkin"
     case user = "User"
-//    case reaction = "Reaction"
-//    case achievement = "Achievement"
+    //    case reaction = "Reaction"
+    //    case achievement = "Achievement"
 }
 
 enum FeedItemResource: Decodable {
@@ -31,8 +31,8 @@ enum FeedItemResource: Decodable {
     case review(FeedReview)
     case checkin(FeedCheckin)
     case user(CompactUser)
-//    case reaction
-//    case achievement
+    //    case reaction
+    //    case achievement
 }
 
 enum PrivacyType: String, Decodable {
@@ -114,5 +114,65 @@ struct FeedItem: Identifiable, Decodable, Equatable {
         reactions = try container.decode(ReactionsObject.self, forKey: .reactions)
         comments = try container.decode([Comment].self, forKey: .comments)
         commentsCount = try container.decode(Int.self, forKey: .commentsCount)
+    }
+    
+    func addReaction(_ userReaction: UserReaction) -> FeedItem {
+        var newReactions = self.reactions
+        
+        // Check if user has already reacted
+        if let index = newReactions.user.firstIndex(where: { $0.id == userReaction.id }) {
+            newReactions.user[index] = userReaction
+        } else {
+            newReactions.user.append(userReaction)
+        }
+        
+        // Check if reaction already exists
+        if let index = newReactions.total.firstIndex(where: { $0.reaction == userReaction.reaction }) {
+            newReactions.total[index] = Reaction(reaction: userReaction.reaction, type: .emoji, count: newReactions.total[index].count + 1)
+        } else {
+            newReactions.total.append(Reaction(reaction: userReaction.reaction, type: .emoji, count: 1))
+        }
+        
+        return FeedItem(
+            id: self.id,
+            user: self.user,
+            place: self.place,
+            activityType: self.activityType,
+            resourceType: self.resourceType,
+            resource: self.resource,
+            privacyType: self.privacyType,
+            createdAt: self.createdAt,
+            updatedAt: self.updatedAt,
+            reactions: newReactions,
+            comments: self.comments,
+            commentsCount: self.commentsCount
+        )
+    }
+    
+    func removeReaction(_ userReaction: UserReaction) -> FeedItem {
+        var newReactions = self.reactions
+        
+        if let index = newReactions.user.firstIndex(where: { $0.id == userReaction.id }) {
+            newReactions.user.remove(at: index)
+        }
+        
+        if let index = newReactions.total.firstIndex(where: { $0.reaction == userReaction.reaction }) {
+            newReactions.total[index] = Reaction(reaction: userReaction.reaction, type: .emoji, count: newReactions.total[index].count - 1)
+        }
+        
+        return FeedItem(
+            id: self.id,
+            user: self.user,
+            place: self.place,
+            activityType: self.activityType,
+            resourceType: self.resourceType,
+            resource: self.resource,
+            privacyType: self.privacyType,
+            createdAt: self.createdAt,
+            updatedAt: self.updatedAt,
+            reactions: newReactions,
+            comments: self.comments,
+            commentsCount: self.commentsCount
+        )
     }
 }

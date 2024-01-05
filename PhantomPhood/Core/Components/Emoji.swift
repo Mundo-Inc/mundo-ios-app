@@ -43,7 +43,7 @@ struct Emoji: View {
     
     var body: some View {
         Group {
-            if emoji.isAnimated, let gifName = emoji.gifName {
+            if emoji.isAnimated, let gifName = emoji.gifName, isAnimating {
                 AnimatedImage(name: gifName, isAnimating: $isAnimating)
                     .resizable()
                     .scaledToFit()

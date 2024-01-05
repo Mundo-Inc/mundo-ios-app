@@ -20,7 +20,7 @@ struct PlaceOverviewView: View {
             if let place = vm.place {
                 Group {
                     if #available(iOS 17.0, *) {
-                        Map {
+                        Map(initialPosition: .region(.init(center: CLLocationCoordinate2D(latitude: place.location.geoLocation.lat, longitude: place.location.geoLocation.lng), latitudinalMeters: 2000, longitudinalMeters: 2000))) {
                             Marker(place.name, coordinate: CLLocationCoordinate2D(latitude: place.location.geoLocation.lat, longitude: place.location.geoLocation.lng))
                         }
                     } else {

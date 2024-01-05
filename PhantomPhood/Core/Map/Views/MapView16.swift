@@ -8,10 +8,13 @@
 import SwiftUI
 import MapKit
 import Kingfisher
+import Combine
 
 let AcceptablePointOfInterestCategories: [MKPointOfInterestCategory] = [.cafe, .restaurant, .nightlife, .bakery, .brewery, .winery]
 
 struct MapView16: View {
+    @EnvironmentObject var searchVM: SearchViewModel
+    
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var locationManager = LocationManager.shared
     
@@ -63,7 +66,7 @@ struct MapView16: View {
                         }
                     }
                 }
-            })
+            }, mapRegion: $searchVM.mapRegion)
             
             if let item = self.selectedPlace {
                 VStack {
@@ -244,6 +247,7 @@ struct Map16: UIViewRepresentable {
     @Binding var centerCoordinate: CLLocationCoordinate2D
     var annotations: [MKPointAnnotation]
     let onTap: (CLLocationCoordinate2D) -> Void
+    @Binding var mapRegion: MKCoordinateRegion?
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
@@ -265,20 +269,26 @@ struct Map16: UIViewRepresentable {
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        Coordinator(self, mapRegion: $mapRegion)
     }
     
     class Coordinator: NSObject, MKMapViewDelegate {
         var parent: Map16
+        @Binding var mapRegion: MKCoordinateRegion?
         
-        init(_ parent: Map16) {
+        init(_ parent: Map16, mapRegion: Binding<MKCoordinateRegion?>) {
             self.parent = parent
+            self._mapRegion = mapRegion
         }
         
         @objc func tapped(gesture: UITapGestureRecognizer) {
             let location = gesture.location(in: gesture.view)
             let coordinate = (gesture.view as! MKMapView).convert(location, toCoordinateFrom: gesture.view)
             parent.onTap(coordinate)
+        }
+        
+        func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
+            mapRegion = mapView.region
         }
     }
 }

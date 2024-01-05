@@ -11,49 +11,50 @@ struct ContentView: View {
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
     @ObservedObject private var commentsViewModel = CommentsViewModel.shared
+    @ObservedObject private var addReviewVM = AddReviewVM.shared
+    
+    @StateObject private var searchViewModel = SearchViewModel()
+    
+    @State private var showActions: Bool = false
     
     var body: some View {
-        TabView(selection: appData.tabViewSelectionHandler) {
-            HomeView()
-                .tabItem {
-                    Label {
-                        Text("Home")
-                    } icon: {
-                        Image(systemName: Tab.home.icon)
+        VStack(spacing: 0) {
+            TabView(selection: appData.tabViewSelectionHandler) {
+                HomeView()
+                    .tag(Tab.home)
+                    .toolbar(.hidden, for: .tabBar)
+                
+                MapView()
+                    .tag(Tab.map)
+                    .toolbar(.hidden, for: .tabBar)
+                
+                
+                LeaderboardView()
+                    .tag(Tab.leaderboard)
+                    .toolbar(.hidden, for: .tabBar)
+                
+                MyProfile()
+                    .tag(Tab.myProfile)
+                    .toolbar(.hidden, for: .tabBar)
+            }
+            .environmentObject(searchViewModel)
+            
+            MainTabBarView(selection: appData.tabViewSelectionHandler, showActions: $showActions)
+                .sheet(isPresented: $showActions) {
+                    QuickActionsView(searchViewModel: searchViewModel)
+                }
+                .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
+                    searchViewModel.tokens.removeAll()
+                    searchViewModel.text = ""
+                }) {
+                    SearchView(vm: searchViewModel) { place in
+                        if let title = place.name {
+                            appData.homeNavStack.append(AppRoute.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title), action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
+                        }
+                    } onUserSelect: { user in
+                        appData.homeNavStack.append(AppRoute.userProfile(userId: user.id))
                     }
                 }
-                .tag(Tab.home)
-            
-            MapView()
-                .tabItem {
-                    Label {
-                        Text("Explore")
-                    } icon: {
-                        Image(systemName: Tab.map.icon)
-                    }
-                }
-                .tag(Tab.map)
-            
-            
-            LeaderboardView()
-                .tabItem {
-                    Label {
-                        Text("Leaderboard")
-                    } icon: {
-                        Image(systemName: Tab.leaderboard.icon)
-                    }
-                }
-                .tag(Tab.leaderboard)
-            
-            MyProfile()
-                .tabItem {
-                    Label {
-                        Text("Profile")
-                    } icon: {
-                        Image(systemName: Tab.myProfile.icon)
-                    }
-                }
-                .tag(Tab.myProfile)
         }
         .sheet(isPresented: $selectReactionsViewModel.isPresented, content: {
             if #available(iOS 17.0, *) {
@@ -68,6 +69,9 @@ struct ContentView: View {
         }, content: {
             CommentsView()
         })
+        .fullScreenCover(isPresented: $addReviewVM.isPresented) {
+            AddReviewView()
+        }
         .onAppear {
             ContactsService.shared.tryToSyncContacts()
         }
