@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import MapKit
 import Kingfisher
 
 struct PlaceView: View {
@@ -219,7 +218,7 @@ struct PlaceView: View {
                     .padding(.horizontal)
                 }
                 
-                VStack {
+                VStack(spacing: 0) {
                     HStack {
                         ForEach(PlaceTab.allCases.indices, id: \.self) { i in
                             Button {
@@ -244,41 +243,44 @@ struct PlaceView: View {
                             }
                         }
                     }
-                    .padding(.bottom, 5)
+                    .padding(.bottom)
+                    
                     Divider()
-                }
-                .padding(.vertical)
                 
-                Group {
-                    if let id = vm.id {
-                        switch vm.activeTab {
-                        case .overview:
-                            PlaceOverviewView(vm: vm)
-                        case .reviews:
-                            PlaceReviewsView(placeId: id, vm: vm)
-                        case .media:
-                            PlaceMediaView(placeId: id, vm: vm)
+                    Group {
+                        if let id = vm.id {
+                            switch vm.activeTab {
+                            case .overview:
+                                PlaceOverviewView(vm: vm)
+                            case .reviews:
+                                PlaceReviewsView(placeId: id, vm: vm)
+                            case .media:
+                                PlaceMediaView(placeId: id, vm: vm)
+                            }
+                        } else {
+                            VStack {
+                                RoundedRectangle(cornerRadius: 15)
+                                    .foregroundStyle(Color.themePrimary)
+                                    .frame(height: 140)
+                                
+                                Text("****** *** ******")
+                                    .font(.custom(style: .headline))
+                                    .bold()
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .padding(.horizontal)
+                            .redacted(reason: .placeholder)
                         }
-                    } else {
-                        VStack {
-                            RoundedRectangle(cornerRadius: 15)
-                                .foregroundStyle(Color.themePrimary)
-                                .frame(height: 140)
-                            
-                            Text("****** *** ******")
-                                .font(.custom(style: .headline))
-                                .bold()
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .padding(.horizontal)
-                        .redacted(reason: .placeholder)
                     }
+                    .frame(maxWidth: .infinity)
+                    .padding(.bottom, 60)
+                    .transition(.slide)
+                    
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.bottom, 60)
-                .transition(.slide)
+                .padding(.top)
             }
+            .scrollIndicators(.hidden)
             .ignoresSafeArea(edges: .top)
             
             if vm.reportId != nil {

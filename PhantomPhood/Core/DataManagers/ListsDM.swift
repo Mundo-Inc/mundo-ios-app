@@ -94,8 +94,8 @@ final class ListsDM {
     /// - Parameters:
     ///   - listId: List Id
     ///   - userId: User Id
-    ///   - access: CollaboratorAccess (view or edit)
-    func addCollaborator(listId: String, userId: String, access: CollaboratorAccess) async throws {
+    ///   - access: ListCollaboratorAccess (view or edit)
+    func addCollaborator(listId: String, userId: String, access: ListCollaboratorAccess) async throws {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
@@ -112,8 +112,8 @@ final class ListsDM {
     /// - Parameters:
     ///   - listId: List Id
     ///   - userId: User Id
-    ///   - access: CollaboratorAccess (view or edit)
-    func editCollaborator(listId: String, userId: String, changeAccessTo access: CollaboratorAccess) async throws {
+    ///   - access: ListCollaboratorAccess (view or edit)
+    func editCollaborator(listId: String, userId: String, changeAccessTo access: ListCollaboratorAccess) async throws {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
@@ -160,10 +160,5 @@ final class ListsDM {
             let user: String
             let access: String
         }
-    }
-    
-    enum CollaboratorAccess: String {
-        case view = "view"
-        case edit = "edit"
     }
 }

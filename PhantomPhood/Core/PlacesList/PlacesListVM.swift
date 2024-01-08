@@ -15,11 +15,10 @@ final class PlacesListVM: ObservableObject {
     
     @Published var tabViewSelection: Tabs = .list
     
-    @Published var deleteListConfirmation: Bool = false
-    
-    @Published var removePlaceConfirmation: Bool = false
-    var removePlaceId: String? = nil
-    
+    @Published var showActions: Bool = false
+    @Published var confirmationRequest: ConfirmationRequest? = nil
+    @Published var editingList: UserPlacesList? = nil
+        
     @Published var list: UserPlacesList? = nil
     
     init(listId: String) {
@@ -43,27 +42,21 @@ final class PlacesListVM: ObservableObject {
         if let list = self.list {
             do {
                 try await dataManager.deleteList(withId: list.id)
-                await self.getList()
             } catch {
                 print(error)
             }
         }
     }
     
-    func deletePlaceFromList() async {
-        if let list = self.list, let deleteId = self.removePlaceId {
+    func removePlaceFromList(placeId: String) async {
+        if let list = self.list {
             do {
-                try await dataManager.removePlaceFromList(listId: list.id, placeId: deleteId)
+                try await dataManager.removePlaceFromList(listId: list.id, placeId: placeId)
                 await self.getList()
             } catch {
                 print(error)
             }
         }
-    }
-    
-    func askRemovePlaceConfirmation(placeId: String) {
-        self.removePlaceId = placeId
-        self.removePlaceConfirmation = true
     }
     
     enum Tabs: String {
@@ -94,6 +87,22 @@ final class PlacesListVM: ObservableObject {
                 return "list.bullet.circle.fill"
             case .map:
                 return "map.fill"
+            }
+        }
+    }
+    
+    enum ConfirmationRequest: Equatable {
+        case deleteList
+        case deletePlace(String)
+        
+        static func == (lhs: ConfirmationRequest, rhs: ConfirmationRequest) -> Bool {
+            switch (lhs, rhs) {
+            case (.deleteList, .deleteList):
+                return true
+            case (.deletePlace(_), .deletePlace(_)):
+                return true
+            default:
+                return false
             }
         }
     }

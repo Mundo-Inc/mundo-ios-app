@@ -24,6 +24,7 @@ class PlaceViewModel: ObservableObject {
     private let toastViewModel = ToastViewModel.shared
     private let addReviewVM = AddReviewVM.shared
     
+    @Published var isMapNavigationPresented: Bool = false
     @Published var isAddToListPresented: Bool = false
     
     @Published private(set) var isLoading = false

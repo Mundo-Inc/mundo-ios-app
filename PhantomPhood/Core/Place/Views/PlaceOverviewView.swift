@@ -33,12 +33,12 @@ struct PlaceOverviewView: View {
                                 MapMarker(coordinate: location.coordinate)
                             }
                         )
-                            .onAppear(perform: {
-                                mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: place.location.geoLocation.lat, longitude: place.location.geoLocation.lng), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-                            })
+                        .onAppear(perform: {
+                            mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: place.location.geoLocation.lat, longitude: place.location.geoLocation.lng), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+                        })
                     }
                 }
-                .frame(height: isMapCollapsed ? 140 : 400)
+                .frame(height: 170)
                 .overlay(alignment: .topLeading) {
                     if let address = place.location.address, isMapCollapsed {
                         VStack(alignment: .leading) {
@@ -52,8 +52,8 @@ struct PlaceOverviewView: View {
                         .font(.custom(style: .subheadline))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(.all, 10)
-                        .background(.black.opacity(0.6))
+                        .padding(.all)
+                        .background(.black.opacity(0.4))
                         .transition(.offset(y: 400))
                         .onTapGesture {
                             withAnimation {
@@ -67,23 +67,53 @@ struct PlaceOverviewView: View {
                                     isMapCollapsed = true
                                 }
                             } label: {
-                                Text("Minimize")
+                                Text("Hide")
                                     .font(.custom(style: .subheadline))
                             }
                             .buttonStyle(.bordered)
-                            .padding(.top, 8)
-                            .padding(.trailing, 8)
+                            .padding(.top)
+                            .padding(.trailing)
                             .foregroundStyle(.primary)
                         }
                         .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .clipShape(Rectangle())
             } else {
-                RoundedRectangle(cornerRadius: 15)
+                Rectangle()
                     .foregroundStyle(Color.themePrimary)
-                    .frame(height: isMapCollapsed ? 140 : 400)
+                    .frame(height: 170)
             }
+            
+            Button {
+                if vm.place != nil {
+                    vm.isMapNavigationPresented = true
+                }
+            } label: {
+                Label {
+                    Text("Get Directions")
+                } icon: {
+                    Image(systemName: "location.square")
+                }
+            }
+            .controlSize(.large)
+            .foregroundStyle(.primary)
+            .font(.custom(style: .body))
+            .padding(.top, 10)
+            .confirmationDialog("Directions", isPresented: $vm.isMapNavigationPresented, titleVisibility: .visible) {
+                if let place = vm.place {
+                    // Apple maps
+                    if let url = URL(string: "http://maps.apple.com/?q=\(place.name)&ll=\(place.location.geoLocation.lat),\(place.location.geoLocation.lng)") {
+                        Link("Apple Maps", destination: url)
+                    }
+                    
+                    // Google maps
+                    if let url = URL(string: "comgooglemaps://?q=\(place.name)&center=\(place.location.geoLocation.lat),\(place.location.geoLocation.lng)&zoom=14&views=traffic") {
+                        Link("Google Maps", destination: url)
+                    }
+                }
+            }
+            .padding(.horizontal)
             
             VStack {
                 Text("Rating and scores")
@@ -102,7 +132,7 @@ struct PlaceOverviewView: View {
                     HStack {
                         YelpRatingView(rating: vm.place?.thirdParty.yelp?.rating, reviewCount: vm.place?.thirdParty.yelp?.reviewCount, isLoading: vm.place == nil)
                             .frame(height: 70)
-
+                        
                         Spacer()
                             .frame(maxWidth: .infinity)
                     }
@@ -110,9 +140,9 @@ struct PlaceOverviewView: View {
                 .frame(maxWidth: .infinity)
                 
             }
-            .padding(.top)
+            .padding()
         }
-        .padding(.horizontal)
+        
     }
 }
 

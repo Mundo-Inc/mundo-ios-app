@@ -149,9 +149,9 @@ struct PlacesListView: View {
             if let list = vm.list, let currentUser = auth.currentUser, list.owner.id == currentUser.id {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        vm.deleteListConfirmation = true
+                        vm.showActions = true
                     } label: {
-                        Image(systemName: "trash.circle")
+                        Image(systemName: "gear")
                     }
                 }
             }
@@ -163,7 +163,18 @@ struct PlacesListView: View {
         .onAppear {
             self.isAnimating = true
         }
-        .confirmationDialog("Are you sure you want to delete this list?", isPresented: $vm.deleteListConfirmation) {
+        .confirmationDialog("Actions", isPresented: $vm.showActions) {
+            Button("Edit") {
+                if let list = vm.list {
+                    vm.editingList = list
+                }
+            }
+            
+            Button("Delete this list", role: .destructive) {
+                vm.confirmationRequest = .deleteList
+            }
+        }
+        .alert("Are you sure you want to delete this list?", isPresented: Binding(optionalValue: $vm.confirmationRequest, ofCase: .deleteList)) {
             Button("Delete List", role: .destructive) {
                 Task {
                     await vm.deleteList()
@@ -171,11 +182,24 @@ struct PlacesListView: View {
                 }
             }
         }
-        .confirmationDialog("Are you sure you want to remove this place from the list?", isPresented: $vm.removePlaceConfirmation) {
+        .alert("Are you sure you want to remove this place from the list?", isPresented: Binding(optionalValue: $vm.confirmationRequest, ofCase: .deletePlace(""))) {
             Button("Remove This Place", role: .destructive) {
-                Task {
-                    await vm.deletePlaceFromList()
+                if let request = vm.confirmationRequest, case .deletePlace(let placeId) = request {
+                    Task {
+                        await vm.removePlaceFromList(placeId: placeId)
+                    }
                 }
+            }
+        }
+        .fullScreenCover(isPresented: Binding(optionalValue: $vm.editingList)) {
+            if let list = vm.list {
+                EditListView(originalList: list) { edited in
+                    vm.list = edited
+                    vm.editingList = nil
+                } onCancel: {
+                    vm.editingList = nil
+                }
+
             }
         }
     }
@@ -197,7 +221,7 @@ fileprivate struct PlaceItem: View {
                     
                     if let list = vm.list, let currentUser = auth.currentUser, list.collaborators.contains(where: { $0.user.id == currentUser.id && $0.access == .edit }) {
                         Button {
-                            vm.askRemovePlaceConfirmation(placeId: place.place.id)
+                            vm.confirmationRequest = .deletePlace(place.place.id)
                         } label: {
                             Image(systemName: "minus.circle.fill")
                                 .foregroundStyle(.red)

@@ -43,7 +43,7 @@ struct MyProfileListsView: View {
             })
             
             
-            if vm.isLoading {
+            if vm.isLoading && vm.lists.isEmpty {
                 ListItemPlaceholder()
             } else {
                 if vm.lists.isEmpty {
@@ -115,6 +115,9 @@ struct MyProfileListsView: View {
         }
         .onAppear {
             self.isAnimating = true
+            Task {
+                await vm.fetchLists()
+            }
         }
     }
 }

@@ -15,6 +15,8 @@ final class CreateNewListVM: ObservableObject {
     
     private let dataManager = ListsDM()
     
+    @Published var step: Step = .general
+    
     @Published var isEmojiAnimating = true
     
     @Published var isLoading = false
@@ -23,7 +25,7 @@ final class CreateNewListVM: ObservableObject {
     @Published var name: String = ""
     @Published var icon: EmojisManager.Emoji = .init(symbol: "❤️", title: "Heart", keywords: [], categories: [], isAnimated: true, unicode: "2764_fe0f")
     @Published var collaborators: [ListCollaborator] = []
-    @Published var isPublic: Bool = true
+    @Published var isPrivate: Bool = false
     
     var isReadyToSubmit: Bool {
         !self.name.isEmpty && self.name.count <= 16 && !self.isLoading
@@ -39,7 +41,7 @@ final class CreateNewListVM: ObservableObject {
         do {
             let list = try await dataManager.createList(body: .init(name: name, icon: icon.symbol, collaborators: collaborators.map({ c in
                 return .init(user: c.user.id, access: c.access.rawValue)
-            }), isPrivate: !isPublic))
+            }), isPrivate: isPrivate))
             
             self.onSuccess(list)
         } catch {
@@ -47,5 +49,10 @@ final class CreateNewListVM: ObservableObject {
             self.onCancel()
         }
         self.isLoading = false
+    }
+    
+    enum Step {
+        case general
+        case collaborators
     }
 }

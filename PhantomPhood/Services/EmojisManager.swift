@@ -23,6 +23,24 @@ final class EmojisManager {
         var gifName: String? {
             return self.isAnimated ? self.unicode + ".gif" : nil
         }
+        
+        init(symbol: String, title: String, keywords: [String], categories: [String], isAnimated: Bool, unicode: String) {
+            self.symbol = symbol
+            self.title = title
+            self.keywords = keywords
+            self.categories = categories
+            self.isAnimated = isAnimated
+            self.unicode = unicode
+        }
+        
+        init(symbol: String) {
+            let theEmoji = EmojisVM.shared.getEmoji(forSymbol: symbol)
+            if let theEmoji {
+                self = theEmoji
+            } else {
+                self = .init(symbol: symbol, title: "", keywords: [], categories: [], isAnimated: false, unicode: "")
+            }
+        }
     }
     
     enum EmojiCategory: String, CaseIterable {

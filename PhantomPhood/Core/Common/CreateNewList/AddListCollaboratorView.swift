@@ -18,9 +18,14 @@ struct AddListCollaboratorView: View {
         NavigationStack {
             ScrollView {
                 if vm.searchResults.isEmpty {
-                    Text("-")
-                        .font(.custom(style: .body))
-                        .padding(.horizontal)
+                    if vm.isLoading {
+                        ProgressView()
+                            .padding(.top)
+                    } else {
+                        Text("No results")
+                            .font(.custom(style: .body))
+                            .padding(.horizontal)
+                    }
                 } else {
                     LazyVStack {
                         ForEach(vm.searchResults) { user in

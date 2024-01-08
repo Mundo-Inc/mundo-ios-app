@@ -1,35 +1,30 @@
 //
-//  CreateNewListView.swift
+//  EditListView.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 12/29/23.
+//  Created by Kia Abdi on 1/8/24.
 //
 
 import SwiftUI
 
-struct CreateNewListView: View {
+struct EditListView: View {
     @ObservedObject private var auth = Authentication.shared
     
-    @StateObject private var vm: CreateNewListVM
+    @StateObject private var vm: EditListVM
     
     @Environment(\.dismiss) private var dismiss
     
     // Creating new instance because of the sheet
     @StateObject var selectReactionsViewModel = SelectReactionsVM()
     
-    init(onSuccess: @escaping (UserPlacesList) -> Void = { _ in }, onCancel: @escaping () -> Void = {}) {
-        self._vm = StateObject(wrappedValue: CreateNewListVM(onSuccess: onSuccess, onCancel: onCancel))
+    init(originalList: UserPlacesList, onSuccess: @escaping (UserPlacesList) -> Void = { _ in }, onCancel: @escaping () -> Void = {}) {
+        self._vm = StateObject(wrappedValue: EditListVM(originalList: originalList, onSuccess: onSuccess, onCancel: onCancel))
     }
-    
-    enum TextFields: Hashable {
-        case name
-    }
-    @FocusState var focusedField: TextFields?
     
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Create a New List")
+                Text("Editing \(vm.originalList.name)")
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.custom(style: .headline))
                 
@@ -71,7 +66,6 @@ struct CreateNewListView: View {
                                 }
                                 
                                 TextField("e.g. Want To Go", text: $vm.name)
-                                    .focused($focusedField, equals: TextFields.name)
                                     .withFilledStyle(size: .large)
                                     .overlay(alignment: .bottomTrailing) {
                                         Text("\(vm.name.count)/16")
@@ -119,20 +113,18 @@ struct CreateNewListView: View {
                         .padding(.horizontal)
                         
                         List {
-                            if let currentUser = auth.currentUser {
-                                HStack {
-                                    ProfileImage(currentUser.profileImage, size: 36, cornerRadius: 18)
-                                    Text(currentUser.name)
-                                        .font(.custom(style: .headline))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    
-                                    Text("Owner")
-                                        .font(.custom(style: .body))
-                                        .foregroundStyle(.secondary)
-                                        .padding(.trailing)
-                                }
-                                .frame(minHeight: 42)
+                            HStack {
+                                ProfileImage(vm.originalList.owner.profileImage, size: 36, cornerRadius: 18)
+                                Text(vm.originalList.owner.name)
+                                    .font(.custom(style: .headline))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                Text("Owner")
+                                    .font(.custom(style: .body))
+                                    .foregroundStyle(.secondary)
+                                    .padding(.trailing)
                             }
+                            .frame(minHeight: 42)
                             
                             ForEach(vm.collaborators) { collaborator in
                                 HStack {
@@ -224,7 +216,7 @@ struct CreateNewListView: View {
                                     ProgressView()
                                         .controlSize(.regular)
                                 }
-                                Text(vm.step == .general ? "Next" : "Create")
+                                Text(vm.step == .general ? "Next" : "Update")
                             }
                             .font(.custom(style: .subheadline))
                             .frame(maxWidth: .infinity)
@@ -270,17 +262,8 @@ struct CreateNewListView: View {
                 })
             }
         })
-        .onAppear {
-            if vm.name.isEmpty {
-                focusedField = .name
-            }
-        }
         .onDisappear {
             vm.isEmojiAnimating = false
         }
     }
-}
-
-#Preview {
-    CreateNewListView()
 }

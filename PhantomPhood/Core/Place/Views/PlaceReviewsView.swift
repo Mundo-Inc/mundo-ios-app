@@ -143,6 +143,7 @@ struct PlaceReviewsView: View {
             }
             .redacted(reason: vm.place == nil ? .placeholder : [])
         }
+        .padding(.top)
         .fullScreenCover(isPresented: $mediasViewModel.show, content: {
             MediasView(vm: mediasViewModel)
         })

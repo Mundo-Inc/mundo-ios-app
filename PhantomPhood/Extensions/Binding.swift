@@ -20,4 +20,19 @@ extension Binding where Value == Bool {
         }
     }
     
+    init<T: Equatable>(optionalValue: Binding<T?>, ofCase: T) {
+        self.init {
+            if let value = optionalValue.wrappedValue {
+                if case ofCase = value {
+                    return true
+                }
+            }
+            return false
+        } set: { newValue in
+            if !newValue {
+                optionalValue.wrappedValue = nil
+            }
+        }
+
+    }
 }

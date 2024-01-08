@@ -154,6 +154,8 @@
 		0B46814F2AC5EB6B009C5EF9 /* CircleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */; };
 		0B4681512AC61D49009C5EF9 /* FeedCheckinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4681502AC61D49009C5EF9 /* FeedCheckinView.swift */; };
 		0B47FDA12B11060600F39527 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B47FDA02B11060600F39527 /* AppRouter.swift */; };
+		0B4DE48E2B4C4B540050E39D /* EditListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4DE48D2B4C4B540050E39D /* EditListView.swift */; };
+		0B4DE4902B4C4B600050E39D /* EditListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4DE48F2B4C4B600050E39D /* EditListVM.swift */; };
 		0B51A8D42ACEC58400DA38DC /* MediasViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B51A8D32ACEC58400DA38DC /* MediasViewModel.swift */; };
 		0B51A8D62ACEC61000DA38DC /* MediasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B51A8D52ACEC61000DA38DC /* MediasView.swift */; };
 		0B547D7C2B3EEA9B002C6336 /* ListsDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B547D7B2B3EEA9B002C6336 /* ListsDM.swift */; };
@@ -444,6 +446,8 @@
 		0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleLabelView.swift; sourceTree = "<group>"; };
 		0B4681502AC61D49009C5EF9 /* FeedCheckinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCheckinView.swift; sourceTree = "<group>"; };
 		0B47FDA02B11060600F39527 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
+		0B4DE48D2B4C4B540050E39D /* EditListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditListView.swift; sourceTree = "<group>"; };
+		0B4DE48F2B4C4B600050E39D /* EditListVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditListVM.swift; sourceTree = "<group>"; };
 		0B51A8D32ACEC58400DA38DC /* MediasViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediasViewModel.swift; sourceTree = "<group>"; };
 		0B51A8D52ACEC61000DA38DC /* MediasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediasView.swift; sourceTree = "<group>"; };
 		0B547D7B2B3EEA9B002C6336 /* ListsDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsDM.swift; sourceTree = "<group>"; };
@@ -850,8 +854,10 @@
 			children = (
 				0B547D842B3F3D3B002C6336 /* CreateNewListVM.swift */,
 				0B547D862B3F3D52002C6336 /* CreateNewListView.swift */,
-				0B9C025F2B4465E3000C4774 /* AddListCollaboratorView.swift */,
+				0B4DE48F2B4C4B600050E39D /* EditListVM.swift */,
+				0B4DE48D2B4C4B540050E39D /* EditListView.swift */,
 				0B9C02612B4468B3000C4774 /* AddListCollaboratorVM.swift */,
+				0B9C025F2B4465E3000C4774 /* AddListCollaboratorView.swift */,
 			);
 			path = CreateNewList;
 			sourceTree = "<group>";
@@ -1577,6 +1583,7 @@
 				0BEF7A3C2B0EB2D4001532E7 /* OAuthViewModel.swift in Sources */,
 				0BF81DC42ABE369500B8892E /* CustomFonts.swift in Sources */,
 				0BB37E9C2ABA52C7009E1272 /* Shaders.metal in Sources */,
+				0B4DE48E2B4C4B540050E39D /* EditListView.swift in Sources */,
 				0B77EA3D2AAF855500C8DF87 /* ContentView.swift in Sources */,
 				0B1F758B2B47185300097A70 /* MainTabBarView.swift in Sources */,
 				0BEE15262AB5028400DF7211 /* MyProfile.swift in Sources */,
@@ -1665,6 +1672,7 @@
 				0BB0C9592B30B3F00013DEAE /* Emoji.swift in Sources */,
 				0BF17BA92AF2FAA500D87812 /* ProfileCheckinsVM.swift in Sources */,
 				0B0183582AB3BF16008E887F /* LeaderboardView.swift in Sources */,
+				0B4DE4902B4C4B600050E39D /* EditListVM.swift in Sources */,
 				0B2E98802AB907340013301D /* UIImage.swift in Sources */,
 				0B0183602AB3C09A008E887F /* NotificationsView.swift in Sources */,
 				0BE1E17A2AD498C200645AA0 /* AddReviewVM.swift in Sources */,

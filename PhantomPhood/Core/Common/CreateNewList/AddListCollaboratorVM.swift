@@ -27,6 +27,10 @@ final class AddListCollaboratorVM: ObservableObject {
         self.onSelect = onSelect
         self.onCancel = onCancel
         
+        Task {
+            await self.search("")
+        }
+        
         $searchText
             .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
             .sink { value in
