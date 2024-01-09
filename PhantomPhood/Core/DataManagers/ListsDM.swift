@@ -65,6 +65,29 @@ final class ListsDM {
         
         return resData.data
     }
+
+    /// Edit a UserPlacesList (name, icon, isPrivate)
+    /// - Note: All fields are optional
+    /// - Parameters:
+    ///   - id: List Id
+    ///   - body: EditListBody
+    /// - Returns: CompactUserPlacesList
+    @discardableResult
+    func editListInfo(withId id: String, body: EditListBody) async throws -> CompactUserPlacesList {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let requestBody = try apiManager.createRequestBody(body)
+        let resData = try await apiManager.requestData("/lists/\(id)", method: .put, body: requestBody, token: token) as APIResponse<CompactUserPlacesList>?
+        
+        guard let resData else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return resData.data
+    }
+
     
     /// Add a place to a UserPlacesList
     /// - Parameters:
@@ -94,8 +117,8 @@ final class ListsDM {
     /// - Parameters:
     ///   - listId: List Id
     ///   - userId: User Id
-    ///   - access: ListCollaboratorAccess (view or edit)
-    func addCollaborator(listId: String, userId: String, access: ListCollaboratorAccess) async throws {
+    ///   - access: ListCollaborator.Access (view or edit)
+    func addCollaborator(listId: String, userId: String, access: ListCollaborator.Access) async throws {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
@@ -112,8 +135,8 @@ final class ListsDM {
     /// - Parameters:
     ///   - listId: List Id
     ///   - userId: User Id
-    ///   - access: ListCollaboratorAccess (view or edit)
-    func editCollaborator(listId: String, userId: String, changeAccessTo access: ListCollaboratorAccess) async throws {
+    ///   - access: ListCollaborator.Access (view or edit)
+    func editCollaborator(listId: String, userId: String, changeAccessTo access: ListCollaborator.Access) async throws {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
@@ -160,5 +183,11 @@ final class ListsDM {
             let user: String
             let access: String
         }
+    }
+
+    struct EditListBody: Encodable {
+        let name: String?
+        let icon: String?
+        let isPrivate: Bool?
     }
 }

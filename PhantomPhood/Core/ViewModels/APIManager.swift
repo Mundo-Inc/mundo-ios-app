@@ -254,6 +254,9 @@ final class APIManager {
         return httpResponse
     }
     
+    /// Create a request body (Data) from an Encodable object
+    /// - Parameter data: Encodable object
+    /// - Returns: Data
     func createRequestBody<T: Encodable>(_ data: T) throws -> Data {
         return try JSONEncoder().encode(data)
     }

@@ -152,10 +152,10 @@ struct CreateNewListView: View {
                                         })
                                     })) {
                                         Text("Can Edit")
-                                            .tag(ListCollaboratorAccess.edit)
+                                            .tag(ListCollaborator.Access.edit)
                                         
                                         Text("Can View")
-                                            .tag(ListCollaboratorAccess.view)
+                                            .tag(ListCollaborator.Access.view)
                                     } label: {
                                         EmptyView()
                                     }

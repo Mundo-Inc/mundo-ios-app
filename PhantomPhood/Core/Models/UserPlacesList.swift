@@ -48,16 +48,16 @@ struct CompactUserPlacesList: Identifiable, Decodable {
     }
 }
 
-enum ListCollaboratorAccess: String, Decodable {
-    case edit = "edit"
-    case view = "view"
-}
-
 struct ListCollaborator: Identifiable, Decodable {
     let user: CompactUser
-    let access: ListCollaboratorAccess
+    let access: Access
     
     var id: String {
         self.user.id
+    }
+    
+    enum Access: String, Decodable {
+        case edit = "edit"
+        case view = "view"
     }
 }

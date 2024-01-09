@@ -108,7 +108,13 @@ final class EditListVM: ObservableObject {
             }
         }
         
-        // TODO: Name, Icon, Privacy
+        if nameChanged || iconChanged || privacyChanged {
+            do {
+                try await dataManager.editListInfo(withId: self.originalList.id, body: .init(name: self.name, icon: self.icon.symbol, isPrivate: self.isPrivate))
+            } catch {
+                print(error)
+            }
+        }
         
         do {
             let list = try await dataManager.getList(withId: self.originalList.id)
