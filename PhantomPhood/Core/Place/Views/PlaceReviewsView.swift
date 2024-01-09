@@ -11,11 +11,11 @@ struct PlaceReviewsView: View {
     @ObservedObject var vm: PlaceViewModel
     @ObservedObject var addReviewVM = AddReviewVM.shared
     
-    @StateObject var placeReviewsViewModel: PlaceReviewsViewModel
+    @StateObject var placeReviewsVM: PlaceReviewsViewModel
     
     init(placeId: String, vm: PlaceViewModel) {
         self.vm = vm
-        self._placeReviewsViewModel = StateObject(wrappedValue: PlaceReviewsViewModel(placeId: placeId))
+        self._placeReviewsVM = StateObject(wrappedValue: PlaceReviewsViewModel(placeId: placeId))
     }
     
     @StateObject var mediasViewModel = MediasViewModel()
@@ -130,13 +130,11 @@ struct PlaceReviewsView: View {
                     
                     Divider()
                     
-                    if let place = vm.place, !place.reviews.isEmpty {
-                        ForEach(place.reviews) { review in
-                            PlaceReviewView(review: review, place: place, mediasViewModel: mediasViewModel, reportId: $vm.reportId)
-                                .padding(.horizontal)
-                            
-                            Divider()
-                        }
+                    ForEach(placeReviewsVM.reviews.indices, id: \.self) { index in
+                        PlaceReviewView(placeReviewsVM: placeReviewsVM, reviewIndex: index, mediasViewModel: mediasViewModel, reportId: $vm.reportId)
+                            .padding(.horizontal)
+                        
+                        Divider()
                     }
                 }
                 .padding(.top)

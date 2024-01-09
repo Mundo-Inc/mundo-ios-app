@@ -11,6 +11,7 @@ import Foundation
 class ProfileActivitiesVM: ObservableObject {
     private let auth = Authentication.shared
     private let apiManager = APIManager.shared
+    private let reactionsDM = ReactionsDM()
     
     enum FeedItemActivityType: String, Decodable, CaseIterable {
         case all = "ALL"
@@ -47,7 +48,7 @@ class ProfileActivitiesVM: ObservableObject {
     @Published var activityType: FeedItemActivityType
     @Published var isactivityTypePresented = false
     @Published var isLoading = false
-    @Published var data: [FeedItem] = []
+    @Published var items: [FeedItem] = []
     @Published var total: Int? = nil
     
     private let userId: UserIdEnum?
@@ -81,7 +82,7 @@ class ProfileActivitiesVM: ObservableObject {
             self.page = 1
             self.total = nil
         } else {
-            if let total, data.count >= total {
+            if let total, items.count >= total {
                 return
             }
         }
@@ -100,9 +101,9 @@ class ProfileActivitiesVM: ObservableObject {
                 switch type {
                     
                 case .refresh:
-                    self.data = data.data
+                    self.items = data.data
                 case .new:
-                    self.data.append(contentsOf: data.data)
+                    self.items.append(contentsOf: data.data)
                 }
                 
                 self.total = data.total
@@ -115,10 +116,84 @@ class ProfileActivitiesVM: ObservableObject {
         self.isLoading = false
     }
     
-    func loadMore(currentItem item: FeedItem) async {
-        let thresholdIndex = data.index(data.endIndex, offsetBy: -5)
-        if data.firstIndex(where: { $0.id == item.id }) == thresholdIndex {
+    func loadMore(currentIndex: Int) async {
+        let thresholdIndex = items.index(items.endIndex, offsetBy: -5)
+        if currentIndex == thresholdIndex {
             await getActivities(.new)
+        }
+    }
+    
+    /// Add reaction to item
+    /// - Parameters:
+    ///   - reaction: NewReaction - aanything that conforms to GeneralReactionProtocol
+    ///   - item: FeedItem
+    func addReaction(_ reaction: GeneralReactionProtocol, _ item: FeedItem) async {
+        // add temporary reaction
+        let tempUserReaction = UserReaction(_id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
+        self.items = self.items.map({ i in
+            if i.id == item.id {
+                var newItem = i
+                newItem.addReaction(tempUserReaction)
+                return newItem
+            }
+            return i
+        })
+        
+        // add reaction to server
+        do {
+            let userReaction = try await reactionsDM.addReaction(type: reaction.type, reaction: reaction.reaction, for: item.id)
+            
+            // replace temporary reaction with server reaction
+            self.items = self.items.map({ i in
+                if i.id == item.id {
+                    var newItem = i
+                    newItem.removeReaction(tempUserReaction)
+                    newItem.addReaction(userReaction)
+                    return newItem
+                }
+                return i
+            })
+        } catch {
+            // remove temp reaction
+            self.items = self.items.map({ i in
+                if i.id == item.id {
+                    var newItem = i
+                    newItem.removeReaction(tempUserReaction)
+                    return newItem
+                }
+                return i
+            })
+        }
+    }
+    
+    /// Remove reaction from item
+    /// - Parameters:
+    ///   - reaction: UserReaction
+    ///   - item: FeedItem
+    func removeReaction(_ reaction: UserReaction, _ item: FeedItem) async {
+        // remove temporary reaction
+        self.items = self.items.map({ i in
+            if i.id == item.id {
+                var newItem = i
+                newItem.removeReaction(reaction)
+                return newItem
+            }
+            return i
+        })
+        
+        // remove reaction from server
+        do {
+            try await reactionsDM.removeReaction(reactionId: reaction.id)
+        } catch {
+            // add temp reaction back
+            self.items = self.items.map({ i in
+                if i.id == item.id {
+                    var newItem = i
+                    newItem.addReaction(reaction)
+                    return newItem
+                }
+                return i
+            })
         }
     }
 }

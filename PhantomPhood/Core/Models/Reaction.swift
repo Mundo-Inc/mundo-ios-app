@@ -12,7 +12,7 @@ enum ReactionType: String, Decodable {
     case special = "special"
 }
 
-struct Reaction: Decodable, Identifiable {
+struct Reaction: Decodable, Identifiable, GeneralReactionProtocol {
     let reaction: String
     let type: ReactionType
     let count: Int
@@ -22,7 +22,7 @@ struct Reaction: Decodable, Identifiable {
     }
 }
 
-struct UserReaction: Identifiable, Decodable {
+struct UserReaction: Identifiable, Decodable, GeneralReactionProtocol {
     let _id: String
     let reaction: String
     let type: ReactionType
@@ -31,4 +31,18 @@ struct UserReaction: Identifiable, Decodable {
     var id: String {
         self._id
     }
+}
+
+struct NewReaction: Decodable, Identifiable, GeneralReactionProtocol {
+    let reaction: String
+    let type: ReactionType
+
+    var id: String {
+        reaction + type.rawValue
+    }
+}
+
+protocol GeneralReactionProtocol {
+    var reaction: String { get }
+    var type: ReactionType { get }
 }

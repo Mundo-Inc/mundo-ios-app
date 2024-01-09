@@ -31,17 +31,17 @@ struct UserActivityView: View {
                 }
             
             ScrollView {
-                if let item = vm.activity {
+                if let item = vm.data {
                     Group {
                         switch item.activityType {
                         case .levelUp:
-                            FeedLevelUpView(data: item)
+                            UserActivityLevelUp(vm: vm)
                         case .following:
-                            FeedFollowingView(data: item)
+                            UserActivityFollowing(vm: vm)
                         case .newReview:
-                            FeedReviewView(data: item, mediasViewModel: mediasViewModel, reportId: $reportId)
+                            UserActivityReview(vm: vm, mediasViewModel: mediasViewModel, reportId: $reportId)
                         case .newCheckin:
-                            FeedCheckinView(data: item)
+                            UserActivityCheckin(vm: vm)
                         default:
                             Text(item.activityType.rawValue)
                         }

@@ -59,7 +59,7 @@ struct FeedItem: Identifiable, Decodable, Equatable {
     let privacyType: PrivacyType
     let createdAt: String
     let updatedAt: String
-    let reactions: ReactionsObject
+    var reactions: ReactionsObject
     let comments: [Comment]
     let commentsCount: Int
     
@@ -111,12 +111,15 @@ struct FeedItem: Identifiable, Decodable, Equatable {
         privacyType = try container.decode(PrivacyType.self, forKey: .privacyType)
         createdAt = try container.decode(String.self, forKey: .createdAt)
         updatedAt = try container.decode(String.self, forKey: .updatedAt)
+        
         reactions = try container.decode(ReactionsObject.self, forKey: .reactions)
+        reactions.total.sort { $0.count > $1.count }
+        
         comments = try container.decode([Comment].self, forKey: .comments)
         commentsCount = try container.decode(Int.self, forKey: .commentsCount)
     }
     
-    func addReaction(_ userReaction: UserReaction) -> FeedItem {
+    mutating func addReaction(_ userReaction: UserReaction) {
         var newReactions = self.reactions
         
         // Check if user has already reacted
@@ -133,23 +136,10 @@ struct FeedItem: Identifiable, Decodable, Equatable {
             newReactions.total.append(Reaction(reaction: userReaction.reaction, type: .emoji, count: 1))
         }
         
-        return FeedItem(
-            id: self.id,
-            user: self.user,
-            place: self.place,
-            activityType: self.activityType,
-            resourceType: self.resourceType,
-            resource: self.resource,
-            privacyType: self.privacyType,
-            createdAt: self.createdAt,
-            updatedAt: self.updatedAt,
-            reactions: newReactions,
-            comments: self.comments,
-            commentsCount: self.commentsCount
-        )
+        self.reactions = newReactions
     }
     
-    func removeReaction(_ userReaction: UserReaction) -> FeedItem {
+    mutating func removeReaction(_ userReaction: UserReaction) {
         var newReactions = self.reactions
         
         if let index = newReactions.user.firstIndex(where: { $0.id == userReaction.id }) {
@@ -160,19 +150,6 @@ struct FeedItem: Identifiable, Decodable, Equatable {
             newReactions.total[index] = Reaction(reaction: userReaction.reaction, type: .emoji, count: newReactions.total[index].count - 1)
         }
         
-        return FeedItem(
-            id: self.id,
-            user: self.user,
-            place: self.place,
-            activityType: self.activityType,
-            resourceType: self.resourceType,
-            resource: self.resource,
-            privacyType: self.privacyType,
-            createdAt: self.createdAt,
-            updatedAt: self.updatedAt,
-            reactions: newReactions,
-            comments: self.comments,
-            commentsCount: self.commentsCount
-        )
+        self.reactions = newReactions
     }
 }

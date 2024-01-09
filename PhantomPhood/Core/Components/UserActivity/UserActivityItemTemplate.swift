@@ -72,7 +72,7 @@ fileprivate struct CommentView: View {
     }
 }
 
-struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
+struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View {
     let comments: [Comment]
     let header: () -> Header
     let content: () -> Content
@@ -163,7 +163,7 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
 
 #Preview {
     ScrollView {
-        FeedItemTemplate(
+        UserActivityItemTemplate(
             user: CompactUser(
                 _id: "TEST_USER_ID",
                 name: "Dwayne",
@@ -197,7 +197,7 @@ struct FeedItemTemplate<Header: View, Content: View, Footer: View>: View {
             Text("Content")
         }
         
-        FeedItemTemplate(
+        UserActivityItemTemplate(
             user: CompactUser(
                 _id: "TEST_USER_ID",
                 name: "Dwayne",

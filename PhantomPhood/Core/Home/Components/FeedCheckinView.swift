@@ -9,21 +9,20 @@ import SwiftUI
 
 struct FeedCheckinView: View {
     private let data: FeedItem
-    @ObservedObject private var commentsViewModel = CommentsViewModel.shared
+    private let addReaction: (NewReaction, FeedItem) async -> Void
+    private let removeReaction: (UserReaction, FeedItem) async -> Void
     
-    @StateObject private var reactionsViewModel: ReactionsViewModel
-    @State private var reactions: ReactionsObject
-    
-    init(data: FeedItem) {
+    init(data: FeedItem, addReaction: @escaping (NewReaction, FeedItem) async -> Void, removeReaction: @escaping (UserReaction, FeedItem) async -> Void) {
         self.data = data
-        self._reactionsViewModel = StateObject(wrappedValue: ReactionsViewModel(activityId: data.id))
-        self._reactions = State(wrappedValue: data.reactions)
+        self.addReaction = addReaction
+        self.removeReaction = removeReaction
     }
     
+    @ObservedObject private var commentsViewModel = CommentsViewModel.shared
     @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
     
     var body: some View {
-        FeedItemTemplate(user: data.user, comments: data.comments, isActive: commentsViewModel.currentActivityId == data.id) {
+        UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: commentsViewModel.currentActivityId == data.id) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(data.user.name)
@@ -109,7 +108,7 @@ struct FeedCheckinView: View {
                 Button {
                     selectReactionsViewModel.select { reaction in
                         Task {
-                            await selectReaction(reaction: reaction)
+                            await addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), data)
                         }
                     }
                 } label: {
@@ -128,38 +127,17 @@ struct FeedCheckinView: View {
                 }
                 .padding(.horizontal, 5)
                 
-                ForEach(reactions.total) { reaction in
-                    if let selectedIndex = reactions.user.firstIndex(where: { $0.reaction == reaction.reaction }) {
+                ForEach(data.reactions.total) { reaction in
+                    if let selectedIndex = data.reactions.user.firstIndex(where: { $0.reaction == reaction.reaction }) {
                         ReactionLabel(reaction: reaction, isSelected: true) { _ in
                             Task {
-                                try await reactionsViewModel.removeReaction(id: String(reactions.user[selectedIndex].id))
-                                reactions.total = reactions.total.compactMap({ item in
-                                    if item.reaction == reactions.user[selectedIndex].reaction {
-                                        if item.count - 1 == 0 {
-                                            return nil
-                                        }
-                                        return Reaction(reaction: item.reaction, type: item.type, count: item.count - 1)
-                                    }
-                                    return item
-                                })
-                                reactions.user.remove(at: selectedIndex)
+                                await removeReaction(data.reactions.user[selectedIndex], data)
                             }
                         }
                     } else {
                         ReactionLabel(reaction: reaction, isSelected: false) { _ in
                             Task {
-                                let newReaction = try await reactionsViewModel.addReaction(type: reaction.type, reaction: reaction.reaction)
-                                reactions.user.append(UserReaction(_id: newReaction.id, reaction: newReaction.reaction, type: newReaction.type, createdAt: newReaction.createdAt))
-                                if reactions.total.contains(where: { $0.reaction == newReaction.reaction }) {
-                                    reactions.total = reactions.total.map({ item in
-                                        if item.reaction == newReaction.reaction {
-                                            return Reaction(reaction: item.reaction, type: item.type, count: item.count + 1)
-                                        }
-                                        return item
-                                    })
-                                } else {
-                                    reactions.total.append(Reaction(reaction: newReaction.reaction, type: newReaction.type, count: 1))
-                                }
+                                await addReaction(NewReaction(reaction: reaction.reaction, type: .emoji), data)
                             }
                         }
                     }
@@ -168,27 +146,4 @@ struct FeedCheckinView: View {
             .foregroundStyle(.primary)
         }
     }
-    
-    private func selectReaction(reaction: EmojisManager.Emoji) async {
-        do {
-            let newReaction = try await reactionsViewModel.addReaction(type: .emoji, reaction: reaction.symbol)
-            reactions.user.append(UserReaction(_id: newReaction.id, reaction: newReaction.reaction, type: newReaction.type, createdAt: newReaction.createdAt))
-            if reactions.total.contains(where: { $0.reaction == newReaction.reaction }) {
-                reactions.total = reactions.total.map({ item in
-                    if item.reaction == newReaction.reaction {
-                        return Reaction(reaction: item.reaction, type: item.type, count: item.count + 1)
-                    }
-                    return item
-                })
-            } else {
-                reactions.total.append(Reaction(reaction: newReaction.reaction, type: newReaction.type, count: 1))
-            }
-        } catch {
-            print("Error")
-        }
-    }
-}
-
-#Preview {
-    Text("TODO")
 }

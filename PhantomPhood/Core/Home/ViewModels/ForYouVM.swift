@@ -1,72 +1,59 @@
 //
-//  PlaceReviewsViewModel.swift
+//  ForYouViewModel.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 10/4/23.
+//  Created by Kia Abdi on 11/16/23.
 //
 
 import Foundation
 
 @MainActor
-class PlaceReviewsViewModel: ObservableObject {
-    private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
+class ForYouVM: ObservableObject {
+    private let dataManager = FeedDM()
     private let reactionsDM = ReactionsDM()
     
-    let placeId: String
+    @Published var items: [FeedItem] = []
+    @Published var isLoading: Bool = false
     
-    init(placeId: String) {
-        self.placeId = placeId
+    var page: Int = 1
+    
+    init() {
+        Task {
+            await getForYou(.refresh)
+        }
     }
     
-    @Published var isLoading: Bool = false
-    @Published var reviews: [PlaceReview] = []
-    
-    var page = 1
-    func fetch(type: RefreshNewAction) async {
-        if isLoading { return }
+    func getForYou(_ action: RefreshNewAction) async {
+        guard !isLoading else { return }
         
-        guard let token = await auth.getToken() else { return }
-        
-        struct ReviewsResponse: Decodable {
-            let success: Bool
-            let total: Int
-            let data: [PlaceReview]
-        }
-        
-        isLoading = true
-        
-        if type == .refresh {
+        if action == .refresh {
             page = 1
         }
         
         do {
-            let data = try await apiManager.requestData("/places/\(placeId)/reviews?page=\(page)", token: token) as ReviewsResponse?
-            if let data = data {
-                if page == 1 {
-                    reviews = data.data
-                } else {
-                    reviews.append(contentsOf: data.data)
-                }
-                page += 1
+            self.isLoading = true
+            let data = try await dataManager.getFeed(page: self.page, type: .forYou)
+            if action == .refresh || self.items.isEmpty {
+                self.items = data
+            } else {
+                self.items.append(contentsOf: data)
             }
+            self.isLoading = false
+            page += 1
         } catch {
             print(error)
         }
-        
-        isLoading = false
     }
-    
+
     /// Add reaction to item
     /// - Parameters:
     ///   - reaction: NewReaction - aanything that conforms to GeneralReactionProtocol
     ///   - item: FeedItem
-    func addReaction(_ reaction: GeneralReactionProtocol, to review: PlaceReview) async {
-        guard let activityId = review.userActivityId else { return }
+    func addReaction(_ reaction: GeneralReactionProtocol, to item: FeedItem) async {
         // add temporary reaction
         let tempUserReaction = UserReaction(_id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
-        self.reviews = self.reviews.map({ i in
-            if i.id == review.id {
+        self.items = self.items.map({ i in
+            if i.id == item.id {
                 var newItem = i
                 newItem.addReaction(tempUserReaction)
                 return newItem
@@ -76,11 +63,11 @@ class PlaceReviewsViewModel: ObservableObject {
 
         // add reaction to server
         do {
-            let userReaction = try await reactionsDM.addReaction(type: reaction.type, reaction: reaction.reaction, for: activityId)
+            let userReaction = try await reactionsDM.addReaction(type: reaction.type, reaction: reaction.reaction, for: item.id)
 
             // replace temporary reaction with server reaction
-            self.reviews = self.reviews.map({ i in
-                if i.id == review.id {
+            self.items = self.items.map({ i in
+                if i.id == item.id {
                     var newItem = i
                     newItem.removeReaction(tempUserReaction)
                     newItem.addReaction(userReaction)
@@ -90,8 +77,8 @@ class PlaceReviewsViewModel: ObservableObject {
             })
         } catch {
             // remove temp reaction
-            self.reviews = self.reviews.map({ i in
-                if i.id == review.id {
+            self.items = self.items.map({ i in
+                if i.id == item.id {
                     var newItem = i
                     newItem.removeReaction(tempUserReaction)
                     return newItem
@@ -105,10 +92,10 @@ class PlaceReviewsViewModel: ObservableObject {
     /// - Parameters:
     ///   - reaction: UserReaction
     ///   - item: FeedItem
-    func removeReaction(_ reaction: UserReaction, from review: PlaceReview) async {
+    func removeReaction(_ reaction: UserReaction, from item: FeedItem) async {
         // remove temporary reaction
-        self.reviews = self.reviews.map({ i in
-            if i.id == review.id {
+        self.items = self.items.map({ i in
+            if i.id == item.id {
                 var newItem = i
                 newItem.removeReaction(reaction)
                 return newItem
@@ -121,8 +108,8 @@ class PlaceReviewsViewModel: ObservableObject {
             try await reactionsDM.removeReaction(reactionId: reaction.id)
         } catch {
             // add temp reaction back
-            self.reviews = self.reviews.map({ i in
-                if i.id == review.id {
+            self.items = self.items.map({ i in
+                if i.id == item.id {
                     var newItem = i
                     newItem.addReaction(reaction)
                     return newItem

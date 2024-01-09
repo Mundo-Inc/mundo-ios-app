@@ -12,7 +12,7 @@ struct ForYouView: View {
     @ObservedObject var appData = AppData.shared
     
     @ObservedObject var commentsViewModel = CommentsViewModel.shared
-    @StateObject var vm = ForYouViewModel()
+    @StateObject var vm = ForYouVM()
     
     @ObservedObject private var forYouInfoVM = ForYouInfoVM.shared
     
@@ -29,9 +29,9 @@ struct ForYouView: View {
             GeometryReader(content: { geometry in
                 ZStack {
                     if !vm.items.isEmpty {
-                        Pager(page: page, data: vm.items) { item in
-                            ForYouItem(data: item, itemIndex: vm.items.firstIndex(of: item), page: page, parentGeometry: geometry)
-                                .if((vm.items.first?.id ?? "NoID") == item.id, transform: { view in
+                        Pager(page: page, data: vm.items.indices, id: \.self) { index in
+                            ForYouItem(index: index, forYouVM: vm, page: page, parentGeometry: geometry)
+                                .if(index == 0, transform: { view in
                                     view
                                         .gesture(
                                             DragGesture()

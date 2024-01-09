@@ -28,7 +28,7 @@ struct FeedView: View {
                         .frame(width: 0, height: 0)
                         .id(1)
                     
-                    if !vm.isLoading && vm.feedItems.isEmpty {
+                    if !vm.isLoading && vm.items.isEmpty {
                         Text("Everyone starts somewhere! Why not with our rockstar CEO, Nabeel? 🎸")
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .font(.custom(style: .body))
@@ -105,26 +105,26 @@ struct FeedView: View {
                             })
                         
                         LazyVStack(spacing: 20) {
-                            ForEach(vm.feedItems) { item in
+                            ForEach(vm.items.indices, id: \.self) { index in
                                 Group {
-                                    switch item.activityType {
+                                    switch vm.items[index].activityType {
                                     case .levelUp:
-                                        FeedLevelUpView(data: item)
+                                        FeedLevelUpView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
                                     case .following:
-                                        FeedFollowingView(data: item)
+                                        FeedFollowingView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
                                     case .newReview:
-                                        FeedReviewView(data: item, mediasViewModel: mediasViewModel, reportId: $reportId)
+                                        FeedReviewView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction, mediasViewModel: mediasViewModel, reportId: $reportId)
                                     case .newCheckin:
-                                        FeedCheckinView(data: item)
+                                        FeedCheckinView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
                                     default:
-                                        Text(item.activityType.rawValue)
+                                        Text(vm.items[index].activityType.rawValue)
                                     }
                                 }
                                 .padding(.horizontal)
                                 .onAppear {
                                     if !vm.isLoading {
                                         Task {
-                                            await vm.loadMore(currentItem: item)
+                                            await vm.loadMore(currentIndex: index)
                                         }
                                     }
                                 }
