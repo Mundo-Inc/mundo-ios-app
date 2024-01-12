@@ -11,6 +11,8 @@ struct FirstLoadingView: View {
     @ObservedObject var auth = Authentication.shared
     @Environment(\.openURL) var openURL
     
+    @EnvironmentObject var network: NetworkMonitor
+    
     @State var retries: Int = 1
     
     func retry() async {
@@ -47,25 +49,45 @@ struct FirstLoadingView: View {
                     .frame(width: 125)
                     .foregroundStyle(.white)
                 
-                if retries == 2 {
-                    Text("Weird, It should not take this long")
+                if network.isConnected {
+                    if retries == 2 {
+                        Text("Weird, It should not take this long")
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal)
+                    } else if retries >= 3 {
+                        Button {
+                            if let url = URL(string: "mailto:admin@phantomphood.com") {
+                                openURL(url)
+                            }
+                        } label: {
+                            Label(
+                                title: { Text("Contact Support") },
+                                icon: { Image(systemName: "envelope.fill.badge.shield.trailinghalf.fill") }
+                            )
+                        }
+                        .buttonStyle(.bordered)
+                        
+                        Text("Hello, Team Extraordinary! It looks like our app's main screen is playing a game of hide and seek and is currently winning. I can't seem to find it anywhere. Could you lend your superpowers to help us spot it? Thanks a bunch!")
+                            .padding(.horizontal)
+                        
+                        Button {
+                            auth.signOut()
+                        } label: {
+                            Text("Sign Out")
+                        }
+                    }
+                } else {
+                    Image(systemName: "wifi.exclamationmark")
+                        .font(.system(size: 50))
                         .foregroundStyle(.secondary)
                         .padding(.horizontal)
-                } else if retries >= 3 {
-                    Button {
-                        if let url = URL(string: "mailto:admin@phantomphood.com") {
-                            openURL(url)
-                        }
-                    } label: {
-                        Label(
-                            title: { Text("Contact Support") },
-                            icon: { Image(systemName: "envelope.fill.badge.shield.trailinghalf.fill") }
-                        )
-                    }
-                    .buttonStyle(.bordered)
                     
-                    Text("Hello, Team Extraordinary! It looks like our app's main screen is playing a game of hide and seek and is currently winning. I can't seem to find it anywhere. Could you lend your superpowers to help us spot it? Thanks a bunch!")
+                    Text("Please check your internet connection and try again.")
+                        .foregroundStyle(.secondary)
                         .padding(.horizontal)
+                        .onDisappear {
+                            retries = 1
+                        }
                 }
             }
             .background {

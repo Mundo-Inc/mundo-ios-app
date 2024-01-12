@@ -56,14 +56,13 @@ final class ContactsService {
             
             self.fetchContacts { result in
                 switch result {
-                case .success(let success):
-                    print("Success")
-                    print(success.count)
-                    if let first = success.first {
-                        for phoneNumber in first.phoneNumbers {
-                            print(phoneNumber)
-                        }
-                    }
+                case .success(let data):
+                    print("Contacts Access Granted: \(data.count)")
+//                    if let first = success.first {
+//                        for phoneNumber in first.phoneNumbers {
+//                            print(phoneNumber)
+//                        }
+//                    }
                     
                     self.updateLastSyncDate()
                 case .failure(let failure):

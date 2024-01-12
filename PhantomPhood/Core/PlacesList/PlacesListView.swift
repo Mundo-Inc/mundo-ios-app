@@ -262,13 +262,18 @@ fileprivate struct PlaceItem: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .aspectRatio(contentMode: .fill)
                 } else {
-                    Color.themePrimary
+                    Color.gray.opacity(0.8)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .overlay {
+                            Text("No Image")
+                                .font(.custom(style: .title2))
+                                .foregroundStyle(.white.opacity(0.5))
+                        }
                 }
             }
             .clipShape(.rect(cornerRadius: 16))
         }
-        .foregroundStyle(.primary)
+        .foregroundStyle(Color.white)
     }
 }
 

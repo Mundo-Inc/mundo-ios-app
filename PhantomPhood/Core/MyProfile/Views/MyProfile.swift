@@ -165,7 +165,7 @@ struct MyProfile: View {
                 }
                 .frame(maxHeight: .infinity)
                 .background {
-                    VStack {
+                    VStack(spacing: 0) {
                         Color.themePrimary.ignoresSafeArea()
                         Color.themeBG.ignoresSafeArea()
                     }

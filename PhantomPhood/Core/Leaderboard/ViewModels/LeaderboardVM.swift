@@ -48,9 +48,9 @@ class LeaderboardVM: ObservableObject {
         self.isLoading = false
     }
     
-    func loadMore(currentItem item: User) async {
+    func loadMore(index: Int) async {
         let thresholdIndex = list.index(list.endIndex, offsetBy: -5)
-        if list.firstIndex(where: { $0.id == item.id }) == thresholdIndex {
+        if index == thresholdIndex {
             await fetchList(.new)
         }
     }

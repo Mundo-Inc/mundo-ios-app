@@ -221,6 +221,8 @@
 		0BA038412AF24CE6000A2B33 /* UserConnectionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA038402AF24CE6000A2B33 /* UserConnectionsViewModel.swift */; };
 		0BA388932AD96D7100C74880 /* MapView17.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA388922AD96D7100C74880 /* MapView17.swift */; };
 		0BA388952AD974A100C74880 /* MapView16.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA388942AD974A100C74880 /* MapView16.swift */; };
+		0BA43C232B516DCA00F0DDBF /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */; };
+		0BA43C252B517F3100F0DDBF /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA43C242B517F3100F0DDBF /* UserSettings.swift */; };
 		0BAE47302ACC68FD001FBDAF /* YelpRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */; };
 		0BAE47322ACC91DF001FBDAF /* PlaceReviewsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAE47312ACC91DF001FBDAF /* PlaceReviewsView.swift */; };
 		0BAE47342ACC93B8001FBDAF /* PlaceScoreRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAE47332ACC93B8001FBDAF /* PlaceScoreRange.swift */; };
@@ -512,6 +514,8 @@
 		0BA038402AF24CE6000A2B33 /* UserConnectionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionsViewModel.swift; sourceTree = "<group>"; };
 		0BA388922AD96D7100C74880 /* MapView17.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView17.swift; sourceTree = "<group>"; };
 		0BA388942AD974A100C74880 /* MapView16.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView16.swift; sourceTree = "<group>"; };
+		0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		0BA43C242B517F3100F0DDBF /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpRatingView.swift; sourceTree = "<group>"; };
 		0BAE47312ACC91DF001FBDAF /* PlaceReviewsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceReviewsView.swift; sourceTree = "<group>"; };
 		0BAE47332ACC93B8001FBDAF /* PlaceScoreRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceScoreRange.swift; sourceTree = "<group>"; };
@@ -1170,6 +1174,8 @@
 				0B9EF2802B302E1D0025F464 /* ContactsService.swift */,
 				0B86F9342B44339400DD4C85 /* EmojisManager.swift */,
 				0B226F642B3354860036B8BE /* AchievementsManager.swift */,
+				0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */,
+				0BA43C242B517F3100F0DDBF /* UserSettings.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1652,6 +1658,7 @@
 				0B997B632AC70E1A00579C9C /* Notification.swift in Sources */,
 				0B9C02622B4468B3000C4774 /* AddListCollaboratorVM.swift in Sources */,
 				0B6B4AB32B482D2D002C9FE0 /* QuickActionsView.swift in Sources */,
+				0BA43C232B516DCA00F0DDBF /* NetworkMonitor.swift in Sources */,
 				0BF5B4AE2AB375D500DEC403 /* MapView.swift in Sources */,
 				0B985AE12AC9AFC200019A06 /* PlaceDM.swift in Sources */,
 				0BC84A6D2AD08A6D00D723AA /* SelectReactionsVM.swift in Sources */,
@@ -1713,6 +1720,7 @@
 				0B2BF8822B17AA8000C10A5E /* AppGeneralVM.swift in Sources */,
 				0BF81DC62ABE36EB00B8892E /* Fonts.swift in Sources */,
 				0B384FA72B2B591000C98245 /* UserActivityDM.swift in Sources */,
+				0BA43C252B517F3100F0DDBF /* UserSettings.swift in Sources */,
 				0B9C026C2B45A3A0000C4774 /* PlacesListVM.swift in Sources */,
 				0BC84A692AD06F8200D723AA /* WrappingHStack.swift in Sources */,
 				0BD9F9912B4DB6830040FCDA /* UserActivityCheckin.swift in Sources */,
@@ -1902,7 +1910,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.42.0;
+				MARKETING_VERSION = 0.43.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1940,7 +1948,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.42.0;
+				MARKETING_VERSION = 0.43.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

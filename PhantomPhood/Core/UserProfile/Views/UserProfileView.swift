@@ -227,7 +227,7 @@ struct UserProfileView: View {
                 Color.themePrimary.ignoresSafeArea()
                     .frame(maxHeight: .infinity)
             } else {
-                VStack {
+                VStack(spacing: 0) {
                     Color.themePrimary.ignoresSafeArea()
                     Color.themeBG.ignoresSafeArea()
                 }

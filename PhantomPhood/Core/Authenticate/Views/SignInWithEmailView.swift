@@ -186,7 +186,7 @@ struct SignInWithEmailView: View {
                     withAnimation {
                         vm.isLoading = true
                     }
-                    let result = await auth.signin(email: vm.email, password: vm.password)
+                    let result = await auth.signIn(email: vm.email, password: vm.password)
                     if let error = result.error, !result.success {
                         withAnimation {
                             vm.error = error

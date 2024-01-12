@@ -16,8 +16,8 @@ struct PhantomPhoodApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     init() {
-        URLCache.shared.memoryCapacity = 50_000_000 // ~50 MB memory space
-        URLCache.shared.diskCapacity = 1_000_000_000 // ~1GB disk cache space
+        // Network cache configuration
+        configureNetworkCache()
     }
     
     var body: some Scene {
@@ -25,13 +25,20 @@ struct PhantomPhoodApp: App {
             AppRouter()
         }
     }
+    
+    private func configureNetworkCache() {
+        URLCache.shared.memoryCapacity = 50_000_000
+        URLCache.shared.diskCapacity = 1_000_000_000
+    }
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     let gcmMessageIDKey = "gcm.message_id"
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        FirebaseApp.configure()
+        if FirebaseApp.app() == nil {
+            FirebaseApp.configure()
+        }
         
         Messaging.messaging().delegate = self
         
@@ -42,7 +49,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
             UNUserNotificationCenter.current().requestAuthorization(
                 options: authOptions,
-                completionHandler: {_, _ in })
+                completionHandler: {_, _ in }
+            )
         } else {
             let settings: UIUserNotificationSettings =
             UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)

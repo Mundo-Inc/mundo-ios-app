@@ -10,6 +10,8 @@ import SwiftUI
 struct AppRouter: View {
     @Environment(\.scenePhase) private var scenePhase
     
+    @StateObject var network = NetworkMonitor()
+    
     @ObservedObject private var auth = Authentication.shared
     @ObservedObject private var appData: AppData = AppData.shared
     @ObservedObject private var toastViewModel = ToastViewModel.shared
@@ -93,6 +95,7 @@ struct AppRouter: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .padding(.top)
         }
+        .environmentObject(network)
         .preferredColorScheme(theme == "" ? .none : theme == "dark" ? .dark : .light)
         .fullScreenCover(isPresented: $appGeneralVM.showForceUpdate) {
             ZStack {

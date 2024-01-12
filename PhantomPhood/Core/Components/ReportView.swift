@@ -47,8 +47,7 @@ struct ReportView: View {
             }
             
             let body = try apiManager.createRequestBody(RequestBody(flagType: flagType.rawValue, note: note))
-            
-            let _ = try await apiManager.requestNoContent("/\(type == .review ? "reviews" : "comments")/\(id)/flag", method: .post, body: body, token: token)
+            try await apiManager.requestNoContent("/\(type == .review ? "reviews" : "comments")/\(id)/flag", method: .post, body: body, token: token)
             
             toastViewModel.toast(.init(type: .success, title: "Success", message: "We got your report. It can take up to 24 hours to respond."))
             

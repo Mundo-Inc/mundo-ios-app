@@ -9,8 +9,11 @@ import Foundation
 
 final class APIManager {
     static let shared = APIManager()
+    static let baseURL = "https://phantomphood.ai/api/v1"
     
     private init() {}
+    
+    private let session = URLSession.shared
     
     // MARK: - Nested Types
     
@@ -50,12 +53,7 @@ final class APIManager {
         case applicationJson
         case multipartFormData(boundary: String)
     }
-    
-    // MARK: - Constants
-    
-    //    static let baseURL = "http://localhost:3020/api/v1"
-    static let baseURL = "https://phantomphood.ai/api/v1"
-    
+        
     // MARK: - Public Methods
     
     func request<T: Decodable>(
@@ -98,7 +96,7 @@ final class APIManager {
             request.httpBody = bodyData
         }
         
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await session.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
@@ -166,7 +164,7 @@ final class APIManager {
             request.httpBody = bodyData
         }
         
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await session.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
@@ -236,7 +234,7 @@ final class APIManager {
             request.httpBody = bodyData
         }
         
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await session.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)

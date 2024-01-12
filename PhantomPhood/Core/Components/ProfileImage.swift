@@ -31,11 +31,15 @@ struct ProfileImage: View {
         cornerRadius >= size / 2 ? size / 2 : cornerRadius * 0.7
     }
     
+    var shadowSize: CGFloat {
+        min(10 * (size / 80), 10)
+    }
+    
     var body: some View {
         if let profileImage, !profileImage.isEmpty, let url = URL(string: profileImage) {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .foregroundStyle(Color(.profileImageStroke))
-                .shadow(color: .black.opacity(0.25), radius: 10, y: 10)
+                .shadow(color: .black.opacity(0.25), radius: shadowSize, y: shadowSize)
                 .overlay {
                     RoundedRectangle(cornerRadius: innerCornerRadius)
                         .foregroundStyle(Color(.profileImageBG))
@@ -61,7 +65,7 @@ struct ProfileImage: View {
         } else {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .foregroundStyle(Color(.profileImageStroke))
-                .shadow(color: .black.opacity(0.25), radius: 10, y: 10)
+                .shadow(color: .black.opacity(0.25), radius: shadowSize, y: shadowSize)
                 .overlay {
                     RoundedRectangle(cornerRadius: innerCornerRadius)
                         .foregroundStyle(Color(.profileImageBG))

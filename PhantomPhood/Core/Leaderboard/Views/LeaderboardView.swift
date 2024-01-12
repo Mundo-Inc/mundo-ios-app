@@ -12,13 +12,15 @@ struct LeaderboardView: View {
     @ObservedObject private var auth = Authentication.shared
     
     @StateObject private var vm = LeaderboardVM()
-    
+
     var body: some View {
         NavigationStack(path: $appData.leaderboardNavStack) {
             ZStack {
-                Color.themeBG.ignoresSafeArea()
+                Rectangle()
+                    .fill(.themeBG.gradient)
+                    .ignoresSafeArea()
                 
-                VStack {
+                VStack(spacing: 0) {
                     HStack(spacing: 12) {
                         ProfileImage(auth.currentUser?.profileImage, size: 64, cornerRadius: 15)
                         
@@ -55,21 +57,46 @@ struct LeaderboardView: View {
                     Divider()
                     
                     ScrollViewReader { proxy in
-                        ScrollView {
-                            Color.clear
-                                .frame(width: 0, height: 0)
-                                .id(1)
-                            
-                            LazyVStack {
-                                ForEach(vm.list.indices, id: \.self) { index in
+                        Group {
+                            if vm.list.isEmpty {
+                                List(0...20, id: \.self) { index in
+                                    HStack {
+                                        Text("#\(index + 1)")
+                                            .font(.custom(style: .headline))
+                                            .foregroundStyle(index == 0 ? Color.gold : index == 1 ? Color.silver : index == 2 ? Color.bronze : Color.secondary.opacity(0.7))
+                                            .frame(minWidth: 40)
+                                        
+                                        ProfileImage("", size: 38, cornerRadius: 10)
+                                            .redacted(reason: .placeholder)
+                                        
+                                        LevelView(level: 50)
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 28, height: 36)
+                                            .redacted(reason: .placeholder)
+                                        
+                                        Text("User name")
+                                            .font(.custom(style: .subheadline))
+                                            .bold()
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .redacted(reason: .placeholder)
+                                        
+                                        Text("9999")
+                                            .font(.custom(style: .caption))
+                                            .foregroundStyle(.secondary)
+                                            .redacted(reason: .placeholder)
+                                    }
+                                    .listRowBackground(Color.clear)
+                                }
+                            } else {
+                                List(vm.list.indices, id: \.self) { index in
                                     NavigationLink(value: AppRoute.userProfile(userId: vm.list[index].id)) {
                                         HStack {
                                             Text("#\(index + 1)")
                                                 .font(.custom(style: .headline))
-                                                .foregroundStyle(.secondary)
+                                                .foregroundStyle(index == 0 ? Color.gold : index == 1 ? Color.silver : index == 2 ? Color.bronze : Color.secondary.opacity(0.7))
                                                 .frame(minWidth: 40)
                                             
-                                            ProfileImage(vm.list[index].profileImage, size: 36, cornerRadius: 10)
+                                            ProfileImage(vm.list[index].profileImage, size: 38, cornerRadius: 10)
                                             
                                             LevelView(level: vm.list[index].progress.level)
                                                 .aspectRatio(contentMode: .fit)
@@ -84,25 +111,25 @@ struct LeaderboardView: View {
                                                 .font(.custom(style: .caption))
                                                 .foregroundStyle(.secondary)
                                         }
-                                        .padding(.horizontal)
                                         .onAppear {
                                             if !vm.isLoading {
                                                 Task {
-                                                    await vm.loadMore(currentItem: vm.list[index])
+                                                    await vm.loadMore(index: index)
                                                 }
                                             }
                                         }
                                     }
                                     .foregroundStyle(auth.currentUser?.id == vm.list[index].id ? Color.accentColor : Color.primary)
-                                    
-                                    Divider()
+                                    .listRowBackground(Color.clear)
+                                    .listRowSeparator(.visible, edges: .all)
+                                    .id(index)
                                 }
                             }
                         }
+                        .scrollContentBackground(.hidden)
+                        .listStyle(PlainListStyle())
                         .refreshable {
-                            Task {
-                                await vm.fetchList(.refresh)
-                            }
+                            await vm.fetchList(.refresh)
                         }
                         .onChange(of: appData.tappedTwice) { tapped in
                             if tapped == .leaderboard {

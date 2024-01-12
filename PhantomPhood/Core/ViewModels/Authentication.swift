@@ -9,6 +9,7 @@ import Foundation
 import Firebase
 import GoogleSignIn
 import FirebaseAuth
+import FirebaseCore
 
 enum UserRole: String, Codable {
     case user
@@ -19,7 +20,6 @@ struct CurrentUserCoreData: Codable, Identifiable {
     let _id, name, username, profileImage: String
     let bio: String?
     let email: Email
-    let coins: Int
     let role: UserRole
     let verified: Bool
     let progress: UserProgress
@@ -38,7 +38,7 @@ struct CurrentUserFullData: Codable {
     let _id, name, username, profileImage: String
     var bio: String?
     let email: Email
-    let rank, remainingXp, coins, reviewsCount, followersCount, followingCount, totalCheckins: Int
+    let rank, remainingXp, reviewsCount, followersCount, followingCount, totalCheckins: Int
     let role: UserRole
     let verified: Bool
     let progress: UserProgress
@@ -69,6 +69,14 @@ class Authentication: ObservableObject {
     // MARK: - INIT
     
     private init() {
+        if FirebaseApp.app() == nil {
+            FirebaseApp.configure()
+        }
+        
+        Auth.auth().addStateDidChangeListener { [weak self] (_, user) in
+            self?.userSession = user
+        }
+
         self.userSession = Auth.auth().currentUser
         
         Task {
@@ -88,7 +96,7 @@ class Authentication: ObservableObject {
     }
     
     @discardableResult
-    func signin(email: String, password: String) async -> (success: Bool, error: String?, errorCode: Int?) {
+    func signIn(email: String, password: String) async -> (success: Bool, error: String?, errorCode: Int?) {
         do {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
             do {
@@ -110,7 +118,7 @@ class Authentication: ObservableObject {
     }
     
     @discardableResult
-    func signin(credential: AuthCredential) async -> (success: Bool, error: String?, errorCode: Int?) {
+    func signIn(credential: AuthCredential) async -> (success: Bool, error: String?, errorCode: Int?) {
         do {
             let result = try await Auth.auth().signIn(with: credential)
             do {
@@ -178,23 +186,18 @@ class Authentication: ObservableObject {
     @discardableResult
     func signinWithGoogle(tokens: GoogleSignInResult) async -> (success: Bool, error: String?, errorCode: Int?) {
         let credential = GoogleAuthProvider.credential(withIDToken: tokens.idToken, accessToken: tokens.accessToken)
-        let result = await signin(credential: credential)
+        let result = await signIn(credential: credential)
         return result
     }
     
     @discardableResult
     func signinWithApple(tokens: SignInWithAppleResult) async -> (success: Bool, error: String?, errorCode: Int?) {
         let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: tokens.token, rawNonce: tokens.nonce)
-        let result = await signin(credential: credential)
+        let result = await signIn(credential: credential)
         return result
     }
     
-    func signup(name: String, email: String, password: String, username: String?) async throws {
-        struct SignUpData: Codable {
-            let userId: String
-            let token: String
-        }
-        
+    func signUp(name: String, email: String, password: String, username: String?) async throws {
         struct SignUpRequestBody: Encodable {
             let name: String
             let email: String
@@ -203,20 +206,22 @@ class Authentication: ObservableObject {
         }
         
         let reqBody = try apiManager.createRequestBody(SignUpRequestBody(name: name, email: email, password: password, username: username))
-        let _ = try await apiManager.requestData("/users", method: .post, body: reqBody) as SignUpData?
+        try await apiManager.requestNoContent("/users", method: .post, body: reqBody)
         
-        await self.signin(email: email, password: password)
+        await self.signIn(email: email, password: password)
     }
     
-    func signout() {
+    func signOut() {
         do {
             try Auth.auth().signOut()
             
             self.currentUser = nil
             self.userSession = nil
+            
+            UserSettings.shared.reset()
             appData.reset()
         } catch {
-            print("DEBUG: Failed to signout | Error: \(error.localizedDescription)")
+            print("DEBUG: Failed to sign out | Error: \(error.localizedDescription)")
         }
     }
     
@@ -233,6 +238,8 @@ class Authentication: ObservableObject {
             if let data {
                 self.currentUser = data.data
                 
+                UserSettings.shared.userRole = data.data.role
+                
                 await setDeviceToken()
             }
         } catch {
@@ -243,6 +250,7 @@ class Authentication: ObservableObject {
         let data = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token) as UserResponse?
         
         if let data {
+            UserSettings.shared.userRole = data.data.role
             return data.data
         } else {
             throw URLError(.badServerResponse)

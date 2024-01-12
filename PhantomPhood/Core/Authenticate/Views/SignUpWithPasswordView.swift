@@ -392,7 +392,7 @@ struct SignUpWithPasswordView: View {
                                     vm.isLoading = true
                                 }
                                 do {
-                                    let _ = try await auth.signup(name: vm.name, email: vm.email, password: vm.password, username: vm.username.count > 5 ? vm.username : nil)
+                                    let _ = try await auth.signUp(name: vm.name, email: vm.email, password: vm.password, username: vm.username.count > 5 ? vm.username : nil)
                                 } catch APIManager.APIError.serverError(let serverError) {
                                     withAnimation {
                                         vm.error = serverError.message

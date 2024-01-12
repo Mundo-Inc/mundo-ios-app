@@ -21,11 +21,11 @@ struct SettingsView: View {
         do {
             guard let token = await auth.getToken(), let user = auth.currentUser else { return }
             
-            let _ = try await apiManager.requestNoContent("/users/\(user.id)", method: .delete, token: token)
+            try await apiManager.requestNoContent("/users/\(user.id)", method: .delete, token: token)
             
             toastViewModel.toast(.init(type: .success, title: "Success", message: "Your account has been deleted"))
             
-            auth.signout()
+            auth.signOut()
         } catch {
             toastViewModel.toast(.init(type: .error, title: "Something went wrong!", message: "Unable to delete your account"))
             print(error)
@@ -98,8 +98,26 @@ struct SettingsView: View {
                         icon: { Image(systemName: "ellipsis.rectangle.fill") }
                     )
                 }
+                .foregroundStyle(.primary)
                 .disabled(isLoading)
                 .opacity(isLoading ? 0.5 : 1)
+            }
+            
+            if UserSettings.shared.userRole == .admin {
+                Section {
+                    Toggle(isOn: UserSettings.shared.$isBetaTester) {
+                        Text("Beta Features")
+                    }
+                } header: {
+                    Label {
+                        Text("Admin")
+                    } icon: {
+                        Image(.fullPhantom)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 24)
+                    }
+                }
             }
             
             Section(header: Text("Account")) {
@@ -111,7 +129,7 @@ struct SettingsView: View {
             }
             
             Button {
-                auth.signout()
+                auth.signOut()
             } label: {
                 Label("Log out", systemImage: "rectangle.portrait.and.arrow.right")
             }

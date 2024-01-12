@@ -259,7 +259,7 @@ struct CompleteTheUserInfoView: View {
                             vm.step -= 1
                         }
                     } else {
-                        auth.signout()
+                        auth.signOut()
                         vm.direction = 1
                     }
                 } label: {
