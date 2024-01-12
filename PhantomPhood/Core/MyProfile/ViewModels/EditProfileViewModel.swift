@@ -44,7 +44,7 @@ class EditProfileViewModel: ObservableObject {
                 Task {
                     do {
                         let token = await self?.auth.getToken()
-                        let _ = try await self?.apiManager.requestNoContent("/users/username-availability/\(value)", token: token)
+                        try await self?.apiManager.requestNoContent("/users/username-availability/\(value)", token: token)
                         self?.isUsernameValid = true
                     } catch let error as APIManager.APIError {
                         self?.isUsernameValid = false
@@ -211,7 +211,7 @@ class EditProfileViewModel: ObservableObject {
                 }
                 
                 let (formData, boundary) = uploadFormDataBody(file: UploadFile(name: "profileImage.jpg", media: media, type: .jpeg), useCase: .profileImage)
-                let _ = try await apiManager.requestNoContent("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary))
+                try await apiManager.requestNoContent("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary))
             } else {
                 throw CancellationError()
             }

@@ -26,9 +26,8 @@ class SignUpWithPasswordDM {
     
     
     // MARK: - Public Methods
-    func checkUsername(_ username: String) async throws -> HTTPURLResponse {
-        let response = try await apiManager.requestNoContent("/users/username-availability/\(username)")
-        return response
+    func checkUsername(_ username: String) async throws {
+        try await apiManager.requestNoContent("/users/username-availability/\(username)")
     }
     
 }
@@ -70,9 +69,8 @@ class SignUpWithPasswordVM: ObservableObject {
                 self?.isLoading = true
                 Task {
                     do {
-                        if let _ = try await self?.dataManager.checkUsername(value) {
-                            self?.isUsernameValid = true
-                        }
+                        try await self?.dataManager.checkUsername(value)
+                        self?.isUsernameValid = true
                     } catch let error as APIManager.APIError {
                         self?.isUsernameValid = false
                         switch error {
@@ -392,7 +390,7 @@ struct SignUpWithPasswordView: View {
                                     vm.isLoading = true
                                 }
                                 do {
-                                    let _ = try await auth.signUp(name: vm.name, email: vm.email, password: vm.password, username: vm.username.count > 5 ? vm.username : nil)
+                                    try await auth.signUp(name: vm.name, email: vm.email, password: vm.password, username: vm.username.count > 5 ? vm.username : nil)
                                 } catch APIManager.APIError.serverError(let serverError) {
                                     withAnimation {
                                         vm.error = serverError.message

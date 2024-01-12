@@ -54,20 +54,10 @@ final class FeedDM {
     }
     
     func followNabeel() async throws {
-        struct FollowResponse: Decodable {
-            let success: Bool
-            let data: FollowData
-            
-            struct FollowData: Decodable {
-                let user: String
-                let target: String
-            }
-        }
-        
         guard let token = await auth.getToken() else {
-            throw CancellationError()
+            throw URLError(.userAuthenticationRequired)
         }
         
-        let _ = try await apiManager.requestData("/users/645e7f843abeb74ee6248ced/connections", method: .post, token: token) as FollowResponse?
+        try await apiManager.requestNoContent("/users/645e7f843abeb74ee6248ced/connections", method: .post, token: token)
     }
 }

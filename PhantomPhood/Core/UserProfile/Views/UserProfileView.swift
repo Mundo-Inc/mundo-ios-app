@@ -223,7 +223,7 @@ struct UserProfileView: View {
         }
         .frame(maxHeight: .infinity)
         .background {
-            if let _ = vm.blockStatus {
+            if vm.blockStatus != nil {
                 Color.themePrimary.ignoresSafeArea()
                     .frame(maxHeight: .infinity)
             } else {

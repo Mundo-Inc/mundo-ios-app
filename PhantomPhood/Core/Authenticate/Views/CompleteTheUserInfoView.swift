@@ -45,9 +45,8 @@ class CompleteTheUserInfoVM: ObservableObject {
                 self?.isLoading = true
                 Task {
                     do {
-                        if let _ = try await self?.dataManager.checkUsername(value) {
-                            self?.isUsernameValid = true
-                        }
+                        try await self?.dataManager.checkUsername(value)
+                        self?.isUsernameValid = true
                     } catch let error as APIManager.APIError {
                         self?.isUsernameValid = false
                         switch error {
@@ -69,14 +68,10 @@ class CompleteTheUserInfoVM: ObservableObject {
             let username: String?
             let eula: Bool
         }
-        struct EditUserResponse: Codable {
-            let success: Bool
-            let data: CurrentUserCoreData
-        }
         
         if let token = await auth.getToken(), let uid = auth.currentUser?.id {
             let reqBody = try apiManager.createRequestBody(EditUserBody(name: self.name, username: self.username.isEmpty ? nil : self.username, eula: self.eula))
-            let _ = try await apiManager.requestData("/users/\(uid)", method: .put, body: reqBody, token: token) as EditUserResponse?
+            try await apiManager.requestNoContent("/users/\(uid)", method: .put, body: reqBody, token: token)
             await auth.updateUserInfo()
         }
     }

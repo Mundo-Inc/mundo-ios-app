@@ -286,7 +286,7 @@ class Authentication: ObservableObject {
         do {
             let body = try apiManager.createRequestBody(RequestBody(apnToken: apnToken, fcmToken: fcmToken))
             
-            let _ = try await apiManager.requestNoContent("/users/\(currentUser.id)/settings", method: .put, body: body, token: token)
+            try await apiManager.requestNoContent("/users/\(currentUser.id)/settings", method: .put, body: body, token: token)
             
             UserDefaults.standard.removeObject(forKey: "apnToken")
             UserDefaults.standard.removeObject(forKey: "fcmToken")

@@ -31,39 +31,19 @@ class UserProfileDM {
     }
     
     func follow(id: String) async throws {
-        struct FollowResponse: Decodable {
-            let success: Bool
-            let data: FollowData
-            
-            struct FollowData: Decodable {
-                let user: String
-                let target: String
-            }
-        }
-        
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let _ = try await apiManager.requestData("/users/\(id)/connections", method: .post, token: token) as FollowResponse?
+        try await apiManager.requestNoContent("/users/\(id)/connections", method: .post, token: token)
     }
     
     func unfollow(id: String) async throws {
-        struct FollowResponse: Decodable {
-            let success: Bool
-            let data: FollowData
-            
-            struct FollowData: Decodable {
-                let user: String
-                let target: String
-            }
-        }
-        
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let _ = try await apiManager.requestNoContent("/users/\(id)/connections", method: .delete, token: token)
+        try await apiManager.requestNoContent("/users/\(id)/connections", method: .delete, token: token)
     }
     
     func block(id: String) async throws {
@@ -71,7 +51,7 @@ class UserProfileDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let _ = try await apiManager.requestNoContent("/users/\(id)/block", method: .post, token: token)
+        try await apiManager.requestNoContent("/users/\(id)/block", method: .post, token: token)
     }
     
     func unblock(id: String) async throws {
@@ -79,6 +59,6 @@ class UserProfileDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let _ = try await apiManager.requestNoContent("/users/\(id)/block", method: .delete, token: token)
+        try await apiManager.requestNoContent("/users/\(id)/block", method: .delete, token: token)
     }
 }

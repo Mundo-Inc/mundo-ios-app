@@ -85,16 +85,6 @@ class PlaceDM {
     }
     
     func checkin(id: String) async throws {
-        struct CheckinResponse: Decodable {
-            let success: Bool
-            let data: CheckinData
-            
-            struct CheckinData: Decodable {
-                let user: String
-                let place: String
-            }
-        }
-        
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
@@ -104,7 +94,6 @@ class PlaceDM {
         }
         
         let body = try apiManager.createRequestBody(RequestBody(place: id))
-        
-        let _ = try await apiManager.requestData("/checkins", method: .post, body: body, token: token) as CheckinResponse?
+        try await apiManager.requestNoContent("/checkins", method: .post, body: body, token: token)
     }
 }
