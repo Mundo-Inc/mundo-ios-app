@@ -11,7 +11,7 @@ import Foundation
 final class AddToListVM: ObservableObject {
     private let dataManager = ListsDM()
     private let auth = Authentication.shared
-    private let toastManager = ToastViewModel.shared
+    private let toastManager = ToastVM.shared
     
     @Published var lists: [CompactUserPlacesList] = []
     @Published var selectedListIds: [String] = []

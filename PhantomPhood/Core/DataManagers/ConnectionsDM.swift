@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ConnectionsDM {
+final class ConnectionsDM {
     private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     

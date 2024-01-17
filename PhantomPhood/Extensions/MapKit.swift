@@ -48,3 +48,11 @@ extension CLLocationCoordinate2D: Equatable {
         return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
     }
 }
+
+@available(iOS 17.0, *)
+extension MapCameraUpdateContext {
+    var scaleValue: CGFloat {
+        let value = 1.0 / self.region.span.latitudeDelta
+        return max(0.4, min(value, 1))
+    }
+}

@@ -259,17 +259,17 @@ struct PlaceView: View {
                             }
                         } else {
                             VStack {
-                                RoundedRectangle(cornerRadius: 15)
+                                Rectangle()
                                     .foregroundStyle(Color.themePrimary)
-                                    .frame(height: 140)
+                                    .frame(height: 170)
                                 
                                 Text("****** *** ******")
                                     .font(.custom(style: .headline))
                                     .bold()
                                     .foregroundStyle(.secondary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal)
                             }
-                            .padding(.horizontal)
                             .redacted(reason: .placeholder)
                         }
                     }

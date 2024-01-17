@@ -23,8 +23,8 @@ struct CommentsView: View {
         switch appData.activeTab {
         case .home:
             appData.homeNavStack.append(.userProfile(userId: userId))
-        case .map:
-            appData.mapNavStack.append(.userProfile(userId: userId))
+        case .explore:
+            appData.exploreNavStack.append(.userProfile(userId: userId))
         case .leaderboard:
             appData.leaderboardNavStack.append(.userProfile(userId: userId))
         case .myProfile:

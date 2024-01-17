@@ -35,9 +35,3 @@ struct FilledTextFieldViewModifier: ViewModifier {
             .cornerRadius(8)
     }
 }
-
-extension View {
-    func withFilledStyle(size: TextFieldSize = .medium, paddingLeading: CGFloat? = nil) -> some View {
-        modifier(FilledTextFieldViewModifier(size: size, paddingLeading: paddingLeading))
-    }
-}

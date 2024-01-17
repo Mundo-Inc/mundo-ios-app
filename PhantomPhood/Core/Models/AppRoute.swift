@@ -95,7 +95,7 @@ struct MapPlace: Hashable {
 
 enum MyProfileActiveTab: String, Hashable, CaseIterable {
     case stats = "Stats"
-    case achievements = "Acheivements"
+    case achievements = "Achievements"
     case lists = "Lists"
 }
 

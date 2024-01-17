@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import MapKit
 
-class PlaceDM {
+final class PlaceDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     

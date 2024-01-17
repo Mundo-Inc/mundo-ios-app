@@ -22,7 +22,7 @@ final class AddReviewVM: ObservableObject {
     
     private let apiManager = APIManager.shared
     private let auth = Authentication.shared
-    private let toastViewModel = ToastViewModel.shared
+    private let toastViewModel = ToastVM.shared
     private let taskManager = TaskManager.shared
     private let placeDM = PlaceDM()
     

@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct QuickActionsView: View {
-    @ObservedObject var searchViewModel: SearchViewModel
+    @EnvironmentObject var placeSelectorVM: PlaceSelectorVM
     
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var appData = AppData.shared
     
-    @ObservedObject private var toastViewModel = ToastViewModel.shared
+    @ObservedObject private var toastViewModel = ToastVM.shared
     @ObservedObject private var addReviewVM = AddReviewVM.shared
     var placeDM = PlaceDM()
     
@@ -104,10 +104,9 @@ struct QuickActionsView: View {
                 .foregroundStyle(.primary)
             } else {
                 Button {
-                    searchViewModel.scope = .places
-                    searchViewModel.tokens = [.checkin]
+                    placeSelectorVM.tokens = [.checkin]
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        searchViewModel.showSearch = true
+                        placeSelectorVM.isPresented = true
                     }
                     dismiss()
                 } label: {
@@ -133,10 +132,9 @@ struct QuickActionsView: View {
                 .foregroundStyle(.primary)
                 
                 Button {
-                    searchViewModel.scope = .places
-                    searchViewModel.tokens = [.addReview]
+                    placeSelectorVM.tokens = [.addReview]
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        searchViewModel.showSearch = true
+                        placeSelectorVM.isPresented = true
                     }
                     dismiss()
                 } label: {
@@ -170,5 +168,6 @@ struct QuickActionsView: View {
 }
 
 #Preview {
-    QuickActionsView(searchViewModel: SearchViewModel())
+    QuickActionsView()
+        .environmentObject(PlaceSelectorVM())
 }

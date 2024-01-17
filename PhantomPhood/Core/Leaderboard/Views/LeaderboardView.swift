@@ -145,42 +145,7 @@ struct LeaderboardView: View {
                     }
                 }
                 .navigationTitle("Leaderboard")
-                .navigationDestination(for: AppRoute.self) { route in
-                    switch route {
-                    case .notifications:
-                        NotificationsView()
-                    case .userActivity(let id):
-                        UserActivityView(id: id)
-                        
-                        // Place
-                        
-                    case .place(let id, let action):
-                        PlaceView(id: id, action: action)
-                    case .placeMapPlace(let mapPlace, let action):
-                        PlaceView(mapPlace: mapPlace, action: action)
-                        
-                        // My Profile
-                        
-                    case .settings:
-                        SettingsView()
-                    case .myConnections(let initTab):
-                        MyConnections(activeTab: initTab)
-                        
-                        // User
-                        
-                    case .userProfile(let id):
-                        UserProfileView(id: id)
-                    case .userConnections(let userId, let initTab):
-                        UserConnectionsView(userId: userId, activeTab: initTab)
-                    case .userActivities(let userId, let activityType):
-                        ProfileActivitiesView(userId: userId, activityType: activityType)
-                    case .userCheckins(let userId):
-                        ProfileCheckins(userId: userId)
-                        
-                    case .placesList(let listId):
-                        PlacesListView(listId: listId)
-                    }
-                }
+                .handleNavigationDestination()
             }
         }
     }

@@ -14,7 +14,7 @@ final class ForYouInfoVM: ObservableObject {
     
     private let apiManager = APIManager.shared
     private let auth = Authentication.shared
-    private let toastVM = ToastViewModel.shared
+    private let toastVM = ToastVM.shared
     
     enum FollowAction: String {
         case follow = "Follow"

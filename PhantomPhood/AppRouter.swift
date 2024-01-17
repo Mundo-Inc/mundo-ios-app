@@ -14,7 +14,7 @@ struct AppRouter: View {
     
     @ObservedObject private var auth = Authentication.shared
     @ObservedObject private var appData: AppData = AppData.shared
-    @ObservedObject private var toastViewModel = ToastViewModel.shared
+    @ObservedObject private var toastViewModel = ToastVM.shared
     @ObservedObject private var appGeneralVM = AppGeneralVM.shared
     @ObservedObject private var emojisVM = EmojisVM.shared
     
@@ -211,15 +211,15 @@ struct AppRouter: View {
                             break
                         }
                         // Map Tab
-                    case .map:
+                    case .explore:
                         switch navRawValue {
                         case "user":
                             if let id = getKeyValue("id", string: string) {
-                                appData.mapNavStack.append(.userProfile(userId: id.lowercased()))
+                                appData.exploreNavStack.append(.userProfile(userId: id.lowercased()))
                             }
                         case "place":
                             if let id = getKeyValue("id", string: string) {
-                                appData.mapNavStack.append(.place(id: id.lowercased()))
+                                appData.exploreNavStack.append(.place(id: id.lowercased()))
                             }
                         default:
                             break

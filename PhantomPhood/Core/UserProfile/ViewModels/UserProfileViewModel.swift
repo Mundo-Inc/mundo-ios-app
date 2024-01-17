@@ -12,7 +12,7 @@ class UserProfileViewModel: ObservableObject {
     private let id: String
     
     private let dataManager = UserProfileDM()
-    private let toastManager = ToastViewModel.shared
+    private let toastManager = ToastVM.shared
     
     @Published private(set) var isLoading = false
     @Published private(set) var isFollowing: Bool? = nil

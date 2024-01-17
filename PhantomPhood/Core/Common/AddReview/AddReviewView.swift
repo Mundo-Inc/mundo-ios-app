@@ -491,6 +491,11 @@ struct AddReviewView: View {
                 .background(Color.themeBG.ignoresSafeArea())
             }
         }
+        .onChange(of: !vm.isSubmitting && vm.place == nil && vm.error == nil ) { value in
+            if value {
+                dismiss()
+            }
+        }
     }
 }
 

@@ -13,7 +13,7 @@ final class CommentsViewModel: ObservableObject {
     
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
-    private let toastViewModel = ToastViewModel.shared
+    private let toastViewModel = ToastVM.shared
     
     @Published var currentActivityId: String? = nil
     

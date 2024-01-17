@@ -9,7 +9,7 @@ import SwiftUI
 
 enum UserProfileTab: String, Hashable, CaseIterable {
     case stats = "Stats"
-    case achievements = "Acheivements"
+    case achievements = "Achievements"
     case lists = "Lists"
 }
 

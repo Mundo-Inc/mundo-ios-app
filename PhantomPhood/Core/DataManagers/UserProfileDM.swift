@@ -7,7 +7,7 @@
 
 import Foundation
 
-class UserProfileDM {
+final class UserProfileDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     

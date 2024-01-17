@@ -7,7 +7,7 @@
 
 import Foundation
 
-class LeaderboardDM {
+final class LeaderboardDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
         

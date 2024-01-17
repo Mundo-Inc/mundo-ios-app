@@ -150,9 +150,9 @@ struct SignInWithEmailView: View {
                             }
                             if result {
                                 vm.showResetPassword = false
-                                ToastViewModel.shared.toast(.init(type: .success, title: "Email Sent", message: "Email sent"))
+                                ToastVM.shared.toast(.init(type: .success, title: "Email Sent", message: "Email sent"))
                             } else {
-                                ToastViewModel.shared.toast(.init(type: .error, title: "Failed", message: "Something went wrong, please try again in couple minutes."))
+                                ToastVM.shared.toast(.init(type: .error, title: "Failed", message: "Something went wrong, please try again in couple minutes."))
                             }
                         }
                     } label: {

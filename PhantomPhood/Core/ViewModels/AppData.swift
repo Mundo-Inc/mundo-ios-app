@@ -16,7 +16,7 @@ final class AppData: ObservableObject {
     @Published var activeTab: Tab = .home
     
     // Map Tab
-    @Published var mapNavStack: [AppRoute] = []
+    @Published var exploreNavStack: [AppRoute] = []
     
     // Leaderboard Tab
     @Published var leaderboardNavStack: [AppRoute] = []
@@ -47,9 +47,9 @@ final class AppData: ObservableObject {
                     } else {
                         self.tappedTwice = $0
                     }
-                case .map:
-                    if !self.mapNavStack.isEmpty {
-                        self.mapNavStack.removeLast()
+                case .explore:
+                    if !self.exploreNavStack.isEmpty {
+                        self.exploreNavStack.removeLast()
                     } else {
                         self.tappedTwice = $0
                     }
@@ -75,7 +75,7 @@ final class AppData: ObservableObject {
         self.activeTab = .home
         
         self.homeNavStack.removeAll()
-        self.mapNavStack.removeAll()
+        self.exploreNavStack.removeAll()
         self.leaderboardNavStack.removeAll()
         self.authNavStack.removeAll()
         
@@ -92,8 +92,8 @@ final class AppData: ObservableObject {
         switch self.activeTab {
         case .home:
             self.homeNavStack.append(.userProfile(userId: id))
-        case .map:
-            self.mapNavStack.append(.userProfile(userId: id))
+        case .explore:
+            self.exploreNavStack.append(.userProfile(userId: id))
         case .leaderboard:
             self.leaderboardNavStack.append(.userProfile(userId: id))
         case .myProfile:
@@ -112,8 +112,8 @@ final class AppData: ObservableObject {
                     return nil
                 }
             }
-        case .map:
-            if let route = self.mapNavStack.last {
+        case .explore:
+            if let route = self.exploreNavStack.last {
                 switch route {
                 case .place(let placeId, _):
                     return placeId

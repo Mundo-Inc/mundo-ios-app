@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    let toastViewModel = ToastViewModel.shared
+    let toastViewModel = ToastVM.shared
     let apiManager = APIManager.shared
     
     @ObservedObject private var auth = Authentication.shared
@@ -82,9 +82,9 @@ struct SettingsView: View {
                                 isLoading = false
                             }
                             if result {
-                                ToastViewModel.shared.toast(.init(type: .success, title: "Email Sent", message: "Email sent"))
+                                ToastVM.shared.toast(.init(type: .success, title: "Email Sent", message: "Email sent"))
                             } else {
-                                ToastViewModel.shared.toast(.init(type: .error, title: "Failed", message: "Something went wrong, please try again in couple minutes."))
+                                ToastVM.shared.toast(.init(type: .error, title: "Failed", message: "Something went wrong, please try again in couple minutes."))
                             }
                         }
                     } else {

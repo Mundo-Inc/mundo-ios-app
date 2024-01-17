@@ -7,7 +7,7 @@
 
 import Foundation
 
-class NotificationsDM {
+final class NotificationsDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     

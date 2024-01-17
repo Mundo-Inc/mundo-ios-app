@@ -25,7 +25,7 @@ enum FlagType: String, CaseIterable {
 }
 
 struct ReportView: View {
-    let toastViewModel = ToastViewModel.shared
+    let toastViewModel = ToastVM.shared
     let apiManager = APIManager.shared
     @ObservedObject var auth = Authentication.shared
     

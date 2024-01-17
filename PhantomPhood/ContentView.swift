@@ -13,7 +13,7 @@ struct ContentView: View {
     @ObservedObject private var commentsViewModel = CommentsViewModel.shared
     @ObservedObject private var addReviewVM = AddReviewVM.shared
     
-    @StateObject private var searchViewModel = SearchViewModel()
+    @StateObject private var placeSelectorVM = PlaceSelectorVM()
     
     @State private var showActions: Bool = false
     
@@ -24,8 +24,8 @@ struct ContentView: View {
                     .tag(Tab.home)
                     .toolbar(.hidden, for: .tabBar)
                 
-                MapView()
-                    .tag(Tab.map)
+                ExploreView()
+                    .tag(Tab.explore)
                     .toolbar(.hidden, for: .tabBar)
                 
                 
@@ -37,25 +37,22 @@ struct ContentView: View {
                     .tag(Tab.myProfile)
                     .toolbar(.hidden, for: .tabBar)
             }
-            .environmentObject(searchViewModel)
+            .environmentObject(placeSelectorVM)
             
             MainTabBarView(selection: appData.tabViewSelectionHandler, showActions: $showActions)
                 .sheet(isPresented: $showActions) {
-                    QuickActionsView(searchViewModel: searchViewModel)
+                    QuickActionsView()
+                        .environmentObject(placeSelectorVM)
                 }
-                .sheet(isPresented: $searchViewModel.showSearch, onDismiss: {
-                    searchViewModel.tokens.removeAll()
-                    searchViewModel.text = ""
-                }) {
-                    SearchView(vm: searchViewModel) { place in
+                .sheet(isPresented: $placeSelectorVM.isPresented) {
+                    PlaceSelectorView(placeSelectorVM: placeSelectorVM) { place in
                         if let title = place.name {
-                            appData.homeNavStack.append(AppRoute.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title), action: searchViewModel.tokens.contains(.addReview) ? .addReview : searchViewModel.tokens.contains(.checkin) ? .checkin : nil))
+                            appData.homeNavStack.append(AppRoute.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title), action: placeSelectorVM.tokens.contains(.addReview) ? .addReview : placeSelectorVM.tokens.contains(.checkin) ? .checkin : nil))
                         }
-                    } onUserSelect: { user in
-                        appData.homeNavStack.append(AppRoute.userProfile(userId: user.id))
                     }
                 }
         }
+        .ignoresSafeArea(.keyboard) // TODO: Test to see if this causes any bugs
         .sheet(isPresented: $selectReactionsViewModel.isPresented, content: {
             if #available(iOS 17.0, *) {
                 SelectReactionsView(vm: selectReactionsViewModel)

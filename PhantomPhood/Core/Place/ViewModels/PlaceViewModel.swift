@@ -21,7 +21,7 @@ class PlaceViewModel: ObservableObject {
     private let action: PlaceAction?
     
     private let dataManager = PlaceDM()
-    private let toastViewModel = ToastViewModel.shared
+    private let toastViewModel = ToastVM.shared
     private let addReviewVM = AddReviewVM.shared
     
     @Published var isMapNavigationPresented: Bool = false

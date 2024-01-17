@@ -16,7 +16,7 @@ struct MainTabBarView: View {
         HStack {
             tabView(tab: .home)
             
-            tabView(tab: .map)
+            tabView(tab: .explore)
             
             Button {
                 showActions.toggle()

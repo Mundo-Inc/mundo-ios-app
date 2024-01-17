@@ -17,6 +17,7 @@ class LocationManager: NSObject, ObservableObject {
     @Published var region = MKCoordinateRegion()
     
     let locationManager = CLLocationManager()
+    private let searchDM = SearchDM()
     
     override init() {
         super.init()
@@ -40,16 +41,14 @@ extension LocationManager: CLLocationManagerDelegate {
         // MARK: - if is admin
         guard UserSettings.shared.userRole == .admin && UserSettings.shared.isBetaTester else { return }
         
-        let request = MKLocalPointsOfInterestRequest(center: location.coordinate, radius: 20)
-        request.pointOfInterestFilter = MKPointOfInterestFilter(including: [.cafe, .restaurant, .nightlife, .bakery, .brewery, .winery])
-
-        let search = MKLocalSearch(request: request)
-        search.start { (response, error) in
-            guard let response, let place = response.mapItems.first else { return }
-
+        Task {
+            guard
+                let mapItems = try? await searchDM.searchAppleMapsPlaces(region: MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 20, longitudinalMeters: 20)),
+                let place = mapItems.first
+            else { return }
+            
             let content = UNMutableNotificationContent()
             content.title = "Are you here?"
-            // point of interst
             content.subtitle = place.name ?? "-"
             content.body = place.placemark.title ?? "-"
             content.sound = UNNotificationSound.default
@@ -57,7 +56,26 @@ extension LocationManager: CLLocationManagerDelegate {
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
             let request = UNNotificationRequest(identifier: "PhantomPhood", content: content, trigger: trigger)
 
-            UNUserNotificationCenter.current().add(request)
+            try? await UNUserNotificationCenter.current().add(request)
         }
+//        let request = MKLocalPointsOfInterestRequest(center: location.coordinate, radius: 20)
+//        request.pointOfInterestFilter = MKPointOfInterestFilter(including: SearchDM.AcceptablePointOfInterestCategories)
+//
+//        let search = MKLocalSearch(request: request)
+//        search.start { (response, error) in
+//            guard let response, let place = response.mapItems.first else { return }
+//
+//            let content = UNMutableNotificationContent()
+//            content.title = "Are you here?"
+//            // point of interst
+//            content.subtitle = place.name ?? "-"
+//            content.body = place.placemark.title ?? "-"
+//            content.sound = UNNotificationSound.default
+//
+//            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+//            let request = UNNotificationRequest(identifier: "PhantomPhood", content: content, trigger: trigger)
+//
+//            UNUserNotificationCenter.current().add(request)
+//        }
     }
 }

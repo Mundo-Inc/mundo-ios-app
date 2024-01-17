@@ -1,5 +1,5 @@
 //
-//  ToastViewModel.swift
+//  ToastVM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 10/11/23.
@@ -20,8 +20,8 @@ struct Toast: Identifiable {
 }
 
 @MainActor
-final class ToastViewModel: ObservableObject {
-    static let shared = ToastViewModel()
+final class ToastVM: ObservableObject {
+    static let shared = ToastVM()
     private init() {}
     
     @Published private(set) var toasts: [Toast] = []

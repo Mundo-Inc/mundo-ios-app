@@ -170,6 +170,6 @@ struct FeedView: View {
 #Preview {
     NavigationStack {
         FeedView(mediasViewModel: MediasViewModel(), reportId: .constant(nil))
-            .environmentObject(SearchViewModel())
+            .environmentObject(PlaceSelectorVM())
     }
 }
