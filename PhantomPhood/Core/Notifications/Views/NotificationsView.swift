@@ -28,6 +28,7 @@ struct NotificationsView: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             Task {
                                 await vm.seenNotifications()
+                                try? await UNUserNotificationCenter.current().setBadgeCount(0)
                             }
                         }
                     }

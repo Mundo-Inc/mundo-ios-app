@@ -54,6 +54,14 @@ struct HomeView: View {
                                                     .font(.custom(style: .caption2))
                                                     .foregroundStyle(Color.white)
                                             }
+                                            .onAppear {
+                                                UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+                                            }
+                                    } else {
+                                        EmptyView()
+                                            .onAppear {
+                                                UNUserNotificationCenter.current().setBadgeCount(0)
+                                            }
                                     }
                                 }
                                 .onAppear {
