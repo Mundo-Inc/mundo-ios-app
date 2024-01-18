@@ -12,7 +12,7 @@ import Kingfisher
 @available(iOS 17.0, *)
 struct ExploreView17: View {
     @EnvironmentObject private var exploreSearchVM: ExploreSearchVM
-    
+    @Environment(\.dismissSearch) private var dismissSearch
     /// for iOS 17
     @StateObject private var vm = ExploreVM17()
     
@@ -144,7 +144,6 @@ struct ExploreView17: View {
                 })
                 .mapControlVisibility(.visible)
                 .mapControls {
-                    MapUserLocationButton()
                     MapCompass()
                 }
                 .onMapCameraChange(frequency: .continuous, { mapCameraUpdateContext in
@@ -164,6 +163,29 @@ struct ExploreView17: View {
                 })
                 .zIndex(1)
                 
+                Button {
+                    if vm.position.followsUserLocation && !vm.position.followsUserHeading {
+                        withAnimation {
+                            vm.position = .userLocation(followsHeading: true, fallback: MapCameraPosition.automatic)
+                        }
+                    } else if !vm.position.followsUserLocation {
+                        withAnimation {
+                            vm.position = .userLocation(fallback: MapCameraPosition.automatic)
+                        }
+                    }
+                } label: {
+                    Circle()
+                        .frame(width: 50, height: 50, alignment: .center)
+                        .foregroundStyle(Color.themePrimary)
+                        .overlay {
+                            Image(systemName: vm.position.followsUserHeading ? "location.north.line.fill" : vm.position.followsUserLocation ? "location.fill" : "location")
+                                .foregroundStyle(vm.position.followsUserHeading || vm.position.followsUserLocation ? Color.accentColor : Color.white)
+                        }
+                }
+                .padding(.trailing, 5)
+                .padding(.bottom, 5)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .zIndex(2)
                 
                 if let item = vm.selectedMapItem {
                     VStack {
@@ -327,7 +349,7 @@ struct ExploreView17: View {
                     .padding(.bottom)
                     .transition(.move(edge: .bottom))
                     .animation(.bouncy, value: vm.selectedMapItem)
-                    .zIndex(2)
+                    .zIndex(3)
                 }
             }
             .toolbar {
@@ -362,28 +384,58 @@ struct ExploreView17: View {
                 }
             }
             
-            ZStack {
-                if let searchResults = vm.searchResults, !searchResults.isEmpty {
-                    Button {
-                        withAnimation {
-                            vm.searchResults = nil
-                        }
-                    } label: {
-                        Label(
-                            title: { Text("Clear search results") },
-                            icon: { Image(systemName: "xmark") }
-                        )
-                        .padding(.horizontal)
-                        .padding(.vertical, 10)
-                        .background(Color.themePrimary)
+            if let searchResults = vm.searchResults, !searchResults.isEmpty {
+                Button {
+                    withAnimation {
+                        vm.searchResults = nil
                     }
-                    .font(.custom(style: .subheadline))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .offset(y: 6)
+                } label: {
+                    Label(
+                        title: { Text("Clear search results") },
+                        icon: { Image(systemName: "xmark") }
+                    )
+                    .padding(.horizontal)
+                    .padding(.vertical, 10)
+                    .background(Color.themePrimary)
                 }
-                
-                ExploreSearchView(exploreSearchVM: exploreSearchVM, mapVM: vm)
+                .font(.custom(style: .subheadline))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .offset(y: 6)
+            } else {
+                ScrollView(.horizontal) {
+                    HStack {
+                        Group {
+                            ForEach(MapDefaultSearch.allCases, id: \.self) { item in
+                                Button(item.title) {
+                                    Task {
+                                        await exploreSearchVM.search(item.search, region: vm.position.region, categories: item.categories)
+                                        if !exploreSearchVM.placeSearchResults.isEmpty {
+                                            vm.searchResults = exploreSearchVM.placeSearchResults
+                                            if let region = getClusterRegion(coordinates: exploreSearchVM.placeSearchResults.map { $0.placemark.coordinate }) {
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                                    withAnimation {
+                                                        vm.panToRegion(region: region)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                .disabled(exploreSearchVM.isLoading)
+                            }
+                        }
+                        .buttonStyle(BorderedProminentButtonStyle())
+                        .foregroundStyle(Color.primary)
+                        .tint(Color.themePrimary)
+                        .font(.custom(style: .body))
+                    }
+                    .padding(.all, 5)
+                    .opacity(exploreSearchVM.isLoading ? 0.7 : 1)
+                }
+                .scrollIndicators(.never)
             }
+            
+            ExploreSearchView(exploreSearchVM: exploreSearchVM, mapVM: vm)
         }
     }
 }

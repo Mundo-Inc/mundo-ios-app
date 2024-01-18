@@ -14,7 +14,9 @@ struct SettingsView: View {
     @ObservedObject private var auth = Authentication.shared
     @AppStorage("theme") var theme: String = ""
     
-    @State var isLoading = false
+    @State private var isLoading = false
+    
+    @State private var isAccountSettingsVisible = false
     
     @State var showAccountDeleteWarning = false
     func deleteAccount() async {
@@ -120,19 +122,43 @@ struct SettingsView: View {
                 }
             }
             
-            Section(header: Text("Account")) {
-                Button {
-                    showAccountDeleteWarning = true
-                } label: {
-                    Label("Delete Account", systemImage: "person.slash.fill")
-                }
-            }
-            
             Button {
                 auth.signOut()
             } label: {
                 Label("Log out", systemImage: "rectangle.portrait.and.arrow.right")
             }
+            
+            Section {
+                if isAccountSettingsVisible {
+                    Button {
+                        showAccountDeleteWarning = true
+                    } label: {
+                        Label("Delete Account", systemImage: "person.slash.fill")
+                    }
+                }
+            } header: {
+                Button {
+                    withAnimation {
+                        isAccountSettingsVisible.toggle()
+                    }
+                } label: {
+                    HStack {
+                        Text("Account")
+                            .foregroundStyle(Color.secondary)
+                        
+                        Spacer()
+                        
+                        Text(isAccountSettingsVisible ? "Hide" : "Show")
+                        Image(systemName: isAccountSettingsVisible ? "chevron.down" : "chevron.right")
+                            .foregroundStyle(Color.accentColor)
+                    }
+                }
+            }
+            
+            Text("Phantom Phood Inc.")
+                .font(.custom(style: .caption))
+                .foregroundStyle(Color.secondary)
+                .listRowBackground(Color.clear)
         }
         .font(.custom(style: .body))
         .listStyle(.insetGrouped)

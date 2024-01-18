@@ -30,12 +30,16 @@ final class SearchDM {
         return resData.data
     }
     
-    func searchAppleMapsPlaces(region: MKCoordinateRegion, q: String? = nil) async throws -> [MKMapItem] {
+    func searchAppleMapsPlaces(region: MKCoordinateRegion, q: String? = nil, categories: [MKPointOfInterestCategory]? = nil) async throws -> [MKMapItem] {
         if let q, !q.isEmpty {
             let searchRequest = MKLocalSearch.Request()
             searchRequest.region = region
             searchRequest.resultTypes = .pointOfInterest
-            searchRequest.pointOfInterestFilter = MKPointOfInterestFilter(including: SearchDM.AcceptablePointOfInterestCategories)
+            if let categories {
+                searchRequest.pointOfInterestFilter = MKPointOfInterestFilter(including: categories)
+            } else {
+                searchRequest.pointOfInterestFilter = MKPointOfInterestFilter(including: SearchDM.AcceptablePointOfInterestCategories)
+            }
             searchRequest.naturalLanguageQuery = q
             
             let search = MKLocalSearch(request: searchRequest)

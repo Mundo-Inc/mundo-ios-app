@@ -8,6 +8,75 @@
 import Foundation
 import Combine
 import MapKit
+import SwiftUI
+
+enum MapDefaultSearch: String, CaseIterable {
+    case restaurants
+    case coffee
+    case bars
+    case takeout
+    case delivery
+
+    var title: String {
+        switch self {
+        case .restaurants:
+            return "Restaurants"
+        case .coffee:
+            return "Coffee"
+        case .bars:
+            return "Bars"
+        case .takeout:
+            return "Takeout"
+        case .delivery:
+            return "Delivery"
+        }
+    }
+
+    var categories: [MKPointOfInterestCategory] {
+        switch self {
+        case .restaurants:
+            return [.restaurant]
+        case .coffee:
+            return [.cafe]
+        case .bars:
+            return [.nightlife]
+        case .takeout:
+            return [.restaurant, .cafe]
+        case .delivery:
+            return [.restaurant, .cafe]
+        }
+    }
+
+    var search: String {
+        switch self {
+        case .restaurants:
+            return "Restaurant"
+        case .coffee:
+            return "Coffee"
+        case .bars:
+            return "Bar"
+        case .takeout:
+            return "Takeout"
+        case .delivery:
+            return "Delivery"
+        }
+    }
+
+    var image: Image {
+        switch self {
+        case .restaurants:
+            return Image(systemName: "fork.knife")
+        case .coffee:
+            return Image(systemName: "cup.and.saucer")
+        case .bars:
+            return Image(systemName: "wineglass")
+        case .takeout:
+            return Image(systemName: "takeoutbag.and.cup.and.straw")
+        case .delivery:
+            return Image(systemName: "suitcase.cart")
+        }
+    }
+}
 
 enum SearchScopes: String, CaseIterable, Identifiable {
     case places
@@ -63,7 +132,7 @@ final class ExploreSearchVM: ObservableObject {
             .store(in: &cancellable)
     }
     
-    func search(_ value: String, region: MKCoordinateRegion? = nil) async {
+    func search(_ value: String, region: MKCoordinateRegion? = nil, categories: [MKPointOfInterestCategory]? = nil) async {
         self.isLoading = true
 
         if self.scope == .places {
@@ -76,7 +145,7 @@ final class ExploreSearchVM: ObservableObject {
                 theRegion = locationManager.region
             }
             do {
-                let mapItems = try await searchDM.searchAppleMapsPlaces(region: theRegion, q: value)
+                let mapItems = try await searchDM.searchAppleMapsPlaces(region: theRegion, q: value, categories: categories)
                 self.placeSearchResults = mapItems
             } catch {
                 print(error)

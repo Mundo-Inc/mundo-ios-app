@@ -52,7 +52,7 @@ struct FirstLoadingView: View {
                 if network.isConnected {
                     if retries == 2 {
                         Text("Weird, It should not take this long")
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.white.opacity(0.7))
                             .padding(.horizontal)
                     } else if retries >= 3 {
                         Button {
@@ -79,11 +79,11 @@ struct FirstLoadingView: View {
                 } else {
                     Image(systemName: "wifi.exclamationmark")
                         .font(.system(size: 50))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.7))
                         .padding(.horizontal)
                     
                     Text("Please check your internet connection and try again.")
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.7))
                         .padding(.horizontal)
                         .onDisappear {
                             retries = 1
@@ -116,12 +116,11 @@ struct FirstLoadingView: View {
                         .offset(x: -offset)
                     }
                 }
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(.white.opacity(0.35))
                 .opacity(0.3)
                 .rotationEffect(.degrees(5))
                 .ignoresSafeArea()
             }
-            .preferredColorScheme(.dark)
             .font(.custom(style: .subheadline))
             .onAppear {
                 withAnimation(Animation.linear(duration: animationDuration).repeatForever(autoreverses: false)) {
