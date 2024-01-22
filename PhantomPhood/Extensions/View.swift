@@ -44,6 +44,8 @@ struct NavigationDestinationViewModifier: ViewModifier {
         content
             .navigationDestination(for: AppRoute.self) { route in
                 switch route {
+                case .leaderboard:
+                    LeaderboardView()
                 case .notifications:
                     NotificationsView()
                 case .userActivity(let id):

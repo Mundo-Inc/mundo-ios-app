@@ -1,0 +1,493 @@
+//
+//  RewardsHubView.swift
+//  PhantomPhood
+//
+//  Created by Kia Abdi on 1/18/24.
+//
+
+import SwiftUI
+
+struct RewardsHubView: View {
+    @ObservedObject private var appData = AppData.shared
+    @ObservedObject private var auth = Authentication.shared
+    @ObservedObject private var pcVM = PhantomCoinsVM.shared
+    
+    @StateObject private var vm = RewardsHubVM()
+    
+    @State var isEmojiAnimating: Bool = true
+    
+    var body: some View {
+        NavigationStack(path: $appData.rewardsHubNavStack) {
+            VStack(spacing: 0) {
+                VStack(spacing: 5) {
+                    HStack {
+                        Text("Rewards Hub")
+                            .fontWeight(.semibold)
+                            .font(.custom(style: .title2))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        NavigationLink(value: AppRoute.leaderboard) {
+                            VStack(spacing: 0) {
+                                Image(.leaderboard)
+                                    .foregroundStyle(Color.accentColor)
+                                Text("#\(auth.currentUser?.rank ?? 1)")
+                                    .font(.custom(style: .caption))
+                                    .redacted(reason: auth.currentUser == nil ? .placeholder : [])
+                            }
+                        }
+                        .foregroundStyle(Color.accentColor)
+                    }
+                    
+                    HStack {
+                        Image(.phantomCoin)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 36, height: 36)
+                            .shadow(color: Color.coin.opacity(0.3), radius: 10)
+                        
+                        Text((pcVM.balance ?? 0).formatted())
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color.coin)
+                            .shadow(color: Color.coin.opacity(0.3), radius: 10)
+                            .redacted(reason: pcVM.balance == nil ? .placeholder : [])
+                        
+                        Spacer()
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.bottom)
+                
+                Divider()
+                
+                ScrollView {
+                    Section {
+                        VStack {
+                            HStack {
+                                if let dailyRewards = pcVM.dailyRewards, let streaks = pcVM.streaks {
+                                    ForEach(dailyRewards.indices, id: \.self) { index in
+                                        VStack {
+                                            Group {
+                                                if streaks == 0 && pcVM.hasClaimedToday {
+                                                    Circle()
+                                                        .frame(width: 28, height: 28)
+                                                        .foregroundStyle(Color.coin)
+                                                        .shadow(color: Color.black.opacity(0.3), radius: 3)
+                                                        .overlay {
+                                                            Image(systemName: "checkmark")
+                                                                .foregroundStyle(Color.black)
+                                                        }
+                                                    
+                                                    Text(dailyRewards[index].description)
+                                                        .foregroundStyle(Color.secondary)
+                                                        .font(.custom(style: .caption))
+                                                } else if streaks == index {
+                                                    if pcVM.hasClaimedToday {
+                                                        Image(.phantomCoin)
+                                                            .resizable()
+                                                            .aspectRatio(contentMode: .fit)
+                                                            .grayscale(1)
+                                                            .frame(width: 28, height: 28)
+                                                            .shadow(color: Color.black.opacity(0.3), radius: 3)
+                                                        
+                                                        Text(dailyRewards[index].description)
+                                                            .foregroundStyle(Color.secondary)
+                                                            .font(.custom(style: .caption))
+                                                    } else {
+                                                        Image(.phantomCoin)
+                                                            .resizable()
+                                                            .aspectRatio(contentMode: .fit)
+                                                            .frame(width: 28, height: 28)
+                                                            .shadow(color: Color.black.opacity(0.3), radius: 3)
+                                                            .scaleEffect(1.4)
+                                                        
+                                                        Text(dailyRewards[index].description)
+                                                            .foregroundStyle(Color.primary)
+                                                            .font(.custom(style: .caption))
+                                                            .fontWeight(.bold)
+                                                    }
+                                                } else if streaks > index {
+                                                    Circle()
+                                                        .frame(width: 28, height: 28)
+                                                        .foregroundStyle(Color.coin)
+                                                        .shadow(color: Color.black.opacity(0.3), radius: 3)
+                                                        .overlay {
+                                                            Image(systemName: "checkmark")
+                                                                .foregroundStyle(Color.black)
+                                                        }
+                                                    
+                                                    Text(dailyRewards[index].description)
+                                                        .foregroundStyle(Color.secondary)
+                                                        .font(.custom(style: .caption))
+                                                } else {
+                                                    Image(.phantomCoin)
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fit)
+                                                        .grayscale(1)
+                                                        .frame(width: 28, height: 28)
+                                                        .shadow(color: Color.black.opacity(0.3), radius: 3)
+                                                    
+                                                    Text(dailyRewards[index].description)
+                                                        .foregroundStyle(Color.secondary)
+                                                        .font(.custom(style: .caption))
+                                                }
+                                            }
+                                            .animation(.easeIn(duration: 0.5), value: streaks)
+                                            .transition(AnyTransition.scale.animation(.easeInOut(duration: 0.5)))
+                                        }
+                                        .frame(maxWidth: .infinity)
+                                    }
+                                }
+                            }
+                            .background(alignment: .top) {
+                                if let streaks = pcVM.streaks {
+                                    ProgressView(value: streaks == 0 && pcVM.hasClaimedToday ? 1 : Double(streaks) / 6)
+                                        .padding(.top, 13)
+                                        .padding(.horizontal)
+                                        .foregroundStyle(Color.coin)
+                                        .tint(Color.coin)
+                                        .animation(.easeIn(duration: 0.5), value: streaks)
+                                }
+                            }
+                            
+                            Button {
+                                Task {
+                                    await vm.claimDailyReward()
+                                }
+                            } label: {
+                                HStack(spacing: 5) {
+                                    if vm.loadingSections.contains(.dailyReward) {
+                                        ProgressView()
+                                            .controlSize(.regular)
+                                    }
+                                    
+                                    if pcVM.hasClaimedToday, let nextClaimDate = pcVM.nextClaimDate {
+                                        TimelineView(.animation(minimumInterval: 1, paused: false)) { _ in
+                                            if let remaining = nextClaimDate.remainingTime() {
+                                                VStack(spacing: 2) {
+                                                    if let streaks = pcVM.streaks {
+                                                        if streaks == 0 {
+                                                            Text("Refreshes in ")
+                                                            Text(remaining)
+                                                                .monospaced()
+                                                        } else {
+                                                            Text(remaining)
+                                                                .monospaced()
+                                                            Text(" Until next reward")
+                                                        }
+                                                    } else {
+                                                        Text(remaining)
+                                                            .monospaced()
+                                                        Text(" Until next reward")
+                                                    }
+                                                }
+                                                .foregroundStyle(Color.secondary)
+                                                .font(.custom(style: .caption))
+                                                .onDisappear {
+                                                    Task {
+                                                        await pcVM.refresh()
+                                                    }
+                                                }
+                                            } else {
+                                                Text("Claim".uppercased())
+                                            }
+                                        }
+                                    } else {
+                                        Text("Claim".uppercased())
+                                    }
+                                }
+                                .frame(height: 40)
+                                .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .disabled(vm.loadingSections.contains(.dailyReward) || pcVM.hasClaimedToday)
+                            .animation(.easeInOut, value: vm.loadingSections.contains(.dailyReward) || pcVM.hasClaimedToday)
+                        }
+                    } header: {
+                        Text("Daily Check-in Rewards")
+                            .font(.custom(style: .headline))
+                            .foregroundStyle(Color.primary.opacity(0.7))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top)
+                    }
+                    .padding(.horizontal)
+                    
+                    Section {
+                        VStack {
+                            if vm.missions.isEmpty && vm.loadingSections.contains(.missions) {
+                                ForEach(0..<2, id: \.self) { _ in
+                                    self.missionPlaceholder
+                                }
+                            } else if !vm.missions.isEmpty {
+                                ForEach(vm.missions) { item in
+                                    MissionItem(vm: vm, mission: item, isAnimating: $isEmojiAnimating)
+                                }
+                            } else {
+                                Text("No missions available")
+                                    .font(.custom(style: .headline))
+                                    .foregroundStyle(Color.secondary)
+                                    .padding(.top)
+                            }
+                        }
+                        .onAppear {
+                            Task {
+                                await vm.getMissions()
+                            }
+                        }
+                    } header: {
+                        HStack {
+                            Text("Weekly Missions")
+                                .font(.custom(style: .headline))
+                                .foregroundStyle(Color.primary.opacity(0.7))
+                            
+                            Spacer()
+                            
+                            if vm.loadingSections.contains(.missions) {
+                                ProgressView()
+                            }
+                            // TODO: Complete when we have the data
+//                            Label {
+//                                Text("4d 12h 45m 34s")
+//                                    .font(.custom(style: .caption))
+//                                    .foregroundStyle(.secondary)
+//                            } icon: {
+//                                Image(systemName: "arrow.clockwise")
+//                                    .font(.system(size: 14))
+//                            }
+                            
+                        }
+                        .padding(.top)
+                    }
+                    .padding(.horizontal)
+                    
+                    Section {
+                        ScrollView(.horizontal) {
+                            HStack(spacing: 20) {
+                                ForEach(0..<3, id: \.self) { _ in
+                                    VStack(alignment: .leading) {
+                                        Image(.fullPhantom)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 135, height: 180)
+                                            .clipShape(.rect(cornerRadius: 10))
+                                            .redacted(reason: .placeholder)
+                                            .overlay {
+                                                Text("Soon")
+                                                    .font(.custom(style: .subheadline))
+                                                    .foregroundStyle(Color.secondary)
+                                            }
+                                        
+                                        Text("This is the placeholder title")
+                                            .font(.custom(style: .headline))
+                                            .multilineTextAlignment(.leading)
+                                            .redacted(reason: .placeholder)
+                                        
+                                        HStack(spacing: 5) {
+                                            Text("50")
+                                                .font(.custom(style: .headline))
+                                                .foregroundStyle(Color.primary)
+                                            Image(.phantomCoin)
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: 20, height: 20)
+                                        }
+                                        .redacted(reason: .placeholder)
+                                    }
+                                    .frame(width: 135)
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                        .scrollIndicators(.never)
+                        .padding(.bottom, 40)
+                    } header: {
+                        Text("Redeem")
+                            .font(.custom(style: .headline))
+                            .foregroundStyle(Color.primary.opacity(0.7))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top)
+                            .padding(.horizontal)
+                    }
+                }
+                .refreshable {
+                    await pcVM.refresh()
+                    await vm.getMissions()
+                }
+                .font(.custom(style: .body))
+                .scrollIndicators(.never)
+            }
+            .background {
+                Rectangle()
+                    .fill(.themeBG.gradient)
+                    .ignoresSafeArea()
+            }
+            .onAppear {
+                isEmojiAnimating = true
+                Task {
+                    await pcVM.refresh()
+                }
+            }
+            .onDisappear {
+                isEmojiAnimating = false
+            }
+            .handleNavigationDestination()
+        }
+    }
+    
+    var missionPlaceholder: some View {
+        HStack {
+            Circle()
+                .foregroundStyle(Color.themeBorder)
+                .frame(width: 46, height: 46)
+            
+            VStack {
+                Text("Title")
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(Color.primary)
+                Text("Subtitle placeholder")
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(Color.secondary)
+                    .font(.custom(style: .subheadline))
+            }
+            .fontWeight(.medium)
+            
+            VStack(spacing: 0) {
+                Spacer()
+                
+                HStack(spacing: 5) {
+                    Spacer()
+                    
+                    Text("50")
+                        .font(.custom(style: .headline))
+                        .foregroundStyle(Color.primary)
+                    Image(.phantomCoin)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 20, height: 20)
+                }
+                
+                VStack(spacing: 0) {
+                    Text("0/16")
+                        .font(.custom(style: .caption))
+                        .foregroundStyle(Color.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    ProgressView()
+                        .progressViewStyle(LinearProgressViewStyle())
+                }
+                
+            }
+            .frame(maxWidth: 110)
+        }
+        .padding(.all, 8)
+        .background(Color.themePrimary)
+        .clipShape(.rect(cornerRadius: 10))
+        .redacted(reason: .placeholder)
+    }
+}
+
+fileprivate struct MissionItem: View {
+    @ObservedObject var vm: RewardsHubVM
+    let mission: Mission
+    @Binding var isAnimating: Bool
+    
+    var body: some View {
+        HStack {
+            Circle()
+                .foregroundStyle(Color.themeBorder)
+                .frame(width: 46, height: 46)
+                .overlay {
+                    Emoji(symbol: mission.icon, isAnimating: $isAnimating)
+                }
+            
+            VStack {
+                Text(mission.title)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(Color.primary)
+                if let subtitle = mission.subtitle {
+                    Text(subtitle)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .foregroundStyle(Color.secondary)
+                        .font(.custom(style: .subheadline))
+                }
+            }
+            .fontWeight(.medium)
+            
+            VStack(spacing: 0) {
+                if mission.progress.completed == mission.progress.total {
+                    if mission.isClaimed {
+                        Button {
+                            print("Already Claimed")
+                        } label: {
+                            Text("Claimed".uppercased())
+                                .padding(.vertical, 5)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .font(.custom(style: .subheadline))
+                        .buttonStyle(.borderedProminent)
+                        .disabled(true)
+                        .animation(.easeInOut, value: mission.isClaimed)
+                    } else {
+                        Button {
+                            Task {
+                                await vm.claimMissions(id: mission.id)
+                            }
+                        } label: {
+                            VStack(spacing: 0) {
+                                Text("Claim".uppercased())
+                                HStack(spacing: 5) {
+                                    Image(.phantomCoin)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 20, height: 20)
+                                    Text(mission.rewardAmount.description)
+                                        .foregroundStyle(Color.primary)
+                                        .fontWeight(.bold)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .font(.custom(style: .subheadline))
+                        .buttonStyle(.borderedProminent)
+                        .disabled(vm.loadingSections.contains(.missions) || vm.loadingSections.contains(.mission(mission.id)))
+                        .animation(.easeInOut, value: mission.isClaimed)
+                    }
+                } else {
+                    Spacer()
+                    
+                    HStack(spacing: 5) {
+                        Spacer()
+                        
+                        Text(mission.rewardAmount.description)
+                            .font(.custom(style: .headline))
+                            .foregroundStyle(Color.primary)
+                        Image(.phantomCoin)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                    }
+                    
+                    VStack(spacing: 0) {
+                        Text("\(mission.progress.completed.description)/\(mission.progress.total.description)")
+                            .font(.custom(style: .caption))
+                            .foregroundStyle(Color.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        ProgressView()
+                            .progressViewStyle(LinearProgressViewStyle())
+                    }
+                }
+            }
+            .frame(maxWidth: 110)
+        }
+        .padding(.all, 8)
+        .background(Color.themePrimary)
+        .clipShape(.rect(cornerRadius: 10))
+    }
+}
+
+#Preview {
+    RewardsHubView()
+}

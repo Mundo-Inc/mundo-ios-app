@@ -10,6 +10,7 @@ import MapKit
 
 enum AppRoute: Hashable {
     case notifications
+    case leaderboard
     case userActivity(id: String)
     
     // My Profile
@@ -30,6 +31,8 @@ enum AppRoute: Hashable {
     
     func hash(into hasher: inout Hasher) {
         switch self {
+        case .leaderboard:
+            hasher.combine("leaderboard")
         case .notifications:
             hasher.combine("notifications")
         case .userActivity(let id):

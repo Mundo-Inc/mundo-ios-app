@@ -10,14 +10,14 @@ import Foundation
 enum Tab: String, CaseIterable {
     case home = "Home"
     case explore = "Explore"
-    case leaderboard = "Leaderboard"
+    case rewardsHub = "RewardsHub"
     case myProfile = "MyProfile"
     
     var imageName: String {
         switch self {
         case .home: return "Home"
         case .explore: return "Explore"
-        case .leaderboard: return "Leaderboard"
+        case .rewardsHub: return "RewardsHub"
         case .myProfile: return "Profile"
         }
     }
@@ -26,7 +26,7 @@ enum Tab: String, CaseIterable {
         switch self {
         case .home: return "Home"
         case .explore: return "Explore"
-        case .leaderboard: return "Leaderboard"
+        case .rewardsHub: return "Rewards Hub"
         case .myProfile: return "Profile"
         }
     }

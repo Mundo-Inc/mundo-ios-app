@@ -17,6 +17,11 @@
 		0B0253032B18CB24003702AF /* ForYouInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0253022B18CB24003702AF /* ForYouInfoView.swift */; };
 		0B0253052B18CE64003702AF /* PlaceIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0253042B18CE64003702AF /* PlaceIcon.swift */; };
 		0B0253072B18F284003702AF /* ForYouInfoVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0253062B18F284003702AF /* ForYouInfoVM.swift */; };
+		0B026CD82B5AB4CD002DAD24 /* RewardsDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CD72B5AB4CD002DAD24 /* RewardsDM.swift */; };
+		0B026CDA2B5AB959002DAD24 /* Mission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CD92B5AB959002DAD24 /* Mission.swift */; };
+		0B026CDC2B5AC7B5002DAD24 /* PhantomCoins.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CDB2B5AC7B5002DAD24 /* PhantomCoins.swift */; };
+		0B026CDE2B5AC863002DAD24 /* PhantomCoinsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */; };
+		0B026CE02B5AED32002DAD24 /* RewardsHubVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CDF2B5AED32002DAD24 /* RewardsHubVM.swift */; };
 		0B0E6D222ABB077B00EC62EE /* UserActivityItemTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D212ABB077B00EC62EE /* UserActivityItemTemplate.swift */; };
 		0B0E6D262ABB22ED00EC62EE /* FeedLevelUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D252ABB22ED00EC62EE /* FeedLevelUpView.swift */; };
 		0B0E6D282ABB242700EC62EE /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D272ABB242700EC62EE /* Comment.swift */; };
@@ -228,6 +233,7 @@
 		0BA038412AF24CE6000A2B33 /* UserConnectionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA038402AF24CE6000A2B33 /* UserConnectionsViewModel.swift */; };
 		0BA43C232B516DCA00F0DDBF /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */; };
 		0BA43C252B517F3100F0DDBF /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA43C242B517F3100F0DDBF /* UserSettings.swift */; };
+		0BABE9D62B59822B003EF70B /* RewardsHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BABE9D52B59822B003EF70B /* RewardsHubView.swift */; };
 		0BAE47302ACC68FD001FBDAF /* YelpRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */; };
 		0BAE47322ACC91DF001FBDAF /* PlaceReviewsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAE47312ACC91DF001FBDAF /* PlaceReviewsView.swift */; };
 		0BAE47342ACC93B8001FBDAF /* PlaceScoreRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAE47332ACC93B8001FBDAF /* PlaceScoreRange.swift */; };
@@ -256,6 +262,9 @@
 		0BCD57DD2B28AE4600A1C914 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD57DC2B28AE4600A1C914 /* UIApplication.swift */; };
 		0BCD57E52B28B38000A1C914 /* MapDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD57E42B28B38000A1C914 /* MapDM.swift */; };
 		0BCD57E72B28BAC300A1C914 /* MapActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD57E62B28BAC300A1C914 /* MapActivity.swift */; };
+		0BCF5D692B5DDEC700D729E2 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCF5D682B5DDEC700D729E2 /* Date.swift */; };
+		0BCF5D6B2B5DE93400D729E2 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCF5D6A2B5DE93400D729E2 /* SoundManager.swift */; };
+		0BCF5D702B5DEC0100D729E2 /* Coin.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0BCF5D6F2B5DEC0100D729E2 /* Coin.mp3 */; };
 		0BD1942B2B06677600C1C35F /* ForYouItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD1942A2B06677600C1C35F /* ForYouItem.swift */; };
 		0BD1942D2B06681B00C1C35F /* ForYouVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD1942C2B06681B00C1C35F /* ForYouVM.swift */; };
 		0BD9F9862B4D91E10040FCDA /* ReactionsDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD9F9852B4D91E10040FCDA /* ReactionsDM.swift */; };
@@ -323,6 +332,11 @@
 		0B0253022B18CB24003702AF /* ForYouInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForYouInfoView.swift; sourceTree = "<group>"; };
 		0B0253042B18CE64003702AF /* PlaceIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceIcon.swift; sourceTree = "<group>"; };
 		0B0253062B18F284003702AF /* ForYouInfoVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForYouInfoVM.swift; sourceTree = "<group>"; };
+		0B026CD72B5AB4CD002DAD24 /* RewardsDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsDM.swift; sourceTree = "<group>"; };
+		0B026CD92B5AB959002DAD24 /* Mission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mission.swift; sourceTree = "<group>"; };
+		0B026CDB2B5AC7B5002DAD24 /* PhantomCoins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomCoins.swift; sourceTree = "<group>"; };
+		0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomCoinsVM.swift; sourceTree = "<group>"; };
+		0B026CDF2B5AED32002DAD24 /* RewardsHubVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsHubVM.swift; sourceTree = "<group>"; };
 		0B0E6D212ABB077B00EC62EE /* UserActivityItemTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityItemTemplate.swift; sourceTree = "<group>"; };
 		0B0E6D252ABB22ED00EC62EE /* FeedLevelUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLevelUpView.swift; sourceTree = "<group>"; };
 		0B0E6D272ABB242700EC62EE /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
@@ -524,6 +538,7 @@
 		0BA038402AF24CE6000A2B33 /* UserConnectionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionsViewModel.swift; sourceTree = "<group>"; };
 		0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		0BA43C242B517F3100F0DDBF /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		0BABE9D52B59822B003EF70B /* RewardsHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsHubView.swift; sourceTree = "<group>"; };
 		0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpRatingView.swift; sourceTree = "<group>"; };
 		0BAE47312ACC91DF001FBDAF /* PlaceReviewsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceReviewsView.swift; sourceTree = "<group>"; };
 		0BAE47332ACC93B8001FBDAF /* PlaceScoreRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceScoreRange.swift; sourceTree = "<group>"; };
@@ -552,6 +567,9 @@
 		0BCD57DC2B28AE4600A1C914 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		0BCD57E42B28B38000A1C914 /* MapDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapDM.swift; sourceTree = "<group>"; };
 		0BCD57E62B28BAC300A1C914 /* MapActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapActivity.swift; sourceTree = "<group>"; };
+		0BCF5D682B5DDEC700D729E2 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		0BCF5D6A2B5DE93400D729E2 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
+		0BCF5D6F2B5DEC0100D729E2 /* Coin.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Coin.mp3; sourceTree = "<group>"; };
 		0BD1942A2B06677600C1C35F /* ForYouItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForYouItem.swift; sourceTree = "<group>"; };
 		0BD1942C2B06681B00C1C35F /* ForYouVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForYouVM.swift; sourceTree = "<group>"; };
 		0BD9F9852B4D91E10040FCDA /* ReactionsDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsDM.swift; sourceTree = "<group>"; };
@@ -901,6 +919,7 @@
 				0BCBC18D2ACDC2FF00992D8E /* View.swift */,
 				0BF5B4A52AB353CB00DEC403 /* TextField.swift */,
 				0BF81DBF2ABDF00300B8892E /* DateFormatter.swift */,
+				0BCF5D682B5DDEC700D729E2 /* Date.swift */,
 				0B3B32DE2AF013DD00E1E0B0 /* Binding.swift */,
 				0B8AA3CA2AFE8817008284F5 /* MapKit.swift */,
 				0BCD57DC2B28AE4600A1C914 /* UIApplication.swift */,
@@ -916,6 +935,7 @@
 				0B77EA492AAF871E00C8DF87 /* Models */,
 				0BCBC1952ACDFEC700992D8E /* ViewModels */,
 				0B77EA4C2AAF875D00C8DF87 /* Components */,
+				0BABE9D02B5981F6003EF70B /* RewardsHub */,
 				0B9C02672B45A1D7000C4774 /* PlacesList */,
 				0B0183542AB3BEFB008E887F /* MyProfile */,
 				0B0183672AB3C169008E887F /* UserProfile */,
@@ -1044,6 +1064,7 @@
 				0B96D66B2AD2E73500612C27 /* LocationManager.swift */,
 				0B1F758A2B47185300097A70 /* MainTabBarView.swift */,
 				0B6B4AB22B482D2D002C9FE0 /* QuickActionsView.swift */,
+				0BCF5D6C2B5DEA7A00D729E2 /* SoundEffects */,
 				0B9EF27F2B302E070025F464 /* Services */,
 				0BF81DC72ABE398400B8892E /* Fonts */,
 				0B6495572AB1EB46000E57AF /* Extensions */,
@@ -1086,6 +1107,8 @@
 				0BF17BAA2AF2FDE800D87812 /* GeneralTypes.swift */,
 				0BCD57E62B28BAC300A1C914 /* MapActivity.swift */,
 				0B547D7D2B3EEC61002C6336 /* UserPlacesList.swift */,
+				0B026CD92B5AB959002DAD24 /* Mission.swift */,
+				0B026CDB2B5AC7B5002DAD24 /* PhantomCoins.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1182,6 +1205,7 @@
 				0B226F642B3354860036B8BE /* AchievementsManager.swift */,
 				0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */,
 				0BA43C242B517F3100F0DDBF /* UserSettings.swift */,
+				0BCF5D6A2B5DE93400D729E2 /* SoundManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1207,6 +1231,31 @@
 			isa = PBXGroup;
 			children = (
 				0BA038402AF24CE6000A2B33 /* UserConnectionsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		0BABE9D02B5981F6003EF70B /* RewardsHub */ = {
+			isa = PBXGroup;
+			children = (
+				0BABE9D22B598205003EF70B /* ViewModels */,
+				0BABE9D12B598200003EF70B /* Views */,
+			);
+			path = RewardsHub;
+			sourceTree = "<group>";
+		};
+		0BABE9D12B598200003EF70B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0BABE9D52B59822B003EF70B /* RewardsHubView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0BABE9D22B598205003EF70B /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				0B026CDF2B5AED32002DAD24 /* RewardsHubVM.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -1245,6 +1294,7 @@
 				0BC84A6C2AD08A6D00D723AA /* SelectReactionsVM.swift */,
 				0BF5B49C2AB292D500DEC403 /* KeychainHelper.swift */,
 				0B86F9362B4433CB00DD4C85 /* EmojisVM.swift */,
+				0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -1263,8 +1313,17 @@
 				0B547D7B2B3EEA9B002C6336 /* ListsDM.swift */,
 				0BD9F9852B4D91E10040FCDA /* ReactionsDM.swift */,
 				0B29207D2B55876C0026DDDE /* SearchDM.swift */,
+				0B026CD72B5AB4CD002DAD24 /* RewardsDM.swift */,
 			);
 			path = DataManagers;
+			sourceTree = "<group>";
+		};
+		0BCF5D6C2B5DEA7A00D729E2 /* SoundEffects */ = {
+			isa = PBXGroup;
+			children = (
+				0BCF5D6F2B5DEC0100D729E2 /* Coin.mp3 */,
+			);
+			path = SoundEffects;
 			sourceTree = "<group>";
 		};
 		0BD9F9872B4DAF4A0040FCDA /* UserActivity */ = {
@@ -1520,6 +1579,7 @@
 				0B3022142B32094500827889 /* 1f612.gif in Resources */,
 				0B30221F2B32094500827889 /* 1f621.gif in Resources */,
 				0BF81DE72ABE398E00B8892E /* Poppins-BoldItalic.ttf in Resources */,
+				0BCF5D702B5DEC0100D729E2 /* Coin.mp3 in Resources */,
 				0BF81DDB2ABE398E00B8892E /* Poppins-LightItalic.ttf in Resources */,
 				0B3022312B32094500827889 /* 1f92a.gif in Resources */,
 				0B3022202B32094500827889 /* 1f648.gif in Resources */,
@@ -1604,12 +1664,14 @@
 				0B3E73CC2B29E9E00092072F /* Throttle.swift in Sources */,
 				0BAE473A2ACC9A20001FBDAF /* PlaceReviewView.swift in Sources */,
 				0B13543A2B2CC7EA0076FF40 /* MapActivityView.swift in Sources */,
+				0BABE9D62B59822B003EF70B /* RewardsHubView.swift in Sources */,
 				0B226F652B3354860036B8BE /* AchievementsManager.swift in Sources */,
 				0B37ABFC2AD7408E00E8D4BC /* ToastVM.swift in Sources */,
 				0B2920832B5590640026DDDE /* PlaceSelectorVM.swift in Sources */,
 				0BCD57DD2B28AE4600A1C914 /* UIApplication.swift in Sources */,
 				0B997B662AC711A300579C9C /* NotificationsVM.swift in Sources */,
 				0BD9F9862B4D91E10040FCDA /* ReactionsDM.swift in Sources */,
+				0B026CDA2B5AB959002DAD24 /* Mission.swift in Sources */,
 				0BC2E3102B22076D0002649D /* VideoHelper.swift in Sources */,
 				0BCBC1902ACDEDDE00992D8E /* PlaceReviewsViewModel.swift in Sources */,
 				0B0E6D222ABB077B00EC62EE /* UserActivityItemTemplate.swift in Sources */,
@@ -1647,15 +1709,18 @@
 				0B997B6A2AC7377C00579C9C /* UserProfileViewModel.swift in Sources */,
 				0B997B702AC74BFA00579C9C /* UserProfileStats.swift in Sources */,
 				0B547D7C2B3EEA9B002C6336 /* ListsDM.swift in Sources */,
+				0BCF5D692B5DDEC700D729E2 /* Date.swift in Sources */,
 				0BC2E3182B2208880002649D /* PickerVM.swift in Sources */,
 				0B547D802B3F33AA002C6336 /* MyProfileListsView.swift in Sources */,
 				0BE3118E2AC4842700CF9BA5 /* ReviewVideoView.swift in Sources */,
 				0B695D7C2AF14E0C00C11870 /* MyConnectionsViewModel.swift in Sources */,
 				0B384FA92B2B5DE500C98245 /* UserActivityVM.swift in Sources */,
+				0B026CDC2B5AC7B5002DAD24 /* PhantomCoins.swift in Sources */,
 				0BD1942B2B06677600C1C35F /* ForYouItem.swift in Sources */,
 				0B91A7252B57F049007F7969 /* ExploreView.swift in Sources */,
 				0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */,
 				0BB37E9E2ABA6D84009E1272 /* FeedView.swift in Sources */,
+				0B026CE02B5AED32002DAD24 /* RewardsHubVM.swift in Sources */,
 				0B9C02712B45C275000C4774 /* AddToListVM.swift in Sources */,
 				0BAE47322ACC91DF001FBDAF /* PlaceReviewsView.swift in Sources */,
 				0B86F9372B4433CB00DD4C85 /* EmojisVM.swift in Sources */,
@@ -1670,6 +1735,8 @@
 				0BA43C232B516DCA00F0DDBF /* NetworkMonitor.swift in Sources */,
 				0B985AE12AC9AFC200019A06 /* PlaceDM.swift in Sources */,
 				0BC84A6D2AD08A6D00D723AA /* SelectReactionsVM.swift in Sources */,
+				0B026CDE2B5AC863002DAD24 /* PhantomCoinsVM.swift in Sources */,
+				0B026CD82B5AB4CD002DAD24 /* RewardsDM.swift in Sources */,
 				0BD9F98B2B4DB32E0040FCDA /* UserActivityFollowing.swift in Sources */,
 				0B96D66C2AD2E73500612C27 /* LocationManager.swift in Sources */,
 				0B226F672B33589C0036B8BE /* ProfileAchievements.swift in Sources */,
@@ -1692,6 +1759,7 @@
 				0B985AE32AC9AFCA00019A06 /* PlaceViewModel.swift in Sources */,
 				0B5EB1C02B56DB6A00497847 /* CustomMapMarker.swift in Sources */,
 				0B77EA3B2AAF855500C8DF87 /* PhantomPhoodApp.swift in Sources */,
+				0BCF5D6B2B5DE93400D729E2 /* SoundManager.swift in Sources */,
 				0B9EF2812B302E1D0025F464 /* ContactsService.swift in Sources */,
 				0B9C02642B458F76000C4774 /* AppRoute.swift in Sources */,
 				0B77EA582AAFCDBD00C8DF87 /* LottieView.swift in Sources */,
@@ -1922,7 +1990,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.44.1;
+				MARKETING_VERSION = 0.45.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1960,7 +2028,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.44.1;
+				MARKETING_VERSION = 0.45.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

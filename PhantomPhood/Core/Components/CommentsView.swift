@@ -25,8 +25,8 @@ struct CommentsView: View {
             appData.homeNavStack.append(.userProfile(userId: userId))
         case .explore:
             appData.exploreNavStack.append(.userProfile(userId: userId))
-        case .leaderboard:
-            appData.leaderboardNavStack.append(.userProfile(userId: userId))
+        case .rewardsHub:
+            appData.rewardsHubNavStack.append(.userProfile(userId: userId))
         case .myProfile:
             appData.myProfileNavStack.append(.userProfile(userId: userId))
         }

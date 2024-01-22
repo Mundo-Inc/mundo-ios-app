@@ -29,8 +29,8 @@ struct ContentView: View {
                     .toolbar(.hidden, for: .tabBar)
                 
                 
-                LeaderboardView()
-                    .tag(Tab.leaderboard)
+                RewardsHubView()
+                    .tag(Tab.rewardsHub)
                     .toolbar(.hidden, for: .tabBar)
                 
                 MyProfile()

@@ -40,7 +40,7 @@ struct MainTabBarView: View {
             .offset(y: -26)
             .animation(.bouncy, value: showActions)
             
-            tabView(tab: .leaderboard)
+            tabView(tab: .rewardsHub)
             
             myProfileView()
         }

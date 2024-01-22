@@ -155,10 +155,15 @@ struct SettingsView: View {
                 }
             }
             
-            Text("Phantom Phood Inc.")
-                .font(.custom(style: .caption))
-                .foregroundStyle(Color.secondary)
-                .listRowBackground(Color.clear)
+            VStack(alignment: .leading) {
+                Text("Phantom Phood Inc.")
+                if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                    Text("App version: " + appVersion)
+                }
+            }
+            .font(.custom(style: .caption))
+            .foregroundStyle(Color.secondary)
+            .listRowBackground(Color.clear)
         }
         .font(.custom(style: .body))
         .listStyle(.insetGrouped)

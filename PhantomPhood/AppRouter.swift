@@ -224,12 +224,12 @@ struct AppRouter: View {
                         default:
                             break
                         }
-                        // Leaderboard Tab
-                    case .leaderboard:
+                        // RewardsHub Tab
+                    case .rewardsHub:
                         switch navRawValue {
                         case "user":
                             if let id = getKeyValue("id", string: string) {
-                                appData.leaderboardNavStack.append(.userProfile(userId: id.lowercased()))
+                                appData.rewardsHubNavStack.append(.userProfile(userId: id.lowercased()))
                             }
                         default:
                             break

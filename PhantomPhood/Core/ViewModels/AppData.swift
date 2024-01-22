@@ -18,8 +18,8 @@ final class AppData: ObservableObject {
     // Map Tab
     @Published var exploreNavStack: [AppRoute] = []
     
-    // Leaderboard Tab
-    @Published var leaderboardNavStack: [AppRoute] = []
+    // Rewards Hub Tab
+    @Published var rewardsHubNavStack: [AppRoute] = []
     
     // Home Tab
     @Published var homeNavStack: [AppRoute] = []
@@ -53,9 +53,9 @@ final class AppData: ObservableObject {
                     } else {
                         self.tappedTwice = $0
                     }
-                case .leaderboard:
-                    if !self.leaderboardNavStack.isEmpty {
-                        self.leaderboardNavStack.removeLast()
+                case .rewardsHub:
+                    if !self.rewardsHubNavStack.isEmpty {
+                        self.rewardsHubNavStack.removeLast()
                     } else {
                         self.tappedTwice = $0
                     }
@@ -76,7 +76,7 @@ final class AppData: ObservableObject {
         
         self.homeNavStack.removeAll()
         self.exploreNavStack.removeAll()
-        self.leaderboardNavStack.removeAll()
+        self.rewardsHubNavStack.removeAll()
         self.authNavStack.removeAll()
         
         self.myProfileNavStack.removeAll()
@@ -94,8 +94,8 @@ final class AppData: ObservableObject {
             self.homeNavStack.append(.userProfile(userId: id))
         case .explore:
             self.exploreNavStack.append(.userProfile(userId: id))
-        case .leaderboard:
-            self.leaderboardNavStack.append(.userProfile(userId: id))
+        case .rewardsHub:
+            self.rewardsHubNavStack.append(.userProfile(userId: id))
         case .myProfile:
             self.myProfileNavStack.append(.userProfile(userId: id))
         }
@@ -121,8 +121,8 @@ final class AppData: ObservableObject {
                     return nil
                 }
             }
-        case .leaderboard:
-            if let route = self.leaderboardNavStack.last {
+        case .rewardsHub:
+            if let route = self.rewardsHubNavStack.last {
                 switch route {
                 case .place(let placeId, _):
                     return placeId
