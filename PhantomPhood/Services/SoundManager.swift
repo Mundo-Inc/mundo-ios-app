@@ -13,7 +13,9 @@ final class SoundManager {
     private var audioPlayer: AVAudioPlayer?
     private let audioQueue = DispatchQueue(label: "audioQueue")
     
-    private init() {}
+    private init() {
+        configureAudioSession()
+    }
     
     func playSound(_ sound: Sound) {
         audioQueue.async {
@@ -35,6 +37,15 @@ final class SoundManager {
             }
         } catch {
             print(error)
+        }
+    }
+    
+    private func configureAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to configure audio session. Error: \(error)")
         }
     }
 }
