@@ -406,7 +406,7 @@ struct ExploreView17: View {
                     HStack {
                         Group {
                             ForEach(MapDefaultSearch.allCases, id: \.self) { item in
-                                Button(item.title) {
+                                Button {
                                     Task {
                                         await exploreSearchVM.search(item.search, region: vm.position.region, categories: item.categories)
                                         if !exploreSearchVM.placeSearchResults.isEmpty {
@@ -420,12 +420,19 @@ struct ExploreView17: View {
                                             }
                                         }
                                     }
+                                } label: {
+                                    Label {
+                                        Text(item.title)
+                                    } icon: {
+                                        item.image
+                                    }
                                 }
                                 .disabled(exploreSearchVM.isLoading)
                             }
                         }
+                        .controlSize(.mini)
+                        .foregroundStyle(Color.accentColor)
                         .buttonStyle(BorderedProminentButtonStyle())
-                        .foregroundStyle(Color.primary)
                         .tint(Color.themePrimary)
                         .font(.custom(style: .body))
                     }

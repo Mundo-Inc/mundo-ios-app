@@ -53,7 +53,7 @@ struct Emoji: View {
                     .scaledToFit()
             } else {
                 Text(emoji.symbol)
-                    .font(.system(size: size * 0.5))
+                    .font(.system(size: size * 0.75))
             }
         }
         .frame(maxWidth: size, maxHeight: size)

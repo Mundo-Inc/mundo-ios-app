@@ -249,6 +249,7 @@
 		0BC2E3162B2207EB0002649D /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC2E3152B2207EB0002649D /* TaskManager.swift */; };
 		0BC2E3182B2208880002649D /* PickerVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC2E3172B2208880002649D /* PickerVM.swift */; };
 		0BC2E31A2B221F850002649D /* Processing.json in Resources */ = {isa = PBXBuildFile; fileRef = 0BC2E3192B221F850002649D /* Processing.json */; };
+		0BC5A2052B5FF34E0029A7A9 /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC5A2042B5FF34E0029A7A9 /* Int.swift */; };
 		0BC84A652AD0339F00D723AA /* ReactionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A642AD0339F00D723AA /* ReactionLabel.swift */; };
 		0BC84A692AD06F8200D723AA /* WrappingHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A682AD06F8200D723AA /* WrappingHStack.swift */; };
 		0BC84A6B2AD071EE00D723AA /* SelectReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A6A2AD071EE00D723AA /* SelectReactionsView.swift */; };
@@ -554,6 +555,7 @@
 		0BC2E3152B2207EB0002649D /* TaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManager.swift; sourceTree = "<group>"; };
 		0BC2E3172B2208880002649D /* PickerVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerVM.swift; sourceTree = "<group>"; };
 		0BC2E3192B221F850002649D /* Processing.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Processing.json; sourceTree = "<group>"; };
+		0BC5A2042B5FF34E0029A7A9 /* Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
 		0BC84A642AD0339F00D723AA /* ReactionLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionLabel.swift; sourceTree = "<group>"; };
 		0BC84A682AD06F8200D723AA /* WrappingHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappingHStack.swift; sourceTree = "<group>"; };
 		0BC84A6A2AD071EE00D723AA /* SelectReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectReactionsView.swift; sourceTree = "<group>"; };
@@ -923,6 +925,7 @@
 				0B3B32DE2AF013DD00E1E0B0 /* Binding.swift */,
 				0B8AA3CA2AFE8817008284F5 /* MapKit.swift */,
 				0BCD57DC2B28AE4600A1C914 /* UIApplication.swift */,
+				0BC5A2042B5FF34E0029A7A9 /* Int.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1821,6 +1824,7 @@
 				0B384FA52B2B57B200C98245 /* UserActivityView.swift in Sources */,
 				0BDBD3C82ACB0E8B003B8D2D /* PlaceOverviewView.swift in Sources */,
 				0B226F692B3359F40036B8BE /* Achievement.swift in Sources */,
+				0BC5A2052B5FF34E0029A7A9 /* Int.swift in Sources */,
 				0B29207A2B5575720026DDDE /* ExploreSearchView.swift in Sources */,
 				0B35B7AB2B0D14CA00822BA6 /* SignInOptionsView.swift in Sources */,
 				0B8AA3CB2AFE8817008284F5 /* MapKit.swift in Sources */,

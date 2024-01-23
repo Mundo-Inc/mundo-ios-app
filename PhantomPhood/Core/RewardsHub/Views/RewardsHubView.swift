@@ -263,38 +263,34 @@ struct RewardsHubView: View {
                     Section {
                         ScrollView(.horizontal) {
                             HStack(spacing: 20) {
-                                ForEach(0..<3, id: \.self) { _ in
-                                    VStack(alignment: .leading) {
-                                        Image(.fullPhantom)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
+                                VStack(alignment: .leading) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .foregroundStyle(Color.themeBorder.opacity(0.8))
                                             .frame(width: 135, height: 180)
-                                            .clipShape(.rect(cornerRadius: 10))
-                                            .redacted(reason: .placeholder)
-                                            .overlay {
-                                                Text("Soon")
-                                                    .font(.custom(style: .subheadline))
-                                                    .foregroundStyle(Color.secondary)
-                                            }
                                         
-                                        Text("This is the placeholder title")
-                                            .font(.custom(style: .headline))
-                                            .multilineTextAlignment(.leading)
-                                            .redacted(reason: .placeholder)
-                                        
-                                        HStack(spacing: 5) {
-                                            Text("50")
-                                                .font(.custom(style: .headline))
-                                                .foregroundStyle(Color.primary)
-                                            Image(.phantomCoin)
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: 20, height: 20)
-                                        }
-                                        .redacted(reason: .placeholder)
+                                        Image("AppleGiftcard")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 135, height: 180)
                                     }
-                                    .frame(width: 135)
+                                    .clipShape(.rect(cornerRadius: 10))
+                                    
+                                    Text("Apple Gift Card")
+                                        .font(.custom(style: .headline))
+                                        .multilineTextAlignment(.leading)
+                                    
+                                    HStack(spacing: 5) {
+                                        Text("Soon")
+                                            .font(.custom(style: .headline))
+                                            .foregroundStyle(Color.secondary)
+                                        Image(.phantomCoin)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 20, height: 20)
+                                    }
                                 }
+                                .frame(width: 135)
                             }
                             .padding(.horizontal)
                         }
@@ -398,8 +394,9 @@ fileprivate struct MissionItem: View {
                 .foregroundStyle(Color.themeBorder)
                 .frame(width: 46, height: 46)
                 .overlay {
-                    Emoji(symbol: mission.icon, isAnimating: $isAnimating)
+                    Emoji(symbol: mission.icon, isAnimating: $isAnimating, size: 28)
                 }
+                .shadow(color: Color.black.opacity(0.2), radius: 3)
             
             VStack {
                 Text(mission.title)
@@ -475,7 +472,7 @@ fileprivate struct MissionItem: View {
                             .font(.custom(style: .caption))
                             .foregroundStyle(Color.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        ProgressView()
+                        ProgressView(value: Double(mission.progress.completed) / Double(mission.progress.total == 0 ? 1 : mission.progress.total))
                             .progressViewStyle(LinearProgressViewStyle())
                     }
                 }

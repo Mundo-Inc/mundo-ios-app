@@ -31,6 +31,8 @@ final class PhantomCoinsVM: ObservableObject {
     }
     
     func refresh() async {
+        guard !isLoading else { return }
+        
         self.isLoading = true
         do {
             let data = try await rewardsDM.getDailyRewardsInfo()
@@ -61,6 +63,10 @@ final class PhantomCoinsVM: ObservableObject {
                         self.balance = data.phantomCoins.balance
                         SoundManager.shared.playSound(.coin)
                     }
+                } else if phantomCoins.balance > data.phantomCoins.balance {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    self.balance = data.phantomCoins.balance
+                    SoundManager.shared.playSound(.coin)
                 }
             } else {
                 self.balance = data.phantomCoins.balance
