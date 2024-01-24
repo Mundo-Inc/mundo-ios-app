@@ -414,20 +414,20 @@ fileprivate struct MissionItem: View {
             .fontWeight(.medium)
             
             VStack(spacing: 0) {
-                if mission.progress.completed == mission.progress.total {
-                    if mission.isClaimed {
-                        Button {
-                            print("Already Claimed")
-                        } label: {
-                            Text("Claimed".uppercased())
-                                .padding(.vertical, 5)
-                                .frame(maxWidth: .infinity)
-                        }
-                        .font(.custom(style: .subheadline))
-                        .buttonStyle(.borderedProminent)
-                        .disabled(true)
-                        .animation(.easeInOut, value: mission.isClaimed)
-                    } else {
+                if mission.isClaimed {
+                    Button {
+                        print("Already Claimed")
+                    } label: {
+                        Text("Claimed".uppercased())
+                            .padding(.vertical, 5)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .font(.custom(style: .subheadline))
+                    .buttonStyle(.borderedProminent)
+                    .disabled(true)
+                    .animation(.easeInOut, value: mission.isClaimed)
+                } else {
+                    if mission.progress.completed == mission.progress.total {
                         Button {
                             Task {
                                 await vm.claimMissions(id: mission.id)
@@ -451,29 +451,29 @@ fileprivate struct MissionItem: View {
                         .buttonStyle(.borderedProminent)
                         .disabled(vm.loadingSections.contains(.missions) || vm.loadingSections.contains(.mission(mission.id)))
                         .animation(.easeInOut, value: mission.isClaimed)
-                    }
-                } else {
-                    Spacer()
-                    
-                    HStack(spacing: 5) {
+                    } else {
                         Spacer()
                         
-                        Text(mission.rewardAmount.description)
-                            .font(.custom(style: .headline))
-                            .foregroundStyle(Color.primary)
-                        Image(.phantomCoin)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
-                    }
-                    
-                    VStack(spacing: 0) {
-                        Text("\(mission.progress.completed.description)/\(mission.progress.total.description)")
-                            .font(.custom(style: .caption))
-                            .foregroundStyle(Color.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        ProgressView(value: Double(mission.progress.completed) / Double(mission.progress.total == 0 ? 1 : mission.progress.total))
-                            .progressViewStyle(LinearProgressViewStyle())
+                        HStack(spacing: 5) {
+                            Spacer()
+                            
+                            Text(mission.rewardAmount.description)
+                                .font(.custom(style: .headline))
+                                .foregroundStyle(Color.primary)
+                            Image(.phantomCoin)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 20, height: 20)
+                        }
+                        
+                        VStack(spacing: 0) {
+                            Text("\(mission.progress.completed.description)/\(mission.progress.total.description)")
+                                .font(.custom(style: .caption))
+                                .foregroundStyle(Color.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            ProgressView(value: Double(mission.progress.completed) / Double(mission.progress.total == 0 ? 1 : mission.progress.total))
+                                .progressViewStyle(LinearProgressViewStyle())
+                        }
                     }
                 }
             }
