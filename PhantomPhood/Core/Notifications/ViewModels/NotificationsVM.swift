@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 @MainActor
 final class NotificationsVM: ObservableObject {
@@ -66,6 +67,7 @@ final class NotificationsVM: ObservableObject {
             let data = try await dataManager.getNotifications(page: self.page, unread: true)
             
             self.unreadCount = data.data.total
+            try? await UNUserNotificationCenter.current().setBadgeCount(data.data.total)
         } catch {
             print(error)
         }
