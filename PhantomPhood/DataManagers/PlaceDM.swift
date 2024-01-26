@@ -15,10 +15,10 @@ final class PlaceDM {
     
     struct PlaceResponse: Decodable {
         let success: Bool
-        let data: Place
+        let data: PlaceDetail
     }
     
-    func fetch(mapPlace: MapPlace) async throws -> Place {
+    func fetch(mapPlace: MapPlace) async throws -> PlaceDetail {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
@@ -32,7 +32,7 @@ final class PlaceDM {
         return data.data
     }
     
-    func fetch(mapItem: MKMapItem) async throws -> Place {
+    func fetch(mapItem: MKMapItem) async throws -> PlaceDetail {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
@@ -51,7 +51,7 @@ final class PlaceDM {
     }
     
     @available(iOS 17.0, *)
-    func fetch(mapFeature: MapFeature) async throws -> Place {
+    func fetch(mapFeature: MapFeature) async throws -> PlaceDetail {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
@@ -60,7 +60,6 @@ final class PlaceDM {
             throw URLError(.requestBodyStreamExhausted)
         }
         
-//        645c1d1ab41f8e12a0d166bc
         let data = try await apiManager.requestData("/places/context?title=\(title)&lat=\(mapFeature.coordinate.latitude)&lng=\(mapFeature.coordinate.longitude)", method: .get, token: token) as PlaceResponse?
 
         guard let data else {
@@ -70,7 +69,7 @@ final class PlaceDM {
         return data.data
     }
     
-    func fetch(id: String) async throws -> Place {
+    func fetch(id: String) async throws -> PlaceDetail {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
@@ -95,5 +94,24 @@ final class PlaceDM {
         
         let body = try apiManager.createRequestBody(RequestBody(place: id))
         try await apiManager.requestNoContent("/checkins", method: .post, body: body, token: token)
+    }
+    
+    func checkin(body: CheckinRequestBody) async throws {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let body = try apiManager.createRequestBody(body)
+        try await apiManager.requestNoContent("/checkins", method: .post, body: body, token: token)
+    }
+    
+    // MARK: - Structs
+    
+    struct CheckinRequestBody: Encodable {
+        let place: String
+        let privacyType: PrivacyType?
+        let tags: [String]?
+        let caption: String?
+        let image: String?
     }
 }

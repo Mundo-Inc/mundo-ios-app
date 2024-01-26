@@ -13,10 +13,10 @@ final class LeaderboardDM {
         
     struct LeaderboardResponse: Decodable {
         let success: Bool
-        let data: [User]
+        let data: [UserOverview]
     }
     
-    func fetchLeaderboard(page: Int = 1) async throws -> [User] {
+    func fetchLeaderboard(page: Int = 1) async throws -> [UserOverview] {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }

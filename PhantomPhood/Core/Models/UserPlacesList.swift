@@ -8,9 +8,9 @@
 import Foundation
 
 struct UserPlacesList: Identifiable, Decodable {
-    let _id: String
+    let id: String
     let name: String
-    let owner: CompactUser
+    let owner: UserEssentials
     let icon: String
     let collaborators: [ListCollaborator]
     let placesCount: Int
@@ -18,38 +18,40 @@ struct UserPlacesList: Identifiable, Decodable {
     let createdAt: String
     let places: [ListPlace]
     
-    var id: String {
-        self._id
-    }
-    
     struct ListPlace: Identifiable, Decodable {
-        let place: BriefPlace
-        let user: CompactUser
+        let place: PlaceEssentials
+        let user: UserEssentials
         let createdAt: String
         
         var id: String {
             self.place.id
         }
     }
+
+    enum CodingKeys: String, CodingKey {
+        case id = "_id"
+        case name, owner, icon, collaborators, placesCount, isPrivate, createdAt, places
+    }
 }
 
 struct CompactUserPlacesList: Identifiable, Decodable {
-    let _id: String
+    let id: String
     let name: String
-    let owner: CompactUser
+    let owner: UserEssentials
     let icon: String
     let collaboratorsCount: Int
     let placesCount: Int
     let isPrivate: Bool
     let createdAt: String
     
-    var id: String {
-        self._id
+    enum CodingKeys: String, CodingKey {
+        case id = "_id"
+        case name, owner, icon, collaboratorsCount, placesCount, isPrivate, createdAt
     }
 }
 
 struct ListCollaborator: Identifiable, Decodable {
-    let user: CompactUser
+    let user: UserEssentials
     let access: Access
     
     var id: String {

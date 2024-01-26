@@ -23,13 +23,14 @@ struct Reaction: Decodable, Identifiable, GeneralReactionProtocol {
 }
 
 struct UserReaction: Identifiable, Decodable, GeneralReactionProtocol {
-    let _id: String
+    let id: String
     let reaction: String
     let type: ReactionType
     let createdAt: String
     
-    var id: String {
-        self._id
+    enum CodingKeys: String, CodingKey {
+        case id = "_id"
+        case reaction, type, createdAt
     }
 }
 

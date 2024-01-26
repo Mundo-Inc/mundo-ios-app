@@ -16,7 +16,7 @@ struct MapActivityView: View {
     
     @Binding var mapActivity: MapActivity?
     
-    @State var place: Place? = nil
+    @State var place: PlaceDetail? = nil
     @State var isLoading = false
     
     func getPlace(id: String) async {

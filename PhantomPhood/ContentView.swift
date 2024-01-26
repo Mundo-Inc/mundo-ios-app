@@ -11,9 +11,7 @@ struct ContentView: View {
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
     @ObservedObject private var commentsViewModel = CommentsViewModel.shared
-    @ObservedObject private var addReviewVM = AddReviewVM.shared
-    
-    @StateObject private var placeSelectorVM = PlaceSelectorVM()
+    @ObservedObject private var placeSelectorVM = PlaceSelectorVM.shared
     
     @State private var showActions: Bool = false
     
@@ -37,19 +35,14 @@ struct ContentView: View {
                     .tag(Tab.myProfile)
                     .toolbar(.hidden, for: .tabBar)
             }
-            .environmentObject(placeSelectorVM)
             
             MainTabBarView(selection: appData.tabViewSelectionHandler, showActions: $showActions)
                 .sheet(isPresented: $showActions) {
                     QuickActionsView()
-                        .environmentObject(placeSelectorVM)
                 }
                 .sheet(isPresented: $placeSelectorVM.isPresented) {
-                    PlaceSelectorView(placeSelectorVM: placeSelectorVM) { place in
-                        if let title = place.name {
-                            appData.homeNavStack.append(AppRoute.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title), action: placeSelectorVM.tokens.contains(.addReview) ? .addReview : placeSelectorVM.tokens.contains(.checkin) ? .checkin : nil))
-                        }
-                    }
+                    PlaceSelectorView()
+                        .presentationDetents([.fraction(0.99)])
                 }
         }
         .ignoresSafeArea(.keyboard) // TODO: Test to see if this causes any bugs
@@ -66,9 +59,6 @@ struct ContentView: View {
         }, content: {
             CommentsView()
         })
-        .fullScreenCover(isPresented: $addReviewVM.isPresented) {
-            AddReviewView()
-        }
         .onAppear {
             ContactsService.shared.tryToSyncContacts()
         }

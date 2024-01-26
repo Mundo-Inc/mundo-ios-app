@@ -32,7 +32,6 @@ struct PlaceView: View {
                 ZStack {
                     Rectangle()
                         .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width : UIScreen.main.bounds.size.width + 150)
-                        .frame(height: isHeaderCollapsed ? UIScreen.main.bounds.size.width : UIScreen.main.bounds.size.width + 150)
                         .frame(maxWidth: .infinity)
                         .foregroundStyle(Color.themePrimary)
                     
@@ -279,6 +278,7 @@ struct PlaceView: View {
                     
                 }
                 .padding(.top)
+                .padding(.bottom, 50)
             }
             .scrollIndicators(.hidden)
             .ignoresSafeArea(edges: .top)

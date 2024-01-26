@@ -11,18 +11,14 @@ import MapKit
 struct PlaceSelectorView<Content>: View where Content : View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var locationManager = LocationManager.shared
-    @ObservedObject var placeSelectorVM: PlaceSelectorVM
+    @ObservedObject var placeSelectorVM = PlaceSelectorVM.shared
     
     var isLocationAvailable: Bool {
         locationManager.location != nil
     }
     
-    var onPlaceSelect: (MKMapItem) -> Void
-    
     var header: Content
-    init(placeSelectorVM: PlaceSelectorVM, onPlaceSelect: @escaping (MKMapItem) -> Void, @ViewBuilder header: () -> Content = {EmptyView()}) {
-        self._placeSelectorVM = ObservedObject(wrappedValue: placeSelectorVM)
-        self.onPlaceSelect = onPlaceSelect
+    init(@ViewBuilder header: () -> Content = {EmptyView()}) {
         self.header = header()
     }
     
@@ -33,7 +29,7 @@ struct PlaceSelectorView<Content>: View where Content : View {
             RoundedRectangle(cornerRadius: 3)
                 .frame(width: 30, height: 4)
                 .foregroundStyle(.tertiary)
-                .padding(.top, 7)
+                .padding(.vertical, 7)
             
             HStack(spacing: -14) {
                 ForEach(placeSelectorVM.tokens) { token in
@@ -111,7 +107,7 @@ struct PlaceSelectorView<Content>: View where Content : View {
                     .padding(.top)
                 
                 List(placeSelectorVM.results, id: \.self) { place in
-                    PlaceCard(placeSelectorVM: placeSelectorVM, place: place, dismiss: dismiss, onSelect: onPlaceSelect)
+                    PlaceCard(place: place, dismiss: dismiss)
                 }
                 .listStyle(.plain)
                 .scrollDismissesKeyboard(.interactively)
@@ -122,17 +118,19 @@ struct PlaceSelectorView<Content>: View where Content : View {
 }
 
 fileprivate struct PlaceCard: View {
-    @ObservedObject var placeSelectorVM: PlaceSelectorVM
+    @ObservedObject var placeSelectorVM = PlaceSelectorVM.shared
     
     let place: MKMapItem
-    
     let dismiss: DismissAction
-    let onSelect: (MKMapItem) -> Void
     
     var body: some View {
         Button {
-            self.onSelect(place)
             dismiss()
+            if let onSelect = placeSelectorVM.onSelect {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    onSelect(place)
+                }
+            }
         } label: {
             HStack {
                 Circle()

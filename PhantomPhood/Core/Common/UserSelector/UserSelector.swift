@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-struct AddListCollaboratorView: View {
-    @StateObject private var vm: AddListCollaboratorVM
+struct UserSelector: View {
+    @StateObject private var vm: UserSelectorVM
     
-    init(onSelect: @escaping (CompactUser) -> Void = { _ in }, onCancel: @escaping () -> Void = {}) {
-        self._vm = StateObject(wrappedValue: AddListCollaboratorVM(onSelect: onSelect, onCancel: onCancel))
+    init(onSelect: @escaping (UserOverview) -> Void = { _ in }, onCancel: @escaping () -> Void = {}) {
+        self._vm = StateObject(wrappedValue: UserSelectorVM(onSelect: onSelect, onCancel: onCancel))
     }
     
     var body: some View {
@@ -43,9 +43,9 @@ struct AddListCollaboratorView: View {
 }
 
 fileprivate struct UserCard: View {
-    let user: CompactUser
+    let user: UserOverview
     
-    let onSelect: (CompactUser) -> Void
+    let onSelect: (UserOverview) -> Void
     
     var body: some View {
         Button {
@@ -90,5 +90,5 @@ fileprivate struct UserCard: View {
 
 
 #Preview {
-    AddListCollaboratorView()
+    UserSelector()
 }

@@ -16,12 +16,12 @@ final class SearchDM {
     
     // MARK: - Public methods
     
-    func searchUsers(q: String) async throws -> [User] {
+    func searchUsers(q: String) async throws -> [UserOverview] {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let resData = try await apiManager.requestData("/users\(q.isEmpty ? "" : "?q=\(q)")", token: token) as APIResponse<[User]>?
+        let resData = try await apiManager.requestData("/users\(q.isEmpty ? "" : "?q=\(q)")", token: token) as APIResponse<[UserOverview]>?
         
         guard let resData else {
             throw URLError(.badServerResponse)

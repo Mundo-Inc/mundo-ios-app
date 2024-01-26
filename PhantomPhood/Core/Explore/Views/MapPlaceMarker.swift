@@ -36,5 +36,5 @@ struct MapPlaceMarker: View {
 }
 
 #Preview {
-    MapPlaceMarker(place: RegionPlace(_id: "", name: "MEME", amenity: .cafe, longitude: 40.7128, latitude: 74.0060, overallScore: 4, phantomScore: 86))
+    MapPlaceMarker(place: RegionPlace(id: "", name: "MEME", amenity: .cafe, longitude: 40.7128, latitude: 74.0060, overallScore: 4, phantomScore: 86))
 }

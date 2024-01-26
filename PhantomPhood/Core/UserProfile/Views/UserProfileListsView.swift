@@ -10,7 +10,7 @@ import SwiftUI
 struct UserProfileListsView: View {
     @StateObject private var vm: UserProfileListsVM
     
-    init(user: UserProfile) {
+    init(user: UserDetail) {
         self._vm = StateObject(wrappedValue: UserProfileListsVM(userId: user.id))
     }
     

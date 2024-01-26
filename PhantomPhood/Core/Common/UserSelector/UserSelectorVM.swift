@@ -9,21 +9,21 @@ import Foundation
 import Combine
 
 @MainActor
-final class AddListCollaboratorVM: ObservableObject {
+final class UserSelectorVM: ObservableObject {
     private let apiManager = APIManager.shared
-    private let auth = Authentication.shared
+    private let searchDM = SearchDM()
     
-    let onSelect: (CompactUser) -> Void
+    let onSelect: (UserOverview) -> Void
     let onCancel: () -> Void
     
     @Published var searchText = ""
     @Published var isLoading = false
-    @Published var searchResults: [CompactUser] = []
+    @Published var searchResults: [UserOverview] = []
     
     @Published var error: String? = nil
     private var cancellable = [AnyCancellable]()
     
-    init(onSelect: @escaping (CompactUser) -> Void, onCancel: @escaping () -> Void) {
+    init(onSelect: @escaping (UserOverview) -> Void, onCancel: @escaping () -> Void) {
         self.onSelect = onSelect
         self.onCancel = onCancel
         
@@ -42,14 +42,10 @@ final class AddListCollaboratorVM: ObservableObject {
     }
     
     func search(_ value: String) async {
-        guard let token = await auth.getToken() else { return }
-        
         self.isLoading = true
         do {
-            let data = try await self.apiManager.requestData("/users\(value.isEmpty ? "" : "?q=\(value)")", token: token) as APIResponse<[CompactUser]>?
-            if let data {
-                self.searchResults = data.data
-            }
+            let data = try await self.searchDM.searchUsers(q: value)
+            self.searchResults = data
             self.isLoading = false
         } catch {
             if let error = error as? APIManager.APIError {

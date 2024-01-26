@@ -51,7 +51,7 @@ class ForYouVM: ObservableObject {
     ///   - item: FeedItem
     func addReaction(_ reaction: GeneralReactionProtocol, to item: FeedItem) async {
         // add temporary reaction
-        let tempUserReaction = UserReaction(_id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
+        let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
         self.items = self.items.map({ i in
             if i.id == item.id {
                 var newItem = i

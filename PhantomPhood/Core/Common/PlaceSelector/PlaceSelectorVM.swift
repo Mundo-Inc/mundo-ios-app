@@ -20,9 +20,13 @@ enum SearchTokens: String, Identifiable {
 
 @MainActor
 final class PlaceSelectorVM: ObservableObject {
+    static let shared = PlaceSelectorVM()
+    
     private let locationManager = LocationManager.shared
     private let searchDM = SearchDM()
-    
+
+    var onSelect: ((MKMapItem) -> Void)? = nil
+
     var mapRegion: MKCoordinateRegion? = nil
     
     @Published var results: [MKMapItem] = []
@@ -53,6 +57,11 @@ final class PlaceSelectorVM: ObservableObject {
                 }
             }
             .store(in: &cancellable)
+    }
+
+    func present(onSelect: @escaping (MKMapItem) -> Void) {
+        self.onSelect = onSelect
+        self.isPresented = true
     }
     
     private func search(_ value: String) async {

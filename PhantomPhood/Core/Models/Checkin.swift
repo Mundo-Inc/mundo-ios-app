@@ -8,24 +8,26 @@
 import Foundation
 
 struct Checkin: Identifiable, Decodable {
-    let _id: String
+    let id: String
     let createdAt: String
-    let user: CompactUser
-    let place: BriefPlace
+    let user: UserEssentials
+    let place: PlaceEssentials
     
-    var id: String {
-        self._id
+    enum CodingKeys: String, CodingKey {
+        case id = "_id"
+        case createdAt, user, place
     }
 }
 
 struct FeedCheckin: Identifiable, Decodable {
-    let _id: String
+    let id: String
     let createdAt: String
-    let user: CompactUser
-    let place: BriefPlace
+    let user: UserEssentials
+    let place: PlaceEssentials
     let totalCheckins: Int
     
-    var id: String {
-        self._id
+    enum CodingKeys: String, CodingKey {
+        case id = "_id"
+        case createdAt, user, place, totalCheckins
     }
 }

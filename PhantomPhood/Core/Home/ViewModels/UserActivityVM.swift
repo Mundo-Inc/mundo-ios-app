@@ -35,7 +35,7 @@ final class UserActivityVM: ObservableObject {
     func addReaction(_ reaction: GeneralReactionProtocol) async {
         guard let data else { return }
         // add temporary reaction
-        let tempUserReaction = UserReaction(_id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
+        let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
         self.data?.addReaction(tempUserReaction)
 
         // add reaction to server

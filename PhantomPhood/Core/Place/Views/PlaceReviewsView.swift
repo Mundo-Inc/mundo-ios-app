@@ -9,8 +9,6 @@ import SwiftUI
 
 struct PlaceReviewsView: View {
     @ObservedObject var vm: PlaceViewModel
-    @ObservedObject var addReviewVM = AddReviewVM.shared
-    
     @StateObject var placeReviewsVM: PlaceReviewsViewModel
     
     init(placeId: String, vm: PlaceViewModel) {
@@ -111,18 +109,16 @@ struct PlaceReviewsView: View {
                         
                         Spacer()
                         
-                        Button {
-                            if let place = vm.place {
-                                addReviewVM.present(place: place)
+                        if let place = vm.place {
+                            NavigationLink(value: AppRoute.review(.data(PlaceEssentials(placeDetail: place)))) {
+                                Label(
+                                    title: { Text("Add Review") },
+                                    icon: { Image(systemName: "text.bubble") }
+                                )
                             }
-                        } label: {
-                            Label(
-                                title: { Text("Add Review") },
-                                icon: { Image(systemName: "text.bubble.rtl") }
-                            )
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
                     }
                     .font(.custom(style: .headline))
                     .frame(maxWidth: .infinity, alignment: .leading)

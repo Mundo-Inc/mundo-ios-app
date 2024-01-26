@@ -12,7 +12,7 @@ class LeaderboardVM: ObservableObject {
     private let dataManager = LeaderboardDM()
     
     @Published private(set) var isLoading = false
-    @Published private(set) var list: [User] = []
+    @Published private(set) var list: [UserOverview] = []
     @Published private(set) var error: String?
     
     var page: Int = 1

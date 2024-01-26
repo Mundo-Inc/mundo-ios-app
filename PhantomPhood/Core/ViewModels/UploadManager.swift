@@ -17,7 +17,7 @@ final class UploadManager {
         case cantCreateDataFromVideoURL
     }
     
-    func uploadMedia(media: CompressedMediaData, usecase: UploadUseCase) async throws -> APIResponse.ResponseData {
+    func uploadMedia(media: CompressedMediaData, usecase: UploadUseCase) async throws -> ResponseData {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
@@ -25,7 +25,7 @@ final class UploadManager {
         switch media {
         case .image(let data):
             let (formData, boundary) = UploadManager.uploadFormDataBody(file: UploadFile(name: UUID().uuidString + ".jpg", data: data, type: .image), usecase: usecase)
-            let resData = try await apiManager.requestData("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary)) as UploadManager.APIResponse?
+            let resData = try await apiManager.requestData("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary)) as APIResponse<ResponseData>?
             guard let data = resData?.data else {
                 throw URLError(.badServerResponse)
             }
@@ -36,7 +36,7 @@ final class UploadManager {
             }
             
             let (formData, boundary) = UploadManager.uploadFormDataBody(file: UploadFile(name: UUID().uuidString + ".mp4", data: data, type: .video), usecase: usecase)
-            let resData = try await apiManager.requestData("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary)) as UploadManager.APIResponse?
+            let resData = try await apiManager.requestData("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary)) as APIResponse<ResponseData>?
             guard let data = resData?.data else {
                 throw URLError(.badServerResponse)
             }
@@ -98,28 +98,24 @@ final class UploadManager {
     }
     
     /// API response type on uploading media
-    struct APIResponse: Decodable {
-        let success: Bool
-        let data: ResponseData
+    struct ResponseData: Decodable, Identifiable {
+        let _id: String
+        let user: String
+        let key: String
+        let src: String
+        let type: String
+        let usecase: String
+        let createdAt: String
         
-        struct ResponseData: Decodable, Identifiable {
-            let _id: String
-            let user: String
-            let key: String
-            let src: String
-            let type: String
-            let usecase: String
-            let createdAt: String
-            
-            var id: String {
-                self._id
-            }
+        var id: String {
+            self._id
         }
     }
     
     /// Usecase of the uploading media (This is required to send request to server)
     enum UploadUseCase: String {
         case placeReview = "placeReview"
+        case checkin = "checkin"
     }
     
     private enum UploadFileType: String {

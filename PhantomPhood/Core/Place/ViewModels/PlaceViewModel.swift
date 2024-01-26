@@ -7,7 +7,6 @@
 
 import Foundation
 import MapKit
-import SwiftUI
 
 enum PlaceTab: String, CaseIterable, Hashable {
     case overview = "Overview"
@@ -22,13 +21,13 @@ class PlaceViewModel: ObservableObject {
     
     private let dataManager = PlaceDM()
     private let toastViewModel = ToastVM.shared
-    private let addReviewVM = AddReviewVM.shared
+    private let appData = AppData.shared
     
     @Published var isMapNavigationPresented: Bool = false
     @Published var isAddToListPresented: Bool = false
     
     @Published private(set) var isLoading = false
-    @Published private(set) var place: Place?
+    @Published private(set) var place: PlaceDetail?
     @Published private(set) var error: String?
     
     @Published var activeTab: PlaceTab = .overview
@@ -41,26 +40,28 @@ class PlaceViewModel: ObservableObject {
         self.id = id
         self.action = action
         
-        switch action {
-        case .checkin:
-            Task {
-                await self.checkin()
-            }
-        case .addReview:
-            self.activeTab = .reviews
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                if let place = self.place {
-                    self.addReviewVM.present(place: place)
-                } else {
-                    self.addReviewVM.present(placeId: id)
-                }
-            }
-        case nil:
-            break
-        }
-        
         Task {
-            await self.fetchData()
+            do {
+                let data = try await dataManager.fetch(id: id)
+                self.place = data
+                
+                switch action {
+                case .checkin:
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.appData.goTo(AppRoute.checkin(.data(PlaceEssentials(placeDetail: data))))
+                    }
+                case .addReview:
+                    self.activeTab = .reviews
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.appData.goTo(AppRoute.review(.data(PlaceEssentials(placeDetail: data))))
+                    }
+                case nil:
+                    break
+                }
+            } catch {
+                print(error)
+                self.error = error.localizedDescription
+            }
         }
     }
     
@@ -75,13 +76,13 @@ class PlaceViewModel: ObservableObject {
                 
                 switch action {
                 case .checkin:
-                    Task {
-                        await self.checkin()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.appData.goTo(AppRoute.checkin(.data(PlaceEssentials(placeDetail: data))))
                     }
                 case .addReview:
                     self.activeTab = .reviews
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        self.addReviewVM.present(place: data)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.appData.goTo(AppRoute.review(.data(PlaceEssentials(placeDetail: data))))
                     }
                 case nil:
                     break
@@ -89,90 +90,6 @@ class PlaceViewModel: ObservableObject {
             } catch {
                 print(error)
                 self.error = error.localizedDescription
-            }
-        }
-    }
-    
-    //    init(mapItem: MKMapItem, action: PlaceAction? = nil) {
-    //        self.action = action
-    //
-    //        Task {
-    //            do {
-    //                let data = try await dataManager.fetch(mapItem: mapItem)
-    //                self.id = data.id
-    //                self.place = data
-    //
-    //                switch action {
-    //                case .checkin:
-    //                    Task {
-    //                        await self.checkin()
-    //                    }
-    //                case .addReview:
-    //                    self.activeTab = .reviews
-    //                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-    //                        self.showAddReview = true
-    //                    }
-    //                case nil:
-    //                    break
-    //                }
-    //            } catch {
-    //                print(error)
-    //                self.error = error.localizedDescription
-    //            }
-    //        }
-    //    }
-    //
-    //    @available(iOS 17.0, *)
-    //    init(mapFeature: MapFeature, action: PlaceAction? = nil) {
-    //        self.action = action
-    //
-    //        Task {
-    //            do {
-    //                let data = try await dataManager.fetch(mapFeature: mapFeature)
-    //                self.id = data.id
-    //                self.place = data
-    //
-    //                switch action {
-    //                case .checkin:
-    //                    Task {
-    //                        await self.checkin()
-    //                    }
-    //                case .addReview:
-    //                    self.activeTab = .reviews
-    //                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-    //                        self.showAddReview = true
-    //                    }
-    //                case nil:
-    //                    break
-    //                }
-    //            } catch {
-    //                print(error)
-    //                self.error = error.localizedDescription
-    //            }
-    //        }
-    //    }
-    
-    func fetchData() async {
-        if let id {
-            do {
-                self.place = try await dataManager.fetch(id: id)
-                self.error = nil
-            } catch {
-                print(error)
-                self.error = error.localizedDescription
-            }
-        }
-    }
-    
-    func checkin() async {
-        if let id {
-            do {
-                try await dataManager.checkin(id: id)
-                toastViewModel.toast(Toast(type: .success, title: "Checkin", message: "Checked in successfully"))
-            } catch {
-                print(error)
-                self.error = error.localizedDescription
-                toastViewModel.toast(Toast(type: .error, title: "Checkin", message: "Failed to checkin"))
             }
         }
     }

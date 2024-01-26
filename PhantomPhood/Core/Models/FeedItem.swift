@@ -27,15 +27,15 @@ enum FeedItemResourceType: String, Decodable {
 }
 
 enum FeedItemResource: Decodable {
-    case place(CompactPlace)
+    case place(PlaceOverview)
     case review(FeedReview)
     case checkin(FeedCheckin)
-    case user(CompactUser)
+    case user(UserEssentials)
     //    case reaction
     //    case achievement
 }
 
-enum PrivacyType: String, Decodable {
+enum PrivacyType: String, Codable {
     case PUBLIC = "PUBLIC"
     case PRIVATE = "PRIVATE"
 }
@@ -51,8 +51,8 @@ struct FeedItem: Identifiable, Decodable, Equatable {
     }
     
     let id: String
-    let user: CompactUser
-    let place: CompactPlace?
+    let user: UserEssentials
+    let place: PlaceOverview?
     let activityType: FeedItemActivityType
     let resourceType: FeedItemResourceType
     let resource: FeedItemResource
@@ -68,7 +68,7 @@ struct FeedItem: Identifiable, Decodable, Equatable {
     }
     
     // By Values
-    init(id: String, user: CompactUser, place: CompactPlace?, activityType: FeedItemActivityType, resourceType: FeedItemResourceType, resource: FeedItemResource, privacyType: PrivacyType, createdAt: String, updatedAt: String, reactions: ReactionsObject, comments: [Comment], commentsCount: Int) {
+    init(id: String, user: UserEssentials, place: PlaceOverview?, activityType: FeedItemActivityType, resourceType: FeedItemResourceType, resource: FeedItemResource, privacyType: PrivacyType, createdAt: String, updatedAt: String, reactions: ReactionsObject, comments: [Comment], commentsCount: Int) {
         self.id = id
         self.user = user
         self.place = place
@@ -88,14 +88,14 @@ struct FeedItem: Identifiable, Decodable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         id = try container.decode(String.self, forKey: .id)
-        user = try container.decode(CompactUser.self, forKey: .user)
-        place = try container.decodeIfPresent(CompactPlace.self, forKey: .place)
+        user = try container.decode(UserEssentials.self, forKey: .user)
+        place = try container.decodeIfPresent(PlaceOverview.self, forKey: .place)
         activityType = try container.decode(FeedItemActivityType.self, forKey: .activityType)
         resourceType = try container.decode(FeedItemResourceType.self, forKey: .resourceType)
         
         switch resourceType {
         case .place:
-            let value = try container.decode(CompactPlace.self, forKey: .resource)
+            let value = try container.decode(PlaceOverview.self, forKey: .resource)
             resource = .place(value)
         case .review:
             let value = try container.decode(FeedReview.self, forKey: .resource)
@@ -104,7 +104,7 @@ struct FeedItem: Identifiable, Decodable, Equatable {
             let value = try container.decode(FeedCheckin.self, forKey: .resource)
             resource = .checkin(value)
         case .user:
-            let value = try container.decode(CompactUser.self, forKey: .resource)
+            let value = try container.decode(UserEssentials.self, forKey: .resource)
             resource = .user(value)
         }
         

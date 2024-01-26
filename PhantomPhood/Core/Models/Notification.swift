@@ -7,19 +7,9 @@
 
 import Foundation
 
-struct NotificationResource {
-    let _id: String
-    let date: String
-    let type: NotificationResourceType
-    
-    var id: String {
-        self._id
-    }
-}
-
 struct Notification: Decodable, Identifiable {
-    let _id: String
-    let user: CompactUser
+    let id: String
+    let user: UserEssentials
     let type: String
     var readAt: String?
     let sent: Bool
@@ -34,12 +24,13 @@ struct Notification: Decodable, Identifiable {
     let title: String?
     let activity: String?
 
-    var id: String {
-        self._id
-    }
-
     var isKnownType: Bool {
         NotificationType.allCases.map { $0.rawValue }.contains(self.type)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id = "_id"
+        case user, type, readAt, sent, failReason, importance, batchCount, content, createdAt, updatedAt, image, subtitle, title, activity
     }
 }
 

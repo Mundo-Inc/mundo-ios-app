@@ -11,7 +11,7 @@ import MapKit
 
 @MainActor
 class ExploreVM: ObservableObject {
-    @Published var selectedPlaceData: Place? = nil
+    @Published var selectedPlaceData: PlaceDetail? = nil
     
     fileprivate let placeDM = PlaceDM()
     fileprivate let mapDM = MapDM()

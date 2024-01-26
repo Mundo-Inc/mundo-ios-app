@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UserProfileAchievements: View {
-    let user: UserProfile?
+    let user: UserDetail?
     
     let columns: [GridItem] = [
         GridItem(.flexible(minimum: 80, maximum: 200)),

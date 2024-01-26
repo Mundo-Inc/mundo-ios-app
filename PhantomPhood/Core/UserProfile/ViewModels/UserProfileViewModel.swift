@@ -16,7 +16,7 @@ class UserProfileViewModel: ObservableObject {
     
     @Published private(set) var isLoading = false
     @Published private(set) var isFollowing: Bool? = nil
-    @Published private(set) var user: UserProfile?
+    @Published private(set) var user: UserDetail?
     @Published private(set) var error: String?
     
     @Published var showActions = false

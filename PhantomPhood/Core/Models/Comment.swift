@@ -13,16 +13,17 @@ struct UserMentions: Decodable {
 }
 
 struct Comment: Decodable, Identifiable {
-    let _id: String
+    let id: String
     let content: String
     let createdAt: String
     let updatedAt: String
-    let author: CompactUser
+    let author: UserEssentials
     let likes: Int
     let liked: Bool
     let mentions: [UserMentions]?
 
-    var id: String {
-        self._id
+    enum CodingKeys: String, CodingKey {
+        case id = "_id"
+        case content, createdAt, updatedAt, author, likes, liked, mentions
     }
 }

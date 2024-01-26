@@ -250,9 +250,9 @@ struct CreateNewListView: View {
         })
         .sheet(isPresented: $vm.showAddListCollaborators, content: {
             if #available(iOS 17.0, *) {
-                AddListCollaboratorView(onSelect: { user in
+                UserSelector(onSelect: { user in
                     if !vm.collaborators.contains(where: { $0.user.id == user.id }) {
-                        vm.collaborators.append(.init(user: user, access: .edit))
+                        vm.collaborators.append(.init(user: UserEssentials(userOverview: user), access: .edit))
                     }
                     vm.showAddListCollaborators = false
                 }, onCancel: {
@@ -260,9 +260,9 @@ struct CreateNewListView: View {
                 })
                 .presentationBackground(.thinMaterial)
             } else {
-                AddListCollaboratorView(onSelect: { user in
+                UserSelector(onSelect: { user in
                     if !vm.collaborators.contains(where: { $0.user.id == user.id }) {
-                        vm.collaborators.append(.init(user: user, access: .edit))
+                        vm.collaborators.append(.init(user: UserEssentials(userOverview: user), access: .edit))
                     }
                     vm.showAddListCollaborators = false
                 }, onCancel: {

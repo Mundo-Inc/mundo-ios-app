@@ -7,12 +7,19 @@
 
 import SwiftUI
 import PhotosUI
-import AVKit
 import Kingfisher
 
 struct AddReviewView: View {
     @ObservedObject var appData = AppData.shared
-    @ObservedObject var vm = AddReviewVM.shared
+    @StateObject var vm: AddReviewVM
+    
+    init(_ idOrData: IdOrData<PlaceEssentials>) {
+        self._vm = StateObject(wrappedValue: AddReviewVM(idOrData: idOrData))
+    }
+    
+    init(mapPlace: MapPlace) {
+        self._vm = StateObject(wrappedValue: AddReviewVM(mapPlace: mapPlace))
+    }
     
     @Environment(\.dismiss) var dismiss
     
@@ -29,56 +36,47 @@ struct AddReviewView: View {
     var body: some View {
         ZStack {
             if let place = vm.place {
-                VStack {
-                    HStack {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Text("Cancel")
-                        }
-                        
-                        Spacer()
-                    }
-                    .font(.custom(style: .body))
-                    .padding(.horizontal)
-                    
-                    HStack {
-                        if let thumbnail = place.thumbnail, let url = URL(string: thumbnail) {
-                            KFImage.url(url)
-                                .placeholder {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .overlay {
-                                            ProgressView()
-                                        }
-                                }
-                                .loadDiskFileSynchronously()
-                                .cacheMemoryOnly()
-                                .fade(duration: 0.25)
-                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 50, height: 50)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .contentShape(RoundedRectangle(cornerRadius: 10))
-                        }
-                        
-                        VStack {
-                            Text(place.name)
-                                .font(.custom(style: .body))
-                                .bold()
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(spacing: 0) {
+                    VStack {
+                        HStack {
+                            if let thumbnail = place.thumbnail, let url = URL(string: thumbnail) {
+                                KFImage.url(url)
+                                    .placeholder {
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .foregroundStyle(Color.themePrimary)
+                                            .overlay {
+                                                ProgressView()
+                                            }
+                                    }
+                                    .loadDiskFileSynchronously()
+                                    .cacheMemoryOnly()
+                                    .fade(duration: 0.25)
+                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .contentShape(RoundedRectangle(cornerRadius: 10))
+                            }
                             
+                            VStack(spacing: 10) {
+                                Text(place.name)
+                                    .font(.custom(style: .body))
+                                    .bold()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                Text(place.location.address ?? "-")
+                                    .font(.custom(style: .caption))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
                             
-                            Text(place.location.address ?? (place.scores.overall != nil ? String(place.scores.overall!) : "-"))
-                                .font(.custom(style: .caption))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Spacer()
                         }
+                        .padding(.horizontal)
                         
-                        Spacer()
+                        Divider()
                     }
-                    .padding(.horizontal)
-                    
-                    Divider()
+                    .background(.ultraThinMaterial)
                     
                     switch vm.step {
                     case .recommendation:
@@ -86,6 +84,7 @@ struct AddReviewView: View {
                             Text("Do you recommend this place?")
                                 .font(.custom(style: .headline))
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.top)
                             
                             HStack {
                                 Spacer()
@@ -95,6 +94,7 @@ struct AddReviewView: View {
                                             vm.isRecommended = nil
                                         } else {
                                             vm.isRecommended = false
+                                            vm.step = .scores
                                         }
                                     }
                                 } label: {
@@ -114,6 +114,7 @@ struct AddReviewView: View {
                                             vm.isRecommended = nil
                                         } else {
                                             vm.isRecommended = true
+                                            vm.step = .scores
                                         }
                                     }
                                 } label: {
@@ -142,6 +143,9 @@ struct AddReviewView: View {
                                                         vm.overallScore = nil
                                                     } else {
                                                         vm.overallScore = index + 1
+                                                        if vm.haveAllScores {
+                                                            vm.step = .review
+                                                        }
                                                     }
                                                 }
                                             } label: {
@@ -170,6 +174,9 @@ struct AddReviewView: View {
                                                         vm.foodQuality = nil
                                                     } else {
                                                         vm.foodQuality = index + 1
+                                                        if vm.haveAllScores {
+                                                            vm.step = .review
+                                                        }
                                                     }
                                                 }
                                             } label: {
@@ -198,6 +205,9 @@ struct AddReviewView: View {
                                                         vm.drinkQuality = nil
                                                     } else {
                                                         vm.drinkQuality = index + 1
+                                                        if vm.haveAllScores {
+                                                            vm.step = .review
+                                                        }
                                                     }
                                                 }
                                             } label: {
@@ -226,6 +236,9 @@ struct AddReviewView: View {
                                                         vm.service = nil
                                                     } else {
                                                         vm.service = index + 1
+                                                        if vm.haveAllScores {
+                                                            vm.step = .review
+                                                        }
                                                     }
                                                 }
                                             } label: {
@@ -254,6 +267,9 @@ struct AddReviewView: View {
                                                         vm.atmosphere = nil
                                                     } else {
                                                         vm.atmosphere = index + 1
+                                                        if vm.haveAllScores {
+                                                            vm.step = .review
+                                                        }
                                                     }
                                                 }
                                             } label: {
@@ -276,6 +292,7 @@ struct AddReviewView: View {
                             }
                             .foregroundStyle(.secondary)
                             .padding(.horizontal)
+                            .padding(.top)
                         }
                     case .review:
                         ScrollView {
@@ -297,6 +314,7 @@ struct AddReviewView: View {
                                     }
                             }
                             .padding(.horizontal)
+                            .padding(.top)
                             
                             ScrollView(.horizontal) {
                                 HStack {
@@ -346,6 +364,7 @@ struct AddReviewView: View {
                                 .font(.custom(style: .subheadline))
                                 .padding(.horizontal)
                             }
+                            .scrollIndicators(.never)
                             
                             PhotosPicker(
                                 selection: $pickerVM.selection,
@@ -362,9 +381,8 @@ struct AddReviewView: View {
                             .disabled(vm.isSubmitting)
                             .buttonStyle(.bordered)
                             .padding(.horizontal)
-                            
                         }
-                        .scrollDismissesKeyboard(.immediately)
+                        .scrollDismissesKeyboard(.interactively)
                     }
                     
                     HStack {
@@ -434,8 +452,7 @@ struct AddReviewView: View {
                         }
                     }
                     .font(.custom(style: .body))
-                    .padding(.horizontal)
-                    .padding(.bottom)
+                    .padding()
                 }
             } else if let error = vm.error {
                 Text(error)
@@ -446,15 +463,16 @@ struct AddReviewView: View {
                     Spacer()
                     
                     LottieView(file: .processing, loop: true)
-                        .frame(width: UIScreen.main.bounds.width * 0.7, height: UIScreen.main.bounds.width * 0.7)
+                        .frame(width: UIScreen.main.bounds.width * 0.65, height: UIScreen.main.bounds.width * 0.65)
                     
-                    VStack(spacing: 30) {
+                    VStack(spacing: 20) {
                         Text("**Review in progress:**\nCompressing and uploading your content.\nNot live yet – stay tuned!")
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .multilineTextAlignment(.leading)
                             .foregroundStyle(.secondary)
                         
-                        Text("Almost there! This may take a minute or two. 🚀 Feel free to explore - hit 'Home Page' or 'Place Info'. No need to wait here!")
+                        Text("Almost there! This may take a minute or two.\n🚀 Feel free to explore the app. No need to wait here!")
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                             .italic()
@@ -462,28 +480,17 @@ struct AddReviewView: View {
                     
                     Spacer()
                     
-                    HStack {
-                        Button {
-                            dismiss()
-                            
-                            appData.activeTab = .home
-                            appData.homeNavStack.removeAll()
-                        } label: {
-                            Text("Home Page")
-                                .frame(maxWidth: .infinity, alignment: .center)
-                        }
-                        .controlSize(.large)
-                        .buttonStyle(.borderedProminent)
-                        
-                        Button {
-                            dismiss()
-                        } label: {
-                            Text("Place Info")
-                                .frame(maxWidth: .infinity, alignment: .center)
-                        }
-                        .controlSize(.large)
-                        .buttonStyle(.borderedProminent)
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("👍")
+                            .frame(maxWidth: .infinity, alignment: .center)
                     }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .padding(.vertical)
+                    
+                    Spacer()
                 }
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 .font(.custom(style: .body))
@@ -491,6 +498,8 @@ struct AddReviewView: View {
                 .background(Color.themeBG.ignoresSafeArea())
             }
         }
+        .navigationTitle("Add Review")
+        .navigationBarTitleDisplayMode(.inline)
         .onChange(of: !vm.isSubmitting && vm.place == nil && vm.error == nil ) { value in
             if value {
                 dismiss()
@@ -501,6 +510,6 @@ struct AddReviewView: View {
 
 #Preview {
     NavigationStack {
-        AddReviewView()
+        AddReviewView(.id("TestId"))
     }
 }

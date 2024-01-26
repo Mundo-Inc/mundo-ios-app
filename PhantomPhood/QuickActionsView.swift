@@ -8,32 +8,13 @@
 import SwiftUI
 
 struct QuickActionsView: View {
-    @EnvironmentObject var placeSelectorVM: PlaceSelectorVM
+    @ObservedObject var placeSelectorVM = PlaceSelectorVM.shared
     
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var appData = AppData.shared
     
     @ObservedObject private var toastViewModel = ToastVM.shared
-    @ObservedObject private var addReviewVM = AddReviewVM.shared
     var placeDM = PlaceDM()
-    
-    @State private var loading: LoadingSection? = nil
-    
-    func checkin(placeId: String) async {
-        self.loading = .checkin
-        do {
-            try await placeDM.checkin(id: placeId)
-            toastViewModel.toast(Toast(type: .success, title: "Checkin", message: "Checked in successfully"))
-        } catch {
-            print(error)
-            toastViewModel.toast(Toast(type: .error, title: "Checkin", message: "Failed to checkin"))
-        }
-        self.loading = nil
-    }
-    
-    enum LoadingSection {
-        case checkin
-    }
     
     var body: some View {
         VStack {
@@ -46,20 +27,13 @@ struct QuickActionsView: View {
             
             if let placeId = appData.visiblePlaceId() {
                 Button {
-                    Task {
-                        await checkin(placeId: placeId)
-                        dismiss()
-                    }
+                    appData.goTo(AppRoute.checkin(.id(placeId)))
+                    dismiss()
                 } label: {
                     HStack {
-                        if loading == .checkin {
-                            ProgressView()
-                                .frame(width: 36 , height: 36)
-                        } else {
-                            Image(systemName: "checkmark.diamond")
-                                .font(.system(size: 28))
-                                .frame(width: 36 , height: 36)
-                        }
+                        Image(systemName: "checkmark.diamond")
+                            .font(.system(size: 28))
+                            .frame(width: 36 , height: 36)
                         
                         VStack {
                             Text("Check-in")
@@ -77,10 +51,8 @@ struct QuickActionsView: View {
                 .foregroundStyle(.primary)
                 
                 Button {
+                    appData.goTo(AppRoute.review(.id(placeId)))
                     dismiss()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        addReviewVM.present(placeId: placeId)
-                    }
                 } label: {
                     HStack {
                         Image(systemName: "star.bubble")
@@ -104,9 +76,12 @@ struct QuickActionsView: View {
                 .foregroundStyle(.primary)
             } else {
                 Button {
-                    placeSelectorVM.tokens = [.checkin]
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        placeSelectorVM.isPresented = true
+                        placeSelectorVM.present { mapItem in
+                            if let name = mapItem.name {
+                                appData.goTo(AppRoute.checkinMapPlace(MapPlace(coordinate: mapItem.placemark.coordinate, title: name)))
+                            }
+                        }
                     }
                     dismiss()
                 } label: {
@@ -132,9 +107,12 @@ struct QuickActionsView: View {
                 .foregroundStyle(.primary)
                 
                 Button {
-                    placeSelectorVM.tokens = [.addReview]
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        placeSelectorVM.isPresented = true
+                        placeSelectorVM.present { mapItem in
+                            if let name = mapItem.name {
+                                appData.goTo(AppRoute.reviewMapPlace(MapPlace(coordinate: mapItem.placemark.coordinate, title: name)))
+                            }
+                        }
                     }
                     dismiss()
                 } label: {
@@ -169,5 +147,4 @@ struct QuickActionsView: View {
 
 #Preview {
     QuickActionsView()
-        .environmentObject(PlaceSelectorVM())
 }

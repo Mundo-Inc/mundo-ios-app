@@ -8,7 +8,7 @@
 import Foundation
 
 struct Mission: Identifiable, Codable {
-    let _id: String
+    let id: String
     let title: String
     let subtitle: String?
     let icon: String
@@ -20,10 +20,6 @@ struct Mission: Identifiable, Codable {
     let task: MissionTask
     let progress: MissionProgress
     
-    var id: String {
-        self._id
-    }
-    
     struct MissionTask: Codable {
         let type: String
         let count: Int
@@ -31,5 +27,10 @@ struct Mission: Identifiable, Codable {
     struct MissionProgress: Codable {
         let completed: Int
         let total: Int
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id = "_id"
+        case title, subtitle, icon, rewardAmount, startsAt, expiresAt, createdAt, isClaimed, task, progress
     }
 }

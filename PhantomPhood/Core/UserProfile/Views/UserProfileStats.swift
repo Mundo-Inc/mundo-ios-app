@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UserProfileStats: View {
-    let user: UserProfile?
+    let user: UserDetail?
     @Binding var activeTab: UserProfileTab
     
     @ObservedObject var appData = AppData.shared

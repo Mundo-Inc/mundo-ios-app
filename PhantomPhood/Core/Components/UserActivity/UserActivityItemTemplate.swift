@@ -77,11 +77,11 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
     let header: () -> Header
     let content: () -> Content
     let footer: () -> Footer
-    let user: CompactUser
+    let user: UserEssentials
     let isActive: Bool
     
     init(
-        user: CompactUser,
+        user: UserEssentials,
         comments: [Comment] = [],
         isActive: Bool = false,
         @ViewBuilder header: @escaping () -> Header,
@@ -164,8 +164,8 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
 #Preview {
     ScrollView {
         UserActivityItemTemplate(
-            user: CompactUser(
-                _id: "TEST_USER_ID",
+            user: UserEssentials(
+                id: "TEST_USER_ID",
                 name: "Dwayne",
                 username: "DwayneTheRock",
                 verified: true,
@@ -174,12 +174,12 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
             ),
             comments: [
                 Comment(
-                    _id: "TEST_COMMENT_ID_1",
+                    id: "TEST_COMMENT_ID_1",
                     content: "This is the comment body let's see what happens if this exceeds two lines",
                     createdAt: "2023-09-19T20:06:45.214Z",
                     updatedAt: "2023-09-19T20:06:45.214Z",
-                    author: CompactUser(
-                        _id: "TEST_USER_ID",
+                    author: UserEssentials(
+                        id: "TEST_USER_ID",
                         name: "Dwayne",
                         username: "DwayneTheRock",
                         verified: true,
@@ -198,8 +198,8 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
         }
         
         UserActivityItemTemplate(
-            user: CompactUser(
-                _id: "TEST_USER_ID",
+            user: UserEssentials(
+                id: "TEST_USER_ID",
                 name: "Dwayne",
                 username: "DwayneTheRock",
                 verified: true,
@@ -208,12 +208,12 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
             ),
             comments: [
                 Comment(
-                    _id: "TEST_COMMENT_ID_1",
+                    id: "TEST_COMMENT_ID_1",
                     content: "This is the comment body let's see what happens if this exceeds two lines",
                     createdAt: "2023-09-19T20:06:45.214Z",
                     updatedAt: "2023-09-19T20:06:45.214Z",
-                    author: CompactUser(
-                        _id: "TEST_USER_ID",
+                    author: UserEssentials(
+                        id: "TEST_USER_ID",
                         name: "Dwayne",
                         username: "DwayneTheRock",
                         verified: true,

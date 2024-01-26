@@ -94,8 +94,8 @@ struct MediasView: View {
     return MediasView(vm: vm)
         .onAppear {
             vm.show(medias: [
-                .init(_id: "Test1", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/af9ddd441be2d1d48450e96aaaed0658.jpg", caption: nil, type: .image),
-                .init(_id: "Test2", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/2a667b01b413fd08fd00a60b2f5ba3e1.mp4", caption: nil, type: .video)
+                .init(id: "Test1", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/af9ddd441be2d1d48450e96aaaed0658.jpg", caption: nil, type: .image),
+                .init(id: "Test2", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/2a667b01b413fd08fd00a60b2f5ba3e1.mp4", caption: nil, type: .video)
             ])
         }
 }

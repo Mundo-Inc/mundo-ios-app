@@ -107,7 +107,7 @@ final class ExploreSearchVM: ObservableObject {
     @Published var scope: SearchScopes = .places
     
     @Published var placeSearchResults: [MKMapItem] = []
-    @Published var userSearchResults: [User] = []
+    @Published var userSearchResults: [UserOverview] = []
     @Published var isLoading: Bool = false
     @Published var error: String? = nil
     

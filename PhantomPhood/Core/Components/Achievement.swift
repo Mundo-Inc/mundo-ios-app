@@ -66,5 +66,5 @@ struct Achievement: View {
 }
 
 #Preview {
-    Achievement(achievement: .init(id: "LEGEND", title: "Legend Badge", description: "Reach level 100"), recievedAchievements: [.init(_id: "", type: "LEGEND", createdAt: "2023-10-25T02:02:15.389Z")])
+    Achievement(achievement: .init(id: "LEGEND", title: "Legend Badge", description: "Reach level 100"), recievedAchievements: [.init(id: "", type: "LEGEND", createdAt: "2023-10-25T02:02:15.389Z")])
 }

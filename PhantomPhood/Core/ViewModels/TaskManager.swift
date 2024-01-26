@@ -92,7 +92,7 @@ final class TaskManager: ObservableObject {
         await startNextTask()
     }
     
-    private func uploadMediaItem(compressedMediaData: CompressedMediaData, usecase: UploadManager.UploadUseCase) async -> UploadManager.APIResponse.ResponseData? {
+    private func uploadMediaItem(compressedMediaData: CompressedMediaData, usecase: UploadManager.UploadUseCase) async -> UploadManager.ResponseData? {
         let uploadResponse = try? await uploadManager.uploadMedia(media: compressedMediaData, usecase: usecase)
         
         return uploadResponse
@@ -201,7 +201,7 @@ enum TasksMedia: Identifiable {
     case uncompressed(mediaItemData: MediaItemData)
     case compressed(compressedMediaData: CompressedMediaData, mediaItemData: MediaItemData)
     case uploading(compressedMediaData: CompressedMediaData, mediaItemData: MediaItemData)
-    case uploaded(tasksMediaAPIResponseData: UploadManager.APIResponse.ResponseData, compressedMediaData: CompressedMediaData, mediaItemData: MediaItemData)
+    case uploaded(tasksMediaAPIResponseData: UploadManager.ResponseData, compressedMediaData: CompressedMediaData, mediaItemData: MediaItemData)
     
     var id: String {
         switch self {

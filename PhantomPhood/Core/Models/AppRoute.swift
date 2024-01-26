@@ -8,10 +8,32 @@
 import Foundation
 import MapKit
 
+enum IdOrData<T: Identifiable>: Equatable {
+    static func ==(lhs: IdOrData<T>, rhs: IdOrData<T>) -> Bool {
+        switch (lhs, rhs) {
+        case let (.id(id1), .id(id2)):
+            return id1 == id2
+        case let (.data(data1), .data(data2)):
+            return data1.id == data2.id
+        default:
+            return false
+        }
+    }
+    
+    case id(String)
+    case data(T)
+}
+
 enum AppRoute: Hashable {
     case notifications
     case leaderboard
     case userActivity(id: String)
+    
+    // Actions
+    case checkin(IdOrData<PlaceEssentials>)
+    case checkinMapPlace(MapPlace)
+    case review(IdOrData<PlaceEssentials>)
+    case reviewMapPlace(MapPlace)
     
     // My Profile
     case settings
@@ -38,6 +60,31 @@ enum AppRoute: Hashable {
         case .userActivity(let id):
             hasher.combine("userActivity")
             hasher.combine(id)
+            
+            // Actions
+            
+        case .checkin(let idOrData):
+            hasher.combine("checkin")
+            switch idOrData {
+            case .id(let id):
+                hasher.combine(id)
+            case .data(let place):
+                hasher.combine(place.id)
+            }
+        case .checkinMapPlace(let mapPlace):
+            hasher.combine("checkin")
+            hasher.combine(mapPlace)
+        case .review(let idOrData):
+            hasher.combine("review")
+            switch idOrData {
+            case .id(let id):
+                hasher.combine(id)
+            case .data(let place):
+                hasher.combine(place.id)
+            }
+        case .reviewMapPlace(let mapPlace):
+            hasher.combine("review")
+            hasher.combine(mapPlace)
             
             // My Profile
             

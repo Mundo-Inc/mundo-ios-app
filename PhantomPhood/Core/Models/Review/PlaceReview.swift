@@ -1,23 +1,14 @@
 //
-//  Review.swift
+//  PlaceReview.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 20.09.2023.
+//  Created by Kia Abdi on 1/26/24.
 //
 
 import Foundation
 
-struct ReviewScores: Decodable {
-    let overall: Double?
-    let drinkQuality: Double?
-    let foodQuality: Double?
-    let atmosphere: Double?
-    let service: Double?
-    let value: Double?
-}
-
 struct PlaceReview: Identifiable, Decodable {
-    let _id: String
+    let id: String
     let scores: ReviewScores?
     let content: String
     let images: [Media]
@@ -28,12 +19,13 @@ struct PlaceReview: Identifiable, Decodable {
     let createdAt: String
     let updatedAt: String
     let userActivityId: String?
-    let writer: CompactUser
+    let writer: UserEssentials
     let comments: [Comment]
     var reactions: ReactionsObject
     
-    var id: String {
-        self._id
+    enum CodingKeys: String, CodingKey {
+        case id = "_id"
+        case scores, content, images, videos, tags, recommend, language, createdAt, updatedAt, userActivityId, writer, comments, reactions
     }
     
     mutating func addReaction(_ userReaction: UserReaction) {
@@ -68,25 +60,5 @@ struct PlaceReview: Identifiable, Decodable {
         }
         
         self.reactions = newReactions
-    }
-}
-
-
-struct FeedReview: Identifiable, Decodable {
-    let _id: String
-    let scores: ReviewScores
-    let content: String
-    let images: [Media]
-    let videos: [Media]
-    let tags: [String]?
-    let recommend: Bool?
-    let language: String?
-    let createdAt: String
-    let updatedAt: String
-    let userActivityId: String?
-    let writer: CompactUser
-    
-    var id: String {
-        self._id
     }
 }

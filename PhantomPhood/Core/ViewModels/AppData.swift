@@ -84,21 +84,25 @@ final class AppData: ObservableObject {
         self.showEditProfile = false
     }
     
+    func goTo(_ route: AppRoute) {
+        switch self.activeTab {
+        case .home:
+            self.homeNavStack.append(route)
+        case .explore:
+            self.exploreNavStack.append(route)
+        case .rewardsHub:
+            self.rewardsHubNavStack.append(route)
+        case .myProfile:
+            self.myProfileNavStack.append(route)
+        }
+    }
+    
     func goToUser(_ id: String, _ currentUserId: String? = nil) {
         if let userId = currentUserId, userId == id {
             self.activeTab = .myProfile
             return
         }
-        switch self.activeTab {
-        case .home:
-            self.homeNavStack.append(.userProfile(userId: id))
-        case .explore:
-            self.exploreNavStack.append(.userProfile(userId: id))
-        case .rewardsHub:
-            self.rewardsHubNavStack.append(.userProfile(userId: id))
-        case .myProfile:
-            self.myProfileNavStack.append(.userProfile(userId: id))
-        }
+        self.goTo(.userProfile(userId: id))
     }
     
     func visiblePlaceId() -> String? {

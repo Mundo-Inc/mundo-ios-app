@@ -16,7 +16,7 @@ class FeedViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     
     @Published private(set) var isFollowingNabeel: Bool? = nil
-    @Published var nabeel: UserProfile? = nil
+    @Published var nabeel: UserDetail? = nil
     @Published var isRequestingFollow = false
     
     var page: Int = 1
@@ -87,7 +87,7 @@ class FeedViewModel: ObservableObject {
     ///   - item: FeedItem
     func addReaction(_ reaction: GeneralReactionProtocol, _ item: FeedItem) async {
         // add temporary reaction
-        let tempUserReaction = UserReaction(_id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
+        let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
         self.items = self.items.map({ i in
             if i.id == item.id {
                 var newItem = i

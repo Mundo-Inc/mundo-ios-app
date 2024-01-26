@@ -11,10 +11,10 @@ final class UserProfileDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
-    func fetch(id: String) async throws -> UserProfile {
+    func fetch(id: String) async throws -> UserDetail {
         struct UserResponse: Decodable {
             let success: Bool
-            let data: UserProfile
+            let data: UserDetail
         }
         
         guard let token = await auth.getToken() else {

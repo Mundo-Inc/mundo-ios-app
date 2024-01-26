@@ -34,10 +34,10 @@ final class FeedDM {
         }
     }
     
-    func getNabeel() async throws -> UserProfile {
+    func getNabeel() async throws -> UserDetail {
         struct UserResponse: Decodable {
             let success: Bool
-            let data: UserProfile
+            let data: UserDetail
         }
         
         guard let token = await auth.getToken() else {
