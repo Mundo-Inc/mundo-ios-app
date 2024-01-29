@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 class ForYouVM: ObservableObject {
-    private let dataManager = FeedDM()
+    private let feedDM = FeedDM()
     private let reactionsDM = ReactionsDM()
     
     @Published var items: [FeedItem] = []
@@ -32,7 +32,7 @@ class ForYouVM: ObservableObject {
         
         do {
             self.isLoading = true
-            let data = try await dataManager.getFeed(page: self.page, type: .forYou)
+            let data = try await feedDM.getFeed(page: self.page, type: .forYou)
             if action == .refresh || self.items.isEmpty {
                 self.items = data
             } else {

@@ -9,13 +9,13 @@ import SwiftUI
 
 struct AddToListView: View {
     @StateObject private var vm: AddToListVM
+    @ObservedObject private var placeVM: PlaceVM
+    
     @State var isAnimating = true
     
-    private let placeName: String
-    
-    init(placeId: String, placeName: String, dismiss: @escaping () -> Void) {
-        self._vm = StateObject(wrappedValue: AddToListVM(placeId: placeId, dismiss: dismiss))
-        self.placeName = placeName
+    init(placeVM: PlaceVM, placeId: String) {
+        self._vm = StateObject(wrappedValue: AddToListVM(placeVM: placeVM, placeId: placeId))
+        self._placeVM = ObservedObject(wrappedValue: placeVM)
     }
     
     var body: some View {
@@ -24,7 +24,9 @@ struct AddToListView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .contentShape(.rect)
                 .onTapGesture {
-                    vm.dismiss()
+                    withAnimation {
+                        placeVM.isAddToListPresented = false
+                    }
                 }
             
             VStack(spacing: 0) {
@@ -32,7 +34,7 @@ struct AddToListView: View {
                     Text("Add to List")
                         .font(.custom(style: .headline))
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    Text("Adding **\(placeName)** to a list")
+                    Text("Adding **\(placeVM.place?.name ?? "Place Name")** to a list")
                         .font(.custom(style: .body))
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
@@ -58,10 +60,8 @@ struct AddToListView: View {
                     .fullScreenCover(isPresented: $vm.isAddListPresented, content: {
                         CreateNewListView { list in
                             Task {
-                                print("Called")
                                 await vm.fetchLists()
                             }
-                            print("Called2")
                             vm.isAddListPresented = false
                         } onCancel: {
                             vm.isAddListPresented = false
@@ -69,10 +69,14 @@ struct AddToListView: View {
                     })
                     
                     ScrollView {
-                        if !vm.isLoading {
+                        if let includedLists = placeVM.includedLists, !vm.isLoading {
                             ForEach(vm.lists) { list in
                                 Button {
-                                    vm.selectList(listId: list.id)
+                                    if includedLists.contains(where: { $0 == list.id }) {
+                                        vm.addAction(item: .init(id: list.id, action: .remove))
+                                    } else {
+                                        vm.addAction(item: .init(id: list.id, action: .add))
+                                    }
                                 } label: {
                                     HStack {
                                         Circle()
@@ -90,14 +94,14 @@ struct AddToListView: View {
                                             .frame(width: 20, height: 20)
                                             .foregroundStyle(.secondary.opacity(0.2))
                                             .overlay {
-                                                if vm.selectedListIds.contains(list.id) {
+                                                if vm.isItemSelected(includedLists: includedLists, listId: list.id) {
                                                     Image(systemName: "checkmark.square.fill")
                                                         .foregroundStyle(Color.accentColor)
                                                 }
                                             }
                                     }
                                     .padding(.all, 10)
-                                    .background(vm.selectedListIds.contains(list.id) ? Color.accentColor.opacity(0.1) : Color.secondary.opacity(0.1))
+                                    .background(vm.isItemSelected(includedLists: includedLists, listId: list.id) ? Color.accentColor.opacity(0.1) : Color.secondary.opacity(0.1))
                                     .clipShape(.rect(cornerRadius: 8))
                                 }
                                 .foregroundStyle(.primary)
@@ -137,7 +141,9 @@ struct AddToListView: View {
                     Spacer()
                     
                     Button {
-                        vm.dismiss()
+                        withAnimation {
+                            placeVM.isAddToListPresented = false
+                        }
                     } label: {
                         Text("Cancel")
                             .padding()
@@ -151,7 +157,9 @@ struct AddToListView: View {
                     Button {
                         Task {
                             await vm.submit()
-                            vm.dismiss()
+                            withAnimation {
+                                placeVM.isAddToListPresented = false
+                            }
                         }
                     } label: {
                         Text("Save")
@@ -167,6 +175,7 @@ struct AddToListView: View {
             .clipShape(.rect(cornerRadius: 16))
             .padding(.horizontal)
         }
+        .redacted(reason: placeVM.place == nil ? .placeholder : [])
         .frame(maxHeight: .infinity)
         .background(.thinMaterial)
         .onDisappear {

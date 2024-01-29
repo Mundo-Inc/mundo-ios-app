@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 class LeaderboardVM: ObservableObject {
-    private let dataManager = LeaderboardDM()
+    private let leaderboardDM = LeaderboardDM()
     
     @Published private(set) var isLoading = false
     @Published private(set) var list: [UserOverview] = []
@@ -33,7 +33,7 @@ class LeaderboardVM: ObservableObject {
         }
         
         do {
-            let data = try await dataManager.fetchLeaderboard(page: page)
+            let data = try await leaderboardDM.fetchLeaderboard(page: page)
             if action == .refresh || self.list.isEmpty {
                 self.list = data
             } else {

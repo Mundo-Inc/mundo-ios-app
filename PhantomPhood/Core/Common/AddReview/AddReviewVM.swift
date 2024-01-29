@@ -45,9 +45,9 @@ final class AddReviewVM: ObservableObject {
         case .id(let placeId):
             Task { [weak self] in
                 do {
-                    let placeData = try await self?.placeDM.fetch(id: placeId)
-                    if let placeData {
-                        self?.place = PlaceEssentials(placeDetail: placeData)
+                    let placeOverview = try await self?.placeDM.getOverview(id: placeId)
+                    if let placeOverview {
+                        self?.place = PlaceEssentials(placeOverview: placeOverview)
                     } else {
                         self?.error = "Not Found"
                     }

@@ -11,17 +11,12 @@ final class LeaderboardDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
         
-    struct LeaderboardResponse: Decodable {
-        let success: Bool
-        let data: [UserOverview]
-    }
-    
     func fetchLeaderboard(page: Int = 1) async throws -> [UserOverview] {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/users/leaderboard?page=\(page)&limit=30", method: .get, token: token) as LeaderboardResponse?
+        let data = try await apiManager.requestData("/users/leaderboard?page=\(page)&limit=30", method: .get, token: token) as APIResponse<[UserOverview]>?
         
         guard let data = data else {
             throw URLError(.badServerResponse)

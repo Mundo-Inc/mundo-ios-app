@@ -13,17 +13,12 @@ final class PlaceDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
-    struct PlaceResponse: Decodable {
-        let success: Bool
-        let data: PlaceDetail
-    }
-    
     func fetch(mapPlace: MapPlace) async throws -> PlaceDetail {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
                 
-        let data = try await apiManager.requestData("/places/context?title=\(mapPlace.title)&lat=\(mapPlace.coordinate.latitude)&lng=\(mapPlace.coordinate.longitude)", method: .get, token: token) as PlaceResponse?
+        let data = try await apiManager.requestData("/places/context?title=\(mapPlace.title)&lat=\(mapPlace.coordinate.latitude)&lng=\(mapPlace.coordinate.longitude)", method: .get, token: token) as APIResponse<PlaceDetail>?
 
         guard let data else {
             throw URLError(.badServerResponse)
@@ -41,7 +36,7 @@ final class PlaceDM {
             throw URLError(.requestBodyStreamExhausted)
         }
         
-        let data = try await apiManager.requestData("/places/context?title=\(title)&lat=\(mapItem.placemark.coordinate.latitude)&lng=\(mapItem.placemark.coordinate.longitude)", method: .get, token: token) as PlaceResponse?
+        let data = try await apiManager.requestData("/places/context?title=\(title)&lat=\(mapItem.placemark.coordinate.latitude)&lng=\(mapItem.placemark.coordinate.longitude)", method: .get, token: token) as APIResponse<PlaceDetail>?
 
         guard let data else {
             throw URLError(.badServerResponse)
@@ -60,7 +55,7 @@ final class PlaceDM {
             throw URLError(.requestBodyStreamExhausted)
         }
         
-        let data = try await apiManager.requestData("/places/context?title=\(title)&lat=\(mapFeature.coordinate.latitude)&lng=\(mapFeature.coordinate.longitude)", method: .get, token: token) as PlaceResponse?
+        let data = try await apiManager.requestData("/places/context?title=\(title)&lat=\(mapFeature.coordinate.latitude)&lng=\(mapFeature.coordinate.longitude)", method: .get, token: token) as APIResponse<PlaceDetail>?
 
         guard let data else {
             throw URLError(.badServerResponse)
@@ -74,7 +69,21 @@ final class PlaceDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/places/\(id)", method: .get, token: token) as PlaceResponse?
+        let data = try await apiManager.requestData("/places/\(id)", method: .get, token: token) as APIResponse<PlaceDetail>?
+
+        guard let data else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return data.data
+    }
+    
+    func getOverview(id: String) async throws -> PlaceOverview {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let data = try await apiManager.requestData("/places/\(id)", method: .get, token: token) as APIResponse<PlaceOverview>?
 
         guard let data else {
             throw URLError(.badServerResponse)
@@ -103,6 +112,20 @@ final class PlaceDM {
         
         let body = try apiManager.createRequestBody(body)
         try await apiManager.requestNoContent("/checkins", method: .post, body: body, token: token)
+    }
+    
+    func getIncludedLists(id: String) async throws -> [String] {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let data = try await apiManager.requestData("/places/\(id)/lists", token: token) as APIResponse<[String]>?
+        
+        guard let data else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return data.data
     }
     
     // MARK: - Structs

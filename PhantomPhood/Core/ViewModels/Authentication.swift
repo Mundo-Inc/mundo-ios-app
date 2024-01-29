@@ -227,15 +227,11 @@ class Authentication: ObservableObject {
         }
     }
     
-    struct UserResponse: Codable {
-        let success: Bool
-        let data: CurrentUserFullData
-    }
     func updateUserInfo() async {
         do {
             guard let uid = Auth.auth().currentUser?.uid, let token = await getToken() else { return }
             
-            let data = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token) as UserResponse?
+            let data = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token) as APIResponse<CurrentUserFullData>?
             
             if let data {
                 self.currentUser = data.data
@@ -249,7 +245,7 @@ class Authentication: ObservableObject {
         }
     }
     func getUserInfo(uid: String, token: String) async throws -> CurrentUserFullData {
-        let data = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token) as UserResponse?
+        let data = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token) as APIResponse<CurrentUserFullData>?
         
         if let data {
             UserSettings.shared.userRole = data.data.role

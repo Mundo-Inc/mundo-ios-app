@@ -8,33 +8,9 @@
 import SwiftUI
 import Combine
 
-class SignUpWithPasswordDM {
-    
-    // MARK: - Nested Types
-    struct ServerError: Codable {
-        let success: Bool
-        let error: ErrorRes
-        
-        struct ErrorRes: Codable {
-            let message: String
-        }
-    }
-    
-    // MARK: - API Manager
-    
-    private let apiManager = APIManager.shared
-    
-    
-    // MARK: - Public Methods
-    func checkUsername(_ username: String) async throws {
-        try await apiManager.requestNoContent("/users/username-availability/\(username)")
-    }
-    
-}
-
 @MainActor
 class SignUpWithPasswordVM: ObservableObject {
-    private let dataManager = SignUpWithPasswordDM()
+    private let checksDM = ChecksDM()
     
     @Published var step = 0
     @Published var direction = 1
@@ -69,7 +45,7 @@ class SignUpWithPasswordVM: ObservableObject {
                 self?.isLoading = true
                 Task {
                     do {
-                        try await self?.dataManager.checkUsername(value)
+                        try await self?.checksDM.checkUsername(value)
                         self?.isUsernameValid = true
                     } catch let error as APIManager.APIError {
                         self?.isUsernameValid = false

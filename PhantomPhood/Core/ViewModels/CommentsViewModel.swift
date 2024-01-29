@@ -36,13 +36,9 @@ final class CommentsViewModel: ObservableObject {
         if isLoading { return }
         guard let token = await auth.getToken() else { return }
         
-        struct CommentsResponse: Decodable {
-            let success: Bool
-            let data: [Comment]
-        }
         isLoading = true
         do {
-            let data = try await apiManager.requestData("/feeds/\(activityId)/comments?page=\(commentsPage)", token: token) as CommentsResponse?
+            let data = try await apiManager.requestData("/feeds/\(activityId)/comments?page=\(commentsPage)", token: token) as APIResponse<[Comment]>?
             if let data = data {
                 if commentsPage == 1 {
                     comments = data.data
@@ -75,15 +71,11 @@ final class CommentsViewModel: ObservableObject {
             let content: String
             let activity: String
         }
-        struct ResponseData: Decodable {
-            let success: Bool
-            let data: Comment
-        }
         
         self.isSubmitting = true
         do {
             let body = try apiManager.createRequestBody(RequestBody(content: commentContent, activity: activityID))
-            let data = try await apiManager.requestData("/comments", method: .post, body: body, token: token) as ResponseData?
+            let data = try await apiManager.requestData("/comments", method: .post, body: body, token: token) as APIResponse<Comment>?
             commentContent = ""
             if let data {
                 self.comments.insert(data.data, at: 0)
@@ -104,14 +96,9 @@ final class CommentsViewModel: ObservableObject {
     func updateCommentLike(id: String, action: LikeAction) async {
         guard let token = await auth.getToken() else { return }
         
-        struct ResponseData: Decodable {
-            let success: Bool
-            let data: Comment
-        }
-        
         self.isSubmitting = true
         do {
-            let data = try await apiManager.requestData("/comments/\(id)/likes", method: action == .add ? .post : .delete, token: token) as ResponseData?
+            let data = try await apiManager.requestData("/comments/\(id)/likes", method: action == .add ? .post : .delete, token: token) as APIResponse<Comment>?
             if let data {
                 self.comments = self.comments.map({ comment in
                     return comment.id == data.data.id ? data.data : comment

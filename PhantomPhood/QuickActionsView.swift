@@ -16,6 +16,60 @@ struct QuickActionsView: View {
     @ObservedObject private var toastViewModel = ToastVM.shared
     var placeDM = PlaceDM()
     
+    func handleCheckin() {
+        if isViewingPlace {
+            switch appData.getActiveRotue() {
+            case .place(let id, _):
+                appData.goTo(AppRoute.checkin(.id(id)))
+            case .placeMapPlace(let mapPlace, _):
+                appData.goTo(AppRoute.checkinMapPlace(mapPlace))
+            default:
+                break
+            }
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                placeSelectorVM.present { mapItem in
+                    if let name = mapItem.name {
+                        appData.goTo(AppRoute.checkinMapPlace(MapPlace(coordinate: mapItem.placemark.coordinate, title: name)))
+                    }
+                }
+            }
+        }
+        dismiss()
+    }
+    
+    func handleReview() {
+        if isViewingPlace {
+            switch appData.getActiveRotue() {
+            case .place(let id, _):
+                appData.goTo(AppRoute.review(.id(id)))
+            case .placeMapPlace(let mapPlace, _):
+                appData.goTo(AppRoute.reviewMapPlace(mapPlace))
+            default:
+                break
+            }
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                placeSelectorVM.present { mapItem in
+                    if let name = mapItem.name {
+                        appData.goTo(AppRoute.reviewMapPlace(MapPlace(coordinate: mapItem.placemark.coordinate, title: name)))
+                    }
+                }
+            }
+        }
+        dismiss()
+    }
+    
+    @State var isViewingPlace = false
+    func updateIsViewingPlace() {
+        switch appData.getActiveRotue() {
+        case .place(_, _), .placeMapPlace(_, _):
+            self.isViewingPlace = true
+        default:
+            self.isViewingPlace = false
+        }
+    }
+    
     var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 3)
@@ -25,10 +79,9 @@ struct QuickActionsView: View {
             
             Spacer()
             
-            if let placeId = appData.visiblePlaceId() {
+            if isViewingPlace {
                 Button {
-                    appData.goTo(AppRoute.checkin(.id(placeId)))
-                    dismiss()
+                    handleCheckin()
                 } label: {
                     HStack {
                         Image(systemName: "checkmark.diamond")
@@ -51,8 +104,7 @@ struct QuickActionsView: View {
                 .foregroundStyle(.primary)
                 
                 Button {
-                    appData.goTo(AppRoute.review(.id(placeId)))
-                    dismiss()
+                    handleReview()
                 } label: {
                     HStack {
                         Image(systemName: "star.bubble")
@@ -76,14 +128,7 @@ struct QuickActionsView: View {
                 .foregroundStyle(.primary)
             } else {
                 Button {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        placeSelectorVM.present { mapItem in
-                            if let name = mapItem.name {
-                                appData.goTo(AppRoute.checkinMapPlace(MapPlace(coordinate: mapItem.placemark.coordinate, title: name)))
-                            }
-                        }
-                    }
-                    dismiss()
+                    handleCheckin()
                 } label: {
                     HStack {
                         Image(systemName: "checkmark.diamond")
@@ -107,14 +152,7 @@ struct QuickActionsView: View {
                 .foregroundStyle(.primary)
                 
                 Button {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        placeSelectorVM.present { mapItem in
-                            if let name = mapItem.name {
-                                appData.goTo(AppRoute.reviewMapPlace(MapPlace(coordinate: mapItem.placemark.coordinate, title: name)))
-                            }
-                        }
-                    }
-                    dismiss()
+                    handleReview()
                 } label: {
                     HStack {
                         Image(systemName: "star.bubble")
@@ -142,6 +180,9 @@ struct QuickActionsView: View {
         }
         .padding(.horizontal)
         .presentationDetents([.height(250)])
+        .onAppear {
+            updateIsViewingPlace()
+        }
     }
 }
 

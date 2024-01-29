@@ -11,7 +11,7 @@ import Foundation
 class UserProfileViewModel: ObservableObject {
     private let id: String
     
-    private let dataManager = UserProfileDM()
+    private let userProfileDM = UserProfileDM()
     private let toastManager = ToastVM.shared
     
     @Published private(set) var isLoading = false
@@ -37,7 +37,7 @@ class UserProfileViewModel: ObservableObject {
     
     func fetchUser() async {
         do {
-            let theUser = try await dataManager.fetch(id: id)
+            let theUser = try await userProfileDM.fetch(id: id)
             self.user = theUser
             self.isFollowing = theUser.isFollowing
             self.error = nil
@@ -67,7 +67,7 @@ class UserProfileViewModel: ObservableObject {
     
     func follow() async {
         do {
-            try await dataManager.follow(id: id)
+            try await userProfileDM.follow(id: id)
             self.isFollowing = true
             if let user {
                 toastManager.toast(Toast(type: .success, title: "New Connection", message: "You are now following \(user.name)"))
@@ -81,7 +81,7 @@ class UserProfileViewModel: ObservableObject {
     
     func unfollow() async {
         do {
-            try await dataManager.unfollow(id: id)
+            try await userProfileDM.unfollow(id: id)
             self.isFollowing = false
             if let user {
                 toastManager.toast(Toast(type: .success, title: "Unfollow", message: "Successfully unfollowed \(user.name)"))
@@ -96,7 +96,7 @@ class UserProfileViewModel: ObservableObject {
     func block() async {
         self.isLoading = true
         do {
-            try await dataManager.block(id: id)
+            try await userProfileDM.block(id: id)
             self.user = nil
             self.isFollowing = nil
             self.blockStatus = .isBlocked
@@ -109,7 +109,7 @@ class UserProfileViewModel: ObservableObject {
     func unblock() async {
         self.isLoading = true
         do {
-            try await dataManager.unblock(id: id)
+            try await userProfileDM.unblock(id: id)
             self.blockStatus = nil
             await fetchUser()
         } catch {

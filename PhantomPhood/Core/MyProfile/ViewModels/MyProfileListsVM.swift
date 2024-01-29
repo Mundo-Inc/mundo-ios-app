@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 final class MyProfileListsVM: ObservableObject {
-    private let dataManager = ListsDM()
+    private let listsDM = ListsDM()
     private let auth = Authentication.shared
     
     @Published var lists: [CompactUserPlacesList] = []
@@ -28,7 +28,7 @@ final class MyProfileListsVM: ObservableObject {
         
         self.isLoading = true
         do {
-            let data = try await dataManager.getUserLists(forUserId: uid)
+            let data = try await listsDM.getUserLists(forUserId: uid)
             
             self.lists = data
         } catch {

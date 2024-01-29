@@ -12,14 +12,10 @@ final class MapDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
-    struct GeoActivitiesResponseType: Decodable {
-        let success: Bool
-        let data: DataType
-        
-        struct DataType: Decodable {
-            let activities: [MapActivity]
-        }
+    struct GeoActivitiesData: Decodable {
+        let activities: [MapActivity]
     }
+    
     func getGeoActivities(for region: MKCoordinateRegion) async throws -> [MapActivity] {
         let (ne, sw) = region.boundariesNESW
         
@@ -32,7 +28,7 @@ final class MapDM {
             "northEastLng": String(ne.longitude),
             "southWestLat": String(sw.latitude),
             "southWestLng": String(sw.longitude)
-        ], token: token) as GeoActivitiesResponseType?
+        ], token: token) as APIResponse<GeoActivitiesData>?
         
         guard let responseData else {
             throw URLError(.badServerResponse)

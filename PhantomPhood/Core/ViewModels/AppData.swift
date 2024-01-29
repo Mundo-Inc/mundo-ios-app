@@ -105,46 +105,17 @@ final class AppData: ObservableObject {
         self.goTo(.userProfile(userId: id))
     }
     
-    func visiblePlaceId() -> String? {
+    func getActiveRotue() -> AppRoute? {
         switch self.activeTab {
         case .home:
-            if let route = self.homeNavStack.last {
-                switch route {
-                case .place(let placeId, _):
-                    return placeId
-                default:
-                    return nil
-                }
-            }
+            return self.homeNavStack.last
         case .explore:
-            if let route = self.exploreNavStack.last {
-                switch route {
-                case .place(let placeId, _):
-                    return placeId
-                default:
-                    return nil
-                }
-            }
+            return self.exploreNavStack.last
         case .rewardsHub:
-            if let route = self.rewardsHubNavStack.last {
-                switch route {
-                case .place(let placeId, _):
-                    return placeId
-                default:
-                    return nil
-                }
-            }
+            return self.rewardsHubNavStack.last
         case .myProfile:
-            if let route = self.myProfileNavStack.last {
-                switch route {
-                case .place(let placeId, _):
-                    return placeId
-                default:
-                    return nil
-                }
-            }
+            return self.myProfileNavStack.last
         }
-        return nil
     }
 }
 

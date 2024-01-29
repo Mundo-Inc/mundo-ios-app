@@ -14,7 +14,7 @@ final class EditListVM: ObservableObject {
     let onSuccess: (UserPlacesList) -> Void
     let onCancel: () -> Void
     
-    private let dataManager = ListsDM()
+    private let listsDM = ListsDM()
     
     @Published var step: Step = .general
     
@@ -83,7 +83,7 @@ final class EditListVM: ObservableObject {
         if !newCollaborators.isEmpty {
             for c in newCollaborators {
                 do {
-                    try await dataManager.addCollaborator(listId: self.originalList.id, userId: c.user.id, access: c.access)
+                    try await listsDM.addCollaborator(listId: self.originalList.id, userId: c.user.id, access: c.access)
                 } catch {
                     print(error)
                 }
@@ -92,7 +92,7 @@ final class EditListVM: ObservableObject {
         if !removedCollaborators.isEmpty {
             for c in removedCollaborators {
                 do {
-                    try await dataManager.removeCollaborator(listId: self.originalList.id, userId: c.user.id)
+                    try await listsDM.removeCollaborator(listId: self.originalList.id, userId: c.user.id)
                 } catch {
                     print(error)
                 }
@@ -101,7 +101,7 @@ final class EditListVM: ObservableObject {
         if !editedCollaborators.isEmpty {
             for c in editedCollaborators {
                 do {
-                    try await dataManager.editCollaborator(listId: self.originalList.id, userId: c.user.id, changeAccessTo: c.access)
+                    try await listsDM.editCollaborator(listId: self.originalList.id, userId: c.user.id, changeAccessTo: c.access)
                 } catch {
                     print(error)
                 }
@@ -110,14 +110,14 @@ final class EditListVM: ObservableObject {
         
         if nameChanged || iconChanged || privacyChanged {
             do {
-                try await dataManager.editListInfo(withId: self.originalList.id, body: .init(name: self.name, icon: self.icon.symbol, isPrivate: self.isPrivate))
+                try await listsDM.editListInfo(withId: self.originalList.id, body: .init(name: self.name, icon: self.icon.symbol, isPrivate: self.isPrivate))
             } catch {
                 print(error)
             }
         }
         
         do {
-            let list = try await dataManager.getList(withId: self.originalList.id)
+            let list = try await listsDM.getList(withId: self.originalList.id)
             self.onSuccess(list)
         } catch {
             print(error)

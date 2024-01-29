@@ -10,8 +10,6 @@ import SwiftUI
 // MARK: - ViewModel
 @MainActor
 class SignInViewModel: ObservableObject {
-    private let dataManager = SignUpWithPasswordDM()
-    
     @Published var isLoading = false
     
     @Published var email: String = ""

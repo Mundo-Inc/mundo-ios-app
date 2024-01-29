@@ -9,11 +9,11 @@ import SwiftUI
 import Kingfisher
 
 struct PlaceMediaView: View {
-    @ObservedObject var vm: PlaceViewModel
+    @ObservedObject var vm: PlaceVM
     
     @StateObject var placeMediaViewModel: PlaceMediaViewModel
     
-    init(placeId: String, vm: PlaceViewModel) {
+    init(placeId: String, vm: PlaceVM) {
         self.vm = vm
         self._placeMediaViewModel = StateObject(wrappedValue: PlaceMediaViewModel(placeId: placeId))
     }
@@ -106,5 +106,5 @@ struct PlaceMediaView: View {
 }
 
 #Preview {
-    PlaceMediaView(placeId: "645c1d1ab41f8e12a0d166bc", vm: PlaceViewModel(id: "645c1d1ab41f8e12a0d166bc"))
+    PlaceMediaView(placeId: "645c1d1ab41f8e12a0d166bc", vm: PlaceVM(id: "645c1d1ab41f8e12a0d166bc"))
 }

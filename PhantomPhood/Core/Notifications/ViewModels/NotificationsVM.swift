@@ -14,7 +14,7 @@ final class NotificationsVM: ObservableObject {
     
     private init() {}
     
-    private let dataManager = NotificationsDM()
+    private let notificationsDM = NotificationsDM()
     
     @Published var notifications: [Notification] = []
     @Published var unreadCount: Int? = nil
@@ -38,7 +38,7 @@ final class NotificationsVM: ObservableObject {
         }
         do {
             self.isLoading = true
-            let data = try await dataManager.getNotifications(page: self.page)
+            let data = try await notificationsDM.getNotifications(page: self.page)
             
             hasMore = data.hasMore
             
@@ -64,7 +64,7 @@ final class NotificationsVM: ObservableObject {
     
     func updateUnreadNotificationsCount() async {
         do {
-            let data = try await dataManager.getNotifications(page: self.page, unread: true)
+            let data = try await notificationsDM.getNotifications(page: self.page, unread: true)
             
             self.unreadCount = data.data.total
             try? await UNUserNotificationCenter.current().setBadgeCount(data.data.total)
@@ -75,7 +75,7 @@ final class NotificationsVM: ObservableObject {
     
     func seenNotifications() async {
         do {
-            try await dataManager.markNotificationsAsRead()
+            try await notificationsDM.markNotificationsAsRead()
             
             self.notifications = self.notifications.map({ notification in
                 var new = notification

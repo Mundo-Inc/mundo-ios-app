@@ -20,7 +20,7 @@ final class RewardsHubVM: ObservableObject {
     }
     
     @Published var loadingSections = Set<LoadingSection>()
-    @Published var missions: [Mission] = []
+    @Published var missions: [Mission]? = nil
     
     func claimDailyReward() async {
         guard !pcVM.hasClaimedToday && !loadingSections.contains(.dailyReward) else { return }
@@ -55,12 +55,14 @@ final class RewardsHubVM: ObservableObject {
         self.loadingSections.insert(.mission(id))
         do {
             try await rewardsDM.claimMission(missionId: id)
-            self.missions = self.missions.map { mission in
-                var mission = mission
-                if mission.id == id {
-                    mission.isClaimed = true
+            if let missions {
+                self.missions = missions.map { mission in
+                    var mission = mission
+                    if mission.id == id {
+                        mission.isClaimed = true
+                    }
+                    return mission
                 }
-                return mission
             }
             await pcVM.refresh()
             UIImpactFeedbackGenerator(style: .heavy).impactOccurred()

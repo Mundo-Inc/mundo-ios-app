@@ -12,16 +12,11 @@ final class UserProfileDM {
     private let auth: Authentication = Authentication.shared
     
     func fetch(id: String) async throws -> UserDetail {
-        struct UserResponse: Decodable {
-            let success: Bool
-            let data: UserDetail
-        }
-        
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/users/\(id)", method: .get, token: token) as UserResponse?
+        let data = try await apiManager.requestData("/users/\(id)", method: .get, token: token) as APIResponse<UserDetail>?
         
         guard let data = data else {
             throw URLError(.badServerResponse)

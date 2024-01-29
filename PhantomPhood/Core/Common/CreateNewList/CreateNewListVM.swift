@@ -13,7 +13,7 @@ final class CreateNewListVM: ObservableObject {
     let onSuccess: (UserPlacesList) -> Void
     let onCancel: () -> Void
     
-    private let dataManager = ListsDM()
+    private let listsDM = ListsDM()
     
     @Published var step: Step = .general
     
@@ -39,7 +39,7 @@ final class CreateNewListVM: ObservableObject {
     func submit() async {
         self.isLoading = true
         do {
-            let list = try await dataManager.createList(body: .init(name: name, icon: icon.symbol, collaborators: collaborators.map({ c in
+            let list = try await listsDM.createList(body: .init(name: name, icon: icon.symbol, collaborators: collaborators.map({ c in
                 return .init(user: c.user.id, access: c.access.rawValue)
             }), isPrivate: isPrivate))
             

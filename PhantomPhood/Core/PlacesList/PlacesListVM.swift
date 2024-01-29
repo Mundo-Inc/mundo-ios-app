@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 final class PlacesListVM: ObservableObject {
-    private let dataManager = ListsDM()
+    private let listsDM = ListsDM()
     
     let listId: String
     
@@ -31,7 +31,7 @@ final class PlacesListVM: ObservableObject {
     
     private func getList() async {
         do {
-            let data = try await dataManager.getList(withId: self.listId)
+            let data = try await listsDM.getList(withId: self.listId)
             self.list = data
         } catch {
             print(error)
@@ -41,7 +41,7 @@ final class PlacesListVM: ObservableObject {
     func deleteList() async {
         if let list = self.list {
             do {
-                try await dataManager.deleteList(withId: list.id)
+                try await listsDM.deleteList(withId: list.id)
             } catch {
                 print(error)
             }
@@ -51,7 +51,7 @@ final class PlacesListVM: ObservableObject {
     func removePlaceFromList(placeId: String) async {
         if let list = self.list {
             do {
-                try await dataManager.removePlaceFromList(listId: list.id, placeId: placeId)
+                try await listsDM.removePlaceFromList(listId: list.id, placeId: placeId)
                 await self.getList()
             } catch {
                 print(error)

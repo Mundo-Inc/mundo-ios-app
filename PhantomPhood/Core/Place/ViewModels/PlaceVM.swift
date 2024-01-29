@@ -15,11 +15,11 @@ enum PlaceTab: String, CaseIterable, Hashable {
 }
 
 @MainActor
-class PlaceViewModel: ObservableObject {
+final class PlaceVM: ObservableObject {
     private(set) var id: String? = nil
     private let action: PlaceAction?
     
-    private let dataManager = PlaceDM()
+    private let placeDM = PlaceDM()
     private let toastViewModel = ToastVM.shared
     private let appData = AppData.shared
     
@@ -35,14 +35,19 @@ class PlaceViewModel: ObservableObject {
     
     @Published var reportId: String? = nil
     
+    /// user's lists that include this place
+    @Published var includedLists: [String]? = nil
     
     init(id: String, action: PlaceAction? = nil) {
         self.id = id
         self.action = action
         
         Task {
+            await updateIncludedLists()
+        }
+        Task {
             do {
-                let data = try await dataManager.fetch(id: id)
+                let data = try await placeDM.fetch(id: id)
                 self.place = data
                 
                 switch action {
@@ -70,7 +75,7 @@ class PlaceViewModel: ObservableObject {
         
         Task {
             do {
-                let data = try await dataManager.fetch(mapPlace: mapPlace)
+                let data = try await placeDM.fetch(mapPlace: mapPlace)
                 self.id = data.id
                 self.place = data
                 
@@ -87,10 +92,22 @@ class PlaceViewModel: ObservableObject {
                 case nil:
                     break
                 }
+                
+                await updateIncludedLists()
             } catch {
                 print(error)
                 self.error = error.localizedDescription
             }
+        }
+    }
+    
+    func updateIncludedLists() async {
+        guard let id = self.id else { return }
+        do {
+            let listIds = try await placeDM.getIncludedLists(id: id)
+            self.includedLists = listIds
+        } catch {
+            print(error.localizedDescription)
         }
     }
 }

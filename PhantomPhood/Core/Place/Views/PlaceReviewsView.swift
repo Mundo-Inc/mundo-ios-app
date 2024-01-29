@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct PlaceReviewsView: View {
-    @ObservedObject var vm: PlaceViewModel
+    @ObservedObject var vm: PlaceVM
     @StateObject var placeReviewsVM: PlaceReviewsViewModel
     
-    init(placeId: String, vm: PlaceViewModel) {
+    init(placeId: String, vm: PlaceVM) {
         self.vm = vm
         self._placeReviewsVM = StateObject(wrappedValue: PlaceReviewsViewModel(placeId: placeId))
     }
@@ -145,5 +145,5 @@ struct PlaceReviewsView: View {
 }
 
 #Preview {
-    PlaceReviewsView(placeId: "645c1d1ab41f8e12a0d166bc", vm: PlaceViewModel(id: "645c1d1ab41f8e12a0d166bc"))
+    PlaceReviewsView(placeId: "645c1d1ab41f8e12a0d166bc", vm: PlaceVM(id: "645c1d1ab41f8e12a0d166bc"))
 }

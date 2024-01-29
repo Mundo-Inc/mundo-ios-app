@@ -9,14 +9,14 @@ import SwiftUI
 import Kingfisher
 
 struct PlaceView: View {
-    @StateObject private var vm: PlaceViewModel
+    @StateObject private var vm: PlaceVM
     
     init(id: String, action: PlaceAction? = nil) {
-        self._vm = StateObject(wrappedValue: PlaceViewModel(id: id, action: action))
+        self._vm = StateObject(wrappedValue: PlaceVM(id: id, action: action))
     }
     
     init(mapPlace: MapPlace, action: PlaceAction? = nil) {
-        self._vm = StateObject(wrappedValue: PlaceViewModel(mapPlace: mapPlace, action: action))
+        self._vm = StateObject(wrappedValue: PlaceVM(mapPlace: mapPlace, action: action))
     }
     
     @State var isCollapsed = true
@@ -151,17 +151,17 @@ struct PlaceView: View {
                         }
                     } label: {
                         Label {
-                            Text("Add to list")
+                            Text((vm.includedLists?.isEmpty ?? true) ? "Add to list" : "Saved")
                                 .foregroundStyle(Color.white)
                         } icon: {
-                            Image(systemName: "star.square.on.square.fill")
+                            Image(systemName: (vm.includedLists?.isEmpty ?? true) ? "star.square.on.square" : "star.square.on.square.fill")
                                 .foregroundStyle(Color.white)
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                     }
                     .font(.custom(style: .subheadline))
-                    .background(Color.accentColor)
+                    .background((vm.includedLists?.isEmpty ?? true) ? Color.accentColor : Color.themePrimary)
                     .clipShape(.rect(cornerRadius: 5))
                     .padding(.all, 2)
                     .background(Color.themeBG)
@@ -170,7 +170,7 @@ struct PlaceView: View {
                     .frame(height: 40)
                     .padding(.trailing)
                     .offset(y: 20)
-                    .redacted(reason: vm.place == nil ? .placeholder : [])
+                    .redacted(reason: vm.includedLists == nil ? .placeholder : [])
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 }
                 
@@ -289,13 +289,9 @@ struct PlaceView: View {
                     .animation(.easeInOut, value: vm.reportId)
             }
             
-            if let place = vm.place, vm.isAddToListPresented {
-                AddToListView(placeId: place.id, placeName: place.name) {
-                    withAnimation {
-                        vm.isAddToListPresented = false
-                    }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            if let place = vm.place, vm.includedLists != nil, vm.isAddToListPresented {
+                AddToListView(placeVM: vm, placeId: place.id)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .toolbarBackground(.hidden, for: .automatic)

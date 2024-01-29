@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 class FeedViewModel: ObservableObject {
-    private let dataManager = FeedDM()
+    private let feedDM = FeedDM()
     private let reactionsDM = ReactionsDM()
     
     @Published var items: [FeedItem] = []
@@ -36,7 +36,7 @@ class FeedViewModel: ObservableObject {
         
         do {
             self.isLoading = true
-            let data = try await dataManager.getFeed(page: self.page, type: .followings)
+            let data = try await feedDM.getFeed(page: self.page, type: .followings)
             if action == .refresh || self.items.isEmpty {
                 self.items = data
             } else {
@@ -61,7 +61,7 @@ class FeedViewModel: ObservableObject {
     
     func getNabeel() async {
         do {
-            let data = try await dataManager.getNabeel()
+            let data = try await feedDM.getNabeel()
             self.nabeel = data
             self.isFollowingNabeel = data.isFollowing
         } catch {
@@ -72,7 +72,7 @@ class FeedViewModel: ObservableObject {
     func followNabeel() async {
         self.isRequestingFollow = true
         do {
-            try await dataManager.followNabeel()
+            try await feedDM.followNabeel()
             self.isFollowingNabeel = true
             await getFeed(.refresh)
         } catch {

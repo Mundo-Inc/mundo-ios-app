@@ -214,19 +214,21 @@ struct RewardsHubView: View {
                     
                     Section {
                         VStack {
-                            if vm.missions.isEmpty && vm.loadingSections.contains(.missions) {
+                            if let missions = vm.missions {
+                                if missions.isEmpty {
+                                    Text("No missions available")
+                                        .font(.custom(style: .headline))
+                                        .foregroundStyle(Color.secondary)
+                                        .padding(.top)
+                                } else {
+                                    ForEach(missions) { item in
+                                        MissionItem(vm: vm, mission: item, isAnimating: $isEmojiAnimating)
+                                    }
+                                }
+                            } else if vm.loadingSections.contains(.missions) {
                                 ForEach(0..<2, id: \.self) { _ in
                                     self.missionPlaceholder
                                 }
-                            } else if !vm.missions.isEmpty {
-                                ForEach(vm.missions) { item in
-                                    MissionItem(vm: vm, mission: item, isAnimating: $isEmojiAnimating)
-                                }
-                            } else {
-                                Text("No missions available")
-                                    .font(.custom(style: .headline))
-                                    .foregroundStyle(Color.secondary)
-                                    .padding(.top)
                             }
                         }
                         .onAppear {

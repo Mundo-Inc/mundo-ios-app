@@ -101,20 +101,13 @@ final class ForYouInfoVM: ObservableObject {
         self.isLoadingFollowState = false
     }
     
-    struct FollowStatusResponse: Decodable {
-        let success: Bool
-        let data: FollowStatus
-        
-        struct FollowStatus: Decodable {
-            let isFollowing: Bool
-            let isFollower: Bool
-        }
-    }
-    private func getFollowStatus(_ userId: String) async -> FollowStatusResponse.FollowStatus? {
+    // MARK: - Private methods
+    
+    private func getFollowStatus(_ userId: String) async -> FollowStatus? {
         guard let token = await auth.getToken() else { return nil }
         
         do {
-            let data = try await apiManager.requestData("/users/\(userId)/connections/followStatus", method: .get, token: token) as FollowStatusResponse?
+            let data = try await apiManager.requestData("/users/\(userId)/connections/followStatus", method: .get, token: token) as APIResponse<FollowStatus>?
             
             if let data {
                 return data.data
@@ -124,5 +117,12 @@ final class ForYouInfoVM: ObservableObject {
         }
         
         return nil
+    }
+    
+    // MARK: - Structs
+    
+    struct FollowStatus: Decodable {
+        let isFollowing: Bool
+        let isFollower: Bool
     }
 }

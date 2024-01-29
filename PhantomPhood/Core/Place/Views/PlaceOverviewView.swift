@@ -9,7 +9,7 @@ import SwiftUI
 import MapKit
 
 struct PlaceOverviewView: View {
-    @ObservedObject var vm: PlaceViewModel
+    @ObservedObject var vm: PlaceVM
     @State private var isMapCollapsed = true
     
     // Only used on iOS 16
@@ -147,5 +147,5 @@ struct PlaceOverviewView: View {
 }
 
 #Preview {
-    PlaceOverviewView(vm: PlaceViewModel(id: "645c1d1ab41f8e12a0d166bc"))
+    PlaceOverviewView(vm: PlaceVM(id: "645c1d1ab41f8e12a0d166bc"))
 }

@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 class MyConnectionsViewModel: ObservableObject {
-    private let dataManager = ConnectionsDM()
+    private let connectionsDM = ConnectionsDM()
     private let auth = Authentication.shared
     
     @Published var isLoading: Bool = false
@@ -61,7 +61,7 @@ class MyConnectionsViewModel: ObservableObject {
         }
         
         do {
-            let (data, total) = try await dataManager.getConnections(userId: userId, type: type, page: type == .followers ? followersPage : followingsPage, limit: DATA_LIMIT)
+            let (data, total) = try await connectionsDM.getConnections(userId: userId, type: type, page: type == .followers ? followersPage : followingsPage, limit: DATA_LIMIT)
             
             switch type {
             case .followers:

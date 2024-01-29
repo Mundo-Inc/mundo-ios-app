@@ -158,17 +158,11 @@ class EditProfileViewModel: ObservableObject {
             let bio: String?
             let removeProfileImage: Bool?
         }
-        struct EditUserResponse: Codable {
-            let success: Bool
-            let data: CurrentUserCoreData
-        }
-        
-        
         
         if let token = await auth.getToken(), let uid = auth.currentUser?.id {
             do {
                 let reqBody = try apiManager.createRequestBody(EditUserBody(name: self.name, username: self.username, bio: self.bio, removeProfileImage: self.isDeleting ? self.isDeleting : nil))
-                let _ = try await apiManager.requestData("/users/\(uid)", method: .put, body: reqBody, token: token) as EditUserResponse?
+                let _ = try await apiManager.requestData("/users/\(uid)", method: .put, body: reqBody, token: token) as APIResponse<CurrentUserCoreData>?
             } catch {
                 print(error)
             }

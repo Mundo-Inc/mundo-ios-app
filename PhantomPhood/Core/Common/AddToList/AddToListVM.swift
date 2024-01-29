@@ -6,25 +6,26 @@
 //
 
 import Foundation
+import SwiftUI
 
 @MainActor
 final class AddToListVM: ObservableObject {
-    private let dataManager = ListsDM()
+    private let listsDM = ListsDM()
     private let auth = Authentication.shared
     private let toastManager = ToastVM.shared
+    private let placeVM: PlaceVM
     
     @Published var lists: [CompactUserPlacesList] = []
-    @Published var selectedListIds: [String] = []
+    @Published var actionsList: [ActionItem] = []
     @Published var isLoading: Bool = false
     
     @Published var isAddListPresented = false
     
     let placeId: String
-    let dismiss: () -> Void
     
-    init(placeId: String, dismiss: @escaping () -> Void) {
+    init(placeVM: PlaceVM, placeId: String) {
+        self.placeVM = placeVM
         self.placeId = placeId
-        self.dismiss = dismiss
         
         Task {
             await fetchLists()
@@ -36,7 +37,7 @@ final class AddToListVM: ObservableObject {
         
         self.isLoading = true
         do {
-            let data = try await dataManager.getUserLists(forUserId: uid)
+            let data = try await listsDM.getUserLists(forUserId: uid)
             
             self.lists = data
         } catch {
@@ -46,25 +47,56 @@ final class AddToListVM: ObservableObject {
     }
     
     func submit() async {
-        guard !selectedListIds.isEmpty else { return }
+        guard !actionsList.isEmpty else { return }
         
         self.isLoading = true
-        for listId in selectedListIds {
+        for item in actionsList {
             do {
-                try await dataManager.addPlaceToList(listId: listId, placeId: placeId)
+                switch item.action {
+                case .add:
+                    try await listsDM.addPlaceToList(listId: item.id, placeId: placeId)
+                case .remove:
+                    try await listsDM.removePlaceFromList(listId: item.id, placeId: placeId)
+                }
             } catch {
                 print(error)
             }
         }
-        toastManager.toast(.init(type: .success, title: "Added to List", message: "Place successfully added to lists"))
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        toastManager.toast(.init(type: .success, title: "Success", message: "Lists updated successfully"))
         self.isLoading = false
+        withAnimation {
+            self.placeVM.isAddToListPresented = false
+        }
+        await self.placeVM.updateIncludedLists()
     }
     
-    func selectList(listId: String) {
-        if selectedListIds.contains(listId) {
-            selectedListIds.removeAll(where: { $0 == listId })
+    func addAction(item: ActionItem) {
+        if actionsList.contains(where: { $0.id == item.id }) {
+            actionsList.removeAll(where: { $0.id == item.id })
         } else {
-            selectedListIds.append(listId)
+            actionsList.append(item)
+        }
+    }
+    
+    func isItemSelected(includedLists: [String], listId: String) -> Bool {
+        if let found = self.actionsList.first(where: { $0.id == listId }) {
+            if found.action == .add {
+                return true
+            }
+        } else if includedLists.contains(where: { $0 == listId }) {
+            return true
+        }
+        return false
+    }
+    
+    struct ActionItem {
+        let id: String
+        let action: ActionType
+        
+        enum ActionType {
+            case add
+            case remove
         }
     }
 }

@@ -11,8 +11,8 @@ import Combine
 @MainActor
 class CompleteTheUserInfoVM: ObservableObject {
     private let apiManager = APIManager.shared
-    @ObservedObject var auth = Authentication.shared
-    private let dataManager = SignUpWithPasswordDM()
+    private let auth = Authentication.shared
+    private let checksDM = ChecksDM()
     
     @Published var step = 0
     @Published var direction = 1
@@ -45,7 +45,7 @@ class CompleteTheUserInfoVM: ObservableObject {
                 self?.isLoading = true
                 Task {
                     do {
-                        try await self?.dataManager.checkUsername(value)
+                        try await self?.checksDM.checkUsername(value)
                         self?.isUsernameValid = true
                     } catch let error as APIManager.APIError {
                         self?.isUsernameValid = false
