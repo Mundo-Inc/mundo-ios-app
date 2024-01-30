@@ -41,7 +41,7 @@ struct NewCheckinView: View {
                 Divider()
                     .padding(.vertical)
                 
-                TextField("Caption", text: $vm.caption, axis: .vertical)
+                TextField("(Optional) - Caption", text: $vm.caption, axis: .vertical)
                     .lineLimit(5...15)
                     .disabled(vm.loadings.contains(.submitting))
                     .padding()
@@ -81,12 +81,12 @@ struct NewCheckinView: View {
                 Divider()
                 
                 VStack {
-                    Text("Capture a Memory: Share Your Moment!")
+                    Text("Take a Selfie!")
                         .font(.custom(style: .headline))
                         .fontWeight(.bold)
                         .foregroundStyle(Color.primary)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    Text("You will earn additional 20 points by adding an image")
+                    Text("Take a fun picture of you and your friends having a good time")
                         .font(.custom(style: .caption))
                         .foregroundStyle(Color.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -99,7 +99,7 @@ struct NewCheckinView: View {
                     ) {
                         if pickerVM.mediaItems.isEmpty {
                             Label {
-                                Text("Add Memory")
+                                Text("Add Photo")
                                     .fontWeight(.medium)
                             } icon: {
                                 Image(systemName: "camera.fill")
