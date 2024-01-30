@@ -135,7 +135,7 @@ struct ForYouItem: View {
                                         .onFailureImage(UIImage(named: "ErrorLoadingImage"))
                                         .resizable()
                                         .aspectRatio(contentMode: .fill)
-                                        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height - (parentGeometry?.safeAreaInsets.bottom ?? 0))
+                                        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height - (parentGeometry?.safeAreaInsets.top ?? 0))
                                         .contentShape(Rectangle())
                                         .clipShape(Rectangle())
                                         .tag(image.id)
@@ -162,7 +162,7 @@ struct ForYouItem: View {
                             .onFailureImage(UIImage(named: "ErrorLoadingImage"))
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height - (parentGeometry?.safeAreaInsets.bottom ?? 0))
+                            .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height - (parentGeometry?.safeAreaInsets.top ?? 0))
                             .contentShape(Rectangle())
                             .clipShape(Rectangle())
                     } else if let video = feedReview.videos.first {
@@ -228,7 +228,7 @@ struct ForYouItem: View {
                         .onFailureImage(UIImage(named: "ErrorLoadingImage"))
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height - (parentGeometry?.safeAreaInsets.bottom ?? 0))
+                        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height - (parentGeometry?.safeAreaInsets.top ?? 0))
                         .contentShape(Rectangle())
                         .clipShape(Rectangle())
                 }
