@@ -8,8 +8,10 @@
 import Foundation
 
 struct UserConnection: Identifiable, Decodable {
+    static let dummy = UserConnection(id: "", user: .init(id: "", name: "Name", username: "username", verified: false, profileImage: "", progress: .init(level: 50)), createdAt: "")
+    
     let id: String
-    let user: UserOverview
+    let user: UserEssentials
     let createdAt: String
     
     enum CodingKeys: String, CodingKey {

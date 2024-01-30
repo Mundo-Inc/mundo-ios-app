@@ -11,14 +11,21 @@ import Kingfisher
 struct MyConnections: View {
     @State private var activeTab: UserConnectionsTab
     
+    @ObservedObject private var appData = AppData.shared
+    @ObservedObject private var auth = Authentication.shared
+    
     @StateObject private var vm = MyConnectionsViewModel()
     
     init(activeTab: UserConnectionsTab = .followers) {
         self._activeTab = State(wrappedValue: activeTab)
     }
     
+    func gotToUser(_ id: String) {
+        appData.goToUser(id, auth.currentUser?.id)
+    }
+    
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             HStack {
                 Button {
                     withAnimation {
@@ -59,13 +66,14 @@ struct MyConnections: View {
             }
             
             Divider()
+                .padding(.top, 4)
             
             List {
                 switch activeTab {
                 case .followers:
                     if let connections = vm.followers {
                         ForEach(connections) { connection in
-                            UserCard(connection: connection)
+                            UserCard(connection: connection, goToUser: gotToUser)
                                 .onAppear {
                                     if !vm.isLoading {
                                         Task {
@@ -75,7 +83,10 @@ struct MyConnections: View {
                                 }
                         }
                     } else {
-                        ProgressView()
+                        UserCard(connection: UserConnection.dummy, goToUser: gotToUser)
+                            .redacted(reason: .placeholder)
+                        UserCard(connection: UserConnection.dummy, goToUser: gotToUser)
+                            .redacted(reason: .placeholder)
                             .onAppear {
                                 Task {
                                     await vm.getConnections(type: .followers, requestType: .refresh)
@@ -85,7 +96,7 @@ struct MyConnections: View {
                 case .followings:
                     if let connections = vm.followings {
                         ForEach(connections) { connection in
-                            UserCard(connection: connection)
+                            UserCard(connection: connection, goToUser: gotToUser)
                                 .onAppear {
                                     if !vm.isLoading {
                                         Task {
@@ -95,7 +106,10 @@ struct MyConnections: View {
                                 }
                         }
                     } else {
-                        ProgressView()
+                        UserCard(connection: UserConnection.dummy, goToUser: gotToUser)
+                            .redacted(reason: .placeholder)
+                        UserCard(connection: UserConnection.dummy, goToUser: gotToUser)
+                            .redacted(reason: .placeholder)
                             .onAppear {
                                 Task {
                                     await vm.getConnections(type: .followings, requestType: .refresh)
@@ -104,7 +118,7 @@ struct MyConnections: View {
                     }
                 }
             }
-            .listStyle(.plain)
+            .listStyle(PlainListStyle())
             .scrollIndicators(.hidden)
             .refreshable {
                 await vm.getConnections(type: activeTab == .followers ? .followers : .followings, requestType: .refresh)
@@ -125,30 +139,32 @@ struct MyConnections: View {
 
 fileprivate struct UserCard: View {
     let connection: UserConnection
+    let goToUser: (String) -> Void
     
     var body: some View {
-        NavigationLink(value: AppRoute.userProfile(userId: connection.user.id)) {
-            HStack {
-                ProfileImage(connection.user.profileImage, size: 46, cornerRadius: 10)
-                
-                VStack(spacing: 0) {
-                    HStack {
-                        LevelView(level: connection.user.progress.level)
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 28)
-                        
-                        Text(connection.user.name)
-                            .bold()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    Text("@" + connection.user.username)
-                        .foregroundStyle(.secondary)
+        HStack(spacing: 10) {
+            ProfileImage(connection.user.profileImage, size: 42, cornerRadius: 10)
+            
+            VStack(spacing: 0) {
+                HStack {
+                    LevelView(level: connection.user.progress.level)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 20, height: 26)
+                    
+                    Text(connection.user.name)
+                        .font(.custom(style: .headline))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.leading, 8)
-                .font(.custom(style: .body))
-                .frame(maxWidth: .infinity, alignment: .leading)
+                Text("@" + connection.user.username)
+                    .font(.custom(style: .subheadline))
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            goToUser(connection.user.id)
         }
     }
 }

@@ -27,7 +27,7 @@ struct UserConnectionsView: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             HStack {
                 Button {
                     withAnimation {
@@ -66,7 +66,9 @@ struct UserConnectionsView: View {
                 )
                 .padding(.leading)
             }
+            
             Divider()
+                .padding(.top, 4)
             
             List {
                 switch activeTab {
@@ -83,7 +85,10 @@ struct UserConnectionsView: View {
                                 }
                         }
                     } else {
-                        ProgressView()
+                        UserCard(connection: UserConnection.dummy, goToUser: gotToUser)
+                            .redacted(reason: .placeholder)
+                        UserCard(connection: UserConnection.dummy, goToUser: gotToUser)
+                            .redacted(reason: .placeholder)
                             .onAppear {
                                 Task {
                                     await vm.getConnections(userId: userId, type: .followers, requestType: .refresh)
@@ -103,7 +108,10 @@ struct UserConnectionsView: View {
                                 }
                         }
                     } else {
-                        ProgressView()
+                        UserCard(connection: UserConnection.dummy, goToUser: gotToUser)
+                            .redacted(reason: .placeholder)
+                        UserCard(connection: UserConnection.dummy, goToUser: gotToUser)
+                            .redacted(reason: .placeholder)
                             .onAppear {
                                 Task {
                                     await vm.getConnections(userId: userId, type: .followings, requestType: .refresh)
@@ -112,7 +120,7 @@ struct UserConnectionsView: View {
                     }
                 }
             }
-            .listStyle(.plain)
+            .listStyle(PlainListStyle())
             .scrollIndicators(.hidden)
             .refreshable {
                 await vm.getConnections(userId: userId, type: activeTab == .followers ? .followers : .followings, requestType: .refresh)
@@ -136,27 +144,27 @@ fileprivate struct UserCard: View {
     let goToUser: (String) -> Void
     
     var body: some View {
-        HStack {
-            ProfileImage(connection.user.profileImage, size: 46, cornerRadius: 10)
+        HStack(spacing: 10) {
+            ProfileImage(connection.user.profileImage, size: 42, cornerRadius: 10)
             
             VStack(spacing: 0) {
                 HStack {
                     LevelView(level: connection.user.progress.level)
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 20, height: 28)
+                        .frame(width: 20, height: 26)
                     
                     Text(connection.user.name)
-                        .bold()
+                        .font(.custom(style: .headline))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 Text("@" + connection.user.username)
+                    .font(.custom(style: .subheadline))
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(.leading, 8)
-            .font(.custom(style: .body))
             .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .contentShape(Rectangle())
         .onTapGesture {
             goToUser(connection.user.id)
         }

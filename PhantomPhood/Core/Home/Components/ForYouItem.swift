@@ -108,7 +108,7 @@ struct ForYouItem: View {
                                 .overlay(alignment: .bottomLeading) {
                                     if !time.seconds.isZero, !currentVideoTotalDuration.isZero {
                                         Rectangle()
-                                            .animation(.linear, value: time.seconds)
+                                            .animation(.linear(duration: 0.1), value: time.seconds)
                                             .frame(height: 2)
                                             .frame(width: UIScreen.main.bounds.width * (time.seconds / currentVideoTotalDuration))
                                             .foregroundStyle(.white)
@@ -210,6 +210,27 @@ struct ForYouItem: View {
                         .tag(video.id)
                         
                     }
+                }
+            case .checkin(let feedCheckin):
+                if let image = feedCheckin.image, let url = URL(string: image.src) {
+                    KFImage.url(url)
+                        .placeholder { progress in
+                            Rectangle()
+                                .foregroundStyle(.clear)
+                                .frame(maxWidth: 150)
+                                .overlay {
+                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                        .progressViewStyle(LinearProgressViewStyle())
+                                }
+                        }
+                        .loadDiskFileSynchronously()
+                        .fade(duration: 0.25)
+                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height - (parentGeometry?.safeAreaInsets.bottom ?? 0))
+                        .contentShape(Rectangle())
+                        .clipShape(Rectangle())
                 }
             default:
                 VStack {
@@ -348,7 +369,95 @@ struct ForYouItem: View {
                                 }
                             }
                         }
+                    case .checkin(let feedCheckin):
+                        HStack {
+                            NavigationLink(value: AppRoute.userProfile(userId: forYouVM.items[index].user.id)) {
+                                VStack(spacing: -15) {
+                                    ProfileImage(forYouVM.items[index].user.profileImage, size: 50)
+                                    
+                                    LevelView(level: forYouVM.items[index].user.progress.level)
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 24, height: 30)
+                                }
+                            }
+                            
+                            VStack {
+                                NavigationLink(value: AppRoute.userProfile(userId: forYouVM.items[index].user.id)) {
+                                    Text(forYouVM.items[index].user.name)
+                                        .font(.custom(style: .headline))
+                                        .frame(height: 18)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                                .foregroundStyle(.white)
+                                
+                                HStack {
+                                    if let place = forYouVM.items[index].place {
+                                        NavigationLink(value: AppRoute.place(id: place.id)) {
+                                            HStack {
+                                                if let amenity = place.amenity {
+                                                    Image(systemName: amenity.image)
+                                                } else {
+                                                    Image(systemName: "fork.knife")
+                                                }
+                                                
+                                                Text(place.name)
+                                                    .lineLimit(1)
+                                            }
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
+                                        .foregroundStyle(.primary)
+                                    } else {
+                                        Text("-")
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Text(DateFormatter.getPassedTime(from: forYouVM.items[index].createdAt))
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .fontWeight(.semibold)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.top, 10)
+                        .padding(.bottom, 5)
+                        .background(Material.ultraThin.opacity(0.7))
+                        .clipShape(.rect(cornerRadius: 16))
+                        .padding(.horizontal)
                         
+                        Spacer()
+                        
+                        VStack(spacing: 5) {
+                            if let tags = feedCheckin.tags {
+                                ForEach(tags) { user in
+                                    HStack(spacing: 3) {
+                                        ProfileImage(user.profileImage, size: 22)
+                                        Text("@\(user.username)")
+                                            .font(.custom(style: .caption))
+                                            .foregroundStyle(.white)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                    }
+                                }
+                            }
+                            
+                            if let caption = feedCheckin.caption, !caption.isEmpty {
+                                Text(caption)
+                                    .lineLimit(5)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .padding(.vertical)
+                        .padding(.horizontal)
+                        .padding(.trailing, 52)
+                        .padding(.trailing)
+                        .padding(.bottom)
+                        .frame(maxWidth: .infinity)
+                        .background {
+                            LinearGradient(colors: [.clear, .black.opacity(0.2), .black.opacity(0.4), .black.opacity(0.5), .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
+                                .allowsHitTesting(false)
+                        }
                     default:
                         EmptyView()
                     }
