@@ -153,6 +153,13 @@
 		0B3022452B32094500827889 /* 2764_fe0f.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0B3021EB2B32094400827889 /* 2764_fe0f.gif */; };
 		0B3022472B32178300827889 /* emojis.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B3022462B32178300827889 /* emojis.json */; };
 		0B3022492B32183100827889 /* 1f924.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0B3022482B32183100827889 /* 1f924.gif */; };
+		0B3126E32B6A9FE30063FC0E /* OnboardingVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3126E22B6A9FE30063FC0E /* OnboardingVM.swift */; };
+		0B3126E52B6AB0700063FC0E /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3126E42B6AB0700063FC0E /* OnboardingView.swift */; };
+		0B3126ED2B6ABB560063FC0E /* DrinkingCoffee.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B3126EC2B6ABB560063FC0E /* DrinkingCoffee.json */; };
+		0B3126EF2B6ABDE80063FC0E /* Reviews.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B3126EE2B6ABDE80063FC0E /* Reviews.json */; };
+		0B3126F12B6ABEA80063FC0E /* Friends.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B3126F02B6ABEA70063FC0E /* Friends.json */; };
+		0B3126F32B6AC2870063FC0E /* Rewards.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B3126F22B6AC2870063FC0E /* Rewards.json */; };
+		0B3126F52B6AC3440063FC0E /* RewardLightEffect.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B3126F42B6AC3440063FC0E /* RewardLightEffect.json */; };
 		0B35B7A52B0D095A00822BA6 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 0B35B7A42B0D095A00822BA6 /* GoogleSignIn */; };
 		0B35B7A72B0D095A00822BA6 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B35B7A62B0D095A00822BA6 /* GoogleSignInSwift */; };
 		0B35B7A92B0D09EB00822BA6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0B35B7A82B0D09EB00822BA6 /* GoogleService-Info.plist */; };
@@ -483,6 +490,13 @@
 		0B3021EB2B32094400827889 /* 2764_fe0f.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = 2764_fe0f.gif; sourceTree = "<group>"; };
 		0B3022462B32178300827889 /* emojis.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = emojis.json; sourceTree = "<group>"; };
 		0B3022482B32183100827889 /* 1f924.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = 1f924.gif; sourceTree = "<group>"; };
+		0B3126E22B6A9FE30063FC0E /* OnboardingVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingVM.swift; sourceTree = "<group>"; };
+		0B3126E42B6AB0700063FC0E /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		0B3126EC2B6ABB560063FC0E /* DrinkingCoffee.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DrinkingCoffee.json; sourceTree = "<group>"; };
+		0B3126EE2B6ABDE80063FC0E /* Reviews.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Reviews.json; sourceTree = "<group>"; };
+		0B3126F02B6ABEA70063FC0E /* Friends.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Friends.json; sourceTree = "<group>"; };
+		0B3126F22B6AC2870063FC0E /* Rewards.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Rewards.json; sourceTree = "<group>"; };
+		0B3126F42B6AC3440063FC0E /* RewardLightEffect.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = RewardLightEffect.json; sourceTree = "<group>"; };
 		0B35B7A82B0D09EB00822BA6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0B35B7AA2B0D14CA00822BA6 /* SignInOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInOptionsView.swift; sourceTree = "<group>"; };
 		0B35B7AC2B0D14D500822BA6 /* SignInWithEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithEmailView.swift; sourceTree = "<group>"; };
@@ -1014,6 +1028,7 @@
 			isa = PBXGroup;
 			children = (
 				0B46814C2AC5EAFB009C5EF9 /* FirstLoadingView.swift */,
+				0B3126E42B6AB0700063FC0E /* OnboardingView.swift */,
 				0B6495592AB1FD16000E57AF /* Authenticate */,
 				0BF10B902B35D0AB00522E60 /* Common */,
 				0B77EA4C2AAF875D00C8DF87 /* Components */,
@@ -1231,7 +1246,12 @@
 		0B77EA542AAFCA9700C8DF87 /* LottieFiles */ = {
 			isa = PBXGroup;
 			children = (
+				0B3126EC2B6ABB560063FC0E /* DrinkingCoffee.json */,
+				0B3126F02B6ABEA70063FC0E /* Friends.json */,
 				0BC2E3192B221F850002649D /* Processing.json */,
+				0B3126F22B6AC2870063FC0E /* Rewards.json */,
+				0B3126F42B6AC3440063FC0E /* RewardLightEffect.json */,
+				0B3126EE2B6ABDE80063FC0E /* Reviews.json */,
 				0B77EA552AAFCAA800C8DF87 /* Welcome.json */,
 			);
 			path = LottieFiles;
@@ -1380,6 +1400,7 @@
 				0B37ABFB2AD7408E00E8D4BC /* ToastVM.swift */,
 				0BC2E3132B2207B40002649D /* UploadManager.swift */,
 				0B7DD5402B14DCC100D2EECB /* VideoPlayerVM.swift */,
+				0B3126E22B6A9FE30063FC0E /* OnboardingVM.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -1625,9 +1646,11 @@
 				0B30221B2B32094500827889 /* 1f602.gif in Resources */,
 				0B3022172B32094500827889 /* 1fae3.gif in Resources */,
 				0B30223B2B32094500827889 /* 1f600.gif in Resources */,
+				0B3126F52B6AC3440063FC0E /* RewardLightEffect.json in Resources */,
 				0BF81DE62ABE398E00B8892E /* Poppins-ThinItalic.ttf in Resources */,
 				0B3022372B32094500827889 /* 1f972.gif in Resources */,
 				0BF81DE42ABE398E00B8892E /* Poppins-Medium.ttf in Resources */,
+				0B3126EF2B6ABDE80063FC0E /* Reviews.json in Resources */,
 				0B30221A2B32094500827889 /* 1f44d.gif in Resources */,
 				0BF81DE02ABE398E00B8892E /* Poppins-Light.ttf in Resources */,
 				0BF81DDE2ABE398E00B8892E /* Poppins-SemiBoldItalic.ttf in Resources */,
@@ -1717,6 +1740,7 @@
 				0B3021F52B32094400827889 /* 2615.gif in Resources */,
 				0B3022422B32094500827889 /* 1f920.gif in Resources */,
 				0B30222C2B32094500827889 /* 1f3d5_fe0f.gif in Resources */,
+				0B3126F12B6ABEA80063FC0E /* Friends.json in Resources */,
 				0B3022112B32094500827889 /* 1f340.gif in Resources */,
 				0B30220F2B32094500827889 /* 1f609.gif in Resources */,
 				0B77EA562AAFCAA800C8DF87 /* Welcome.json in Resources */,
@@ -1726,7 +1750,9 @@
 				0B3022402B32094500827889 /* 1f911.gif in Resources */,
 				0B3021F02B32094400827889 /* 1f49c.gif in Resources */,
 				0B3022052B32094400827889 /* 1f4a9.gif in Resources */,
+				0B3126ED2B6ABB560063FC0E /* DrinkingCoffee.json in Resources */,
 				0BF81DEA2ABE398E00B8892E /* Poppins-Italic.ttf in Resources */,
+				0B3126F32B6AC2870063FC0E /* Rewards.json in Resources */,
 				0B30223A2B32094500827889 /* 1f47d.gif in Resources */,
 				0BF81DE32ABE398E00B8892E /* Poppins-ExtraBold.ttf in Resources */,
 				0B3021EE2B32094400827889 /* 1f35c.gif in Resources */,
@@ -1747,6 +1773,7 @@
 				0B226F632B3325350036B8BE /* StarRating.swift in Sources */,
 				0B1610C42B62A14500DCAFA5 /* NewCheckinVM.swift in Sources */,
 				0B2920812B5590560026DDDE /* PlaceSelectorView.swift in Sources */,
+				0B3126E52B6AB0700063FC0E /* OnboardingView.swift in Sources */,
 				0B1610DD2B63265100DCAFA5 /* FeedReview.swift in Sources */,
 				0BD1942D2B06681B00C1C35F /* ForYouVM.swift in Sources */,
 				0BC84A712AD0A8B100D723AA /* PlaceMediaViewModel.swift in Sources */,
@@ -1778,6 +1805,7 @@
 				0B4DE48E2B4C4B540050E39D /* EditListView.swift in Sources */,
 				0B77EA3D2AAF855500C8DF87 /* ContentView.swift in Sources */,
 				0B1F758B2B47185300097A70 /* MainTabBarView.swift in Sources */,
+				0B3126E32B6A9FE30063FC0E /* OnboardingVM.swift in Sources */,
 				0BEE15262AB5028400DF7211 /* MyProfile.swift in Sources */,
 				0B6839922AEC335D0082661A /* ReportView.swift in Sources */,
 				0B013EF02AB78BA5003CB57F /* EditProfileView.swift in Sources */,
@@ -2094,7 +2122,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.47.1;
+				MARKETING_VERSION = 0.48.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2132,7 +2160,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.47.1;
+				MARKETING_VERSION = 0.48.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

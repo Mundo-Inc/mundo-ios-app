@@ -220,7 +220,7 @@ class Authentication: ObservableObject {
             self.currentUser = nil
             self.userSession = nil
             
-            UserSettings.shared.reset()
+            UserSettings.shared.logoutCleanup()
             appData.reset()
         } catch {
             print("DEBUG: Failed to sign out | Error: \(error.localizedDescription)")
@@ -236,7 +236,7 @@ class Authentication: ObservableObject {
             if let data {
                 self.currentUser = data.data
                 
-                UserSettings.shared.userRole = data.data.role
+                UserSettings.shared.setUserInfo(data.data)
                 
                 await setDeviceToken()
             }
@@ -248,7 +248,7 @@ class Authentication: ObservableObject {
         let data = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token) as APIResponse<CurrentUserFullData>?
         
         if let data {
-            UserSettings.shared.userRole = data.data.role
+            UserSettings.shared.setUserInfo(data.data)
             return data.data
         } else {
             throw URLError(.badServerResponse)

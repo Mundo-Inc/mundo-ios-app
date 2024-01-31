@@ -11,6 +11,11 @@ import Lottie
 enum LottieFiles: String {
     case welcome = "Welcome"
     case processing = "Processing"
+    case drinkingCoffee = "DrinkingCoffee"
+    case reviews = "Reviews"
+    case friends = "Friends"
+    case rewards = "Rewards"
+    case rewardLightEffect = "RewardLightEffect"
 }
 
 struct LottieView: UIViewRepresentable {
