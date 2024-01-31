@@ -34,72 +34,70 @@ struct ForYouView17: View {
             }
             
             GeometryReader(content: { geometry in
-                ScrollViewReader { scrollProxy in
-                    ScrollView(.vertical) {
-                        LazyVStack(spacing: 0) {
-                            if !vm.items.isEmpty {
-                                ForEach(vm.items.indices, id: \.self) { index in
-                                    ForYouItem17(index: index, forYouVM: vm, parentGeometry: geometry, scrollPosition: scrollPosition)
-                                        .frame(width: geometry.size.width, height: geometry.size.height + geometry.safeAreaInsets.top)
-                                        .id(vm.items[index].id)
-                                }
-                            } else {
-                                Color.black
+                ScrollView(.vertical) {
+                    LazyVStack(spacing: 0) {
+                        if !vm.items.isEmpty {
+                            ForEach(vm.items.indices, id: \.self) { index in
+                                ForYouItem17(index: index, forYouVM: vm, parentGeometry: geometry, scrollPosition: scrollPosition)
                                     .frame(width: geometry.size.width, height: geometry.size.height + geometry.safeAreaInsets.top)
+                                    .id(vm.items[index].id)
                             }
-                        }
-                        .scrollTargetLayout()
-                    }
-                    .onChange(of: scrollPosition) { newValue in
-                        if let scrollPosition = newValue {
-                            guard let itemIndex = vm.items.firstIndex(where: { $0.id == scrollPosition }) else { return }
-                            
-                            switch vm.items[itemIndex].resource {
-                            case .review(let feedReview):
-                                if let first = feedReview.videos.first, videoPlayerVM.playId != first.id {
-                                    videoPlayerVM.playId = first.id
-                                } else if videoPlayerVM.playId != nil {
-                                    videoPlayerVM.playId = nil
-                                }
-                            default:
-                                break
-                            }
-                            
-                            guard itemIndex >= vm.items.count - 5 else { return }
-                            
-                            if !vm.isLoading {
-                                Task {
-                                    await vm.getForYou(.new)
-                                }
-                            }
+                        } else {
+                            ForYouItemPlaceholder(parentGeometry: geometry)
+                                .frame(width: geometry.size.width, height: geometry.size.height + geometry.safeAreaInsets.top)
                         }
                     }
-                    .scrollPosition(id: $scrollPosition)
-                    .refreshable {
-                        if !vm.isLoading {
-                            await vm.getForYou(.refresh)
-                        }
-                    }
-                    .ignoresSafeArea(edges: .top)
-                    .scrollTargetBehavior(.paging)
-                    .scrollIndicators(.never)
-                    .onChange(of: appData.tappedTwice) { tapped in
-                        if tapped == .home {
-                            if let first = vm.items.first {
-                                withAnimation {
-                                    scrollProxy.scrollTo(first.id)
-                                }
-                            }
-                            appData.tappedTwice = nil
-                            Task {
-                                if !vm.isLoading {
-                                    await vm.getForYou(.refresh)
-                                }
-                            }
-                        }
-                    }
-                    .environment(\.colorScheme, .dark)
+                    .scrollTargetLayout()
                 }
+                .onChange(of: scrollPosition) { newValue in
+                    if let scrollPosition = newValue {
+                        guard let itemIndex = vm.items.firstIndex(where: { $0.id == scrollPosition }) else { return }
+                        
+                        switch vm.items[itemIndex].resource {
+                        case .review(let feedReview):
+                            if let first = feedReview.videos.first, videoPlayerVM.playId != first.id {
+                                videoPlayerVM.playId = first.id
+                            } else if videoPlayerVM.playId != nil {
+                                videoPlayerVM.playId = nil
+                            }
+                        default:
+                            break
+                        }
+                        
+                        guard itemIndex >= vm.items.count - 5 else { return }
+                        
+                        if !vm.isLoading {
+                            Task {
+                                await vm.getForYou(.new)
+                            }
+                        }
+                    }
+                }
+                .scrollPosition(id: $scrollPosition)
+                .refreshable {
+                    if !vm.isLoading {
+                        await vm.getForYou(.refresh)
+                    }
+                }
+                .ignoresSafeArea(edges: .top)
+                .scrollTargetBehavior(.paging)
+                .scrollIndicators(.never)
+                .onChange(of: appData.tappedTwice) { tapped in
+                    if tapped == .home {
+                        if let first = vm.items.first {
+                            withAnimation {
+                                scrollPosition = first.id
+                            }
+                        }
+                        appData.tappedTwice = nil
+                        Task {
+                            if !vm.isLoading {
+                                await vm.getForYou(.refresh)
+                            }
+                        }
+                    }
+                }
+                .environment(\.colorScheme, .dark)
             })
         }
         .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {

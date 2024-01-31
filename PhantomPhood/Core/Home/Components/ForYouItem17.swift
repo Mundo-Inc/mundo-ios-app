@@ -85,6 +85,11 @@ struct ForYouItem17: View {
                     self.totalSize = .init(width: parentGeometry.size.width, height: parentGeometry.size.height + parentGeometry.safeAreaInsets.top)
                     self.contentSize = parentGeometry.size
                 }
+                .onChange(of: scrollPosition) { newValue in
+                    if newValue != forYouVM.items[index].id {
+                        time = .zero
+                    }
+                }
             
             switch forYouVM.items[index].resource {
             case .review(let feedReview):
