@@ -124,8 +124,6 @@ struct ForYouView: View {
                 }
             })
         }
-        
-        
         .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {
             forYouInfoVM.reset()
         }) {

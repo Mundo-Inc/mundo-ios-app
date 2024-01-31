@@ -27,8 +27,13 @@ struct HomeView: View {
         NavigationStack(path: $appData.homeNavStack) {
             ZStack(alignment: .bottomTrailing) {
                 TabView(selection: $appData.homeActiveTab) {
-                    ForYouView(draggedAmount: $draggedAmount, dragAmountToRefresh: dragAmountToRefresh)
-                        .tag(HomeTab.forYou)
+                    if #available(iOS 17.0, *) {
+                        ForYouView17()
+                            .tag(HomeTab.forYou)
+                    } else {
+                        ForYouView(draggedAmount: $draggedAmount, dragAmountToRefresh: dragAmountToRefresh)
+                            .tag(HomeTab.forYou)
+                    }
                     
                     FeedView(mediasViewModel: mediasViewModel, reportId: $reportId)
                         .tag(HomeTab.followings)

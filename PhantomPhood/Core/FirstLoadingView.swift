@@ -64,11 +64,13 @@ struct FirstLoadingView: View {
                                 title: { Text("Contact Support") },
                                 icon: { Image(systemName: "envelope.fill.badge.shield.trailinghalf.fill") }
                             )
+                            .foregroundStyle(.white.opacity(0.7))
                         }
                         .buttonStyle(.bordered)
                         
                         Text("Hello, Team Extraordinary! It looks like our app's main screen is playing a game of hide and seek and is currently winning. I can't seem to find it anywhere. Could you lend your superpowers to help us spot it? Thanks a bunch!")
                             .padding(.horizontal)
+                            .foregroundStyle(.white.opacity(0.7))
                         
                         Button {
                             auth.signOut()

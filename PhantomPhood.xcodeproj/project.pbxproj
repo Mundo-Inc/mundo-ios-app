@@ -186,6 +186,8 @@
 		0B547D852B3F3D3B002C6336 /* CreateNewListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B547D842B3F3D3B002C6336 /* CreateNewListVM.swift */; };
 		0B547D872B3F3D52002C6336 /* CreateNewListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B547D862B3F3D52002C6336 /* CreateNewListView.swift */; };
 		0B5EB1C02B56DB6A00497847 /* CustomMapMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5EB1BF2B56DB6A00497847 /* CustomMapMarker.swift */; };
+		0B62BE902B69A9A5004A3CFE /* ForYouView17.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B62BE8F2B69A9A5004A3CFE /* ForYouView17.swift */; };
+		0B62BE922B69B4B2004A3CFE /* ForYouItem17.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B62BE912B69B4B2004A3CFE /* ForYouItem17.swift */; };
 		0B6495532AB0A51F000E57AF /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6495522AB0A51F000E57AF /* Validator.swift */; };
 		0B6495562AB10F5E000E57AF /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6495552AB10F5E000E57AF /* APIManager.swift */; };
 		0B64C4C92AB4BDC6009F0D43 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B64C4C82AB4BDC6009F0D43 /* SettingsView.swift */; };
@@ -510,6 +512,8 @@
 		0B547D842B3F3D3B002C6336 /* CreateNewListVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewListVM.swift; sourceTree = "<group>"; };
 		0B547D862B3F3D52002C6336 /* CreateNewListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewListView.swift; sourceTree = "<group>"; };
 		0B5EB1BF2B56DB6A00497847 /* CustomMapMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMapMarker.swift; sourceTree = "<group>"; };
+		0B62BE8F2B69A9A5004A3CFE /* ForYouView17.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForYouView17.swift; sourceTree = "<group>"; };
+		0B62BE912B69B4B2004A3CFE /* ForYouItem17.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForYouItem17.swift; sourceTree = "<group>"; };
 		0B6495522AB0A51F000E57AF /* Validator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validator.swift; sourceTree = "<group>"; };
 		0B6495552AB10F5E000E57AF /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		0B64C4C82AB4BDC6009F0D43 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -782,6 +786,7 @@
 				0B0E6D252ABB22ED00EC62EE /* FeedLevelUpView.swift */,
 				0BB805852AC203EB0074155D /* FeedReviewView.swift */,
 				0BD1942A2B06677600C1C35F /* ForYouItem.swift */,
+				0B62BE912B69B4B2004A3CFE /* ForYouItem17.swift */,
 				0B226F602B331FF10036B8BE /* ForYouItemPlaceholder.swift */,
 			);
 			path = Components;
@@ -1476,6 +1481,7 @@
 				0BB37E9D2ABA6D84009E1272 /* FeedView.swift */,
 				0B0253022B18CB24003702AF /* ForYouInfoView.swift */,
 				0B4016742B046AA5000F1263 /* ForYouView.swift */,
+				0B62BE8F2B69A9A5004A3CFE /* ForYouView17.swift */,
 				0BF5B4A82AB3758000DEC403 /* HomeView.swift */,
 				0B384FA42B2B57B200C98245 /* UserActivityView.swift */,
 			);
@@ -1808,6 +1814,7 @@
 				0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */,
 				0BB37E9E2ABA6D84009E1272 /* FeedView.swift in Sources */,
 				0B026CE02B5AED32002DAD24 /* RewardsHubVM.swift in Sources */,
+				0B62BE922B69B4B2004A3CFE /* ForYouItem17.swift in Sources */,
 				0B9C02712B45C275000C4774 /* AddToListVM.swift in Sources */,
 				0BAE47322ACC91DF001FBDAF /* PlaceReviewsView.swift in Sources */,
 				0B86F9372B4433CB00DD4C85 /* EmojisVM.swift in Sources */,
@@ -1881,6 +1888,7 @@
 				0B0E6D2E2ABB676300EC62EE /* PlaceDetail.swift in Sources */,
 				0B86F9352B44339400DD4C85 /* EmojisManager.swift in Sources */,
 				0BCBC18E2ACDC2FF00992D8E /* View.swift in Sources */,
+				0B62BE902B69A9A5004A3CFE /* ForYouView17.swift in Sources */,
 				0B0E6D262ABB22ED00EC62EE /* FeedLevelUpView.swift in Sources */,
 				0BCBC1942ACDF30600992D8E /* CommentsView.swift in Sources */,
 				0B83A0CB2AF403510096780B /* ProfileActivitiesVM.swift in Sources */,
@@ -2086,7 +2094,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.47.0;
+				MARKETING_VERSION = 0.47.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2124,7 +2132,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.47.0;
+				MARKETING_VERSION = 0.47.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
