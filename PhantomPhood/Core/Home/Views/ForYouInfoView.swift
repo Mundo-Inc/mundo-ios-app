@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ForYouInfoView: View {
+    @ObservedObject private var appData = AppData.shared
+    
     @ObservedObject var commentsViewModel = CommentsViewModel.shared
     @ObservedObject var selectReactionsViewModel = SelectReactionsVM.shared
     
@@ -44,6 +46,9 @@ struct ForYouInfoView: View {
                             .background(.thinMaterial)
                             .clipShape(.rect(cornerRadius: 16))
                             .padding(.horizontal)
+                            .onTapGesture {
+                                appData.goTo(AppRoute.place(id: place.id))
+                            }
                         }
                         
                         HStack {
@@ -103,6 +108,9 @@ struct ForYouInfoView: View {
                             }
                         }
                         .padding()
+                        .onTapGesture {
+                            appData.goTo(AppRoute.userProfile(userId: data.user.id))
+                        }
                         
                         review
                     }
@@ -241,8 +249,7 @@ private struct ScoreItem: View {
                     }
                 }
             
-            
-            StarRating(score: score, size: 16, show: show)
+            AnimatedStarRating(score: score, size: 16, show: show)
         }
     }
 }

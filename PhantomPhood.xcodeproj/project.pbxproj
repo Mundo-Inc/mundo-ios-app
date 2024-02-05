@@ -210,6 +210,7 @@
 		0B6B4AB32B482D2D002C9FE0 /* QuickActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B4AB22B482D2D002C9FE0 /* QuickActionsView.swift */; };
 		0B6E990F2AC7627700D8CE26 /* LeaderboardVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6E990E2AC7627700D8CE26 /* LeaderboardVM.swift */; };
 		0B6E99122AC7629A00D8CE26 /* LeaderboardDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6E99112AC7629A00D8CE26 /* LeaderboardDM.swift */; };
+		0B76C9D32B712F120013CE3E /* AnimatedStarRating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76C9D22B712F120013CE3E /* AnimatedStarRating.swift */; };
 		0B77EA3B2AAF855500C8DF87 /* PhantomPhoodApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77EA3A2AAF855500C8DF87 /* PhantomPhoodApp.swift */; };
 		0B77EA3D2AAF855500C8DF87 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77EA3C2AAF855500C8DF87 /* ContentView.swift */; };
 		0B77EA3F2AAF855600C8DF87 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B77EA3E2AAF855600C8DF87 /* Assets.xcassets */; };
@@ -542,6 +543,7 @@
 		0B6B4AB22B482D2D002C9FE0 /* QuickActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsView.swift; sourceTree = "<group>"; };
 		0B6E990E2AC7627700D8CE26 /* LeaderboardVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardVM.swift; sourceTree = "<group>"; };
 		0B6E99112AC7629A00D8CE26 /* LeaderboardDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardDM.swift; sourceTree = "<group>"; };
+		0B76C9D22B712F120013CE3E /* AnimatedStarRating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedStarRating.swift; sourceTree = "<group>"; };
 		0B77EA372AAF855500C8DF87 /* PhantomPhood.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhantomPhood.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B77EA3A2AAF855500C8DF87 /* PhantomPhoodApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomPhoodApp.swift; sourceTree = "<group>"; };
 		0B77EA3C2AAF855500C8DF87 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -1217,6 +1219,7 @@
 			isa = PBXGroup;
 			children = (
 				0B226F682B3359F40036B8BE /* Achievement.swift */,
+				0B76C9D22B712F120013CE3E /* AnimatedStarRating.swift */,
 				0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */,
 				0BCBC1932ACDF30600992D8E /* CommentsView.swift */,
 				0B5EB1BF2B56DB6A00497847 /* CustomMapMarker.swift */,
@@ -1814,6 +1817,7 @@
 				0B64C4CD2AB4CCA1009F0D43 /* DataCard.swift in Sources */,
 				0B01836A2AB3C179008E887F /* UserProfileView.swift in Sources */,
 				0B1610D12B631F3D00DCAFA5 /* PlaceAmenity.swift in Sources */,
+				0B76C9D32B712F120013CE3E /* AnimatedStarRating.swift in Sources */,
 				0B0253052B18CE64003702AF /* PlaceIcon.swift in Sources */,
 				0BD9F98F2B4DB5CC0040FCDA /* UserActivityReview.swift in Sources */,
 				0B0253032B18CB24003702AF /* ForYouInfoView.swift in Sources */,
@@ -2122,7 +2126,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.48.0;
+				MARKETING_VERSION = 0.48.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2160,7 +2164,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.48.0;
+				MARKETING_VERSION = 0.48.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

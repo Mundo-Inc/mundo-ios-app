@@ -38,47 +38,59 @@ struct HomeView: View {
                     FeedView(mediasViewModel: mediasViewModel, reportId: $reportId)
                         .tag(HomeTab.followings)
                 }
-                .ignoresSafeArea()
+                .ignoresSafeArea(edges: .top)
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 .background(Color.themeBG)
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        NavigationLink(value: AppRoute.notifications) {
-                            Image(systemName: "envelope.fill")
-                                .font(.system(size: 16))
-                                .frame(width: 44, height: 44)
-                                .background(Circle().foregroundStyle(.black))
-                                .overlay(alignment: .topTrailing) {
-                                    if let unreadCount = notificationsVM.unreadCount, unreadCount > 0 {
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .foregroundStyle(Color.accentColor)
-                                            .frame(minWidth: 16)
-                                            .frame(maxWidth: 26, maxHeight: 16)
-                                            .overlay {
-                                                Text(unreadCount > 99 ? "99+" : "\(unreadCount)")
-                                                    .font(.custom(style: .caption2))
-                                                    .foregroundStyle(Color.white)
-                                            }
-                                    }
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.hidden, for: .automatic)
+                .navigationBarTitleDisplayMode(.inline)
+                
+                if reportId != nil {
+                    ReportView(id: $reportId, type: .review)
+                        .transition(.move(edge: .bottom))
+                        .animation(.easeInOut, value: reportId)
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink(value: AppRoute.notifications) {
+                        Image(systemName: "envelope.fill")
+                            .font(.system(size: 16))
+                            .frame(width: 44, height: 44)
+                            .background(Circle().foregroundStyle(.black))
+                            .overlay(alignment: .topTrailing) {
+                                if let unreadCount = notificationsVM.unreadCount, unreadCount > 0 {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .foregroundStyle(Color.accentColor)
+                                        .frame(minWidth: 16)
+                                        .frame(maxWidth: 26, maxHeight: 16)
+                                        .overlay {
+                                            Text(unreadCount > 99 ? "99+" : "\(unreadCount)")
+                                                .font(.custom(style: .caption2))
+                                                .foregroundStyle(Color.white)
+                                        }
                                 }
-                                .onAppear {
-                                    Task {
-                                        await notificationsVM.updateUnreadNotificationsCount()
-                                    }
+                            }
+                            .onAppear {
+                                Task {
+                                    await notificationsVM.updateUnreadNotificationsCount()
                                 }
-                        }
-                        .foregroundStyle(.white)
+                            }
                     }
-                    
-                    ToolbarItem(placement: .principal) {
+                    .foregroundStyle(.white)
+                }
+                
+                ToolbarItem(placement: .principal) {
+                    if #available(iOS 17.0, *) {
                         HStack(spacing: 0) {
                             ZStack {
                                 if appData.homeActiveTab == .forYou {
                                     Capsule()
                                         .matchedGeometryEffect(id: "selectedTab", in: namespace)
                                         .foregroundStyle(Color.accentColor)
+                                        .opacity(0.7)
                                 }
-
+                                
                                 Button {
                                     withAnimation {
                                         appData.homeActiveTab = .forYou
@@ -95,6 +107,7 @@ struct HomeView: View {
                                     Capsule()
                                         .matchedGeometryEffect(id: "selectedTab", in: namespace)
                                         .foregroundStyle(Color.accentColor)
+                                        .opacity(0.7)
                                 }
                                 
                                 Button {
@@ -109,7 +122,52 @@ struct HomeView: View {
                             }
                         }
                         .frame(width: 200, height: 32)
-                        .background(Capsule().foregroundStyle(.black))
+                        .background(Capsule().foregroundStyle(.black).opacity(0.3))
+                        .font(.custom(style: .headline))
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                    } else {
+                        HStack(spacing: 0) {
+                            ZStack {
+                                if appData.homeActiveTab == .forYou {
+                                    Capsule()
+                                        .matchedGeometryEffect(id: "selectedTab", in: namespace)
+                                        .foregroundStyle(Color.accentColor)
+                                        .opacity(0.7)
+                                }
+                                
+                                Button {
+                                    withAnimation {
+                                        appData.homeActiveTab = .forYou
+                                    }
+                                } label: {
+                                    Text(HomeTab.forYou.rawValue)
+                                        .foregroundStyle(.white)
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                            
+                            ZStack {
+                                if appData.homeActiveTab == .followings {
+                                    Capsule()
+                                        .matchedGeometryEffect(id: "selectedTab", in: namespace)
+                                        .foregroundStyle(Color.accentColor)
+                                        .opacity(0.7)
+                                }
+                                
+                                Button {
+                                    withAnimation {
+                                        appData.homeActiveTab = .followings
+                                    }
+                                } label: {
+                                    Text(HomeTab.followings.rawValue)
+                                        .foregroundStyle(.white)
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                        }
+                        .frame(width: 200, height: 32)
+                        .background(Capsule().foregroundStyle(.black).opacity(0.3))
                         .font(.custom(style: .headline))
                         .fontWeight(.semibold)
                         .foregroundStyle(.primary)
@@ -125,15 +183,6 @@ struct HomeView: View {
                         }
                         .offset(y: draggedAmount * 20)
                     }
-                }
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.hidden, for: .automatic)
-                .navigationBarTitleDisplayMode(.inline)
-                
-                if reportId != nil {
-                    ReportView(id: $reportId, type: .review)
-                        .transition(.move(edge: .bottom))
-                        .animation(.easeInOut, value: reportId)
                 }
             }
             .handleNavigationDestination()

@@ -429,7 +429,7 @@ fileprivate struct MissionItem: View {
                     .disabled(true)
                     .animation(.easeInOut, value: mission.isClaimed)
                 } else {
-                    if mission.progress.completed == mission.progress.total {
+                    if mission.progress.completed >= mission.progress.total {
                         Button {
                             Task {
                                 await vm.claimMissions(id: mission.id)

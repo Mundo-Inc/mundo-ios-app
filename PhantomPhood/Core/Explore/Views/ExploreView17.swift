@@ -21,32 +21,31 @@ struct ExploreView17: View {
             ZStack(alignment: .bottom) {
                 Map(position: $vm.position, selection: $vm.selection) {
                     ForEach(vm.mapClusterActivities.clustered) { clusteredActivities in
-                        MapCircle(center: clusteredActivities.location.coordinate, radius: clusteredActivities.radius)
-                            .foregroundStyle(Color.accentColor.opacity(0.3))
-                            .stroke(Color.accentColor.opacity(0.6))
-                            .tint(Color.accentColor)
+//                        MapCircle(center: clusteredActivities.location.coordinate, radius: clusteredActivities.radius)
+//                            .foregroundStyle(Color.accentColor.opacity(0.3))
+//                            .stroke(Color.accentColor.opacity(0.6))
+//                            .tint(Color.accentColor)
                         
-                        //                        MapCircle(center: CLLocationCoordinate2D, radius: CLLocationDistance)
-                        
-                        //                        Annotation("Activities", coordinate: clusteredActivities.coordinate) {
-                        //                            HStack(spacing: 4) {
-                        //                                Image(.activity)
-                        //                                    .foregroundStyle(Color.accentColor)
-                        //
-                        //                                Text("\(clusteredActivities.count)")
-                        //                                    .foregroundStyle(.primary)
-                        //                            }
-                        //                            .font(.custom(style: .body))
-                        //                            .fontWeight(.medium)
-                        //                            .padding(.all, 5)
-                        //                            .padding(.trailing, 5)
-                        //                            .background {
-                        //                                RoundedRectangle(cornerRadius: 14)
-                        //                                    .foregroundStyle(Color.themeBG)
-                        //                            }
-                        //                        }
-                        //                        .annotationTitles(.hidden)
-                        //                            }
+                        Annotation("Activities", coordinate: clusteredActivities.location.coordinate) {
+                            HStack(spacing: 4) {
+                                Image(.activity)
+                                    .foregroundStyle(Color.accentColor)
+                                
+                                Text(clusteredActivities.count.description)
+                                    .foregroundStyle(.primary)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+                            }
+                            .font(.custom(style: .body))
+                            .fontWeight(.medium)
+                            .padding(.all, 4)
+                            .padding(.trailing, 4)
+                            .background {
+                                RoundedRectangle(cornerRadius: 14)
+                                    .foregroundStyle(Color.themeBG)
+                            }
+                        }
+                        .annotationTitles(.hidden)
                     }
                     
                     ForEach(vm.mapClusterActivities.solo) { activity in

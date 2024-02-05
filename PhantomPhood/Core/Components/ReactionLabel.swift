@@ -46,40 +46,38 @@ struct ReactionLabel: View {
 struct ForYouReactionLabel: View {
     let reaction: Reaction
     let isSelected: Bool
-    let onPress: ((_ isSelected: Bool) -> Void)?
+    let onPress: (_ isSelected: Bool) -> Void
     
-    init(reaction: Reaction, isSelected: Bool, onPress: @escaping (_: Bool) -> Void = { _ in }) {
+    init(reaction: Reaction, isSelected: Bool, onPress: @escaping (Bool) -> Void) {
         self.reaction = reaction
         self.isSelected = isSelected
         self.onPress = onPress
     }
     
     var body: some View {
-        Button {
-            onPress?(isSelected)
-        } label: {
-            HStack {
-                Emoji(reaction: reaction, isAnimating: Binding(get: {
-                    isSelected
-                }, set: { _ in }), size: 24)
-                
-                Text(String(reaction.count))
-                    .font(.custom(style: .body))
-                    .frame(maxWidth: .infinity)
-            }
-            .foregroundStyle(.white)
-            .padding(.vertical, 6)
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 10)
-            .background(isSelected ? Color.accentColor.opacity(0.5) : Color.black.opacity(0.3))
-            .background(.ultraThinMaterial)
-            .overlay {
-                Capsule()
-                    .stroke(isSelected ? Color.accentColor : Color.black.opacity(0.1), lineWidth: 4)
-            }
-            .clipShape(Capsule())
+        HStack {
+            Emoji(reaction: reaction, isAnimating: Binding(get: {
+                isSelected
+            }, set: { _ in }), size: 24)
+            
+            Text(String(reaction.count))
+                .font(.custom(style: .body))
+                .frame(maxWidth: .infinity)
         }
-        .foregroundStyle(.primary)
+        .foregroundStyle(.white)
+        .padding(.vertical, 6)
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 10)
+        .background(isSelected ? Color.accentColor.opacity(0.5) : Color.black.opacity(0.3))
+        .background(.ultraThinMaterial)
+        .overlay {
+            Capsule()
+                .stroke(isSelected ? Color.accentColor : Color.black.opacity(0.1), lineWidth: 4)
+        }
+        .clipShape(Capsule())
+        .onTapGesture {
+            onPress(isSelected)
+        }
     }
 }
 
@@ -88,11 +86,11 @@ struct ForYouReactionLabel: View {
     VStack {
         ReactionLabel(reaction: Reaction(reaction: "😍", type: .emoji, count: 5), isSelected: false)
         ReactionLabel(reaction: Reaction(reaction: "🙌🏻", type: .emoji, count: 2), isSelected: true)
-        
-        Group {
-            ForYouReactionLabel(reaction: Reaction(reaction: "😍", type: .emoji, count: 5), isSelected: false)
-            ForYouReactionLabel(reaction: Reaction(reaction: "🙌🏻", type: .emoji, count: 2), isSelected: true)
-        }
-        .frame(maxWidth: 80)
+//        
+//        Group {
+//            ForYouReactionLabel(reaction: Reaction(reaction: "😍", type: .emoji, count: 5), isSelected: false)
+//            ForYouReactionLabel(reaction: Reaction(reaction: "🙌🏻", type: .emoji, count: 2), isSelected: true)
+//        }
+//        .frame(maxWidth: 80)
     }
 }

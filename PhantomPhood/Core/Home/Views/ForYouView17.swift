@@ -47,7 +47,16 @@ struct ForYouView17: View {
                                 .frame(width: geometry.size.width, height: geometry.size.height + geometry.safeAreaInsets.top)
                         }
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .scrollTargetLayout()
+                }
+                .scrollPosition(id: $scrollPosition)
+                .ignoresSafeArea(edges: .top)
+                .scrollTargetBehavior(.paging)
+                .scrollIndicators(.never)
+                .environment(\.colorScheme, .dark)
+                .refreshable {
+                    await vm.getForYou(.refresh)
                 }
                 .onChange(of: scrollPosition) { newValue in
                     if let scrollPosition = newValue {
@@ -73,17 +82,8 @@ struct ForYouView17: View {
                         }
                     }
                 }
-                .scrollPosition(id: $scrollPosition)
-                .refreshable {
-                    if !vm.isLoading {
-                        await vm.getForYou(.refresh)
-                    }
-                }
-                .ignoresSafeArea(edges: .top)
-                .scrollTargetBehavior(.paging)
-                .scrollIndicators(.never)
-                .onChange(of: appData.tappedTwice) { tapped in
-                    if tapped == .home {
+                .onChange(of: appData.tappedTwice) {
+                    if appData.tappedTwice == .home {
                         if let first = vm.items.first {
                             withAnimation {
                                 scrollPosition = first.id
@@ -97,7 +97,6 @@ struct ForYouView17: View {
                         }
                     }
                 }
-                .environment(\.colorScheme, .dark)
             })
         }
         .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {

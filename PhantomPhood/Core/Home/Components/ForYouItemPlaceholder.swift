@@ -159,7 +159,7 @@ struct ForYouItemPlaceholder: View {
                     .frame(width: 52)
                     .padding(.trailing)
                     .padding(.vertical)
-                    .offset(y: -80)
+                    .padding(.bottom, 80)
                 }
             }
             .font(.custom(style: .body))
