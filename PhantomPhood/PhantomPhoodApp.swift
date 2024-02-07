@@ -10,6 +10,7 @@ import Firebase
 import FirebaseCore
 import GoogleSignIn
 import UserNotifications
+import BranchSDK
 
 @main
 struct PhantomPhoodApp: App {
@@ -38,6 +39,19 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         if FirebaseApp.app() == nil {
             FirebaseApp.configure()
+        }
+        
+//        // Call `checkPasteboardOnInstall()` before Branch initialization
+//        Branch.getInstance().checkPasteboardOnInstall()
+//        
+        Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
+            guard let data = params as? [String: AnyObject] else { return }
+            print(data)
+            if let link = data["+non_branch_link"] as? String, let url = URL(string: link) {
+                let universalLinkingManager = UniversalLinkingManager()
+                universalLinkingManager.handleIncomingURL(url)
+            }
+            // Access and use deep link data here (nav to page, display content, etc.)
         }
         
         Messaging.messaging().delegate = self

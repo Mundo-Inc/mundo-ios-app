@@ -7,6 +7,8 @@
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>ai.phantomphood.app</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>phantom</string>
@@ -51,6 +53,16 @@
 		<string>fetch</string>
 		<string>location</string>
 		<string>remote-notification</string>
+	</array>
+	<key>branch_key</key>
+	<dict>
+		<key>live</key>
+		<string>key_live_fqpzWzke2LhRFiNhyC8YqnllAAj854WC</string>
+	</dict>
+	<key>branch_universal_link_domains</key>
+	<array>
+		<string>6u9pg.app.link</string>
+		<string>6u9pg-alternate.app.link</string>
 	</array>
 </dict>
 </plist>

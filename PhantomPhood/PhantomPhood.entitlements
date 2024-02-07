@@ -12,6 +12,8 @@
 	<array>
 		<string>webcredentials:phantomphood.ai</string>
 		<string>applinks:phantomphood.ai</string>
+		<string>applinks:6u9pg.app.link</string>
+		<string>applinks:6u9pg-alternate.app.link</string>
 	</array>
 	<key>com.apple.developer.authentication-services.autofill-credential-provider</key>
 	<true/>
