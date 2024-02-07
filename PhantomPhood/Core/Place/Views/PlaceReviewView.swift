@@ -12,7 +12,7 @@ struct PlaceReviewView: View {
     let reviewIndex: Int
     
     @Binding var reportId: String?
-    @ObservedObject var placeReviewsVM: PlaceReviewsViewModel
+    @ObservedObject var placeReviewsVM: PlaceReviewsVM
     @ObservedObject var mediasViewModel: MediasViewModel
     
     @ObservedObject var commentsViewModel = CommentsViewModel.shared
@@ -20,7 +20,7 @@ struct PlaceReviewView: View {
     
     @State var showActions = false
     
-    init(placeReviewsVM: PlaceReviewsViewModel, reviewIndex: Int, mediasViewModel: MediasViewModel, reportId: Binding<String?>) {
+    init(placeReviewsVM: PlaceReviewsVM, reviewIndex: Int, mediasViewModel: MediasViewModel, reportId: Binding<String?>) {
         self.reviewIndex = reviewIndex
         self._placeReviewsVM = ObservedObject(wrappedValue: placeReviewsVM)
         self._mediasViewModel = ObservedObject(wrappedValue: mediasViewModel)

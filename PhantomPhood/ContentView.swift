@@ -50,6 +50,7 @@ struct ContentView: View {
                     }
             }
         }
+        .ignoresSafeArea(.keyboard)
         .fullScreenCover(isPresented: Binding(get: {
             if let user = auth.currentUser, user.accepted_eula != nil {
                 return onboardingVM.isPresented

@@ -38,7 +38,7 @@ struct ForYouView17: View {
                     LazyVStack(spacing: 0) {
                         if !vm.items.isEmpty {
                             ForEach(vm.items.indices, id: \.self) { index in
-                                ForYouItem17(index: index, forYouVM: vm, parentGeometry: geometry, scrollPosition: scrollPosition)
+                                ForYouItem17(index: index, item: vm.items[index], forYouVM: vm, parentGeometry: geometry, scrollPosition: scrollPosition)
                                     .frame(width: geometry.size.width, height: geometry.size.height + geometry.safeAreaInsets.top)
                                     .id(vm.items[index].id)
                             }
@@ -54,7 +54,6 @@ struct ForYouView17: View {
                 .ignoresSafeArea(edges: .top)
                 .scrollTargetBehavior(.paging)
                 .scrollIndicators(.never)
-                .environment(\.colorScheme, .dark)
                 .refreshable {
                     await vm.getForYou(.refresh)
                 }
@@ -70,7 +69,9 @@ struct ForYouView17: View {
                                 videoPlayerVM.playId = nil
                             }
                         default:
-                            break
+                            if videoPlayerVM.playId != nil {
+                                videoPlayerVM.playId = nil
+                            }
                         }
                         
                         guard itemIndex >= vm.items.count - 5 else { return }
@@ -85,7 +86,7 @@ struct ForYouView17: View {
                 .onChange(of: appData.tappedTwice) {
                     if appData.tappedTwice == .home {
                         if let first = vm.items.first {
-                            withAnimation {
+                            withAnimation(.bouncy(duration: 1)) {
                                 scrollPosition = first.id
                             }
                         }
@@ -99,6 +100,7 @@ struct ForYouView17: View {
                 }
             })
         }
+        .environment(\.colorScheme, .dark)
         .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {
             forYouInfoVM.reset()
         }) {

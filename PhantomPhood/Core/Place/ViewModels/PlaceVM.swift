@@ -50,6 +50,10 @@ final class PlaceVM: ObservableObject {
                 let data = try await placeDM.fetch(id: id)
                 self.place = data
                 
+                if let yelpData = data.thirdParty.yelp, !yelpData.photos.isEmpty {
+                    self.place?.media.append(contentsOf: yelpData.photos.map({ .init(id: UUID().uuidString, src: $0, caption: "", type: .image) }))
+                }
+                
                 switch action {
                 case .checkin:
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

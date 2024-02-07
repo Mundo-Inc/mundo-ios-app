@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct PlaceReviewsView: View {
-    @ObservedObject var vm: PlaceVM
-    @StateObject var placeReviewsVM: PlaceReviewsViewModel
+    @ObservedObject private var vm: PlaceVM
+    @StateObject private var placeReviewsVM: PlaceReviewsVM
     
     init(placeId: String, vm: PlaceVM) {
-        self.vm = vm
-        self._placeReviewsVM = StateObject(wrappedValue: PlaceReviewsViewModel(placeId: placeId))
+        self._vm = ObservedObject(wrappedValue: vm)
+        self._placeReviewsVM = StateObject(wrappedValue: PlaceReviewsVM(placeId: placeId))
     }
     
     @StateObject var mediasViewModel = MediasViewModel()

@@ -10,7 +10,7 @@ import SwiftUI
 struct UserSelector: View {
     @StateObject private var vm: UserSelectorVM
     
-    init(onSelect: @escaping (UserOverview) -> Void = { _ in }, onCancel: @escaping () -> Void = {}) {
+    init(onSelect: @escaping (UserEssentials) -> Void = { _ in }, onCancel: @escaping () -> Void = {}) {
         self._vm = StateObject(wrappedValue: UserSelectorVM(onSelect: onSelect, onCancel: onCancel))
     }
     
@@ -43,9 +43,9 @@ struct UserSelector: View {
 }
 
 fileprivate struct UserCard: View {
-    let user: UserOverview
+    let user: UserEssentials
     
-    let onSelect: (UserOverview) -> Void
+    let onSelect: (UserEssentials) -> Void
     
     var body: some View {
         Button {

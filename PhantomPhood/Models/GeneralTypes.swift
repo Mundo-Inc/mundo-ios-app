@@ -16,3 +16,9 @@ struct APIResponse<T: Decodable>: Decodable {
     let success: Bool
     let data: T
 }
+
+struct PaginatedAPIResponse<T: Decodable>: Decodable {
+    let success: Bool
+    let total: Int
+    let data: T
+}

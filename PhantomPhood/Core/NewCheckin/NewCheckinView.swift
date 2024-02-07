@@ -214,7 +214,7 @@ struct NewCheckinView: View {
             if #available(iOS 17.0, *) {
                 UserSelector(onSelect: { user in
                     if !vm.mentions.contains(where: { $0.id == user.id }) {
-                        vm.mentions.append(.init(userOverview: user))
+                        vm.mentions.append(user)
                     }
                     vm.isUserSelectorPresented = false
                 }, onCancel: {
@@ -224,7 +224,7 @@ struct NewCheckinView: View {
             } else {
                 UserSelector(onSelect: { user in
                     if !vm.mentions.contains(where: { $0.id == user.id }) {
-                        vm.mentions.append(.init(userOverview: user))
+                        vm.mentions.append(user)
                     }
                     vm.isUserSelectorPresented = false
                 }, onCancel: {

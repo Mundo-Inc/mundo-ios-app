@@ -46,9 +46,9 @@ struct PlaceDetail: Identifiable, Decodable {
     let reviewCount: Int
     
     // -
-    let reviews: [PlaceReview]
+    let reviews: [PlaceReview]? // Unused
     let thirdParty: ThirdPartyResults
-    let media: [Media]
+    var media: [Media]
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
@@ -79,11 +79,18 @@ extension PlaceDetail {
         }
     }
     
-    struct YelpResults: Decodable {
-        let rating: Double
+    struct YelpResults: Decodable, Identifiable {
+        let id: String
         let reviewCount: Int
-        let reviews: [YelpReviews]?
+        let rating: Double
+        let phone: String
+        let photos: [String]
+        let url: String?
         let thumbnail: String?
+        let categories: [Categories]?
+        let transactions: [String]?
+        let price: String?
+        let reviews: [YelpReviews]?
         
         struct YelpReviews: Identifiable, Decodable {
             struct YelpUser: Identifiable, Decodable {
@@ -99,6 +106,11 @@ extension PlaceDetail {
             let rating: Int
             let time_created: String
             let user: YelpUser
+        }
+        
+        struct Categories: Decodable {
+            let title: String
+            let alias: String
         }
     }
     

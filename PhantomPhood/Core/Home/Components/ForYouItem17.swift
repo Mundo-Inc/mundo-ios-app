@@ -14,6 +14,7 @@ struct ForYouItem17: View {
     @ObservedObject private var appData = AppData.shared
     
     let index: Int
+    private var item: FeedItem
     @ObservedObject private var forYouVM: ForYouVM
     let parentGeometry: GeometryProxy
     
@@ -33,14 +34,15 @@ struct ForYouItem17: View {
     
     private let scrollPosition: String?
     
-    init(index: Int, forYouVM: ForYouVM, parentGeometry: GeometryProxy, scrollPosition: String?) {
+    init(index: Int, item: FeedItem, forYouVM: ForYouVM, parentGeometry: GeometryProxy, scrollPosition: String?) {
         self.index = index
+        self.item = item
         self._forYouVM = ObservedObject(wrappedValue: forYouVM)
         self.parentGeometry = parentGeometry
         
         self._videoPlayerVM = ObservedObject(wrappedValue: VideoPlayerVM.shared)
         
-        switch forYouVM.items[index].resource {
+        switch item.resource {
         case .review(let feedReview):
             if let firstVideo = feedReview.videos.first {
                 self._tabPage = State(wrappedValue: firstVideo.id)
@@ -88,16 +90,16 @@ struct ForYouItem17: View {
                     self.contentSize = parentGeometry.size
                 }
                 .onChange(of: scrollPosition) { newValue in
-                    if newValue != forYouVM.items[index].id {
+                    if newValue != item.id {
                         time = .zero
                     }
                 }
             
-            switch forYouVM.items[index].resource {
+            switch item.resource {
             case .review(let feedReview):
                 Color.clear
                     .onChange(of: tabPage) { newTab in
-                        if scrollPosition == forYouVM.items[index].id {
+                        if scrollPosition == item.id {
                             if feedReview.videos.contains(where: { $0.id == newTab }) {
                                 videoPlayerVM.playId = newTab
                             } else {
@@ -285,32 +287,32 @@ struct ForYouItem17: View {
                 
                 ZStack {
                     VStack(spacing: 0) {
-                        switch forYouVM.items[index].resource {
+                        switch item.resource {
                         case .review(let feedReview):
                             HStack {
                                 VStack(spacing: -15) {
-                                    ProfileImage(forYouVM.items[index].user.profileImage, size: 50)
+                                    ProfileImage(item.user.profileImage, size: 50)
                                     
-                                    LevelView(level: forYouVM.items[index].user.progress.level)
+                                    LevelView(level: item.user.progress.level)
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 24, height: 30)
                                 }
                                 .onTapGesture {
-                                    appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
+                                    appData.goTo(AppRoute.userProfile(userId: item.user.id))
                                 }
                                 
                                 VStack {
-                                    Text(forYouVM.items[index].user.name)
+                                    Text(item.user.name)
                                         .font(.custom(style: .headline))
                                         .frame(height: 18)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .foregroundStyle(.white)
                                         .onTapGesture {
-                                            appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
+                                            appData.goTo(AppRoute.userProfile(userId: item.user.id))
                                         }
                                     
                                     HStack {
-                                        if let place = forYouVM.items[index].place {
+                                        if let place = item.place {
                                             HStack {
                                                 if let amenity = place.amenity {
                                                     Image(systemName: amenity.image)
@@ -332,7 +334,7 @@ struct ForYouItem17: View {
                                         
                                         Spacer()
                                         
-                                        Text(DateFormatter.getPassedTime(from: forYouVM.items[index].createdAt))
+                                        Text(DateFormatter.getPassedTime(from: item.createdAt))
                                             .font(.custom(style: .caption))
                                             .foregroundStyle(.secondary)
                                     }
@@ -402,8 +404,8 @@ struct ForYouItem17: View {
                                     .allowsHitTesting(false)
                             }
                             .onTapGesture {
-                                ForYouInfoVM.shared.show(forYouVM.items[index]) { reaction in
-                                    let item = forYouVM.items[index]
+                                ForYouInfoVM.shared.show(item) { reaction in
+                                    let item = item
                                     Task {
                                         await forYouVM.addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), to: item)
                                     }
@@ -412,28 +414,28 @@ struct ForYouItem17: View {
                         case .checkin(let feedCheckin):
                             HStack {
                                 VStack(spacing: -15) {
-                                    ProfileImage(forYouVM.items[index].user.profileImage, size: 50)
+                                    ProfileImage(item.user.profileImage, size: 50)
                                     
-                                    LevelView(level: forYouVM.items[index].user.progress.level)
+                                    LevelView(level: item.user.progress.level)
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 24, height: 30)
                                 }
                                 .onTapGesture {
-                                    appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
+                                    appData.goTo(AppRoute.userProfile(userId: item.user.id))
                                 }
                                 
                                 VStack {
-                                    Text(forYouVM.items[index].user.name)
+                                    Text(item.user.name)
                                         .font(.custom(style: .headline))
                                         .frame(height: 18)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .foregroundStyle(.white)
                                         .onTapGesture {
-                                            appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
+                                            appData.goTo(AppRoute.userProfile(userId: item.user.id))
                                         }
                                     
                                     HStack {
-                                        if let place = forYouVM.items[index].place {
+                                        if let place = item.place {
                                             HStack {
                                                 if let amenity = place.amenity {
                                                     Image(systemName: amenity.image)
@@ -455,7 +457,7 @@ struct ForYouItem17: View {
                                         
                                         Spacer()
                                         
-                                        Text(DateFormatter.getPassedTime(from: forYouVM.items[index].createdAt))
+                                        Text(DateFormatter.getPassedTime(from: item.createdAt))
                                             .font(.custom(style: .caption))
                                             .foregroundStyle(.secondary)
                                     }
@@ -513,18 +515,18 @@ struct ForYouItem17: View {
                         VStack(spacing: 8) {
                             Spacer()
                             
-                            ForEach(Array(forYouVM.items[index].reactions.total.prefix(5))) { reaction in
+                            ForEach(Array(item.reactions.total.prefix(5))) { reaction in
                                 Group {
-                                    if let selectedIndex = forYouVM.items[index].reactions.user.firstIndex(where: { $0.reaction == reaction.reaction }) {
+                                    if let selectedIndex = item.reactions.user.firstIndex(where: { $0.reaction == reaction.reaction }) {
                                         ForYouReactionLabel(reaction: reaction, isSelected: true) { _ in
-                                            let item = forYouVM.items[index]
+                                            let item = item
                                             Task {
                                                 await forYouVM.removeReaction(item.reactions.user[selectedIndex], from: item)
                                             }
                                         }
                                     } else {
                                         ForYouReactionLabel(reaction: reaction, isSelected: false) { _ in
-                                            let item = forYouVM.items[index]
+                                            let item = item
                                             Task {
                                                 await forYouVM.addReaction(NewReaction(reaction: reaction.reaction, type: .emoji), to: item)
                                             }
@@ -534,8 +536,8 @@ struct ForYouItem17: View {
                                 .frame(width: 70, height: 34)
                             }
                             
-                            if forYouVM.items[index].reactions.total.count > 5 {
-                                Text("+ \(forYouVM.items[index].reactions.total.count - 5)")
+                            if item.reactions.total.count > 5 {
+                                Text("+ \(item.reactions.total.count - 5)")
                                     .font(.custom(style: .caption))
                             }
                             
@@ -552,7 +554,7 @@ struct ForYouItem17: View {
                                 }
                                 .onTapGesture {
                                     selectReactionsViewModel.select { reaction in
-                                        let item = forYouVM.items[index]
+                                        let item = item
                                         Task {
                                             await forYouVM.addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), to: item)
                                         }
@@ -565,8 +567,8 @@ struct ForYouItem17: View {
                                 .frame(width: 70, height: 34)
                                 .overlay {
                                     HStack {
-                                        if forYouVM.items[index].commentsCount > 0 {
-                                            Text("\(forYouVM.items[index].commentsCount)")
+                                        if item.commentsCount > 0 {
+                                            Text("\(item.commentsCount)")
                                                 .font(.custom(style: .body))
                                         }
                                         Image(systemName: "bubble.left")
@@ -577,7 +579,7 @@ struct ForYouItem17: View {
                                     .foregroundStyle(.white)
                                 }
                                 .onTapGesture {
-                                    commentsViewModel.showComments(activityId: forYouVM.items[index].id)
+                                    commentsViewModel.showComments(activityId: item.id)
                                 }
                         }
                         .frame(width: 52)

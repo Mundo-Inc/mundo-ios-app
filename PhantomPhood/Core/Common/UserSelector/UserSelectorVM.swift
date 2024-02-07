@@ -13,17 +13,17 @@ final class UserSelectorVM: ObservableObject {
     private let apiManager = APIManager.shared
     private let searchDM = SearchDM()
     
-    let onSelect: (UserOverview) -> Void
+    let onSelect: (UserEssentials) -> Void
     let onCancel: () -> Void
     
     @Published var searchText = ""
     @Published var isLoading = false
-    @Published var searchResults: [UserOverview] = []
+    @Published var searchResults: [UserEssentials] = []
     
     @Published var error: String? = nil
     private var cancellable = [AnyCancellable]()
     
-    init(onSelect: @escaping (UserOverview) -> Void, onCancel: @escaping () -> Void) {
+    init(onSelect: @escaping (UserEssentials) -> Void, onCancel: @escaping () -> Void) {
         self.onSelect = onSelect
         self.onCancel = onCancel
         

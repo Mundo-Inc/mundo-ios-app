@@ -147,7 +147,7 @@ fileprivate struct PlaceCard: View {
 }
 
 fileprivate struct UserCard: View {
-    let user: UserOverview
+    let user: UserEssentials
     
     var body: some View {
         NavigationLink(value: AppRoute.userProfile(userId: user.id)) {

@@ -1,5 +1,5 @@
 //
-//  PlaceReviewsViewModel.swift
+//  PlaceReviewsVM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 10/4/23.
@@ -8,15 +8,20 @@
 import Foundation
 
 @MainActor
-class PlaceReviewsViewModel: ObservableObject {
+class PlaceReviewsVM: ObservableObject {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     private let reactionsDM = ReactionsDM()
+    private let placeDM = PlaceDM()
     
     let placeId: String
     
     init(placeId: String) {
         self.placeId = placeId
+        
+        Task {
+            await self.fetch(type: .refresh)
+        }
     }
     
     @Published var isLoading: Bool = false
@@ -25,35 +30,23 @@ class PlaceReviewsViewModel: ObservableObject {
     var page = 1
     func fetch(type: RefreshNewAction) async {
         if isLoading { return }
-        
-        guard let token = await auth.getToken() else { return }
-        
-        struct ReviewsResponse: Decodable {
-            let success: Bool
-            let total: Int
-            let data: [PlaceReview]
-        }
-        
-        isLoading = true
-        
+
         if type == .refresh {
             page = 1
         }
         
+        isLoading = true
         do {
-            let data = try await apiManager.requestData("/places/\(placeId)/reviews?page=\(page)", token: token) as ReviewsResponse?
-            if let data = data {
-                if page == 1 {
-                    reviews = data.data
-                } else {
-                    reviews.append(contentsOf: data.data)
-                }
-                page += 1
+            let data = try await placeDM.getReviews(id: placeId, page: page)
+            if page == 1 {
+                reviews = data.data
+            } else {
+                reviews.append(contentsOf: data.data)
             }
+            page += 1
         } catch {
             print(error)
         }
-        
         isLoading = false
     }
     

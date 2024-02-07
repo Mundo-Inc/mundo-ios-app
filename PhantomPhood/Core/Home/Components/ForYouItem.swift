@@ -17,8 +17,7 @@ struct ForYouItem: View {
     @ObservedObject private var page: Page
     let parentGeometry: GeometryProxy?
     
-    @ObservedObject var videoPlayerVM: VideoPlayerVM
-    
+    @ObservedObject private var videoPlayerVM = VideoPlayerVM.shared
     @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
     @ObservedObject private var commentsViewModel = CommentsViewModel.shared
     
@@ -32,8 +31,6 @@ struct ForYouItem: View {
         self._forYouVM = ObservedObject(wrappedValue: forYouVM)
         self._page = ObservedObject(wrappedValue: page)
         self.parentGeometry = parentGeometry
-        
-        self._videoPlayerVM = ObservedObject(wrappedValue: VideoPlayerVM.shared)
         
         switch forYouVM.items[index].resource {
         case .review(let feedReview):

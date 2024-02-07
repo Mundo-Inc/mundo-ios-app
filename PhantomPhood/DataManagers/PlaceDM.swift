@@ -128,6 +128,34 @@ final class PlaceDM {
         return data.data
     }
     
+    func getReviews(id: String, page: Int = 1) async throws -> PaginatedAPIResponse<[PlaceReview]> {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let data = try await apiManager.requestData("/places/\(id)/reviews?page=\(page)", token: token) as PaginatedAPIResponse<[PlaceReview]>?
+        
+        guard let data else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return data
+    }
+    
+    func getMedias(id: String, page: Int = 1) async throws -> PaginatedAPIResponse<[MediaWithUser]> {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let data = try await apiManager.requestData("/places/\(id)/media?page=\(page)", token: token) as PaginatedAPIResponse<[MediaWithUser]>?
+        
+        guard let data else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return data
+    }
+    
     // MARK: - Structs
     
     struct CheckinRequestBody: Encodable {

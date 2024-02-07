@@ -278,9 +278,9 @@
 		0BC84A6B2AD071EE00D723AA /* SelectReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A6A2AD071EE00D723AA /* SelectReactionsView.swift */; };
 		0BC84A6D2AD08A6D00D723AA /* SelectReactionsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A6C2AD08A6D00D723AA /* SelectReactionsVM.swift */; };
 		0BC84A6F2AD0A83900D723AA /* PlaceMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A6E2AD0A83900D723AA /* PlaceMediaView.swift */; };
-		0BC84A712AD0A8B100D723AA /* PlaceMediaViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A702AD0A8B100D723AA /* PlaceMediaViewModel.swift */; };
+		0BC84A712AD0A8B100D723AA /* PlaceMediaVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A702AD0A8B100D723AA /* PlaceMediaVM.swift */; };
 		0BCBC18E2ACDC2FF00992D8E /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCBC18D2ACDC2FF00992D8E /* View.swift */; };
-		0BCBC1902ACDEDDE00992D8E /* PlaceReviewsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCBC18F2ACDEDDE00992D8E /* PlaceReviewsViewModel.swift */; };
+		0BCBC1902ACDEDDE00992D8E /* PlaceReviewsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCBC18F2ACDEDDE00992D8E /* PlaceReviewsVM.swift */; };
 		0BCBC1922ACDF22100992D8E /* CommentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCBC1912ACDF22100992D8E /* CommentsViewModel.swift */; };
 		0BCBC1942ACDF30600992D8E /* CommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCBC1932ACDF30600992D8E /* CommentsView.swift */; };
 		0BCD57DD2B28AE4600A1C914 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD57DC2B28AE4600A1C914 /* UIApplication.swift */; };
@@ -607,9 +607,9 @@
 		0BC84A6A2AD071EE00D723AA /* SelectReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectReactionsView.swift; sourceTree = "<group>"; };
 		0BC84A6C2AD08A6D00D723AA /* SelectReactionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectReactionsVM.swift; sourceTree = "<group>"; };
 		0BC84A6E2AD0A83900D723AA /* PlaceMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMediaView.swift; sourceTree = "<group>"; };
-		0BC84A702AD0A8B100D723AA /* PlaceMediaViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMediaViewModel.swift; sourceTree = "<group>"; };
+		0BC84A702AD0A8B100D723AA /* PlaceMediaVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMediaVM.swift; sourceTree = "<group>"; };
 		0BCBC18D2ACDC2FF00992D8E /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
-		0BCBC18F2ACDEDDE00992D8E /* PlaceReviewsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceReviewsViewModel.swift; sourceTree = "<group>"; };
+		0BCBC18F2ACDEDDE00992D8E /* PlaceReviewsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceReviewsVM.swift; sourceTree = "<group>"; };
 		0BCBC1912ACDF22100992D8E /* CommentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewModel.swift; sourceTree = "<group>"; };
 		0BCBC1932ACDF30600992D8E /* CommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsView.swift; sourceTree = "<group>"; };
 		0BCD57DC2B28AE4600A1C914 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
@@ -1263,8 +1263,8 @@
 		0B985ADF2AC9AFAB00019A06 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				0BC84A702AD0A8B100D723AA /* PlaceMediaViewModel.swift */,
-				0BCBC18F2ACDEDDE00992D8E /* PlaceReviewsViewModel.swift */,
+				0BC84A702AD0A8B100D723AA /* PlaceMediaVM.swift */,
+				0BCBC18F2ACDEDDE00992D8E /* PlaceReviewsVM.swift */,
 				0B985AE22AC9AFCA00019A06 /* PlaceVM.swift */,
 			);
 			path = ViewModels;
@@ -1779,7 +1779,7 @@
 				0B3126E52B6AB0700063FC0E /* OnboardingView.swift in Sources */,
 				0B1610DD2B63265100DCAFA5 /* FeedReview.swift in Sources */,
 				0BD1942D2B06681B00C1C35F /* ForYouVM.swift in Sources */,
-				0BC84A712AD0A8B100D723AA /* PlaceMediaViewModel.swift in Sources */,
+				0BC84A712AD0A8B100D723AA /* PlaceMediaVM.swift in Sources */,
 				0B35B7B32B0DFCE000822BA6 /* SignInGoogleHelper.swift in Sources */,
 				0B3E73CC2B29E9E00092072F /* Throttle.swift in Sources */,
 				0BAE473A2ACC9A20001FBDAF /* PlaceReviewView.swift in Sources */,
@@ -1794,7 +1794,7 @@
 				0B026CDA2B5AB959002DAD24 /* Mission.swift in Sources */,
 				0B1610D42B63237800DCAFA5 /* UserDetail.swift in Sources */,
 				0BC2E3102B22076D0002649D /* VideoHelper.swift in Sources */,
-				0BCBC1902ACDEDDE00992D8E /* PlaceReviewsViewModel.swift in Sources */,
+				0BCBC1902ACDEDDE00992D8E /* PlaceReviewsVM.swift in Sources */,
 				0B0E6D222ABB077B00EC62EE /* UserActivityItemTemplate.swift in Sources */,
 				0B4016752B046AA5000F1263 /* ForYouView.swift in Sources */,
 				0B9C026F2B45C267000C4774 /* AddToListView.swift in Sources */,
@@ -2126,7 +2126,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.48.1;
+				MARKETING_VERSION = 0.48.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2164,7 +2164,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.48.1;
+				MARKETING_VERSION = 0.48.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

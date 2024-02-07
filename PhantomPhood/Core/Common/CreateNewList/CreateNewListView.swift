@@ -252,7 +252,7 @@ struct CreateNewListView: View {
             if #available(iOS 17.0, *) {
                 UserSelector(onSelect: { user in
                     if !vm.collaborators.contains(where: { $0.user.id == user.id }) {
-                        vm.collaborators.append(.init(user: UserEssentials(userOverview: user), access: .edit))
+                        vm.collaborators.append(.init(user: user, access: .edit))
                     }
                     vm.showAddListCollaborators = false
                 }, onCancel: {
@@ -262,7 +262,7 @@ struct CreateNewListView: View {
             } else {
                 UserSelector(onSelect: { user in
                     if !vm.collaborators.contains(where: { $0.user.id == user.id }) {
-                        vm.collaborators.append(.init(user: UserEssentials(userOverview: user), access: .edit))
+                        vm.collaborators.append(.init(user: user, access: .edit))
                     }
                     vm.showAddListCollaborators = false
                 }, onCancel: {

@@ -9,13 +9,12 @@ import SwiftUI
 import Kingfisher
 
 struct PlaceMediaView: View {
-    @ObservedObject var vm: PlaceVM
-    
-    @StateObject var placeMediaViewModel: PlaceMediaViewModel
+    @ObservedObject private var vm: PlaceVM
+    @StateObject private var placeMediaVM: PlaceMediaVM
     
     init(placeId: String, vm: PlaceVM) {
-        self.vm = vm
-        self._placeMediaViewModel = StateObject(wrappedValue: PlaceMediaViewModel(placeId: placeId))
+        self._vm = ObservedObject(wrappedValue: vm)
+        self._placeMediaVM = StateObject(wrappedValue: PlaceMediaVM(placeId: placeId))
     }
     
     let gridColumns: [GridItem] = [
@@ -25,7 +24,7 @@ struct PlaceMediaView: View {
     
     var body: some View {
         ScrollView {
-            if placeMediaViewModel.isLoading && placeMediaViewModel.medias.isEmpty {
+            if placeMediaVM.isLoading && placeMediaVM.medias.isEmpty {
                 Group {
                     Rectangle()
                     Rectangle()
@@ -34,7 +33,7 @@ struct PlaceMediaView: View {
                 }
                 .aspectRatio(2 / 3, contentMode: .fill)
                 .foregroundStyle(Color.themePrimary)
-            } else if placeMediaViewModel.medias.isEmpty {
+            } else if placeMediaVM.medias.isEmpty {
                 Text("No media")
                     .font(.custom(style: .subheadline))
                     .foregroundStyle(.secondary)
@@ -42,7 +41,7 @@ struct PlaceMediaView: View {
                     .padding(.horizontal)
             } else {
                 LazyVGrid(columns: gridColumns, spacing: 0) {
-                    ForEach(placeMediaViewModel.medias) { media in
+                    ForEach(placeMediaVM.medias) { media in
                         ZStack {
                             Group {
                                 if media.type == .image, let url = URL(string: media.src) {
@@ -95,7 +94,7 @@ struct PlaceMediaView: View {
                         .frame(width: 0, height: 0)
                         .onAppear {
                             Task {
-                                await placeMediaViewModel.fetch(type: .new)
+                                await placeMediaVM.fetch(type: .new)
                             }
                         }
                 }
