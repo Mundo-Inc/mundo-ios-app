@@ -35,14 +35,3 @@ extension UserEssentials {
         self.progress = CompactUserProgress(level: userDetail.progress.level)
     }
 }
-
-extension UserEssentials {
-    init(userOverview: UserOverview) {
-        self.id = userOverview.id
-        self.name = userOverview.name
-        self.username = userOverview.username
-        self.verified = userOverview.verified
-        self.profileImage = userOverview.profileImage
-        self.progress = CompactUserProgress(level: userOverview.progress.level)
-    }
-}
