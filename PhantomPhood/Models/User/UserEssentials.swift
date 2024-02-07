@@ -17,6 +17,7 @@ struct UserEssentials: Identifiable, Decodable {
     
     struct CompactUserProgress: Decodable {
         let level: Int
+        let xp: Int
     }
 
     enum CodingKeys: String, CodingKey {
@@ -32,6 +33,6 @@ extension UserEssentials {
         self.username = userDetail.username
         self.verified = userDetail.verified
         self.profileImage = userDetail.profileImage
-        self.progress = CompactUserProgress(level: userDetail.progress.level)
+        self.progress = CompactUserProgress(level: userDetail.progress.level, xp: userDetail.progress.xp)
     }
 }

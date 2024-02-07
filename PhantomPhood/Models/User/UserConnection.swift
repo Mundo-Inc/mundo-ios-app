@@ -8,7 +8,7 @@
 import Foundation
 
 struct UserConnection: Identifiable, Decodable {
-    static let dummy = UserConnection(id: "", user: .init(id: "", name: "Name", username: "username", verified: false, profileImage: "", progress: .init(level: 50)), createdAt: "")
+    static let dummy = UserConnection(id: "", user: .init(id: "", name: "Name", username: "username", verified: false, profileImage: "", progress: .init(level: 50, xp: 3000)), createdAt: "")
     
     let id: String
     let user: UserEssentials
