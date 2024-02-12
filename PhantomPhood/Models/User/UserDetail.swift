@@ -34,16 +34,16 @@ struct UserProgress: Codable {
     let xp: Int
     let level: Int
     let achievements: [UserAchievments]
-}
-
-struct UserAchievments: Codable, Identifiable {
-    let id: String
-    let type: String
-    let createdAt: String
     
-    enum CodingKeys: String, CodingKey {
-        case id = "_id"
-        case type, createdAt
+    struct UserAchievments: Codable, Identifiable {
+        let id: AchievementsEnum
+        let count: Int
+        let createdAt: String
+        
+        enum CodingKeys: String, CodingKey {
+            case id = "type"
+            case count, createdAt
+        }
     }
 }
 

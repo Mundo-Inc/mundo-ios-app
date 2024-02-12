@@ -283,12 +283,6 @@ struct PlaceView: View {
             .scrollIndicators(.hidden)
             .ignoresSafeArea(edges: .top)
             
-            if vm.reportId != nil {
-                ReportView(id: $vm.reportId, type: .review)
-                    .transition(.move(edge: .bottom))
-                    .animation(.easeInOut, value: vm.reportId)
-            }
-            
             if let place = vm.place, vm.includedLists != nil, vm.isAddToListPresented {
                 AddToListView(placeVM: vm, placeId: place.id)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -10,12 +10,12 @@ import SwiftUI
 struct UserActivityView: View {
     let id: String
     
-    @StateObject var vm = UserActivityVM()
+    @ObservedObject private var commentsViewModel = CommentsVM.shared
     
-    @ObservedObject private var commentsViewModel = CommentsViewModel.shared
-    @StateObject private var mediasViewModel = MediasViewModel()
+    @StateObject private var vm = UserActivityVM()
+    @StateObject private var mediasViewModel = MediasVM()
     
-    @State private var reportId: String? = nil
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         ZStack {
@@ -39,7 +39,7 @@ struct UserActivityView: View {
                         case .following:
                             UserActivityFollowing(vm: vm)
                         case .newReview:
-                            UserActivityReview(vm: vm, mediasViewModel: mediasViewModel, reportId: $reportId)
+                            UserActivityReview(vm: vm, mediasViewModel: mediasViewModel)
                         case .newCheckin:
                             UserActivityCheckin(vm: vm)
                         default:
@@ -63,6 +63,17 @@ struct UserActivityView: View {
                         await vm.getActivity(id)
                     }
                 }
+            }
+        }
+        .alert("Error", isPresented: Binding(optionalValue: $vm.error)) {
+            Button("OK", role: .cancel) {
+                dismiss()
+            }
+        } message: {
+            if let error = vm.error {
+                Text(error)
+            } else {
+                Text("Something went wrong :(")
             }
         }
     }

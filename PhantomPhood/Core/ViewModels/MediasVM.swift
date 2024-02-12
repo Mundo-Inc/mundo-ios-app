@@ -1,5 +1,5 @@
 //
-//  MediasViewModel.swift
+//  MediasVM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 10/5/23.
@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 @MainActor
-final class MediasViewModel: ObservableObject {
+final class MediasVM: ObservableObject {
     @Published var show = false
     @Published var medias: [Media] = []
         

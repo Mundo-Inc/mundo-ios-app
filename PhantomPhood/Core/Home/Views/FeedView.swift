@@ -10,12 +10,10 @@ import SwiftUI
 struct FeedView: View {
     @ObservedObject var appData = AppData.shared
     
-    @ObservedObject var commentsViewModel = CommentsViewModel.shared
-    @ObservedObject var mediasViewModel: MediasViewModel
+    @ObservedObject var commentsViewModel = CommentsVM.shared
+    @ObservedObject var mediasViewModel: MediasVM
     
     @StateObject var vm = FeedViewModel()
-    
-    @Binding var reportId: String?
     
     var body: some View {
         ZStack {
@@ -113,7 +111,7 @@ struct FeedView: View {
                                     case .following:
                                         FeedFollowingView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
                                     case .newReview:
-                                        FeedReviewView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction, mediasViewModel: mediasViewModel, reportId: $reportId)
+                                        FeedReviewView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction, mediasViewModel: mediasViewModel)
                                     case .newCheckin:
                                         FeedCheckinView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
                                     default:
@@ -157,7 +155,9 @@ struct FeedView: View {
                         appData.tappedTwice = nil
                         Task {
                             if !vm.isLoading {
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                 await vm.getFeed(.refresh)
+                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
                             }
                         }
                     }
@@ -169,6 +169,6 @@ struct FeedView: View {
 
 #Preview {
     NavigationStack {
-        FeedView(mediasViewModel: MediasViewModel(), reportId: .constant(nil))
+        FeedView(mediasViewModel: MediasVM())
     }
 }

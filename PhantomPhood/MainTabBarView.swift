@@ -38,7 +38,7 @@ struct MainTabBarView: View {
                     }
             }
             .rotationEffect(showActions ? .degrees(135) : .zero)
-            .offset(y: -26)
+            .offset(y: -25)
             .animation(.bouncy, value: showActions)
             
             rewardsHubView()
@@ -47,7 +47,6 @@ struct MainTabBarView: View {
         }
         .padding(.top, 8)
         .background(.ultraThinMaterial)
-        .ignoresSafeArea(.all, edges: .bottom)
     }
 }
 

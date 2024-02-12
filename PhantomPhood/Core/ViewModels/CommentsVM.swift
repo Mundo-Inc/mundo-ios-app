@@ -8,12 +8,12 @@
 import Foundation
 
 @MainActor
-final class CommentsViewModel: ObservableObject {
-    static let shared = CommentsViewModel()
+final class CommentsVM: ObservableObject {
+    static let shared = CommentsVM()
     
+    private let auth = Authentication.shared
     private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
-    private let toastViewModel = ToastVM.shared
+    private let toastVM = ToastVM.shared
     
     @Published var currentActivityId: String? = nil
     
@@ -79,12 +79,12 @@ final class CommentsViewModel: ObservableObject {
             commentContent = ""
             if let data {
                 self.comments.insert(data.data, at: 0)
-                toastViewModel.toast(.init(type: .success, title: "Success", message: "Comment Added"))
+                toastVM.toast(.init(type: .success, title: "Success", message: "Comment Added"))
             } else {
-                toastViewModel.toast(.init(type: .error, title: "Error", message: "We couldn't add your comment"))
+                toastVM.toast(.init(type: .error, title: "Error", message: "We couldn't add your comment"))
             }
         } catch {
-            toastViewModel.toast(.init(type: .error, title: "Error", message: "Something went wrong"))
+            toastVM.toast(.init(type: .error, title: "Error", message: "Something went wrong"))
         }
         self.isSubmitting = false
     }
@@ -104,10 +104,10 @@ final class CommentsViewModel: ObservableObject {
                     return comment.id == data.data.id ? data.data : comment
                 })
             } else {
-                toastViewModel.toast(.init(type: .error, title: "Error", message: "Something went wrong"))
+                toastVM.toast(.init(type: .error, title: "Error", message: "Something went wrong"))
             }
         } catch {
-            toastViewModel.toast(.init(type: .error, title: "Error", message: "Something went wrong"))
+            toastVM.toast(.init(type: .error, title: "Error", message: "Something went wrong"))
         }
         self.isSubmitting = false
     }

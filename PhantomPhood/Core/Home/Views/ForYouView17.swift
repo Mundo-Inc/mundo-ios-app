@@ -11,7 +11,7 @@ import SwiftUI
 struct ForYouView17: View {
     @ObservedObject var appData = AppData.shared
     
-    @ObservedObject var commentsViewModel = CommentsViewModel.shared
+    @ObservedObject var commentsViewModel = CommentsVM.shared
     @StateObject var vm = ForYouVM()
     
     @ObservedObject private var forYouInfoVM = ForYouInfoVM.shared
@@ -93,7 +93,9 @@ struct ForYouView17: View {
                         appData.tappedTwice = nil
                         Task {
                             if !vm.isLoading {
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                 await vm.getForYou(.refresh)
+                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
                             }
                         }
                     }

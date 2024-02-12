@@ -9,6 +9,83 @@ import Foundation
 
 @MainActor
 final class UniversalLinkingManager {
+    static let routingSchemes: [String: RouteScheme] = [
+        "place": RouteScheme(pattern: ["id", "action?"], routeGetter: { components in
+            var id: String?
+            var action: PlaceAction?
+            
+            for index in components.indices {
+                switch index {
+                case 0:
+                    id = components[index]
+                case 1:
+                    if components[index].lowercased() == "checkin" {
+                        action = .checkin
+                    } else if components[index].lowercased() == "addreview" {
+                        action = .addReview
+                    }
+                default:
+                    break
+                }
+            }
+            
+            guard let id else {
+                throw LinkingError.missingParam
+            }
+            
+            return AppRoute.place(id: id, action: action)
+        }, validator: { components in
+            for index in components.indices {
+                switch index {
+                case 0:
+                    if components[index].isEmpty {
+                        throw LinkingError.badParam
+                    }
+                default:
+                    break
+                }
+            }
+        }),
+        "user": RouteScheme(pattern: ["id"], routeGetter: { components in
+            if let first = components.first {
+                return AppRoute.userProfile(userId: first)
+            }
+            
+            throw LinkingError.missingParam
+        }, validator: { components in
+            if let first = components.first {
+                if first.isEmpty {
+                    throw LinkingError.badParam
+                }
+            } else {
+                throw LinkingError.missingParam
+            }
+        }),
+        "activity": RouteScheme(pattern: ["id"], routeGetter: { components in
+            if let first = components.first {
+                return AppRoute.userActivity(id: first)
+            }
+            
+            throw LinkingError.missingParam
+        }, validator: { components in
+            if let first = components.first {
+                if first.isEmpty {
+                    throw LinkingError.badParam
+                }
+            } else {
+                throw LinkingError.missingParam
+            }
+        }),
+        "signup": RouteScheme(pattern: ["ref?"], authRouteGetter: { components in
+            if let first = components.first {
+                // TODO: Pass in the optional ref
+                return AuthRoute.signUpOptions
+            }
+            
+            throw LinkingError.missingParam
+        }),
+    ]
+    
     private let appData = AppData.shared
     private let auth = Authentication.shared
     
@@ -22,70 +99,37 @@ final class UniversalLinkingManager {
         return nil
     }
     
+    /// Handles incoming URL
+    /// - Note: e.g. `phantom://tab=home/nav=place/id=645c1d1ab41f8e12a0d166bc`
     func handleIncomingURL(_ url: URL) {
-        // return if not signed in
-        guard auth.userSession != nil, let scheme = url.scheme else { return }
+        var pathComponents = url.pathComponents
         
-        if scheme == "phantom" {
-            // phantom://tab=home/nav=place/id=645c1d1ab41f8e12a0d166bc
-            let string = url.absoluteString.replacingOccurrences(of: "phantom://", with: "")
-            let components = string.components(separatedBy: "/")
-            
-            var tabSet = false
-            for component in components {
-                if component.contains("tab=") {
-                    let tabRawValue = component.replacingOccurrences(of: "tab=", with: "")
-                    if let requestedTab = Tab.convert(from: tabRawValue) {
-                        appData.activeTab = requestedTab
-                        tabSet = true
-                    }
-                } else if !tabSet {
-                    // return if tab is not specified
-                    return
-                }
-                if component.contains("nav") {
-                    let navRawValue = component.replacingOccurrences(of: "nav=", with: "").lowercased()
-                    switch navRawValue {
-                    case "notifications":
-                        appData.goTo(.notifications)
-                    case "user":
-                        if let id = getKeyValue("id", string: string) {
-                            appData.goTo(.userProfile(userId: id.lowercased()))
-                        }
-                    case "place":
-                        if let id = getKeyValue("id", string: string) {
-                            appData.goTo(.place(id: id.lowercased()))
-                        }
-                    case "settings":
-                        appData.goTo(.settings)
-                    case "myConnections":
-                        if let tab = getKeyValue("tab", string: string)?.lowercased(), (tab == "followers" || tab == "followings") {
-                            appData.goTo(.myConnections(initTab: tab == "followers" ? .followers : .followings))
-                        }
-                    default:
-                        break
-                    }
-                }
-            }
-        } else if scheme == "https" {
-            // https://phantomphood.ai/place/6561679c15727151d1a5355f
-            let string = url.absoluteString.replacingOccurrences(of: "https://phantomphood.ai/", with: "")
-            let components = string.components(separatedBy: "/")
-            
-            guard let type = components.first, components.endIndex >= 1 else { return }
-            
-            let id = components[1]
-            
-            switch type {
-            case "place":
-                appData.goTo(AppRoute.place(id: id))
-            case "user":
-                appData.goTo(AppRoute.userProfile(userId: id))
-            case "activity":
-                appData.goTo(AppRoute.userActivity(id: id))
-            default:
-                break
-            }
+        if let first = pathComponents.first, first == "/" {
+            pathComponents.removeFirst()
+        }
+        
+        guard
+            let startScheme = pathComponents.first,
+            let item = UniversalLinkingManager.routingSchemes[startScheme]
+        else { return }
+        
+        pathComponents.removeFirst()
+        
+        do {
+            try item.validate(pathComponents)
+        } catch {
+            return
+        }
+        
+        switch item.router {
+        case .app:
+            guard let route = try? item.getRoute(pathComponents) else { return }
+            /// return if not signed in
+            guard auth.userSession != nil else { return }
+            appData.goTo(route)
+        case .auth:
+            guard let route = try? item.getAuthRoute(pathComponents), auth.userSession == nil else { return }
+            appData.authNavStack.append(route)
         }
     }
 }

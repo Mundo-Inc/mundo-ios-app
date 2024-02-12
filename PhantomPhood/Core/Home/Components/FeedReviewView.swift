@@ -13,19 +13,17 @@ struct FeedReviewView: View {
     private let addReaction: (NewReaction, FeedItem) async -> Void
     private let removeReaction: (UserReaction, FeedItem) async -> Void
     
-    @ObservedObject private var mediasViewModel: MediasViewModel
-    @Binding private var reportId: String?
+    @ObservedObject private var mediasViewModel: MediasVM
 
-    init(data: FeedItem, addReaction: @escaping (NewReaction, FeedItem) async -> Void, removeReaction: @escaping (UserReaction, FeedItem) async -> Void, mediasViewModel: MediasViewModel, reportId: Binding<String?>) {
+    init(data: FeedItem, addReaction: @escaping (NewReaction, FeedItem) async -> Void, removeReaction: @escaping (UserReaction, FeedItem) async -> Void, mediasViewModel: MediasVM) {
         self.data = data
         self.addReaction = addReaction
         self.removeReaction = removeReaction
         self._mediasViewModel = ObservedObject(wrappedValue: mediasViewModel)
-        self._reportId = reportId
     }
     
     @State private var showActions = false
-    @ObservedObject private var commentsViewModel = CommentsViewModel.shared
+    @ObservedObject private var commentsViewModel = CommentsVM.shared
     @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
     
     private func showMedia() {
@@ -180,33 +178,33 @@ struct FeedReviewView: View {
                 }
                 
                 if showActions {
-                    ZStack {
-                        Color.black
-                        
-                        VStack(spacing: 20) {
-                            Button("Report", role: .destructive) {
-                                withAnimation {
-                                    showActions = false
-                                    switch data.resource {
-                                    case .review(let review):
-                                        reportId = review.id
-                                    default:
-                                        break
-                                    }
-                                }
+                    VStack {
+                        switch data.resource {
+                        case .review(let review):
+                            NavigationLink(value: AppRoute.report(id: review.id, type: .review)) {
+                                Text("Report")
+                                    .frame(maxWidth: .infinity)
                             }
                             .buttonStyle(.bordered)
-                            
-                            Button("Cancel", role: .destructive) {
-                                withAnimation {
-                                    showActions = false
-                                    reportId = nil
-                                }
-                            }
-                            .buttonStyle(.bordered)
+                        default:
+                            EmptyView()
                         }
+                        Button {
+                            withAnimation {
+                                showActions = false
+                            }
+                        } label: {
+                            Text("Cancel")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
                     }
-                    .zIndex(100)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+                    .background(Color.themeBG)
+                    .onDisappear {
+                        showActions = false
+                    }
                 }
             }
         } footer: {

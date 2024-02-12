@@ -11,7 +11,7 @@ import SwiftUIPager
 struct ForYouView: View {
     @ObservedObject var appData = AppData.shared
     
-    @ObservedObject var commentsViewModel = CommentsViewModel.shared
+    @ObservedObject var commentsViewModel = CommentsVM.shared
     @StateObject var vm = ForYouVM()
     
     @ObservedObject private var forYouInfoVM = ForYouInfoVM.shared
@@ -73,7 +73,7 @@ struct ForYouView: View {
                         }
                         .singlePagination()
                         .pagingPriority(.simultaneous)
-//                        .delaysTouches(false)
+                        //                        .delaysTouches(false)
                         .bounces(false)
                         .vertical()
                         .onPageChanged({ pageIndex in
@@ -117,7 +117,9 @@ struct ForYouView: View {
                         appData.tappedTwice = nil
                         if !vm.isLoading {
                             Task {
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                 await vm.getForYou(.refresh)
+                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
                             }
                         }
                     }

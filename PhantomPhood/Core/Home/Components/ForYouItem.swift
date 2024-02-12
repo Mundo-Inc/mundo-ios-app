@@ -19,7 +19,7 @@ struct ForYouItem: View {
     
     @ObservedObject private var videoPlayerVM = VideoPlayerVM.shared
     @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
-    @ObservedObject private var commentsViewModel = CommentsViewModel.shared
+    @ObservedObject private var commentsViewModel = CommentsVM.shared
     
     /// For handling multiple video playback
     @State private var tabPage: String = ""
@@ -139,7 +139,7 @@ struct ForYouItem: View {
                                 }
                             }
                         }
-                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                        .tabViewStyle(PageTabViewStyle())
                     }
                 } else {
                     if let image = feedReview.images.first, let url = URL(string: image.src) {
@@ -298,8 +298,8 @@ struct ForYouItem: View {
                         .padding(.horizontal, 10)
                         .padding(.top, 10)
                         .padding(.bottom, 5)
-                        .background(Material.ultraThin.opacity(0.7))
-                        .clipShape(.rect(cornerRadius: 16))
+                        .background(Material.ultraThin.opacity(0.65))
+                        .clipShape(.rect(cornerRadius: 20))
                         .padding(.horizontal)
                         
                         Spacer()
@@ -314,26 +314,9 @@ struct ForYouItem: View {
                         }
                         
                         VStack(spacing: 5) {
-                            ScrollView(.horizontal) {
-                                HStack(spacing: 4) {
-                                    ForEach(feedReview.videos) { vid in
-                                        Image(systemName: "video")
-                                            .animation(.easeInOut, value: tabPage)
-                                            .foregroundStyle(vid.id == tabPage ? Color.accentColor : Color.secondary)
-                                    }
-                                    ForEach(feedReview.images) { img in
-                                        Image(systemName: "photo")
-                                            .foregroundStyle(img.id == tabPage ? Color.accentColor : Color.secondary)
-                                    }
-                                }
-                                .font(.system(size: 14))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            .scrollIndicators(.hidden)
-                            
                             if let overallScore = feedReview.scores.overall {
                                 HStack {
-                                    StarRating(score: overallScore)
+                                    StarRating(score: overallScore, activeColor: Color.gold)
                                     
                                     Text("(\(String(format: "%.0f", overallScore))/5)")
                                         .font(.custom(style: .headline))
@@ -352,7 +335,7 @@ struct ForYouItem: View {
                         .padding(.horizontal)
                         .padding(.trailing, 52)
                         .padding(.trailing)
-                        .padding(.bottom)
+                        .padding(.bottom, 8)
                         .frame(maxWidth: .infinity)
                         .background {
                             LinearGradient(colors: [.clear, .black.opacity(0.2), .black.opacity(0.4), .black.opacity(0.5), .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
@@ -419,8 +402,8 @@ struct ForYouItem: View {
                         .padding(.horizontal, 10)
                         .padding(.top, 10)
                         .padding(.bottom, 5)
-                        .background(Material.ultraThin.opacity(0.7))
-                        .clipShape(.rect(cornerRadius: 16))
+                        .background(Material.ultraThin.opacity(0.65))
+                        .clipShape(.rect(cornerRadius: 20))
                         .padding(.horizontal)
                         
                         Spacer()
@@ -449,11 +432,13 @@ struct ForYouItem: View {
                         .padding(.horizontal)
                         .padding(.trailing, 52)
                         .padding(.trailing)
-                        .padding(.bottom)
+                        .padding(.bottom, 8)
                         .frame(maxWidth: .infinity)
                         .background {
-                            LinearGradient(colors: [.clear, .black.opacity(0.2), .black.opacity(0.4), .black.opacity(0.5), .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
-                                .allowsHitTesting(false)
+                            if (feedCheckin.caption != nil && !feedCheckin.caption!.isEmpty) || (feedCheckin.tags != nil && !feedCheckin.tags!.isEmpty) {
+                                LinearGradient(colors: [.clear, .black.opacity(0.2), .black.opacity(0.4), .black.opacity(0.5), .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
+                                    .allowsHitTesting(false)
+                            }
                         }
                     default:
                         EmptyView()

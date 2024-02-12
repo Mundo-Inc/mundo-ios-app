@@ -18,7 +18,7 @@ struct FeedLevelUpView: View {
         self.removeReaction = removeReaction
     }
     
-    @ObservedObject private var commentsViewModel = CommentsViewModel.shared
+    @ObservedObject private var commentsViewModel = CommentsVM.shared
     @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
     
     // For shader

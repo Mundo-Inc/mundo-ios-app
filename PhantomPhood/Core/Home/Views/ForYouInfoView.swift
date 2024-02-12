@@ -10,7 +10,7 @@ import SwiftUI
 struct ForYouInfoView: View {
     @ObservedObject private var appData = AppData.shared
     
-    @ObservedObject var commentsViewModel = CommentsViewModel.shared
+    @ObservedObject var commentsViewModel = CommentsVM.shared
     @ObservedObject var selectReactionsViewModel = SelectReactionsVM.shared
     
     @Environment(\.dismiss) private var dismiss
@@ -130,7 +130,6 @@ struct ForYouInfoView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(height: 26)
-                                .foregroundStyle(.white)
                             
                             Text("\(data.reactions.total.reduce(0) { $0 + $1.count })")
                                 .font(.custom(style: .body))
@@ -149,7 +148,6 @@ struct ForYouInfoView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(height: 22)
-                                .foregroundStyle(.white)
                             
                             Text("\(data.commentsCount)")
                                 .font(.custom(style: .body))

@@ -33,7 +33,7 @@ struct WelcomeView: View {
                     
                     Spacer()
                     
-                    NavigationLink(value: AuthStack.signUpOptions) {
+                    NavigationLink(value: AuthRoute.signUpOptions) {
                         Text("Create an Account")
                             .font(.custom(style: .headline))
                             .frame(maxWidth: .infinity)
@@ -42,7 +42,7 @@ struct WelcomeView: View {
                     .controlSize(.large)
                     .padding(.horizontal)
                     
-                    NavigationLink(value: AuthStack.signInOptions) {
+                    NavigationLink(value: AuthRoute.signInOptions) {
                         Text("I already have an account")
                             .font(.custom(style: .headline))
                             .padding(.vertical, 5)
@@ -55,7 +55,7 @@ struct WelcomeView: View {
                 }
                 .toolbar(.hidden, for: .automatic)
                 .navigationTitle("Welcome")
-                .navigationDestination(for: AuthStack.self) { link in
+                .navigationDestination(for: AuthRoute.self) { link in
                     switch link {
                     case .signUpOptions:
                         SignUpOptionsView()

@@ -1,5 +1,5 @@
 //
-//  OAuthViewModel.swift
+//  OAuthVM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 11/23/23.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 @MainActor
-final class OAuthViewModel: ObservableObject {
+final class OAuthVM: ObservableObject {
     @ObservedObject var auth = Authentication.shared
     
     @Published var error: String? = nil

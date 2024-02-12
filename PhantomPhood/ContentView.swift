@@ -10,8 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject private var auth = Authentication.shared
     @ObservedObject private var appData = AppData.shared
-    @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
-    @ObservedObject private var commentsViewModel = CommentsViewModel.shared
+    @ObservedObject private var selectReactionsVM = SelectReactionsVM.shared
+    @ObservedObject private var commentsVM = CommentsVM.shared
     @ObservedObject private var placeSelectorVM = PlaceSelectorVM.shared
     
     @StateObject private var onboardingVM = OnboardingVM()
@@ -30,7 +30,6 @@ struct ContentView: View {
                         .tag(Tab.explore)
                         .toolbar(.hidden, for: .tabBar)
                     
-                    
                     RewardsHubView()
                         .tag(Tab.rewardsHub)
                         .toolbar(.hidden, for: .tabBar)
@@ -39,16 +38,21 @@ struct ContentView: View {
                         .tag(Tab.myProfile)
                         .toolbar(.hidden, for: .tabBar)
                 }
-                
-                MainTabBarView(selection: appData.tabViewSelectionHandler, showActions: $showActions)
-                    .sheet(isPresented: $showActions) {
-                        QuickActionsView()
-                    }
-                    .sheet(isPresented: $placeSelectorVM.isPresented) {
-                        PlaceSelectorView()
-                            .presentationDetents([.fraction(0.99)])
-                    }
+            } else {
+                EmptyView()
             }
+            
+            Divider()
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            MainTabBarView(selection: appData.tabViewSelectionHandler, showActions: $showActions)
+                .sheet(isPresented: $showActions) {
+                    QuickActionsView()
+                }
+                .sheet(isPresented: $placeSelectorVM.isPresented) {
+                    PlaceSelectorView()
+                        .presentationDetents([.fraction(0.99)])
+                }
         }
         .ignoresSafeArea(.keyboard)
         .fullScreenCover(isPresented: Binding(get: {
@@ -61,16 +65,16 @@ struct ContentView: View {
         })) {
             OnboardingView(vm: onboardingVM)
         }
-        .sheet(isPresented: $selectReactionsViewModel.isPresented, content: {
+        .sheet(isPresented: $selectReactionsVM.isPresented, content: {
             if #available(iOS 17.0, *) {
-                SelectReactionsView(vm: selectReactionsViewModel)
+                SelectReactionsView(vm: selectReactionsVM)
                     .presentationBackground(.thinMaterial)
             } else {
-                SelectReactionsView(vm: selectReactionsViewModel)
+                SelectReactionsView(vm: selectReactionsVM)
             }
         })
-        .sheet(isPresented: Binding(optionalValue: $commentsViewModel.currentActivityId), onDismiss: {
-            commentsViewModel.onDismiss()
+        .sheet(isPresented: Binding(optionalValue: $commentsVM.currentActivityId), onDismiss: {
+            commentsVM.onDismiss()
         }, content: {
             CommentsView()
         })

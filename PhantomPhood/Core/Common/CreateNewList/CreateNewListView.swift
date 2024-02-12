@@ -15,7 +15,7 @@ struct CreateNewListView: View {
     @Environment(\.dismiss) private var dismiss
     
     // Creating new instance because of the sheet
-    @StateObject var selectReactionsViewModel = SelectReactionsVM()
+    @StateObject var selectReactionsVM = SelectReactionsVM()
     
     init(onSuccess: @escaping (UserPlacesList) -> Void = { _ in }, onCancel: @escaping () -> Void = {}) {
         self._vm = StateObject(wrappedValue: CreateNewListVM(onSuccess: onSuccess, onCancel: onCancel))
@@ -58,7 +58,7 @@ struct CreateNewListView: View {
                             
                             HStack {
                                 Button {
-                                    selectReactionsViewModel.select { emoji in
+                                    selectReactionsVM.select { emoji in
                                         vm.icon = emoji
                                     }
                                 } label: {
@@ -240,12 +240,12 @@ struct CreateNewListView: View {
                 }
             }
         }
-        .sheet(isPresented: $selectReactionsViewModel.isPresented, content: {
+        .sheet(isPresented: $selectReactionsVM.isPresented, content: {
             if #available(iOS 17.0, *) {
-                SelectReactionsView(vm: selectReactionsViewModel)
+                SelectReactionsView(vm: selectReactionsVM)
                     .presentationBackground(.thinMaterial)
             } else {
-                SelectReactionsView(vm: selectReactionsViewModel)
+                SelectReactionsView(vm: selectReactionsVM)
             }
         })
         .sheet(isPresented: $vm.showAddListCollaborators, content: {

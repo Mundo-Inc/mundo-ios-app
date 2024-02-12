@@ -46,6 +46,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 //        
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
             guard let data = params as? [String: AnyObject] else { return }
+
             print(data)
             if let link = data["+non_branch_link"] as? String, let url = URL(string: link) {
                 let universalLinkingManager = UniversalLinkingManager()

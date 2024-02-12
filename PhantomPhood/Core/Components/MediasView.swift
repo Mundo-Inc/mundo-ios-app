@@ -9,7 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct MediasView: View {
-    @StateObject var vm: MediasViewModel
+    @StateObject var vm: MediasVM
     
     @State var offset: CGSize = .zero
     var scale: CGFloat {
@@ -90,7 +90,7 @@ struct MediasView: View {
 }
 
 #Preview {
-    @ObservedObject var vm = MediasViewModel()
+    @ObservedObject var vm = MediasVM()
     return MediasView(vm: vm)
         .onAppear {
             vm.show(medias: [

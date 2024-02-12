@@ -31,7 +31,7 @@ final class AppData: ObservableObject {
     @Published var showEditProfile: Bool = false
     
     // Authentication Tab (Only before sign-in)
-    @Published var authNavStack: [AuthStack] = []
+    @Published var authNavStack: [AuthRoute] = []
     
     @Published var tappedTwice: Tab? = nil
     
@@ -94,6 +94,19 @@ final class AppData: ObservableObject {
             self.rewardsHubNavStack.append(route)
         case .myProfile:
             self.myProfileNavStack.append(route)
+        }
+    }
+    
+    func goBack() {
+        switch self.activeTab {
+        case .home:
+            self.homeNavStack.removeLast()
+        case .explore:
+            self.exploreNavStack.removeLast()
+        case .rewardsHub:
+            self.rewardsHubNavStack.removeLast()
+        case .myProfile:
+            self.myProfileNavStack.removeLast()
         }
     }
     

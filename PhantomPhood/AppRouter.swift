@@ -14,7 +14,7 @@ struct AppRouter: View {
     @StateObject var network = NetworkMonitor()
     
     @ObservedObject private var auth = Authentication.shared
-    @ObservedObject private var toastViewModel = ToastVM.shared
+    @ObservedObject private var toastVM = ToastVM.shared
     @ObservedObject private var appGeneralVM = AppGeneralVM.shared
     
     @AppStorage("theme") var theme: String = ""
@@ -38,7 +38,7 @@ struct AppRouter: View {
             }
             
             VStack(spacing: 5) {
-                ForEach(toastViewModel.toasts) { toast in
+                ForEach(toastVM.toasts) { toast in
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
                             .frame(maxWidth: .infinity)
@@ -72,15 +72,15 @@ struct AppRouter: View {
                         .padding(.horizontal)
                     }
                     .onTapGesture {
-                        toastViewModel.remove(id: toast.id)
+                        toastVM.remove(id: toast.id)
                     }
                     .padding(.horizontal)
                     .transition(.asymmetric(insertion: .push(from: .top), removal: .push(from: .bottom)))
-                    .animation(.bouncy, value: toastViewModel.toasts.count)
+                    .animation(.bouncy, value: toastVM.toasts.count)
                     
                 }
             }
-            .animation(.bouncy, value: toastViewModel.toasts.count)
+            .animation(.bouncy, value: toastVM.toasts.count)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .padding(.top)
         }

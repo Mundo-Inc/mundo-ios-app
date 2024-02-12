@@ -21,8 +21,14 @@ final class UserActivityVM: ObservableObject {
         do {
             let data = try await userActivityDM.getUserActivity(id)
             self.data = data
+        } catch let error as APIManager.APIError {
+            switch error {
+            case .serverError(let serverError):
+                self.error = serverError.message
+            default:
+                self.error = "Something went wrong :("
+            }
         } catch {
-            self.error = error.localizedDescription
             print(error)
         }
         self.isLoading = false

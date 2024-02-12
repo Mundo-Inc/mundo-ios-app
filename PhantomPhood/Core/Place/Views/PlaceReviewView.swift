@@ -11,20 +11,18 @@ import Kingfisher
 struct PlaceReviewView: View {
     let reviewIndex: Int
     
-    @Binding var reportId: String?
     @ObservedObject var placeReviewsVM: PlaceReviewsVM
-    @ObservedObject var mediasViewModel: MediasViewModel
+    @ObservedObject var mediasViewModel: MediasVM
     
-    @ObservedObject var commentsViewModel = CommentsViewModel.shared
+    @ObservedObject var commentsViewModel = CommentsVM.shared
     @ObservedObject var selectReactionsViewModel = SelectReactionsVM.shared
     
     @State var showActions = false
     
-    init(placeReviewsVM: PlaceReviewsVM, reviewIndex: Int, mediasViewModel: MediasViewModel, reportId: Binding<String?>) {
+    init(placeReviewsVM: PlaceReviewsVM, reviewIndex: Int, mediasViewModel: MediasVM) {
         self.reviewIndex = reviewIndex
         self._placeReviewsVM = ObservedObject(wrappedValue: placeReviewsVM)
         self._mediasViewModel = ObservedObject(wrappedValue: mediasViewModel)
-        self._reportId = reportId
     }
     
     func showMedia() {
@@ -57,11 +55,7 @@ struct PlaceReviewView: View {
                     Image(systemName: "ellipsis")
                 }
                 .confirmationDialog("Actions", isPresented: $showActions) {
-                    Button(role: .destructive) {
-                        withAnimation {
-                            self.reportId = self.review.id
-                        }
-                    } label: {
+                    NavigationLink(value: AppRoute.report(id: self.review.id, type: .review)) {
                         Text("Report")
                     }
                 }

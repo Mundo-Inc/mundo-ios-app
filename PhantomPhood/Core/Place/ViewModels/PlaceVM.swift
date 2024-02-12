@@ -33,8 +33,6 @@ final class PlaceVM: ObservableObject {
     @Published var activeTab: PlaceTab = .overview
     @Published var prevActiveTab: PlaceTab = .overview
     
-    @Published var reportId: String? = nil
-    
     /// user's lists that include this place
     @Published var includedLists: [String]? = nil
     

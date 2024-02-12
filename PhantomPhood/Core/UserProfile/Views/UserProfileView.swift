@@ -15,15 +15,17 @@ enum UserProfileTab: String, Hashable, CaseIterable {
 
 
 struct UserProfileView: View {
-    let id: String
-    
-    @StateObject private var vm: UserProfileViewModel
-    @State private var activeTab: UserProfileTab = .stats
+    @StateObject private var vm: UserProfileVM
     
     init(id: String) {
-        self.id = id
-        self._vm = StateObject(wrappedValue: UserProfileViewModel(id: id))
+        self._vm = StateObject(wrappedValue: UserProfileVM(id: id))
     }
+    
+    init(username: String) {
+        self._vm = StateObject(wrappedValue: UserProfileVM(username: username))
+    }
+    
+    @State private var activeTab: UserProfileTab = .stats
     
     var body: some View {
         ScrollView {
@@ -125,9 +127,7 @@ struct UserProfileView: View {
                             .opacity(0)
                         
                         Button {
-                            withAnimation {
-                                activeTab = .stats
-                            }
+                            activeTab = .stats
                         } label: {
                             Text(UserProfileTab.stats.rawValue)
                                 .padding(.vertical)
@@ -142,9 +142,7 @@ struct UserProfileView: View {
                             .frame(maxHeight: 20)
                         
                         Button {
-                            withAnimation {
-                                activeTab = .achievements
-                            }
+                            activeTab = .achievements
                         } label: {
                             Text(UserProfileTab.achievements.rawValue)
                                 .padding()
@@ -158,9 +156,7 @@ struct UserProfileView: View {
                         Spacer()
                         
                         Button {
-                            withAnimation {
-                                activeTab = .lists
-                            }
+                            activeTab = .lists
                         } label: {
                             Text(UserProfileTab.lists.rawValue)
                                 .padding(.vertical)
@@ -190,22 +186,28 @@ struct UserProfileView: View {
                 }
                 
                 VStack {
-                    Group {
-                        switch activeTab {
-                        case .stats:
-                            UserProfileStats(user: vm.user, activeTab: $activeTab)
-                        case .achievements:
-                            UserProfileAchievements(user: vm.user)
-                        case .lists:
-                            if let user = vm.user {
-                                UserProfileListsView(user: user)
-                            } else {
-                                VStack {
-                                    Text("Loading")
-                                }
-                                .font(.custom(style: .headline))
-                                .frame(maxWidth: .infinity)
+                    switch activeTab {
+                    case .stats:
+                        UserProfileStats(user: vm.user, activeTab: $activeTab)
+                    case .achievements:
+                        if let user = vm.user {
+                            UserProfileAchievements(user: user)
+                        } else {
+                            VStack {
+                                Text("Loading")
                             }
+                            .font(.custom(style: .headline))
+                            .frame(maxWidth: .infinity)
+                        }
+                    case .lists:
+                        if let user = vm.user {
+                            UserProfileListsView(user: user)
+                        } else {
+                            VStack {
+                                Text("Loading")
+                            }
+                            .font(.custom(style: .headline))
+                            .frame(maxWidth: .infinity)
                         }
                     }
                 }

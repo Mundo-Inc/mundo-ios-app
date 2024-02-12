@@ -241,6 +241,7 @@ class Authentication: ObservableObject {
                 await setDeviceToken()
             }
         } catch {
+            print(error)
             print("DEBUG: Couldn't get user info | Error: \(error.localizedDescription)")
         }
     }

@@ -10,16 +10,14 @@ import Kingfisher
 
 struct UserActivityReview: View {
     @ObservedObject private var vm: UserActivityVM
-    @ObservedObject private var mediasViewModel: MediasViewModel
-    @Binding private var reportId: String?
+    @ObservedObject private var mediasViewModel: MediasVM
     
-    init(vm: UserActivityVM, mediasViewModel: MediasViewModel, reportId: Binding<String?>) {
+    init(vm: UserActivityVM, mediasViewModel: MediasVM) {
         self._vm = ObservedObject(wrappedValue: vm)
         self._mediasViewModel = ObservedObject(wrappedValue: mediasViewModel)
-        self._reportId = reportId
     }
     
-    @ObservedObject private var commentsViewModel = CommentsViewModel.shared
+    @ObservedObject private var commentsViewModel = CommentsVM.shared
     @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
     
     @State private var showActions = false
@@ -177,35 +175,15 @@ struct UserActivityReview: View {
                     default:
                         EmptyView()
                     }
-                    
-                    if showActions {
-                        ZStack {
-                            Color.black
-                            
-                            VStack(spacing: 20) {
-                                Button("Report", role: .destructive) {
-                                    withAnimation {
-                                        showActions = false
-                                        switch data.resource {
-                                        case .review(let review):
-                                            reportId = review.id
-                                        default:
-                                            break
-                                        }
-                                    }
-                                }
-                                .buttonStyle(.bordered)
-                                
-                                Button("Cancel", role: .destructive) {
-                                    withAnimation {
-                                        showActions = false
-                                        reportId = nil
-                                    }
-                                }
-                                .buttonStyle(.bordered)
-                            }
+                }
+                .confirmationDialog("Actions", isPresented: $showActions) {
+                    switch data.resource {
+                    case .review(let review):
+                        NavigationLink(value: AppRoute.report(id: review.id, type: .review)) {
+                            Text("Report")
                         }
-                        .zIndex(100)
+                    default:
+                        EmptyView()
                     }
                 }
             } footer: {

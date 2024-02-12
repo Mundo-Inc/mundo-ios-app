@@ -1,5 +1,5 @@
 //
-//  AuthStack.swift
+//  AuthRoute.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 15.09.2023.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum AuthStack: Hashable {
+enum AuthRoute: Hashable {
     case signInOptions
     case signInWithPassword
     case signUpOptions

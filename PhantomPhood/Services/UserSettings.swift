@@ -20,8 +20,9 @@ struct UserSettings {
     // MARK: - App settings
 
     @AppStorage("isBetaTester") var isBetaTester: Bool = false
+    @AppStorage("referralsGenerated") var referralsGenerated: Int = 0
 
-    ///
+    /// Onboarding Version
     @AppStorage("onboardingVersion") var onboardingVersion: Int = 0
     
     // MARK: - Public Methods

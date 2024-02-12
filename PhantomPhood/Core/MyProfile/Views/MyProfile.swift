@@ -72,9 +72,7 @@ struct MyProfile: View {
                                 .opacity(0)
                             
                             Button {
-                                withAnimation {
-                                    appData.myProfileActiveTab = .stats
-                                }
+                                appData.myProfileActiveTab = .stats
                             } label: {
                                 Text(MyProfileActiveTab.stats.rawValue)
                                     .padding(.vertical)
@@ -89,9 +87,7 @@ struct MyProfile: View {
                                 .frame(maxHeight: 20)
                             
                             Button {
-                                withAnimation {
-                                    appData.myProfileActiveTab = .achievements
-                                }
+                                appData.myProfileActiveTab = .achievements
                             } label: {
                                 Text(MyProfileActiveTab.achievements.rawValue)
                                     .padding()
@@ -105,9 +101,7 @@ struct MyProfile: View {
                             Spacer()
                             
                             Button {
-                                withAnimation {
-                                    appData.myProfileActiveTab = .lists
-                                }
+                                appData.myProfileActiveTab = .lists
                             } label: {
                                 Text(MyProfileActiveTab.lists.rawValue)
                                     .padding(.vertical)
@@ -138,15 +132,13 @@ struct MyProfile: View {
                     .id(1)
                     
                     VStack {
-                        Group {
-                            switch appData.myProfileActiveTab {
-                            case .stats:
-                                ProfileStats()
-                            case .achievements:
-                                ProfileAchievements()
-                            case .lists:
-                                MyProfileListsView()
-                            }
+                        switch appData.myProfileActiveTab {
+                        case .stats:
+                            ProfileStats()
+                        case .achievements:
+                            ProfileAchievements()
+                        case .lists:
+                            MyProfileListsView()
                         }
                     }
                     .frame(minHeight: UIScreen.main.bounds.height / 1.5)
@@ -173,9 +165,9 @@ struct MyProfile: View {
                 }
                 .navigationTitle("My Profile")
                 .toolbar {
-                    if let url = URL(string: "https://phantomphood.ai/") {
+                    if let currentUser = auth.currentUser, let url = URL(string: "https://phantomphood.ai/user/@\(currentUser.username)") {
                         ToolbarItem(placement: .topBarLeading) {
-                            ShareLink("Phantom Phood", item: url, subject: Text("Join us on a journey of taste with Phantom Phood"), message: Text("Explore new dining experiences with Phantom Phood. A social platform for foodies to rate and review restaurants. Connect with others and share your culinary finds."))
+                            ShareLink("Phantom Phood", item: url, message: Text("Join \(currentUser.name) on a journey of taste"))
                         }
                     }
                     ToolbarItem(placement: .topBarTrailing) {

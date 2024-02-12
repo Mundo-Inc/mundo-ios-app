@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct CommentsView: View {
-    @ObservedObject private var vm = CommentsViewModel.shared
+    @ObservedObject private var vm = CommentsVM.shared
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var auth = Authentication.shared
     
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
     
     func navigateToUserProfile(userId: String) {
         if let currentUserId = auth.currentUser?.id, currentUserId == userId {
@@ -32,8 +32,6 @@ struct CommentsView: View {
         }
         dismiss()
     }
-    
-    @State var reportId: String? = nil
     
     var body: some View {
         VStack(spacing: 0) {
@@ -162,11 +160,11 @@ struct CommentsView: View {
                         }
                         .swipeActions {
                             Button {
-                                reportId = comment.id
+                                dismiss()
+                                appData.goTo(AppRoute.report(id: comment.id, type: .comment))
                             } label: {
                                 Text("Report")
                             }
-                            
                         }
                     }
                     .frame(maxHeight: .infinity)
@@ -196,9 +194,6 @@ struct CommentsView: View {
                     .padding(.all, 11)
                 }.padding(.horizontal)
                 .padding(.vertical, 10)
-        }
-        .sheet(isPresented: Binding(optionalValue: $reportId)) {
-            ReportView(id: $reportId, type: .comment)
         }
         .presentationDetents([.medium, .large])
     }

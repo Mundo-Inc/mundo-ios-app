@@ -34,6 +34,7 @@ enum AppRoute: Hashable {
     case checkinMapPlace(MapPlace)
     case review(IdOrData<PlaceEssentials>)
     case reviewMapPlace(MapPlace)
+    case report(id: String, type: ReportDM.ReportType)
     
     // My Profile
     case settings
@@ -85,6 +86,10 @@ enum AppRoute: Hashable {
         case .reviewMapPlace(let mapPlace):
             hasher.combine("review")
             hasher.combine(mapPlace)
+        case .report(let id, let type):
+            hasher.combine("report")
+            hasher.combine(id)
+            hasher.combine(type)
             
             // My Profile
             

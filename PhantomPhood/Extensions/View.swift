@@ -61,6 +61,8 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     AddReviewView(idOrData)
                 case .reviewMapPlace(let mapPlace):
                     AddReviewView(mapPlace: mapPlace)
+                case .report(let id, let type):
+                    ReportView(id: id, type: type)
                     
                     // Place
                     
@@ -78,8 +80,12 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     
                     // User
                     
-                case .userProfile(let id):
-                    UserProfileView(id: id)
+                case .userProfile(let idOrUsername):
+                    if idOrUsername.starts(with: "@") {
+                        UserProfileView(username: idOrUsername.replacingOccurrences(of: "@", with: ""))
+                    } else {
+                        UserProfileView(id: idOrUsername)
+                    }
                 case .userConnections(let userId, let initTab):
                     UserConnectionsView(userId: userId, activeTab: initTab)
                 case .userActivities(let userId, let activityType):

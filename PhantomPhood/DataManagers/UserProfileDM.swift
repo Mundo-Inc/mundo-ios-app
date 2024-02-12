@@ -25,6 +25,20 @@ final class UserProfileDM {
         return data.data
     }
     
+    func fetch(username: String) async throws -> UserDetail {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let data = try await apiManager.requestData("/users/@\(username)", method: .get, token: token) as APIResponse<UserDetail>?
+        
+        guard let data = data else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return data.data
+    }
+    
     func follow(id: String) async throws {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)

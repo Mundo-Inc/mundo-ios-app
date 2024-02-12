@@ -16,7 +16,7 @@ struct PlaceReviewsView: View {
         self._placeReviewsVM = StateObject(wrappedValue: PlaceReviewsVM(placeId: placeId))
     }
     
-    @StateObject var mediasViewModel = MediasViewModel()
+    @StateObject var mediasViewModel = MediasVM()
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -95,7 +95,6 @@ struct PlaceReviewsView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal)
                 
-                
                 VStack {
                     HStack {
                         Text("Reviews")
@@ -127,7 +126,7 @@ struct PlaceReviewsView: View {
                     Divider()
                     
                     ForEach(placeReviewsVM.reviews.indices, id: \.self) { index in
-                        PlaceReviewView(placeReviewsVM: placeReviewsVM, reviewIndex: index, mediasViewModel: mediasViewModel, reportId: $vm.reportId)
+                        PlaceReviewView(placeReviewsVM: placeReviewsVM, reviewIndex: index, mediasViewModel: mediasViewModel)
                             .padding(.horizontal)
                         
                         Divider()

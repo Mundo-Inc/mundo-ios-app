@@ -10,7 +10,7 @@ import SwiftUI
 struct UserActivityFollowing: View {
     @ObservedObject var vm: UserActivityVM
     
-    @ObservedObject private var commentsViewModel = CommentsViewModel.shared
+    @ObservedObject private var commentsViewModel = CommentsVM.shared
     @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
     
     var body: some View {

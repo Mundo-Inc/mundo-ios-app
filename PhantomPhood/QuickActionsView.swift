@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct QuickActionsView: View {
-    @ObservedObject var placeSelectorVM = PlaceSelectorVM.shared
-    
-    @Environment(\.dismiss) var dismiss
+    @ObservedObject private var placeSelectorVM = PlaceSelectorVM.shared
     @ObservedObject private var appData = AppData.shared
     
-    @ObservedObject private var toastViewModel = ToastVM.shared
-    var placeDM = PlaceDM()
+    @Environment(\.dismiss) private var dismiss
+    
+    @State var isViewingPlace = false
     
     func handleCheckin() {
         if isViewingPlace {
@@ -60,7 +59,6 @@ struct QuickActionsView: View {
         dismiss()
     }
     
-    @State var isViewingPlace = false
     func updateIsViewingPlace() {
         switch appData.getActiveRotue() {
         case .place(_, _), .placeMapPlace(_, _):

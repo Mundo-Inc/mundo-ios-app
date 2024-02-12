@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SignUpOptionsView: View {
-    @StateObject private var vm = OAuthViewModel()
+    @StateObject private var vm = OAuthVM()
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -72,7 +72,7 @@ struct SignUpOptionsView: View {
                             .foregroundStyle(.tertiary)
                             .padding(.vertical, 10)
                         
-                        NavigationLink(value: AuthStack.signUpWithPassword) {
+                        NavigationLink(value: AuthRoute.signUpWithPassword) {
                             Label(
                                 title: { Text("Using Email and Password") },
                                 icon: { Image(systemName: "envelope.fill") }

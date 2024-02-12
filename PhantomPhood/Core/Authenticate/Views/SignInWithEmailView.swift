@@ -7,26 +7,11 @@
 
 import SwiftUI
 
-// MARK: - ViewModel
-@MainActor
-class SignInViewModel: ObservableObject {
-    @Published var isLoading = false
-    
-    @Published var email: String = ""
-    @Published var isValidEmail: Bool = false
-    @Published var password: String = ""
-    
-    @Published var error: String?
-    
-    @Published var showResetPassword = false
-}
-
-// MARK: - View
 struct SignInWithEmailView: View {
     @ObservedObject private var auth = Authentication.shared
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
     
-    @StateObject private var vm = SignInViewModel()
+    @StateObject private var vm = SignInVM()
     
     enum TextFields: Hashable {
         case email

@@ -8,63 +8,91 @@
 import SwiftUI
 
 struct Achievement: View {
-    let achievement: AchievementsManager.Achievement
+    private let data: UserProgress.UserAchievments?
+    private let achievement: AchievementsEnum
     
-    let count: Int
-    let date: String?
+    init(data: UserProgress.UserAchievments) {
+        self.achievement = data.id
+        self.data = data
+    }
     
-    init(achievement: AchievementsManager.Achievement, recievedAchievements: [UserAchievments]) {
+    init(achievement: AchievementsEnum) {
         self.achievement = achievement
-        
-        let same = recievedAchievements.filter { $0.type == achievement.id }
-        
-        if let last = same.last {
-            count = same.count
-            date = last.createdAt
-        } else {
-            self.count = 0
-            self.date = nil
-        }
+        self.data = nil
     }
     
     var body: some View {
-        VStack {
-            if count == 0 {
-                Image(.LOCKED)
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                Image(achievement.id)
-                    .resizable()
-                    .scaledToFit()
-            }
-            
-            Text((count > 1 ? "\(count)x " : "") + achievement.title)
-                .multilineTextAlignment(.center)
-                .font(.custom(style: .subheadline))
-                .foregroundStyle(.primary)
-                .opacity(0.85)
-            
-            Text(achievement.description)
-                .multilineTextAlignment(.center)
-                .font(.custom(style: .caption))
-                .foregroundStyle(.secondary)
-            
-            if let date, let theDate = DateFormatter.stringToDate(dateString: date) {
-                Text(DateFormatter.dateToShortString(date: theDate))
+        VStack(spacing: 0) {
+            if let data {
+                if let theDate = DateFormatter.stringToDate(dateString: data.createdAt) {
+                    HStack {
+                        Text(DateFormatter.dateToShortString(date: theDate))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundStyle(.tertiary)
+                        
+                        if data.count > 1 {
+                            Text("\(data.count)x")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                     .font(.custom(style: .caption))
-                    .foregroundStyle(.tertiary)
+                    
+                }
+                
+                VStack {
+                    Image(achievement.rawValue)
+                        .resizable()
+                        .scaledToFit()
+                    
+                    Text((data.count > 1 ? "\(data.count)x " : "") + achievement.title)
+                        .multilineTextAlignment(.center)
+                        .font(.custom(style: .subheadline))
+                        .foregroundStyle(.primary)
+                        .opacity(0.85)
+                    
+                    Text(achievement.description)
+                        .multilineTextAlignment(.center)
+                        .font(.custom(style: .caption))
+                        .foregroundStyle(.secondary)
+                }
             } else {
-                Text("LOCKED")
-                    .font(.custom(style: .caption))
-                    .foregroundStyle(.tertiary)
+                VStack {
+                    Image(.LOCKED)
+                        .resizable()
+                        .scaledToFit()
+                    
+                    Text(achievement.title)
+                        .multilineTextAlignment(.center)
+                        .font(.custom(style: .subheadline))
+                        .foregroundStyle(.primary)
+                        .opacity(0.85)
+                    
+                    Text(achievement.description)
+                        .multilineTextAlignment(.center)
+                        .font(.custom(style: .caption))
+                        .foregroundStyle(.secondary)
+                }
             }
             
             Spacer()
+        }
+        .padding(.all, 8)
+        .background {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(Color.themePrimary.gradient.opacity(0.5))
+                
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.themeBorder, style: .init(lineWidth: 3))
+            }
+            .shadow(color: Color.black.opacity(0.3), radius: 5)
         }
     }
 }
 
 #Preview {
-    Achievement(achievement: .init(id: "LEGEND", title: "Legend Badge", description: "Reach level 100"), recievedAchievements: [.init(id: "", type: "LEGEND", createdAt: "2023-10-25T02:02:15.389Z")])
+    Group {
+        Achievement(achievement: .LEGEND)
+        Achievement(data: .init(id: .LEGEND, count: 4, createdAt: "2023-10-25T02:02:15.389Z"))
+    }
 }
