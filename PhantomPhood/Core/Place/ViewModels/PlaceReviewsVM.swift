@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 @MainActor
 class PlaceReviewsVM: ObservableObject {
@@ -56,6 +57,7 @@ class PlaceReviewsVM: ObservableObject {
     ///   - item: FeedItem
     func addReaction(_ reaction: GeneralReactionProtocol, to review: PlaceReview) async {
         guard let activityId = review.userActivityId else { return }
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         // add temporary reaction
         let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
         self.reviews = self.reviews.map({ i in
@@ -82,6 +84,7 @@ class PlaceReviewsVM: ObservableObject {
                 return i
             })
         } catch {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
             // remove temp reaction
             self.reviews = self.reviews.map({ i in
                 if i.id == review.id {

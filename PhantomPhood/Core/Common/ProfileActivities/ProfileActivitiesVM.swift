@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 @MainActor
 class ProfileActivitiesVM: ObservableObject {
@@ -128,6 +129,7 @@ class ProfileActivitiesVM: ObservableObject {
     ///   - reaction: NewReaction - aanything that conforms to GeneralReactionProtocol
     ///   - item: FeedItem
     func addReaction(_ reaction: GeneralReactionProtocol, _ item: FeedItem) async {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         // add temporary reaction
         let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
         self.items = self.items.map({ i in
@@ -154,6 +156,7 @@ class ProfileActivitiesVM: ObservableObject {
                 return i
             })
         } catch {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
             // remove temp reaction
             self.items = self.items.map({ i in
                 if i.id == item.id {

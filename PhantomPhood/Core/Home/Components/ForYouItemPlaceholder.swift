@@ -68,18 +68,6 @@ struct ForYouItemPlaceholder: View {
                         Spacer()
                         
                         VStack(spacing: 5) {
-                            ScrollView(.horizontal) {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "photo")
-                                        .foregroundStyle(Color.accentColor)
-                                    Image(systemName: "photo")
-                                        .foregroundStyle(Color.secondary)
-                                }
-                                .font(.system(size: 14))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            .scrollIndicators(.hidden)
-                            
                             HStack {
                                 StarRating(score: 5)
                                 

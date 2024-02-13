@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 @MainActor
 final class UserActivityVM: ObservableObject {
@@ -40,6 +41,7 @@ final class UserActivityVM: ObservableObject {
     ///   - item: FeedItem
     func addReaction(_ reaction: GeneralReactionProtocol) async {
         guard let data else { return }
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         // add temporary reaction
         let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
         self.data?.addReaction(tempUserReaction)
@@ -52,6 +54,7 @@ final class UserActivityVM: ObservableObject {
             self.data?.removeReaction(tempUserReaction)
             self.data?.addReaction(userReaction)
         } catch {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
             // remove temp reaction
             self.data?.removeReaction(tempUserReaction)
         }

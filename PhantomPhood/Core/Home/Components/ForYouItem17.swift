@@ -95,95 +95,152 @@ struct ForYouItem17: View {
                     }
                 }
             
-            switch item.resource {
-            case .review(let feedReview):
-                Color.clear
-                    .onChange(of: tabPage) { newTab in
-                        if scrollPosition == item.id {
-                            if feedReview.videos.contains(where: { $0.id == newTab }) {
-                                videoPlayerVM.playId = newTab
-                            } else {
-                                videoPlayerVM.playId = nil
+            ZStack {
+                switch item.resource {
+                case .review(let feedReview):
+                    Color.clear
+                        .onChange(of: tabPage) { newTab in
+                            if scrollPosition == item.id {
+                                if feedReview.videos.contains(where: { $0.id == newTab }) {
+                                    videoPlayerVM.playId = newTab
+                                } else {
+                                    videoPlayerVM.playId = nil
+                                }
                             }
                         }
-                    }
-                
-                if feedReview.images.count + feedReview.videos.count > 1 {
-                    ZStack {
-                        TabView(selection: $tabPage) {
-                            ForEach(feedReview.videos) { video in
-                                ZStack {
-                                    if let url = URL(string: video.src) {
-                                        VideoPlayer(url: url, play: playBinding(for: video.id), time: $time)
-                                            .onStateChanged { state in
-                                                videosState.updateValue(state, forKey: video.id)
-                                                switch state {
-                                                case .playing(let totalDuration):
-                                                    currentVideoTotalDuration = totalDuration
-                                                default:
-                                                    break
+                    
+                    if feedReview.images.count + feedReview.videos.count > 1 {
+                        ZStack {
+                            TabView(selection: $tabPage) {
+                                ForEach(feedReview.videos) { video in
+                                    ZStack {
+                                        if let url = URL(string: video.src) {
+                                            VideoPlayer(url: url, play: playBinding(for: video.id), time: $time)
+                                                .onStateChanged { state in
+                                                    videosState.updateValue(state, forKey: video.id)
+                                                    switch state {
+                                                    case .playing(let totalDuration):
+                                                        currentVideoTotalDuration = totalDuration
+                                                    default:
+                                                        break
+                                                    }
                                                 }
+                                                .autoReplay(true)
+                                                .mute(videoPlayerVM.isMute)
+                                        }
+                                        
+                                        if let state = videosState[video.id] {
+                                            switch state {
+                                            case .loading:
+                                                ProgressView()
+                                            case .error(let err):
+                                                Text("Something went wrong\n\(err.localizedDescription)")
+                                            default:
+                                                EmptyView()
                                             }
-                                            .autoReplay(true)
-                                            .mute(videoPlayerVM.isMute)
-                                            .onTapGesture {
-                                                withAnimation {
-                                                    videoPlayerVM.isMute = !videoPlayerVM.isMute
-                                                }
-                                            }
-                                    }
-                                    
-                                    if let state = videosState[video.id] {
-                                        switch state {
-                                        case .loading:
-                                            ProgressView()
-                                        case .error(let err):
-                                            Text("Something went wrong\n\(err.localizedDescription)")
-                                        default:
-                                            EmptyView()
                                         }
                                     }
-                                }
-                                .overlay(alignment: .bottomLeading) {
-                                    if !time.seconds.isZero, !currentVideoTotalDuration.isZero {
-                                        Rectangle()
-                                            .frame(height: 2)
-                                            .frame(width: UIScreen.main.bounds.width * (time.seconds / currentVideoTotalDuration))
-                                            .foregroundStyle(.white)
-                                    }
-                                }
-                                .tag(video.id)
-                            }
-                            
-                            ForEach(feedReview.images) { image in
-                                if let url = URL(string: image.src) {
-                                    KFImage.url(url)
-                                        .placeholder { progress in
+                                    .overlay(alignment: .bottomLeading) {
+                                        if !time.seconds.isZero, !currentVideoTotalDuration.isZero {
                                             Rectangle()
-                                                .foregroundStyle(.clear)
-                                                .frame(maxWidth: 150)
-                                                .overlay {
-                                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                        .progressViewStyle(LinearProgressViewStyle())
-                                                }
+                                                .frame(height: 2)
+                                                .frame(width: UIScreen.main.bounds.width * (time.seconds / currentVideoTotalDuration))
+                                                .foregroundStyle(.white)
                                         }
-                                        .loadDiskFileSynchronously()
-                                        .cacheMemoryOnly()
-                                        .fade(duration: 0.25)
-                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: totalSize.width, height: totalSize.height)
-                                        .contentShape(Rectangle())
-                                        .clipShape(Rectangle())
-                                        .tag(image.id)
+                                    }
+                                    .tag(video.id)
+                                }
+                                
+                                ForEach(feedReview.images) { image in
+                                    if let url = URL(string: image.src) {
+                                        KFImage.url(url)
+                                            .placeholder { progress in
+                                                Rectangle()
+                                                    .foregroundStyle(.clear)
+                                                    .frame(maxWidth: 150)
+                                                    .overlay {
+                                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                            .progressViewStyle(LinearProgressViewStyle())
+                                                    }
+                                            }
+                                            .loadDiskFileSynchronously()
+                                            .fade(duration: 0.25)
+                                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: totalSize.width, height: totalSize.height)
+                                            .contentShape(Rectangle())
+                                            .clipShape(Rectangle())
+                                            .ignoresSafeArea(edges: .top)
+                                            .tag(image.id)
+                                    }
                                 }
                             }
+                            .tabViewStyle(PageTabViewStyle())
                         }
-                        .tabViewStyle(PageTabViewStyle())
+                    } else {
+                        if let image = feedReview.images.first, let url = URL(string: image.src) {
+                            KFImage.url(url)
+                                .placeholder { progress in
+                                    Rectangle()
+                                        .foregroundStyle(.clear)
+                                        .frame(maxWidth: 150)
+                                        .overlay {
+                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                .progressViewStyle(LinearProgressViewStyle())
+                                        }
+                                }
+                                .loadDiskFileSynchronously()
+                                .fade(duration: 0.25)
+                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: totalSize.width, height: totalSize.height)
+                                .contentShape(Rectangle())
+                                .clipShape(Rectangle())
+                                .ignoresSafeArea(edges: .top)
+                        } else if let video = feedReview.videos.first {
+                            ZStack {
+                                if let url = URL(string: video.src) {
+                                    VideoPlayer(url: url, play: playBinding(for: video.id), time: $time)
+                                        .onStateChanged { state in
+                                            videosState.updateValue(state, forKey: video.id)
+                                            switch state {
+                                            case .playing(let totalDuration):
+                                                currentVideoTotalDuration = totalDuration
+                                            default:
+                                                break
+                                            }
+                                        }
+                                        .autoReplay(true)
+                                        .mute(videoPlayerVM.isMute)
+                                }
+                                
+                                if let state = videosState[video.id] {
+                                    switch state {
+                                    case .loading:
+                                        ProgressView()
+                                    case .error(let err):
+                                        Text("Something went wrong\n\(err.localizedDescription)")
+                                    default:
+                                        EmptyView()
+                                    }
+                                }
+                            }
+                            .overlay(alignment: .bottomLeading) {
+                                if !time.seconds.isZero, !currentVideoTotalDuration.isZero {
+                                    Rectangle()
+                                        .frame(height: 2)
+                                        .frame(width: UIScreen.main.bounds.width * (time.seconds / currentVideoTotalDuration))
+                                        .foregroundStyle(.white)
+                                }
+                            }
+                            .tag(video.id)
+                            
+                        }
                     }
-                } else {
-                    if let image = feedReview.images.first, let url = URL(string: image.src) {
+                case .checkin(let feedCheckin):
+                    if let image = feedCheckin.image, let url = URL(string: image.src) {
                         KFImage.url(url)
                             .placeholder { progress in
                                 Rectangle()
@@ -195,7 +252,6 @@ struct ForYouItem17: View {
                                     }
                             }
                             .loadDiskFileSynchronously()
-                            .cacheMemoryOnly()
                             .fade(duration: 0.25)
                             .onFailureImage(UIImage(named: "ErrorLoadingImage"))
                             .resizable()
@@ -203,79 +259,29 @@ struct ForYouItem17: View {
                             .frame(width: totalSize.width, height: totalSize.height)
                             .contentShape(Rectangle())
                             .clipShape(Rectangle())
-                    } else if let video = feedReview.videos.first {
-                        ZStack {
-                            if let url = URL(string: video.src) {
-                                VideoPlayer(url: url, play: playBinding(for: video.id), time: $time)
-                                    .onStateChanged { state in
-                                        videosState.updateValue(state, forKey: video.id)
-                                        switch state {
-                                        case .playing(let totalDuration):
-                                            currentVideoTotalDuration = totalDuration
-                                        default:
-                                            break
-                                        }
-                                    }
-                                    .autoReplay(true)
-                                    .mute(videoPlayerVM.isMute)
-                                    .onTapGesture {
-                                        withAnimation {
-                                            videoPlayerVM.isMute = !videoPlayerVM.isMute
-                                        }
-                                    }
-                            }
-                            
-                            if let state = videosState[video.id] {
-                                switch state {
-                                case .loading:
-                                    ProgressView()
-                                case .error(let err):
-                                    Text("Something went wrong\n\(err.localizedDescription)")
-                                default:
-                                    EmptyView()
-                                }
-                            }
-                        }
-                        .overlay(alignment: .bottomLeading) {
-                            if !time.seconds.isZero, !currentVideoTotalDuration.isZero {
-                                Rectangle()
-                                    .frame(height: 2)
-                                    .frame(width: UIScreen.main.bounds.width * (time.seconds / currentVideoTotalDuration))
-                                    .foregroundStyle(.white)
-                            }
-                        }
-                        .tag(video.id)
-                        
+                            .ignoresSafeArea(edges: .top)
+                    }
+                default:
+                    VStack {
+                        Text("Unable to load\nPlease Skip this")
+                            .font(.custom(style: .headline))
+                        Text("We'll make sure you won't experience this again in the future updates.")
+                            .font(.custom(style: .body))
+                            .padding()
                     }
                 }
-            case .checkin(let feedCheckin):
-                if let image = feedCheckin.image, let url = URL(string: image.src) {
-                    KFImage.url(url)
-                        .placeholder { progress in
-                            Rectangle()
-                                .foregroundStyle(.clear)
-                                .frame(maxWidth: 150)
-                                .overlay {
-                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                        .progressViewStyle(LinearProgressViewStyle())
-                                }
-                        }
-                        .loadDiskFileSynchronously()
-                        .fade(duration: 0.25)
-                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: totalSize.width, height: totalSize.height)
-                        .contentShape(Rectangle())
-                        .clipShape(Rectangle())
+            }
+            .onTapGesture(count: 2, perform: {
+                let item = item
+                Task {
+                    await forYouVM.addReaction(NewReaction(reaction: "❤️", type: .emoji), to: item)
                 }
-            default:
-                VStack {
-                    Text("Unable to load\nPlease Skip this")
-                        .font(.custom(style: .headline))
-                    Text("We'll make sure you won't experience this again in the future updates.")
-                        .font(.custom(style: .body))
-                        .padding()
+            })
+            .onTapGesture {
+                if videoPlayerVM.playId != nil {
+                    withAnimation {
+                        videoPlayerVM.isMute = !videoPlayerVM.isMute
+                    }
                 }
             }
             

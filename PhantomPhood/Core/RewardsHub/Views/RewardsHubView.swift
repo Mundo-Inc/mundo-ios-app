@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import BranchSDK
 
 struct RewardsHubView: View {
     @ObservedObject private var appData = AppData.shared
@@ -87,36 +86,23 @@ struct RewardsHubView: View {
                             .padding(.top, 2)
                             .padding(.bottom, 8)
                         
+//                        PasteButton(supportedContentTypes: [.url]) { itemProviders in
+//                            Branch.getInstance().passPaste(itemProviders)
+//                        }
+                        
                         Button {
-                            if let currentUser = auth.currentUser {
-                                let buo: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "signup/\(currentUser.id)")
-                                buo.title = "Join \(currentUser.name) in Phantom Phood"
-                                buo.contentDescription = "You've been invited by \(currentUser.name) to Phantom Phood. Join friends in your dining experiences."
-                                
-                                if !currentUser.profileImage.isEmpty {
-                                    buo.imageUrl = currentUser.profileImage
-                                } else {
-                                    buo.imageUrl = "https://phantomphood.ai/img/NoProfileImage.jpg"
-                                }
-                                
-                                let lp: BranchLinkProperties = BranchLinkProperties()
-                                lp.feature = "referral"
-                                lp.stage = "ref-\(UserSettings.shared.referralsGenerated + 1)"
-                                
-                                buo.getShortUrl(with: lp) { url, error in
-                                    if let url {
-                                        UserSettings.shared.referralsGenerated += 1
-                                        print(url)
-                                    } else {
-                                        print(error ?? "--")
-                                    }
-                                }
-                            }
+                            vm.getInviteLink()
                         } label: {
-                            Label {
+                            HStack {
+                                if vm.loadingSections.contains(.inviteLink) {
+                                    ProgressView()
+                                        .controlSize(.regular)
+                                        .tint(Color.black.opacity(0.8))
+                                        .padding(.trailing, 3)
+                                } else {
+                                    Image(systemName: "square.and.arrow.up")
+                                }
                                 Text("Invite Friend")
-                            } icon: {
-                                Image(systemName: "square.and.arrow.up")
                             }
                             .font(.custom(style: .headline))
                             .frame(maxWidth: .infinity)

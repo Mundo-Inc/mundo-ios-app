@@ -7,13 +7,16 @@
 
 import Foundation
 import SwiftUI
+import BranchSDK
 
 @MainActor
 final class RewardsHubVM: ObservableObject {
-    private var pcVM = PhantomCoinsVM.shared
-    private var rewardsDM = RewardsDM()
+    private let auth = Authentication.shared
+    private let pcVM = PhantomCoinsVM.shared
+    private let rewardsDM = RewardsDM()
     
     enum LoadingSection: Hashable {
+        case inviteLink
         case dailyReward
         case missions
         case mission(String)
@@ -70,5 +73,40 @@ final class RewardsHubVM: ObservableObject {
             print(error)
         }
         self.loadingSections.remove(.mission(id))
+    }
+    
+    func getInviteLink() {
+        guard !loadingSections.contains(.inviteLink) else { return }
+        
+        if let currentUser = auth.currentUser {
+            self.loadingSections.insert(.inviteLink)
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            
+            let buo: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "signup/\(currentUser.id)")
+            buo.title = "Join \(currentUser.name) in Phantom Phood"
+            buo.contentDescription = "You've been invited by \(currentUser.name) to Phantom Phood. Join friends in your dining experiences."
+            
+            if !currentUser.profileImage.isEmpty {
+                buo.imageUrl = currentUser.profileImage
+            } else {
+                buo.imageUrl = "https://phantomphood.ai/img/NoProfileImage.jpg"
+            }
+            
+            let lp: BranchLinkProperties = BranchLinkProperties()
+            lp.feature = "referral"
+            lp.stage = "ref-\(UserSettings.shared.referralsGenerated + 1)"
+            
+            if let topViewController = UIApplication.shared.topViewController() {
+                buo.showShareSheet(with: lp, andShareText: "Join \(currentUser.name) in Phantom Phood", from: topViewController) { (activityType, completed) in
+                    self.loadingSections.remove(.inviteLink)
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    if completed {
+                        UserSettings.shared.referralsGenerated += 1
+                    }
+                }
+            } else {
+                self.loadingSections.remove(.inviteLink)
+            }
+        }
     }
 }
