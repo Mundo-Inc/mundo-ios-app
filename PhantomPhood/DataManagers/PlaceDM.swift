@@ -54,7 +54,7 @@ final class PlaceDM {
         guard let title = mapFeature.title else {
             throw URLError(.requestBodyStreamExhausted)
         }
-        
+
         let data = try await apiManager.requestData("/places/context?title=\(title)&lat=\(mapFeature.coordinate.latitude)&lng=\(mapFeature.coordinate.longitude)", method: .get, token: token) as APIResponse<PlaceDetail>?
 
         guard let data else {

@@ -96,7 +96,7 @@ class EditProfileViewModel: ObservableObject {
     }
     private struct UploadFile {
         let name: String
-        let media: UIImage
+        let data: Data
         let type: UploadFileType
     }
     
@@ -107,22 +107,22 @@ class EditProfileViewModel: ObservableObject {
         
         static var transferRepresentation: some TransferRepresentation {
             DataRepresentation(importedContentType: .image) { data in
-            #if canImport(AppKit)
+#if canImport(AppKit)
                 guard let nsImage = NSImage(data: data) else {
                     throw TransferError.importFailed
                 }
                 let image = Image(nsImage: nsImage)
                 return ProfileImage(image: image, nsImage: nsImage, data: data)
-            #elseif canImport(UIKit)
+#elseif canImport(UIKit)
                 guard let uiImage = UIImage(data: data) else {
                     throw TransferError.importFailed
                 }
                 let image = Image(uiImage: uiImage)
                 return ProfileImage(image: image, uiImage: uiImage, data: data)
                 
-            #else
+#else
                 throw TransferError.importFailed
-            #endif
+#endif
             }
         }
     }
@@ -175,40 +175,41 @@ class EditProfileViewModel: ObservableObject {
     
     private func uploadFormDataBody(file: UploadFile, useCase: UploadUseCase) -> (formData: Data, boundary: String) {
         let boundary = "Boundary-\(UUID().uuidString)"
-        /// line break
-        let lb = "\r\n"
+        let linebreak = "\r\n"
         var body = Data()
         
-                
-        body.append("\(lb)--\(boundary + lb)".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"usecase\"\(lb + lb + useCase.rawValue)".data(using: .utf8)!)
+        body.append("\(linebreak)--\(boundary + linebreak)".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"usecase\"\(linebreak + linebreak + useCase.rawValue)".data(using: .utf8)!)
         
-        body.append("\(lb)--\(boundary + lb)".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"\(file.type.rawValue.components(separatedBy: "/").first!)\"; filename=\"\(file.name)\"\(lb)".data(using: .utf8)!)
-        body.append("Content-Type: \(file.type.rawValue)\(lb + lb)".data(using: .utf8)!)
-        body.append(file.media.jpegData(compressionQuality: 0.5)!)
+        body.append("\(linebreak)--\(boundary + linebreak)".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"\(file.type.rawValue.components(separatedBy: "/").first!)\"; filename=\"\(file.name)\"\(linebreak)".data(using: .utf8)!)
+        body.append("Content-Type: \(file.type.rawValue)\(linebreak + linebreak)".data(using: .utf8)!)
+        body.append(file.data)
         
-        print(file.media.size)
+        body.append("\(linebreak)--\(boundary)--\(linebreak)".data(using: .utf8)!)
         
-        body.append("\(lb)--\(boundary)--\(lb)".data(using: .utf8)!)
-
         return (body, boundary)
     }
     
     private func uploadImage() async throws {
         switch imageState {
         case .success(let (_, uiImage, _)):
-            if let token = await auth.getToken() {
-                var media: UIImage = uiImage
-                if uiImage.size.width > 1024 || uiImage.size.height > 1024 {
-                    media = uiImage.resized(to: CGSize(width: 1024, height: 1024))
-                }
-                
-                let (formData, boundary) = uploadFormDataBody(file: UploadFile(name: "profileImage.jpg", media: media, type: .jpeg), useCase: .profileImage)
-                try await apiManager.requestNoContent("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary))
-            } else {
+            guard
+                let token = await auth.getToken(),
+                let resizedIamge = ImageHelper.resize(uiImage: uiImage, targetSize: CGSize(width: 512, height: 512)),
+                var compressedData = ImageHelper.compress(uiImage: resizedIamge, compressionQuality: 0.9)
+            else {
                 throw CancellationError()
             }
+            
+            if compressedData.count / 1024 > 250 {
+                if let data = ImageHelper.compress(uiImage: resizedIamge, compressionQuality: compressedData.count / 1024 > 500 ? 0.6 : 0.75) {
+                    compressedData = data
+                }
+            }
+            
+            let (formData, boundary) = uploadFormDataBody(file: UploadFile(name: "profileImage.jpg", data: compressedData, type: .jpeg), useCase: .profileImage)
+            try await apiManager.requestNoContent("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary))
             
         default:
             break

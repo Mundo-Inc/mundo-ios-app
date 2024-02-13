@@ -9,20 +9,23 @@ import SwiftUI
 import MapKit
 
 struct ExploreSearchView: View {
-    @Environment(\.dismissSearch) var dismissSearch
-    @Environment(\.isSearching) var isSearching
+    @Environment(\.dismissSearch) private var dismissSearch
+    @Environment(\.isSearching) private var isSearching
     
-    @ObservedObject var locationManager = LocationManager.shared
-    @ObservedObject var exploreSearchVM: ExploreSearchVM
-    @ObservedObject var mapVM: ExploreVM
+    @ObservedObject private var locationManager = LocationManager.shared
+    @ObservedObject private var exploreSearchVM: ExploreSearchVM
     
-    var isLocationAvailable: Bool {
+    private var isLocationAvailable: Bool {
         locationManager.location != nil
     }
     
-    init(exploreSearchVM: ExploreSearchVM, mapVM: ExploreVM) {
+    private let setMapSearchResults: ([MKMapItem]) -> Void
+    private let panToRegion: (MKCoordinateRegion) -> Void
+    
+    init(exploreSearchVM: ExploreSearchVM, setMapSearchResults: @escaping ([MKMapItem]) -> Void, panToRegion: @escaping (MKCoordinateRegion) -> Void) {
         self._exploreSearchVM = ObservedObject(wrappedValue: exploreSearchVM)
-        self._mapVM = ObservedObject(wrappedValue: mapVM)
+        self.setMapSearchResults = setMapSearchResults
+        self.panToRegion = panToRegion
     }
     
     var body: some View {
@@ -36,12 +39,12 @@ struct ExploreSearchView: View {
                         if !exploreSearchVM.placeSearchResults.isEmpty {
                             Button {
                                 dismissSearch()
-                                mapVM.searchResults = exploreSearchVM.placeSearchResults
+                                setMapSearchResults(exploreSearchVM.placeSearchResults)
                                 
                                 if let region = getClusterRegion(coordinates: exploreSearchVM.placeSearchResults.map { $0.placemark.coordinate }) {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                                         withAnimation {
-                                            mapVM.panToRegion(region: region)
+                                            panToRegion(region)
                                         }
                                     }
                                 }

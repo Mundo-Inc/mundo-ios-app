@@ -124,7 +124,9 @@ final class TaskManager: ObservableObject {
                     switch mediaItemData.state {
                     case .image(let uiImage):
                         // Convert Image
-                        if let data = ImageHelper.compress(uiImage: uiImage, compressionQuality: TaskManager.imageCompressionRate) {
+                        if let resizedImage = ImageHelper.resize(uiImage: uiImage, targetSize: CGSize(width: 1080, height: 1920)),
+                           let data = ImageHelper.compress(uiImage: resizedImage, compressionQuality: TaskManager.imageCompressionRate)
+                        {
                             updateTaskMediaStatus(task: nextTask, media: .compressed(compressedMediaData: .image(data), mediaItemData: mediaItemData))
                             
                             Task {

@@ -370,10 +370,12 @@ struct ExploreView17: View {
                     
                     let mapItemRequest = MKMapItemRequest(feature: item)
                     mapItemRequest.getMapItem { mapItem, error in
-                        if let mapItem {
-                            vm.selectedMapItem = mapItem
-                        } else {
-                            vm.selectedMapItem = nil
+                        DispatchQueue.main.async {
+                            if let mapItem {
+                                vm.selectedMapItem = mapItem
+                            } else {
+                                vm.selectedMapItem = nil
+                            }
                         }
                     }
                 } else {
@@ -413,7 +415,7 @@ struct ExploreView17: View {
                                             if let region = getClusterRegion(coordinates: exploreSearchVM.placeSearchResults.map { $0.placemark.coordinate }) {
                                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                                     withAnimation {
-                                                        vm.panToRegion(region: region)
+                                                        vm.panToRegion(region)
                                                     }
                                                 }
                                             }
@@ -441,7 +443,12 @@ struct ExploreView17: View {
                 .scrollIndicators(.never)
             }
             
-            ExploreSearchView(exploreSearchVM: exploreSearchVM, mapVM: vm)
+            ExploreSearchView(exploreSearchVM: exploreSearchVM) { results in
+                vm.setSearchResults(results)
+            } panToRegion: { region in
+                vm.panToRegion(region)
+            }
+
         }
     }
 }
