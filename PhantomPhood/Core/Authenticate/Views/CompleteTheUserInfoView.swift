@@ -7,17 +7,28 @@
 
 import SwiftUI
 import Combine
+import BranchSDK
 
 @MainActor
 class CompleteTheUserInfoVM: ObservableObject {
+    private let checksDM = ChecksDM()
+    private let searchDM = SearchDM()
+    private let userProfileDM = UserProfileDM()
+
     private let apiManager = APIManager.shared
     private let auth = Authentication.shared
-    private let checksDM = ChecksDM()
+    
+    enum LoadingSection: Hashable {
+        case username
+        case userSearch
+        case getReferredBy
+        case submit
+    }
+    
+    @Published var loadingSections = Set<LoadingSection>()
     
     @Published var step = 0
     @Published var direction = 1
-    
-    @Published var isLoading = false
     
     @Published var eula = false
     
@@ -29,7 +40,13 @@ class CompleteTheUserInfoVM: ObservableObject {
     
     @Published var error: String?
     
-    private var cancellable = [AnyCancellable]()
+    @Published var showPasteButton = UIPasteboard.general.hasURLs
+    @Published var referredBy: UserEssentials? = nil
+    
+    @Published var suggestedUsersList: [UserEssentials] = []
+    @Published var userSearch: String = ""
+    
+    private var cancellables = [AnyCancellable]()
     
     init() {
         $username
@@ -42,8 +59,8 @@ class CompleteTheUserInfoVM: ObservableObject {
                     self?.isUsernameValid = false
                     return
                 }
-                self?.isLoading = true
                 Task {
+                    self?.loadingSections.insert(.username)
                     do {
                         try await self?.checksDM.checkUsername(value)
                         self?.isUsernameValid = true
@@ -56,24 +73,73 @@ class CompleteTheUserInfoVM: ObservableObject {
                             self?.usernameError = "Unknown Error"
                         }
                     }
-                    self?.isLoading = false
+                    self?.loadingSections.remove(.username)
                 }
             }
-            .store(in: &cancellable)
+            .store(in: &cancellables)
+        
+        $userSearch
+            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            .sink { [weak self] value in
+                guard value.count >= 3 else { return }
+                
+                Task {
+                    await self?.searchUsers(q: value)
+                }
+            }
+            .store(in: &cancellables)
     }
     
-    func saveData() async throws {
+    func searchUsers(q: String) async {
+        self.loadingSections.insert(.userSearch)
+        do {
+            let users = try await searchDM.searchUsers(q: q)
+            withAnimation {
+                self.suggestedUsersList = users
+            }
+        } catch {
+            print(error)
+        }
+        self.loadingSections.remove(.userSearch)
+    }
+    
+    func getRefferedBy(id: String) async {
+        self.loadingSections.insert(.getReferredBy)
+        do {
+            let user = try await userProfileDM.getUserEssentials(id: id)
+            withAnimation {
+                self.referredBy = user
+            }
+        } catch {
+            print(error)
+        }
+        self.loadingSections.remove(.getReferredBy)
+    }
+    
+    func submit() async {
         struct EditUserBody: Encodable {
             let name: String?
             let username: String?
             let eula: Bool
+            let referrer: String?
         }
-        
-        if let token = await auth.getToken(), let uid = auth.currentUser?.id {
-            let reqBody = try apiManager.createRequestBody(EditUserBody(name: self.name, username: self.username.isEmpty ? nil : self.username, eula: self.eula))
-            try await apiManager.requestNoContent("/users/\(uid)", method: .put, body: reqBody, token: token)
-            await auth.updateUserInfo()
+        loadingSections.insert(.submit)
+        do {
+            if let token = await auth.getToken(), let uid = auth.currentUser?.id {
+                let reqBody = try apiManager.createRequestBody(EditUserBody(name: self.name, username: username.isEmpty ? nil : username, eula: eula, referrer: referredBy?.id))
+                try await apiManager.requestNoContent("/users/\(uid)", method: .put, body: reqBody, token: token)
+                await auth.updateUserInfo()
+            }
+        } catch APIManager.APIError.serverError(let serverError) {
+            withAnimation {
+                self.error = serverError.message
+            }
+        } catch {
+            withAnimation {
+                self.error = error.localizedDescription
+            }
         }
+        loadingSections.remove(.submit)
     }
 }
 
@@ -84,9 +150,12 @@ struct CompleteTheUserInfoView: View {
     enum Field: Hashable {
         case name
         case username
+        case userSearch
     }
     
     @FocusState private var focusedField: Field?
+    
+    @AppStorage(UserSettings.Keys.referredBy.rawValue) var referredBy: String = ""
     
     var body: some View {
         VStack {
@@ -109,7 +178,7 @@ struct CompleteTheUserInfoView: View {
                             Text("What's your name")
                                 .font(.custom(style: .title2))
                                 .fontWeight(.semibold)
-                                .padding(.bottom)
+                                .padding(.bottom, 3)
                             Text("Imagine a cheering crowd after your epic achievement. What name are they chanting?")
                                 .font(.custom(style: .subheadline))
                                 .foregroundColor(.secondary)
@@ -141,7 +210,7 @@ struct CompleteTheUserInfoView: View {
                             Text("Choose a username")
                                 .font(.custom(style: .title2))
                                 .fontWeight(.semibold)
-                                .padding(.bottom)
+                                .padding(.bottom, 3)
                             Text("Craft a username as iconic as your latest dance move")
                                 .font(.custom(style: .subheadline))
                                 .foregroundColor(.secondary)
@@ -159,13 +228,16 @@ struct CompleteTheUserInfoView: View {
                                 .overlay(
                                     HStack {
                                         if vm.username.count > 0 {
-                                            if vm.isLoading {
-                                                ProgressView()
-                                            } else {
-                                                vm.isUsernameValid ?
-                                                Image(systemName: "checkmark").foregroundColor(.green) :
-                                                Image(systemName: "xmark").foregroundColor(.red)
+                                            Group {
+                                                if vm.loadingSections.contains(.username) {
+                                                    ProgressView()
+                                                } else if vm.isUsernameValid {
+                                                    Image(systemName: "checkmark").foregroundColor(.green)
+                                                } else {
+                                                    Image(systemName: "xmark").foregroundColor(.red)
+                                                }
                                             }
+                                            .transition(AnyTransition.opacity.animation(.spring))
                                         }
                                     },
                                     alignment: .trailing
@@ -187,6 +259,7 @@ struct CompleteTheUserInfoView: View {
                                 .foregroundStyle(.red)
                                 .font(.custom(style: .caption))
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                .transition(AnyTransition.opacity.animation(.spring))
                         }
                         
                         Spacer()
@@ -201,12 +274,164 @@ struct CompleteTheUserInfoView: View {
                     VStack {
                         Spacer()
                         
+                        if !vm.suggestedUsersList.isEmpty {
+                            ScrollView {
+                                VStack(spacing: 0) {
+                                    Spacer()
+                                    ForEach(vm.suggestedUsersList) { user in
+                                        Button {
+                                            withAnimation {
+                                                vm.referredBy = user
+                                                vm.suggestedUsersList.removeAll()
+                                            }
+                                        } label: {
+                                            HStack {
+                                                ProfileImage(user.profileImage, size: 32, cornerRadius: 10)
+                                                
+                                                VStack(alignment: .leading) {
+                                                    Group {
+                                                        if user.verified {
+                                                            HStack {
+                                                                Text(user.name)
+                                                                Image(systemName: "checkmark.seal")
+                                                                    .font(.system(size: 14))
+                                                                    .foregroundStyle(.blue)
+                                                            }
+                                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                                        } else {
+                                                            Text(user.name)
+                                                                .font(.custom(style: .body))
+                                                            
+                                                        }
+                                                    }
+                                                    .font(.custom(style: .body))
+                                                    .fontWeight(.semibold)
+                                                    
+                                                    Text("@\(user.username)")
+                                                        .font(.custom(style: .caption))
+                                                        .foregroundStyle(.secondary)
+                                                }
+                                                
+                                                Spacer()
+                                            }
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.horizontal)
+                                            .padding(.vertical, 4)
+                                            .frame(height: 46)
+                                            .background(Color.themePrimary)
+                                        }
+                                        .foregroundStyle(.primary)
+                                        
+                                        Divider()
+                                    }
+                                }
+                                .frame(height: max(48 * 4, Double(vm.suggestedUsersList.count) * 48))
+                            }
+                            .scrollIndicators(.hidden)
+                            .frame(height: 48 * 4)
+                        } else {
+                            VStack(alignment: .leading) {
+                                Image(.friends)
+                                Text("Joining Us Through a Friend?")
+                                    .font(.custom(style: .title2))
+                                    .fontWeight(.semibold)
+                                    .padding(.bottom, 3)
+                                Text("Got a friend here? Enter their username and unlock rewards for both!")
+                                    .font(.custom(style: .subheadline))
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.leading)
+                                Text("(Optional, but rewarding!)")
+                                    .font(.custom(style: .subheadline))
+                                    .foregroundColor(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.bottom)
+                        }
+                        
+                        if let referredBy = vm.referredBy {
+                            HStack {
+                                ProfileImage(referredBy.profileImage, size: 52, cornerRadius: 10)
+                                
+                                VStack(alignment: .leading) {
+                                    Text(referredBy.name)
+                                        .font(.custom(style: .title3))
+                                        .fontWeight(.semibold)
+                                    Text("@\(referredBy.username)")
+                                        .foregroundStyle(.secondary)
+                                        .font(.custom(style: .caption))
+                                }
+                                
+                                Spacer()
+                                
+                                Button {
+                                    withAnimation {
+                                        vm.referredBy = nil
+                                        vm.showPasteButton = false
+                                        self.referredBy = ""
+                                        focusedField = .userSearch
+                                    }
+                                } label: {
+                                    Image(systemName: "xmark")
+                                }
+                            }
+                        } else if vm.showPasteButton && referredBy.isEmpty {
+                            HStack {
+                                Text("Tap 'Paste' to apply your referral link automatically after copying it.")
+                                    .font(.custom(style: .caption2))
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                PasteButton(supportedContentTypes: [.url]) { itemProviders in
+                                    Branch.getInstance().passPaste(itemProviders)
+                                    vm.showPasteButton = false
+                                }
+                            }
+                        } else if !referredBy.isEmpty {
+                            HStack {
+                                ProfileImage("", size: 52, cornerRadius: 10)
+                                    .redacted(reason: .placeholder)
+                                
+                                VStack(alignment: .leading) {
+                                    Text("Name")
+                                        .font(.custom(style: .title3))
+                                        .fontWeight(.semibold)
+                                    Text("@username")
+                                        .foregroundStyle(.secondary)
+                                        .font(.custom(style: .caption))
+                                }
+                                .redacted(reason: .placeholder)
+                                
+                                Spacer()
+                                
+                                ProgressView()
+                            }
+                            .onAppear {
+                                Task {
+                                    await vm.getRefferedBy(id: referredBy)
+                                }
+                            }
+                        } else {
+                            TextField("Search Your Friend...", text: $vm.userSearch)
+                                .font(.custom(style: .title2))
+                                .keyboardType(.default)
+                                .autocorrectionDisabled(true)
+                                .focused($focusedField, equals: .userSearch)
+                        }
+                        
+                        Spacer()
+                        Spacer()
+                    }
+                    
+                case 3:
+                    VStack {
+                        Spacer()
+                        
                         VStack(alignment: .leading) {
                             Image(.handshake)
                             Text("Last Step")
                                 .font(.custom(style: .title2))
                                 .fontWeight(.semibold)
-                                .padding(.bottom)
+                                .padding(.bottom, 3)
                             Text("One tiny hurdle before the fun begins! Let's leap over the legal bit.")
                                 .font(.custom(style: .subheadline))
                                 .foregroundColor(.secondary)
@@ -272,7 +497,7 @@ struct CompleteTheUserInfoView: View {
                         if (!vm.username.isEmpty && !vm.isUsernameValid) {
                             proceed = false
                         }
-                    case 2:
+                    case 3:
                         if !vm.eula {
                             proceed = false
                         }
@@ -281,25 +506,9 @@ struct CompleteTheUserInfoView: View {
                     }
                     
                     if (proceed) {
-                        if vm.step == 2 {
+                        if vm.step == 3 {
                             Task {
-                                withAnimation {
-                                    vm.isLoading = true
-                                }
-                                
-                                do {
-                                    try await vm.saveData()
-                                } catch APIManager.APIError.serverError(let serverError) {
-                                    withAnimation {
-                                        vm.error = serverError.message
-                                    }
-                                } catch {
-                                    withAnimation {
-                                        vm.error = error.localizedDescription
-                                    }
-                                }
-                                
-                                vm.isLoading = false
+                                await vm.submit()
                             }
                         } else {
                             vm.direction = 1
@@ -310,11 +519,11 @@ struct CompleteTheUserInfoView: View {
                     }
                 } label: {
                     HStack(spacing: 5) {
-                        if vm.isLoading {
+                        if !vm.loadingSections.isEmpty {
                             ProgressView()
                                 .controlSize(.regular)
                         }
-                        Text(vm.step == 2 ? "Finish Sign Up" : "Next")
+                        Text(vm.step == 3 ? "Finish Sign Up" : "Next")
                     }
                     .font(.custom(style: .subheadline))
                     .frame(maxWidth: .infinity)
@@ -322,11 +531,11 @@ struct CompleteTheUserInfoView: View {
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
                 .disabled(
-                    vm.isLoading ||
+                    !vm.loadingSections.isEmpty ||
                     (
                         vm.step == 0 ? vm.name.isEmpty :
                             vm.step == 1 ? (!vm.username.isEmpty && !vm.isUsernameValid) :
-                            vm.step == 2 ? !vm.eula : false
+                            vm.step == 3 ? !vm.eula : false
                     )
                     
                 )

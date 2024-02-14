@@ -78,7 +78,7 @@ final class UniversalLinkingManager {
         }),
         "signup": RouteScheme(pattern: ["ref?"], authRouteGetter: { components in
             if let first = components.first {
-                // TODO: Pass in the optional ref
+                UserDefaults.standard.setValue(first, forKey: UserSettings.Keys.referredBy.rawValue)
                 return AuthRoute.signUpOptions
             }
             
@@ -129,7 +129,9 @@ final class UniversalLinkingManager {
             appData.goTo(route)
         case .auth:
             guard let route = try? item.getAuthRoute(pathComponents), auth.userSession == nil else { return }
-            appData.authNavStack.append(route)
+            if appData.authNavStack.isEmpty {
+                appData.authNavStack.append(route)
+            }
         }
     }
 }

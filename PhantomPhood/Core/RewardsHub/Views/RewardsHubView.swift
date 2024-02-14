@@ -86,10 +86,6 @@ struct RewardsHubView: View {
                             .padding(.top, 2)
                             .padding(.bottom, 8)
                         
-//                        PasteButton(supportedContentTypes: [.url]) { itemProviders in
-//                            Branch.getInstance().passPaste(itemProviders)
-//                        }
-                        
                         Button {
                             vm.getInviteLink()
                         } label: {

@@ -199,15 +199,16 @@ class Authentication: ObservableObject {
         return result
     }
     
-    func signUp(name: String, email: String, password: String, username: String?) async throws {
+    func signUp(name: String, email: String, password: String, username: String?, referrer: String?) async throws {
         struct SignUpRequestBody: Encodable {
             let name: String
             let email: String
             let password: String
             let username: String?
+            let referrer: String?
         }
         
-        let reqBody = try apiManager.createRequestBody(SignUpRequestBody(name: name, email: email, password: password, username: username))
+        let reqBody = try apiManager.createRequestBody(SignUpRequestBody(name: name, email: email, password: password, username: username, referrer: referrer))
         try await apiManager.requestNoContent("/users", method: .post, body: reqBody)
         
         await self.signIn(email: email, password: password)

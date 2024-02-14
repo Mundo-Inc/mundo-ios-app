@@ -11,6 +11,17 @@ final class UserProfileDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
+    /// No authentication needed
+    func getUserEssentials(id: String) async throws -> UserEssentials {
+        let data = try await apiManager.requestData("/users/\(id)?view=basic", method: .get) as APIResponse<UserEssentials>?
+        
+        guard let data = data else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return data.data
+    }
+    
     func fetch(id: String) async throws -> UserDetail {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)

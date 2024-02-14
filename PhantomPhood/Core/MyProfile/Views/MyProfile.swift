@@ -29,7 +29,6 @@ struct MyProfile: View {
                                             .foregroundStyle(.blue)
                                     }
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    
                                 } else {
                                     Text(auth.currentUser?.name ?? "User Name")
                                         .font(.custom(style: .title2))

@@ -15,15 +15,15 @@ struct UserSettings {
     
     // MARK: - User Info
     
-    @AppStorage("userRole") private(set) var userRole: UserRole = .user
+    @AppStorage(Keys.userRole.rawValue) private(set) var userRole: UserRole = .user
 
     // MARK: - App settings
 
-    @AppStorage("isBetaTester") var isBetaTester: Bool = false
-    @AppStorage("referralsGenerated") var referralsGenerated: Int = 0
+    @AppStorage(Keys.isBetaTester.rawValue) var isBetaTester: Bool = false
+    @AppStorage(Keys.referralsGenerated.rawValue) var referralsGenerated: Int = 0
 
     /// Onboarding Version
-    @AppStorage("onboardingVersion") var onboardingVersion: Int = 0
+    @AppStorage(Keys.onboardingVersion.rawValue) var onboardingVersion: Int = 0
     
     // MARK: - Public Methods
 
@@ -36,6 +36,14 @@ struct UserSettings {
     /// Used in sign in flow to set user information
     func setUserInfo(_ user: CurrentUserFullData) {
         userRole = user.role
+    }
+    
+    enum Keys: String, CaseIterable {
+        case userRole
+        case isBetaTester
+        case referralsGenerated
+        case referredBy
+        case onboardingVersion
     }
 }
 
