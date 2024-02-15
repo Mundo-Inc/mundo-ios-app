@@ -18,7 +18,7 @@ final class RewardsDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let resData = try await apiManager.requestData("/rewards/daily", method: .get, token: token) as APIResponse<DailyRewardsInfoResponse>?
+        let resData: APIResponse<DailyRewardsInfoResponse>? = try await apiManager.requestData("/rewards/daily", method: .get, token: token)
         
         guard let resData else {
             throw URLError(.badServerResponse)
@@ -40,7 +40,7 @@ final class RewardsDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let resData = try await apiManager.requestData("/rewards/missions", method: .get, token: token) as APIResponse<[Mission]>?
+        let resData: APIResponse<[Mission]>? = try await apiManager.requestData("/rewards/missions", method: .get, token: token)
         
         guard let resData else {
             throw URLError(.badServerResponse)
@@ -55,6 +55,28 @@ final class RewardsDM {
         }
         
         try await apiManager.requestNoContent("/rewards/missions/\(id)/claim", method: .post, token: token)
+    }
+    
+    func getPrizes() async throws -> [Prize] {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let resData: APIResponse<[Prize]>? = try await apiManager.requestData("/rewards/prizes", method: .get, token: token)
+        
+        guard let resData else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return resData.data
+    }
+    
+    func redeemPrize(id: String) async throws {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        try await apiManager.requestNoContent("/rewards/prizes/\(id)/redeem", method: .post, token: token)
     }
     
     // MARK: - Structs

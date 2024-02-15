@@ -15,15 +15,25 @@ final class RewardsHubVM: ObservableObject {
     private let pcVM = PhantomCoinsVM.shared
     private let rewardsDM = RewardsDM()
     
+    init() {
+        Task {
+            await getPrizes()
+        }
+    }
+    
     enum LoadingSection: Hashable {
         case inviteLink
         case dailyReward
         case missions
         case mission(String)
+        case prizes
+        case redeeming
     }
     
     @Published var loadingSections = Set<LoadingSection>()
     @Published var missions: [Mission]? = nil
+    @Published var prizes: [Prize]? = nil
+    @Published var selectedPrize: Prize? = nil
     
     func claimDailyReward() async {
         guard !pcVM.hasClaimedToday && !loadingSections.contains(.dailyReward) else { return }
@@ -50,6 +60,36 @@ final class RewardsHubVM: ObservableObject {
             print(error)
         }
         self.loadingSections.remove(.missions)
+    }
+    
+    func getPrizes() async {
+        guard !loadingSections.contains(.prizes) else { return }
+        
+        self.loadingSections.insert(.prizes)
+        do {
+            let data = try await rewardsDM.getPrizes()
+            self.prizes = data
+        } catch {
+            print(error)
+        }
+        self.loadingSections.remove(.prizes)
+    }
+    
+    func redeemPrize(id: String) async {
+        guard !loadingSections.contains(.redeeming) else { return }
+        
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        self.loadingSections.insert(.redeeming)
+        do {
+            try await rewardsDM.redeemPrize(id: id)
+            await pcVM.refresh()
+            withAnimation {
+                self.selectedPrize = nil
+            }
+        } catch {
+            print(error)
+        }
+        self.loadingSections.remove(.redeeming)
     }
     
     func claimMissions(id: String) async {
@@ -83,7 +123,7 @@ final class RewardsHubVM: ObservableObject {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             
             let buo: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "signup/\(currentUser.id)")
-            buo.title = "Join \(currentUser.name) in Phantom Phood"
+            buo.title = "Join \(currentUser.name) on Phantom Phood"
             buo.contentDescription = "You've been invited by \(currentUser.name) to Phantom Phood. Join friends in your dining experiences."
             
             if !currentUser.profileImage.isEmpty {
@@ -97,7 +137,7 @@ final class RewardsHubVM: ObservableObject {
             lp.stage = "ref-\(UserSettings.shared.referralsGenerated + 1)"
             
             if let topViewController = UIApplication.shared.topViewController() {
-                buo.showShareSheet(with: lp, andShareText: "Join \(currentUser.name) in Phantom Phood", from: topViewController) { (activityType, completed) in
+                buo.showShareSheet(with: lp, andShareText: "Join \(currentUser.name) on Phantom Phood", from: topViewController) { (activityType, completed) in
                     self.loadingSections.remove(.inviteLink)
                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     if completed {

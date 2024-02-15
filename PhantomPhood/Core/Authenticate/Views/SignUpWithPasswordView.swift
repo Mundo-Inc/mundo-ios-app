@@ -414,11 +414,11 @@ struct SignUpWithPasswordView: View {
                                     .font(.custom(style: .title2))
                                     .fontWeight(.semibold)
                                     .padding(.bottom, 3)
-                                Text("Got a friend here? Enter their username and unlock rewards for both!")
+                                Text("Got a friend here? Enter their username and unlock rewards!")
                                     .font(.custom(style: .subheadline))
                                     .foregroundColor(.secondary)
                                     .multilineTextAlignment(.leading)
-                                Text("(Optional, but rewarding!)")
+                                Text("(Optional)")
                                     .font(.custom(style: .subheadline))
                                     .foregroundColor(.secondary)
                             }

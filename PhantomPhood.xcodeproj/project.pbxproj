@@ -269,6 +269,7 @@
 		0BB37E9E2ABA6D84009E1272 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB37E9D2ABA6D84009E1272 /* FeedView.swift */; };
 		0BB437292B7673DD002B57D1 /* AchievementsEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB437282B7673DD002B57D1 /* AchievementsEnum.swift */; };
 		0BB805862AC203EB0074155D /* FeedReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB805852AC203EB0074155D /* FeedReviewView.swift */; };
+		0BBEFAF32B7E41E800A78FF0 /* Prize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBEFAF22B7E41E800A78FF0 /* Prize.swift */; };
 		0BC2E3102B22076D0002649D /* VideoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC2E30F2B22076D0002649D /* VideoHelper.swift */; };
 		0BC2E3122B2207820002649D /* ImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC2E3112B2207820002649D /* ImageHelper.swift */; };
 		0BC2E3142B2207B40002649D /* UploadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC2E3132B2207B40002649D /* UploadManager.swift */; };
@@ -282,6 +283,8 @@
 		0BC84A6D2AD08A6D00D723AA /* SelectReactionsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A6C2AD08A6D00D723AA /* SelectReactionsVM.swift */; };
 		0BC84A6F2AD0A83900D723AA /* PlaceMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A6E2AD0A83900D723AA /* PlaceMediaView.swift */; };
 		0BC84A712AD0A8B100D723AA /* PlaceMediaVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A702AD0A8B100D723AA /* PlaceMediaVM.swift */; };
+		0BCAE7442B7E6B5D005AD0EF /* MissionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCAE7432B7E6B5D005AD0EF /* MissionItem.swift */; };
+		0BCAE7462B7E6B8E005AD0EF /* PrizeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCAE7452B7E6B8E005AD0EF /* PrizeItem.swift */; };
 		0BCBC18E2ACDC2FF00992D8E /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCBC18D2ACDC2FF00992D8E /* View.swift */; };
 		0BCBC1902ACDEDDE00992D8E /* PlaceReviewsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCBC18F2ACDEDDE00992D8E /* PlaceReviewsVM.swift */; };
 		0BCBC1922ACDF22100992D8E /* CommentsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCBC1912ACDF22100992D8E /* CommentsVM.swift */; };
@@ -612,6 +615,7 @@
 		0BB37E9D2ABA6D84009E1272 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
 		0BB437282B7673DD002B57D1 /* AchievementsEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsEnum.swift; sourceTree = "<group>"; };
 		0BB805852AC203EB0074155D /* FeedReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedReviewView.swift; sourceTree = "<group>"; };
+		0BBEFAF22B7E41E800A78FF0 /* Prize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prize.swift; sourceTree = "<group>"; };
 		0BC2E30F2B22076D0002649D /* VideoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoHelper.swift; sourceTree = "<group>"; };
 		0BC2E3112B2207820002649D /* ImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageHelper.swift; sourceTree = "<group>"; };
 		0BC2E3132B2207B40002649D /* UploadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadManager.swift; sourceTree = "<group>"; };
@@ -625,6 +629,8 @@
 		0BC84A6C2AD08A6D00D723AA /* SelectReactionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectReactionsVM.swift; sourceTree = "<group>"; };
 		0BC84A6E2AD0A83900D723AA /* PlaceMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMediaView.swift; sourceTree = "<group>"; };
 		0BC84A702AD0A8B100D723AA /* PlaceMediaVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMediaVM.swift; sourceTree = "<group>"; };
+		0BCAE7432B7E6B5D005AD0EF /* MissionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionItem.swift; sourceTree = "<group>"; };
+		0BCAE7452B7E6B8E005AD0EF /* PrizeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrizeItem.swift; sourceTree = "<group>"; };
 		0BCBC18D2ACDC2FF00992D8E /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		0BCBC18F2ACDEDDE00992D8E /* PlaceReviewsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceReviewsVM.swift; sourceTree = "<group>"; };
 		0BCBC1912ACDF22100992D8E /* CommentsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsVM.swift; sourceTree = "<group>"; };
@@ -1263,6 +1269,7 @@
 				0B026CD92B5AB959002DAD24 /* Mission.swift */,
 				0B997B622AC70E1A00579C9C /* Notification.swift */,
 				0B026CDB2B5AC7B5002DAD24 /* PhantomCoins.swift */,
+				0BBEFAF22B7E41E800A78FF0 /* Prize.swift */,
 				0B0E6D332ABB872F00EC62EE /* Reaction.swift */,
 				0B547D7D2B3EEC61002C6336 /* UserPlacesList.swift */,
 				0B1610CB2B631E0A00DCAFA5 /* Place */,
@@ -1413,6 +1420,8 @@
 			isa = PBXGroup;
 			children = (
 				0BABE9D52B59822B003EF70B /* RewardsHubView.swift */,
+				0BCAE7452B7E6B8E005AD0EF /* PrizeItem.swift */,
+				0BCAE7432B7E6B5D005AD0EF /* MissionItem.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1991,6 +2000,7 @@
 				0B4DE4902B4C4B600050E39D /* EditListVM.swift in Sources */,
 				0B2E98802AB907340013301D /* UIImage.swift in Sources */,
 				0B27AE1C2B7575A300C97559 /* SignInVM.swift in Sources */,
+				0BBEFAF32B7E41E800A78FF0 /* Prize.swift in Sources */,
 				0B0183602AB3C09A008E887F /* NotificationsView.swift in Sources */,
 				0BE1E17A2AD498C200645AA0 /* AddReviewVM.swift in Sources */,
 				0B0E6D2E2ABB676300EC62EE /* PlaceDetail.swift in Sources */,
@@ -2043,6 +2053,7 @@
 				0BB437292B7673DD002B57D1 /* AchievementsEnum.swift in Sources */,
 				0B46814D2AC5EAFB009C5EF9 /* FirstLoadingView.swift in Sources */,
 				0B7DD5412B14DCC100D2EECB /* VideoPlayerVM.swift in Sources */,
+				0BCAE7442B7E6B5D005AD0EF /* MissionItem.swift in Sources */,
 				0BF5B4B42AB3787200DEC403 /* Tab.swift in Sources */,
 				0BDBD3CC2ACB5FCD003B8D2D /* GoogleRatingView.swift in Sources */,
 				0BE3C8882B261DB40048F2A6 /* PhotosPickerItem.swift in Sources */,
@@ -2050,6 +2061,7 @@
 				0B0183702AB3DE8A008E887F /* AuthRoute.swift in Sources */,
 				0BDBD3CA2ACB32B7003B8D2D /* PhantomScoreView.swift in Sources */,
 				0BE3F1432B5756A200D96EE8 /* ExploreVM.swift in Sources */,
+				0BCAE7462B7E6B8E005AD0EF /* PrizeItem.swift in Sources */,
 				0B547D822B3F33BA002C6336 /* MyProfileListsVM.swift in Sources */,
 				0B0E6D342ABB872F00EC62EE /* Reaction.swift in Sources */,
 				0BEF7A3E2B0EB60F001532E7 /* CompleteTheUserInfoView.swift in Sources */,
@@ -2206,7 +2218,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.49.4;
+				MARKETING_VERSION = 0.49.5;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2244,7 +2256,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.49.4;
+				MARKETING_VERSION = 0.49.5;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
