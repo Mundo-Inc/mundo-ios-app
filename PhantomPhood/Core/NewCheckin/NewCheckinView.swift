@@ -236,7 +236,7 @@ struct NewCheckinView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     Task {
-                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        HapticManager.shared.impact(style: .light)
                         await vm.submit(mediaItems: pickerVM.mediaItems)
                         dismiss()
                     }

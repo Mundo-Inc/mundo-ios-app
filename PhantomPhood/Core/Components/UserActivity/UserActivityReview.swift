@@ -42,7 +42,7 @@ struct UserActivityReview: View {
                             .font(.custom(style: .body))
                             .fontWeight(.bold)
                         Spacer()
-                        Text(DateFormatter.getPassedTime(from: data.createdAt, suffix: " ago"))
+                        Text(data.createdAt.timeElapsed(suffix: " ago"))
                             .font(.custom(style: .caption))
                             .foregroundStyle(.secondary)
                     }.frame(maxWidth: .infinity)

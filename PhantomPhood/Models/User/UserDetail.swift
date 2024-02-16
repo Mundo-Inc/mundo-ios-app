@@ -38,7 +38,7 @@ struct UserProgress: Codable {
     struct UserAchievments: Codable, Identifiable {
         let id: AchievementsEnum
         let count: Int
-        let createdAt: String
+        let createdAt: Date
         
         enum CodingKeys: String, CodingKey {
             case id = "type"

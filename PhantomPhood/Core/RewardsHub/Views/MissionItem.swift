@@ -125,15 +125,13 @@ struct MissionItem: View {
             }
             .background(RoundedRectangle(cornerRadius: 10).foregroundStyle(Color.themePrimary))
             
-            if let date = DateFormatter.stringToDate(dateString: mission.expiresAt){
-                TimelineView(.animation(minimumInterval: 1, paused: false)) { _ in
-                    if let remaining = date.remainingTime() {
-                        Text(remaining + " remaining")
-                            .foregroundStyle(.tertiary)
-                            .monospaced()
-                            .font(.custom(style: .caption2))
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                    }
+            TimelineView(.animation(minimumInterval: 1, paused: false)) { _ in
+                if let remaining = mission.expiresAt.remainingTime() {
+                    Text(remaining + " remaining")
+                        .foregroundStyle(.tertiary)
+                        .monospaced()
+                        .font(.custom(style: .caption2))
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
         }

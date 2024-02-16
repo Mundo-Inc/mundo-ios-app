@@ -57,9 +57,9 @@ class PlaceReviewsVM: ObservableObject {
     ///   - item: FeedItem
     func addReaction(_ reaction: GeneralReactionProtocol, to review: PlaceReview) async {
         guard let activityId = review.userActivityId else { return }
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        HapticManager.shared.impact(style: .light)
         // add temporary reaction
-        let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
+        let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: .now)
         self.reviews = self.reviews.map({ i in
             if i.id == review.id {
                 var newItem = i
@@ -84,7 +84,7 @@ class PlaceReviewsVM: ObservableObject {
                 return i
             })
         } catch {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            HapticManager.shared.impact(style: .light)
             // remove temp reaction
             self.reviews = self.reviews.map({ i in
                 if i.id == review.id {

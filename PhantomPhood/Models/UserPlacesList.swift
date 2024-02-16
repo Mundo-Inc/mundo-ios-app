@@ -15,13 +15,13 @@ struct UserPlacesList: Identifiable, Decodable {
     let collaborators: [ListCollaborator]
     let placesCount: Int
     let isPrivate: Bool
-    let createdAt: String
+    let createdAt: Date
     let places: [ListPlace]
     
     struct ListPlace: Identifiable, Decodable {
         let place: PlaceEssentials
         let user: UserEssentials
-        let createdAt: String
+        let createdAt: Date
         
         var id: String {
             self.place.id
@@ -42,7 +42,7 @@ struct CompactUserPlacesList: Identifiable, Decodable {
     let collaboratorsCount: Int
     let placesCount: Int
     let isPrivate: Bool
-    let createdAt: String
+    let createdAt: Date
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"

@@ -155,9 +155,9 @@ struct FeedView: View {
                         appData.tappedTwice = nil
                         Task {
                             if !vm.isLoading {
-                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                HapticManager.shared.impact(style: .light)
                                 await vm.getFeed(.refresh)
-                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                HapticManager.shared.notification(type: .success)
                             }
                         }
                     }

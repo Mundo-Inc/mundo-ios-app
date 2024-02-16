@@ -51,9 +51,9 @@ class ForYouVM: ObservableObject {
     ///   - reaction: NewReaction - aanything that conforms to GeneralReactionProtocol
     ///   - item: FeedItem
     func addReaction(_ reaction: GeneralReactionProtocol, to item: FeedItem) async {
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        HapticManager.shared.impact(style: .light)
         // add temporary reaction
-        let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
+        let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: .now)
         self.items = self.items.map({ i in
             if i.id == item.id {
                 var newItem = i
@@ -78,7 +78,7 @@ class ForYouVM: ObservableObject {
                 return i
             })
         } catch {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            HapticManager.shared.impact(style: .light)
             // remove temp reaction
             self.items = self.items.map({ i in
                 if i.id == item.id {

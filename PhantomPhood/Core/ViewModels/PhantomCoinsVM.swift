@@ -33,6 +33,8 @@ final class PhantomCoinsVM: ObservableObject {
     func refresh() async {
         guard !isLoading else { return }
         
+        SoundManager.shared.prepare(sound: .coin)
+        
         self.isLoading = true
         do {
             let data = try await rewardsDM.getDailyRewardsInfo()
@@ -47,7 +49,7 @@ final class PhantomCoinsVM: ObservableObject {
                         let diff = Int(difference / PhantomCoinsVM.BalanceIncreaseSteps)
                         for i in 1...PhantomCoinsVM.BalanceIncreaseSteps {
                             DispatchQueue.main.asyncAfter(deadline: .now() + Double(i*3) * 0.02) {
-                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                HapticManager.shared.selection()
                                 if i == PhantomCoinsVM.BalanceIncreaseSteps {
                                     self.balance = data.phantomCoins.balance
                                 } else {
@@ -59,12 +61,12 @@ final class PhantomCoinsVM: ObservableObject {
                             }
                         }
                     } else {
-                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        HapticManager.shared.impact(style: .medium)
                         self.balance = data.phantomCoins.balance
                         SoundManager.shared.playSound(.coin)
                     }
                 } else if phantomCoins.balance > data.phantomCoins.balance {
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    HapticManager.shared.impact(style: .medium)
                     self.balance = data.phantomCoins.balance
                     SoundManager.shared.playSound(.coin)
                 }

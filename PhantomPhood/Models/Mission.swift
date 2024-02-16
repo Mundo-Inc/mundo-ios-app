@@ -13,9 +13,9 @@ struct Mission: Identifiable, Codable {
     let subtitle: String?
     let icon: String
     let rewardAmount: Int
-    let startsAt: String
-    let expiresAt: String
-    let createdAt: String
+    let startsAt: Date
+    let expiresAt: Date
+    let createdAt: Date
     var isClaimed: Bool
     let task: MissionTask
     let progress: MissionProgress

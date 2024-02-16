@@ -15,8 +15,8 @@ struct UserMentions: Decodable {
 struct Comment: Decodable, Identifiable {
     let id: String
     let content: String
-    let createdAt: String
-    let updatedAt: String
+    let createdAt: Date
+    let updatedAt: Date
     let author: UserEssentials
     let likes: Int
     let liked: Bool

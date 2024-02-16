@@ -93,7 +93,7 @@ final class NewCheckinVM: ObservableObject {
                 }), caption: self.caption, image: image?.uploadId))
                 self.toastVM.toast(.init(type: .success, title: "Success", message: "Checked in"))
                 self.place = nil
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                HapticManager.shared.notification(type: .success)
             } catch {
                 print(error)
                 self.toastVM.toast(.init(type: .error, title: "Error", message: "Couldn't check in"))

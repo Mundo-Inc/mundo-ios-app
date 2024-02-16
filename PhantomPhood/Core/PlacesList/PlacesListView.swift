@@ -231,14 +231,12 @@ fileprivate struct PlaceItem: View {
                 
                 Spacer()
                 
-                if let date = DateFormatter.stringToDate(dateString: place.createdAt) {
-                    HStack {
-                        Spacer()
-                        
-                        Text(DateFormatter.dateToShortString(date: date))
-                        
-                        ProfileImage(place.user.profileImage, size: 28, cornerRadius: 14)
-                    }
+                HStack {
+                    Spacer()
+                    
+                    Text(DateFormatter.dateToShortString(date: place.createdAt))
+                    
+                    ProfileImage(place.user.profileImage, size: 28, cornerRadius: 14)
                 }
             }
             .frame(maxWidth: .infinity)

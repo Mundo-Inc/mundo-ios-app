@@ -8,6 +8,11 @@
 import Foundation
 
 extension Date {
+    enum TimeElapsedFormat {
+        case full
+        case compact
+    }
+    
     /// Returns remaining time until the date in format "HH:mm:ss" or "DD" if the date is more than 24 hours away
     /// - Returns: Remaining time in format "HH:mm:ss" or "DD"
     /// - Note: If the date is in the past, returns nil
@@ -28,5 +33,34 @@ extension Date {
         }
         
         return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+    }
+    
+    func timeElapsed(format: TimeElapsedFormat = .compact, suffix: String = "") -> String {
+        let now = Date()
+        let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: self, to: now)
+        
+        if let years = components.year, years > 0 {
+            return "\(years)\(format == .full ? " year\(years > 1 ? "s" : "")" : "y")\(suffix)"
+        } else if let months = components.month, months > 0 {
+            return "\(months)\(format == .full ? " month\(months > 1 ? "s" : "")" : "mo")\(suffix)"
+        } else if let days = components.day, days > 0 {
+            return "\(days)\(format == .full ? " day\(days > 1 ? "s" : "")" : "d")\(suffix)"
+        } else if let hours = components.hour, hours > 0 {
+            return "\(hours)\(format == .full ? " hour\(hours > 1 ? "s" : "")" : "h")\(suffix)"
+        } else if let minutes = components.minute, minutes > 0 {
+            return "\(minutes)\(format == .full ? " minute\(minutes > 1 ? "s" : "")" : "m")\(suffix)"
+        } else {
+            return "just now"
+        }
+    }
+}
+
+extension Date: RawRepresentable {
+    public var rawValue: String {
+        self.timeIntervalSinceReferenceDate.description
+    }
+    
+    public init?(rawValue: String) {
+        self = Date(timeIntervalSinceReferenceDate: Double(rawValue) ?? 0.0)
     }
 }

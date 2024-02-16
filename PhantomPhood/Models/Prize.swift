@@ -13,10 +13,12 @@ struct Prize: Identifiable, Codable {
     let thumbnail: URL
     let amount: Int
     let createdAt: Date
+    let isRedeemed: Bool
+    let status: String?
     let count: Int?
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case title, thumbnail, amount, createdAt, count
+        case title, thumbnail, amount, createdAt, isRedeemed, status, count
     }
 }

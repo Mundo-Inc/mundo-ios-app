@@ -105,7 +105,7 @@ final class UploadManager {
         let src: String
         let type: String
         let usecase: String
-        let createdAt: String
+        let createdAt: Date
         
         var id: String {
             self._id

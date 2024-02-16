@@ -80,6 +80,7 @@ struct ForYouItemPlaceholder: View {
                             
                             Text("This is a placeholder review content. This is a placeholder review content. This is a placeholder review content.")
                                 .lineLimit(5)
+                                .multilineTextAlignment(.leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .foregroundStyle(.white)
                         }

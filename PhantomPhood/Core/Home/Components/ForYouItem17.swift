@@ -340,7 +340,7 @@ struct ForYouItem17: View {
                                         
                                         Spacer()
                                         
-                                        Text(DateFormatter.getPassedTime(from: item.createdAt))
+                                        Text(item.createdAt.timeElapsed())
                                             .font(.custom(style: .caption))
                                             .foregroundStyle(.secondary)
                                     }
@@ -380,6 +380,7 @@ struct ForYouItem17: View {
                                 
                                 Text(feedReview.content)
                                     .lineLimit(5)
+                                    .multilineTextAlignment(.leading)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .foregroundStyle(.white)
                             }
@@ -447,7 +448,7 @@ struct ForYouItem17: View {
                                         
                                         Spacer()
                                         
-                                        Text(DateFormatter.getPassedTime(from: item.createdAt))
+                                        Text(item.createdAt.timeElapsed())
                                             .font(.custom(style: .caption))
                                             .foregroundStyle(.secondary)
                                     }
@@ -479,6 +480,7 @@ struct ForYouItem17: View {
                                 if let caption = feedCheckin.caption, !caption.isEmpty {
                                     Text(caption)
                                         .lineLimit(5)
+                                        .multilineTextAlignment(.leading)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .foregroundStyle(.white)
                                 }

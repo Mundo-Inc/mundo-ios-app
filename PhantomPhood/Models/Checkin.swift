@@ -9,7 +9,7 @@ import Foundation
 
 struct Checkin: Identifiable, Decodable {
     let id: String
-    let createdAt: String
+    let createdAt: Date
     let user: UserEssentials
     let place: PlaceEssentials
     let image: Media?
@@ -25,7 +25,7 @@ struct Checkin: Identifiable, Decodable {
 
 struct FeedCheckin: Identifiable, Decodable {
     let id: String
-    let createdAt: String
+    let createdAt: Date
     let user: UserEssentials
     let place: PlaceEssentials
     let image: Media?

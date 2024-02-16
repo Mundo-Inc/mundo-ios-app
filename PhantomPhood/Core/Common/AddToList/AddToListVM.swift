@@ -62,7 +62,7 @@ final class AddToListVM: ObservableObject {
                 print(error)
             }
         }
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        HapticManager.shared.notification(type: .success)
         toastManager.toast(.init(type: .success, title: "Success", message: "Lists updated successfully"))
         self.isLoading = false
         withAnimation {

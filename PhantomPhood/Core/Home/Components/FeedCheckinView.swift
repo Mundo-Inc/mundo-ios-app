@@ -30,7 +30,7 @@ struct FeedCheckinView: View {
                         .font(.custom(style: .body))
                         .fontWeight(.bold)
                     Spacer()
-                    Text(DateFormatter.getPassedTime(from: data.createdAt, suffix: " ago"))
+                    Text(data.createdAt.timeElapsed(suffix: " ago"))
                         .font(.custom(style: .caption))
                         .foregroundStyle(.secondary)
                 }.frame(maxWidth: .infinity)
@@ -187,6 +187,7 @@ struct FeedCheckinView: View {
                                     
                                     if let caption = checkin.caption, !caption.isEmpty {
                                         Text(caption)
+                                            .multilineTextAlignment(.leading)
                                             .lineLimit(8)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                             .foregroundStyle(.primary)

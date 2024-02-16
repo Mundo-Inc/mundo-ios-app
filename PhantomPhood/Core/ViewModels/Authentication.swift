@@ -43,7 +43,7 @@ struct CurrentUserFullData: Codable {
     let role: UserRole
     let verified: Bool
     let progress: UserProgress
-    let accepted_eula: String?
+    let accepted_eula: Date?
     
     struct Email: Codable {
         let address: String

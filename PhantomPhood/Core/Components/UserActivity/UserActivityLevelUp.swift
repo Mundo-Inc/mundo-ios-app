@@ -40,7 +40,7 @@ struct UserActivityLevelUp: View {
                     
                     Spacer()
                     
-                    Text(DateFormatter.getPassedTime(from: data.createdAt, suffix: " ago"))
+                    Text(data.createdAt.timeElapsed(suffix: " ago"))
                         .font(.custom(style: .caption))
                         .foregroundStyle(.secondary)
                 }

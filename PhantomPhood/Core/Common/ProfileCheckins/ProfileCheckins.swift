@@ -39,11 +39,9 @@ struct ProfileCheckins: View {
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .multilineTextAlignment(.leading)
                                     
-                                    if let date = DateFormatter.stringToDate(dateString: item.createdAt) {
-                                        Text(DateFormatter.dateToShortString(date: date))
-                                            .font(.custom(style: .caption))
-                                            .foregroundStyle(.secondary)
-                                    }
+                                    Text(DateFormatter.dateToShortString(date: item.createdAt))
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.secondary)
                                 }
                                 
                                 VStack(spacing: 2) {

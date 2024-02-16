@@ -41,9 +41,9 @@ final class UserActivityVM: ObservableObject {
     ///   - item: FeedItem
     func addReaction(_ reaction: GeneralReactionProtocol) async {
         guard let data else { return }
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        HapticManager.shared.impact(style: .light)
         // add temporary reaction
-        let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: Date().ISO8601Format())
+        let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: .now)
         self.data?.addReaction(tempUserReaction)
 
         // add reaction to server
@@ -54,7 +54,7 @@ final class UserActivityVM: ObservableObject {
             self.data?.removeReaction(tempUserReaction)
             self.data?.addReaction(userReaction)
         } catch {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            HapticManager.shared.impact(style: .light)
             // remove temp reaction
             self.data?.removeReaction(tempUserReaction)
         }

@@ -38,6 +38,15 @@ struct PrizeItem: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .contentShape(RoundedRectangle(cornerRadius: 10))
                     .matchedGeometryEffect(id: "\(data.id)-img", in: namespace)
+                
+                if data.isRedeemed {
+                    RoundedRectangle(cornerRadius: 10)
+                        .foregroundStyle(Color.black.opacity(0.75))
+                    
+                    Text("Redeemed".uppercased())
+                        .font(.custom(style: .headline))
+                        .foregroundStyle(Color.white.opacity(0.7))
+                }
             }
             
             Text(data.title)
@@ -59,7 +68,7 @@ struct PrizeItem: View {
         }
         .frame(width: 135)
         .onTapGesture {
-            if vm.selectedPrize == nil {
+            if !data.isRedeemed && vm.selectedPrize == nil {
                 withAnimation {
                     vm.selectedPrize = data
                 }

@@ -42,7 +42,7 @@ struct PlaceReviewView: View {
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    Text(DateFormatter.getPassedTime(from: review.createdAt, format: .full, suffix: " ago"))
+                    Text(review.createdAt.timeElapsed(format: .full, suffix: " ago"))
                         .font(.custom(style: .caption))
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)

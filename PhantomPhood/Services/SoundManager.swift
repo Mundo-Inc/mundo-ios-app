@@ -17,26 +17,45 @@ final class SoundManager {
         configureAudioSession()
     }
     
-    func playSound(_ sound: Sound) {
+    public func playSound(_ sound: Sound) {
         audioQueue.async {
             self.setupAndPlay(sound: sound)
+        }
+    }
+    
+    public func prepare(sound: Sound) {
+        guard let url = Bundle.main.url(forResource: sound.fileName, withExtension: sound.fileExtension) else { return }
+        
+        if let audioPlayer, audioPlayer.url == url {
+            audioPlayer.prepareToPlay()
+        } else {
+            do {
+                self.audioPlayer = try AVAudioPlayer(contentsOf: url)
+                
+                self.audioPlayer?.prepareToPlay()
+            } catch {
+                print(error)
+            }
         }
     }
     
     private func setupAndPlay(sound: Sound) {
         guard let url = Bundle.main.url(forResource: sound.fileName, withExtension: sound.fileExtension) else { return }
         
-        do {
-            if self.audioPlayer == nil || self.audioPlayer?.url != url {
-                self.audioPlayer = try AVAudioPlayer(contentsOf: url)
-            }
-            // Ensure audioPlayer is not nil and prepare to play to reduce latency
-            guard self.audioPlayer?.prepareToPlay() ?? false else { return }
+        if let audioPlayer, audioPlayer.url == url {
             DispatchQueue.main.async {
-                self.audioPlayer?.play()
+                audioPlayer.play()
             }
-        } catch {
-            print(error)
+        } else {
+            do {
+                self.audioPlayer = try AVAudioPlayer(contentsOf: url)
+                
+                DispatchQueue.main.async {
+                    self.audioPlayer?.play()
+                }
+            } catch {
+                print(error)
+            }
         }
     }
     

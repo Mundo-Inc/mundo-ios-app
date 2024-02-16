@@ -11,14 +11,14 @@ struct Notification: Decodable, Identifiable {
     let id: String
     let user: UserEssentials
     let type: String
-    var readAt: String?
+    var readAt: Date?
     let sent: Bool
     let failReason: String?
     let importance: Int
     let batchCount: Int
     let content: String
-    let createdAt: String
-    let updatedAt: String
+    let createdAt: Date
+    let updatedAt: Date
     let image: String?
     let subtitle: String?
     let title: String?

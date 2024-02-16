@@ -57,8 +57,8 @@ struct FeedItem: Identifiable, Decodable, Equatable {
     let resourceType: FeedItemResourceType
     let resource: FeedItemResource
     let privacyType: PrivacyType
-    let createdAt: String
-    let updatedAt: String
+    let createdAt: Date
+    let updatedAt: Date
     var reactions: ReactionsObject
     let comments: [Comment]
     let commentsCount: Int
@@ -68,7 +68,7 @@ struct FeedItem: Identifiable, Decodable, Equatable {
     }
     
     // By Values
-    init(id: String, user: UserEssentials, place: PlaceOverview?, activityType: FeedItemActivityType, resourceType: FeedItemResourceType, resource: FeedItemResource, privacyType: PrivacyType, createdAt: String, updatedAt: String, reactions: ReactionsObject, comments: [Comment], commentsCount: Int) {
+    init(id: String, user: UserEssentials, place: PlaceOverview?, activityType: FeedItemActivityType, resourceType: FeedItemResourceType, resource: FeedItemResource, privacyType: PrivacyType, createdAt: Date, updatedAt: Date, reactions: ReactionsObject, comments: [Comment], commentsCount: Int) {
         self.id = id
         self.user = user
         self.place = place
@@ -109,8 +109,8 @@ struct FeedItem: Identifiable, Decodable, Equatable {
         }
         
         privacyType = try container.decode(PrivacyType.self, forKey: .privacyType)
-        createdAt = try container.decode(String.self, forKey: .createdAt)
-        updatedAt = try container.decode(String.self, forKey: .updatedAt)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         
         reactions = try container.decode(ReactionsObject.self, forKey: .reactions)
         reactions.total.sort { $0.count > $1.count }

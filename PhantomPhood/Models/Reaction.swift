@@ -26,7 +26,7 @@ struct UserReaction: Identifiable, Decodable, GeneralReactionProtocol {
     let id: String
     let reaction: String
     let type: ReactionType
-    let createdAt: String
+    let createdAt: Date
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"

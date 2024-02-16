@@ -62,6 +62,7 @@ fileprivate struct CommentView: View {
                     Text(comment.content)
                 }
                 .lineLimit(2)
+                .multilineTextAlignment(.leading)
                 .font(.custom(style: .callout))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -176,8 +177,8 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
                 Comment(
                     id: "TEST_COMMENT_ID_1",
                     content: "This is the comment body let's see what happens if this exceeds two lines",
-                    createdAt: "2023-09-19T20:06:45.214Z",
-                    updatedAt: "2023-09-19T20:06:45.214Z",
+                    createdAt: .now,
+                    updatedAt: .now,
                     author: UserEssentials(
                         id: "TEST_USER_ID",
                         name: "Dwayne",
@@ -210,8 +211,8 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
                 Comment(
                     id: "TEST_COMMENT_ID_1",
                     content: "This is the comment body let's see what happens if this exceeds two lines",
-                    createdAt: "2023-09-19T20:06:45.214Z",
-                    updatedAt: "2023-09-19T20:06:45.214Z",
+                    createdAt: .now,
+                    updatedAt: .now,
                     author: UserEssentials(
                         id: "TEST_USER_ID",
                         name: "Dwayne",

@@ -16,8 +16,8 @@ struct PlaceReview: Identifiable, Decodable {
     let tags: [String]?
     let recommend: Bool?
     let language: String?
-    let createdAt: String
-    let updatedAt: String
+    let createdAt: Date
+    let updatedAt: Date
     let userActivityId: String?
     let writer: UserEssentials
     let comments: [Comment]

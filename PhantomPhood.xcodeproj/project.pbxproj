@@ -237,6 +237,8 @@
 		0B91A7272B57F157007F7969 /* ExploreView16.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B91A7262B57F157007F7969 /* ExploreView16.swift */; };
 		0B91A7292B57F166007F7969 /* ExploreView17.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B91A7282B57F166007F7969 /* ExploreView17.swift */; };
 		0B9307F32B0709F1005FA1C3 /* ProfileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9307F22B0709F1005FA1C3 /* ProfileImage.swift */; };
+		0B95AD402B7EDAF800F6E85B /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B95AD3F2B7EDAF800F6E85B /* HapticManager.swift */; };
+		0B95AD432B7EEE1F00F6E85B /* UserDataContainer.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0B95AD412B7EEE1F00F6E85B /* UserDataContainer.xcdatamodeld */; };
 		0B96D66C2AD2E73500612C27 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B96D66B2AD2E73500612C27 /* LocationManager.swift */; };
 		0B985AE12AC9AFC200019A06 /* PlaceDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B985AE02AC9AFC200019A06 /* PlaceDM.swift */; };
 		0B985AE32AC9AFCA00019A06 /* PlaceVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B985AE22AC9AFCA00019A06 /* PlaceVM.swift */; };
@@ -360,6 +362,8 @@
 		0BF81DEA2ABE398E00B8892E /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0BF81DD82ABE398E00B8892E /* Poppins-Italic.ttf */; };
 		0BF81DEB2ABE398E00B8892E /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0BF81DD92ABE398E00B8892E /* Poppins-ExtraLightItalic.ttf */; };
 		0BFAC3B72B7425A700F1A036 /* UniversalLinkingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFAC3B62B7425A700F1A036 /* UniversalLinkingManager.swift */; };
+		0BFEB5F22B7F9451006F6A17 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFEB5F12B7F9451006F6A17 /* CoreDataStack.swift */; };
+		0BFEB5F42B7FC4AA006F6A17 /* InviteLinkEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFEB5F32B7FC4AA006F6A17 /* InviteLinkEntity.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -583,6 +587,8 @@
 		0B91A7262B57F157007F7969 /* ExploreView16.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreView16.swift; sourceTree = "<group>"; };
 		0B91A7282B57F166007F7969 /* ExploreView17.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreView17.swift; sourceTree = "<group>"; };
 		0B9307F22B0709F1005FA1C3 /* ProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImage.swift; sourceTree = "<group>"; };
+		0B95AD3F2B7EDAF800F6E85B /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		0B95AD422B7EEE1F00F6E85B /* UserDataContainer.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UserDataContainer.xcdatamodel; sourceTree = "<group>"; };
 		0B96D66B2AD2E73500612C27 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		0B985AE02AC9AFC200019A06 /* PlaceDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceDM.swift; sourceTree = "<group>"; };
 		0B985AE22AC9AFCA00019A06 /* PlaceVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceVM.swift; sourceTree = "<group>"; };
@@ -706,6 +712,8 @@
 		0BF81DD82ABE398E00B8892E /* Poppins-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Italic.ttf"; sourceTree = "<group>"; };
 		0BF81DD92ABE398E00B8892E /* Poppins-ExtraLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		0BFAC3B62B7425A700F1A036 /* UniversalLinkingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalLinkingManager.swift; sourceTree = "<group>"; };
+		0BFEB5F12B7F9451006F6A17 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
+		0BFEB5F32B7FC4AA006F6A17 /* InviteLinkEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteLinkEntity.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1084,6 +1092,7 @@
 				0BCD57DC2B28AE4600A1C914 /* UIApplication.swift */,
 				0B2E987F2AB907340013301D /* UIImage.swift */,
 				0BCBC18D2ACDC2FF00992D8E /* View.swift */,
+				0BFEB5F32B7FC4AA006F6A17 /* InviteLinkEntity.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1243,6 +1252,7 @@
 				0B9EF27F2B302E070025F464 /* Services */,
 				0BCF5D6C2B5DEA7A00D729E2 /* SoundEffects */,
 				0B6495512AB0A4EF000E57AF /* Utils */,
+				0B95AD412B7EEE1F00F6E85B /* UserDataContainer.xcdatamodeld */,
 			);
 			path = PhantomPhood;
 			sourceTree = "<group>";
@@ -1373,7 +1383,9 @@
 			isa = PBXGroup;
 			children = (
 				0B9EF2802B302E1D0025F464 /* ContactsService.swift */,
+				0BFEB5F12B7F9451006F6A17 /* CoreDataStack.swift */,
 				0B86F9342B44339400DD4C85 /* EmojisManager.swift */,
+				0B95AD3F2B7EDAF800F6E85B /* HapticManager.swift */,
 				0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */,
 				0BCF5D6A2B5DE93400D729E2 /* SoundManager.swift */,
 				0BFAC3B62B7425A700F1A036 /* UniversalLinkingManager.swift */,
@@ -1925,6 +1937,7 @@
 				0B695D7C2AF14E0C00C11870 /* MyConnectionsViewModel.swift in Sources */,
 				0B384FA92B2B5DE500C98245 /* UserActivityVM.swift in Sources */,
 				0B026CDC2B5AC7B5002DAD24 /* PhantomCoins.swift in Sources */,
+				0BFEB5F22B7F9451006F6A17 /* CoreDataStack.swift in Sources */,
 				0BD1942B2B06677600C1C35F /* ForYouItem.swift in Sources */,
 				0B91A7252B57F049007F7969 /* ExploreView.swift in Sources */,
 				0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */,
@@ -2021,6 +2034,8 @@
 				0B1610D62B63240B00DCAFA5 /* UserEssentials.swift in Sources */,
 				0B9C026C2B45A3A0000C4774 /* PlacesListVM.swift in Sources */,
 				0BC84A692AD06F8200D723AA /* WrappingHStack.swift in Sources */,
+				0B95AD402B7EDAF800F6E85B /* HapticManager.swift in Sources */,
+				0BFEB5F42B7FC4AA006F6A17 /* InviteLinkEntity.swift in Sources */,
 				0BD9F9912B4DB6830040FCDA /* UserActivityCheckin.swift in Sources */,
 				0B27AE212B757AE300C97559 /* ReportVM.swift in Sources */,
 				0BCD57E72B28BAC300A1C914 /* MapActivity.swift in Sources */,
@@ -2045,6 +2060,7 @@
 				0BDBD3C82ACB0E8B003B8D2D /* PlaceOverviewView.swift in Sources */,
 				0B226F692B3359F40036B8BE /* Achievement.swift in Sources */,
 				0BC5A2052B5FF34E0029A7A9 /* Int.swift in Sources */,
+				0B95AD432B7EEE1F00F6E85B /* UserDataContainer.xcdatamodeld in Sources */,
 				0B29207A2B5575720026DDDE /* ExploreSearchView.swift in Sources */,
 				0B35B7AB2B0D14CA00822BA6 /* SignInOptionsView.swift in Sources */,
 				0B8AA3CB2AFE8817008284F5 /* MapKit.swift in Sources */,
@@ -2218,7 +2234,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.49.5;
+				MARKETING_VERSION = 0.50.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2256,7 +2272,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.49.5;
+				MARKETING_VERSION = 0.50.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2423,6 +2439,19 @@
 			productName = BranchSDK;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		0B95AD412B7EEE1F00F6E85B /* UserDataContainer.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				0B95AD422B7EEE1F00F6E85B /* UserDataContainer.xcdatamodel */,
+			);
+			currentVersion = 0B95AD422B7EEE1F00F6E85B /* UserDataContainer.xcdatamodel */;
+			path = UserDataContainer.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 0B77EA2F2AAF855500C8DF87 /* Project object */;
 }

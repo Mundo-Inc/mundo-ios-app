@@ -116,9 +116,11 @@ struct CommentsView: View {
                                             .font(.custom(style: .body))
                                             .bold()
                                             .foregroundStyle(.primary)
-                                        Text(DateFormatter.getPassedTime(from: comment.createdAt))
+                                        
+                                        Text(comment.createdAt.timeElapsed())
                                             .font(.custom(style: .caption))
                                             .foregroundStyle(.secondary)
+                                        
                                         Spacer()
                                     }
                                     .frame(maxWidth: .infinity)

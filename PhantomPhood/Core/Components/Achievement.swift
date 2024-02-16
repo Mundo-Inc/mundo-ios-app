@@ -24,20 +24,17 @@ struct Achievement: View {
     var body: some View {
         VStack(spacing: 0) {
             if let data {
-                if let theDate = DateFormatter.stringToDate(dateString: data.createdAt) {
-                    HStack {
-                        Text(DateFormatter.dateToShortString(date: theDate))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundStyle(.tertiary)
-                        
-                        if data.count > 1 {
-                            Text("\(data.count)x")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .font(.custom(style: .caption))
+                HStack {
+                    Text(DateFormatter.dateToShortString(date: data.createdAt))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .foregroundStyle(.tertiary)
                     
+                    if data.count > 1 {
+                        Text("\(data.count)x")
+                            .foregroundStyle(.secondary)
+                    }
                 }
+                .font(.custom(style: .caption))
                 
                 VStack {
                     Image(achievement.rawValue)
@@ -93,6 +90,6 @@ struct Achievement: View {
 #Preview {
     Group {
         Achievement(achievement: .LEGEND)
-        Achievement(data: .init(id: .LEGEND, count: 4, createdAt: "2023-10-25T02:02:15.389Z"))
+        Achievement(data: .init(id: .LEGEND, count: 4, createdAt: .now))
     }
 }

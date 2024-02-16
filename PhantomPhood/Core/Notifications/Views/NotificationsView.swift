@@ -152,7 +152,7 @@ struct NotificationsView: View {
                                 .transition(AnyTransition.scale.animation(.easeInOut(duration: 0.2)))
                         }
                         
-                        Text(DateFormatter.getPassedTime(from: data.createdAt))
+                        Text(data.createdAt.timeElapsed())
                             .font(.custom(style: .caption))
                             .foregroundStyle(.secondary)
                     }

@@ -108,7 +108,7 @@ struct RewardsHubView: View {
                                         } label: {
                                             ZStack {
                                                 VStack(spacing: 0) {
-                                                    Text(balance >= selectedPrize.amount ? "Redeem" : "Not Enough Coin".uppercased())
+                                                    Text(balance >= selectedPrize.amount ? "Redeem".uppercased() : "Not Enough Coin".uppercased())
                                                         .font(.custom(style: .subheadline))
                                                         .fontWeight(.semibold)
                                                     
@@ -206,7 +206,7 @@ struct RewardsHubView: View {
     
     var referralSection: some View {
         VStack {
-            HStack(spacing: 3) {
+            HStack(alignment: .top, spacing: 3) {
                 Text("Referral Rewards")
                     .padding(.trailing, 5)
                 
@@ -219,9 +219,19 @@ struct RewardsHubView: View {
                 }
                 
                 Spacer()
-                
-                Text("12")
-                Image(systemName: "person.2.fill")
+                VStack(alignment: .trailing, spacing: 0) {
+                    HStack(spacing: 3) {
+                        Text(UserSettings.shared.inviteCredits.description)
+                        Image(systemName: "person.2.fill")
+                    }
+                    if UserSettings.shared.inviteCredits != 0 && UserSettings.shared.inviteCredits != UserSettings.maxInviteCredits {
+                        TimelineView(.animation(minimumInterval: 1, paused: false)) { _ in
+                            Text("+1 in " + (UserSettings.shared.inviteCreditsLastGiven.addingTimeInterval(3600 * 24 * 7).remainingTime() ?? "7 days"))
+                                .font(.custom(style: .caption))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
             }
             .font(.custom(style: .headline))
             
@@ -230,31 +240,91 @@ struct RewardsHubView: View {
                 .padding(.top, 2)
                 .padding(.bottom, 8)
             
+            if let userInviteLinks = vm.userInviteLinks {
+                HStack {
+                    ForEach(userInviteLinks) { link in
+                        Group {
+                            if let _ = link.referredUser {
+                                VStack {
+                                    ProfileImage("", size: 50, cornerRadius: 25)
+                                    Text("Name")
+                                        .foregroundStyle(.black.opacity(0.5))
+                                }
+                            } else if let expiresIn = link.expiresAt.remainingTime(), let url = link.link {
+                                VStack {
+                                    ShareLink(item: url) {
+                                        ZStack {
+                                            ProfileImage("", size: 50, cornerRadius: 25)
+                                            
+                                            Circle()
+                                                .frame(width: 50, height: 50)
+                                                .foregroundStyle(Color.black.opacity(0.6))
+                                            
+                                            Image(systemName: "rectangle.portrait.on.rectangle.portrait")
+                                                .font(.system(size: 18))
+                                                .foregroundStyle(Color.white.opacity(0.7))
+                                        }
+                                    }
+                                    
+                                    Text(expiresIn)
+                                        .foregroundStyle(.black.opacity(0.5))
+                                }
+                            }
+                        }
+                        .font(.custom(style: .caption2))
+                        .fontWeight(.semibold)
+                    }
+                }
+            }
+            
             Button {
                 vm.getInviteLink()
             } label: {
-                HStack {
-                    if vm.loadingSections.contains(.inviteLink) {
-                        ProgressView()
-                            .controlSize(.regular)
-                            .tint(Color.black.opacity(0.8))
-                            .padding(.trailing, 3)
-                    } else {
-                        Image(systemName: "square.and.arrow.up")
+                if UserSettings.shared.inviteCredits > 0 {
+                    HStack {
+                        if vm.loadingSections.contains(.inviteLink) {
+                            ProgressView()
+                                .controlSize(.regular)
+                                .tint(Color.black.opacity(0.8))
+                                .padding(.trailing, 3)
+                        } else {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                        Text("Invite Friend")
                     }
-                    Text("Invite Friend")
+                    .frame(maxWidth: .infinity)
+                    .font(.custom(style: .headline))
+                } else {
+                    if let userInviteLinks = vm.userInviteLinks, userInviteLinks.filter({ $0.referredUser == nil }).count == UserSettings.maxInviteCredits {
+                        Text("Out of Invites")
+                            .font(.custom(style: .subheadline))
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        VStack(spacing: 0) {
+                            Text("Out of Invites")
+                                .font(.custom(style: .subheadline))
+                                .fontWeight(.semibold)
+                            
+                            TimelineView(.animation(minimumInterval: 1, paused: false)) { _ in
+                                Text(UserSettings.shared.inviteCreditsLastGiven.addingTimeInterval(3600 * 24 * 2).remainingTime() ?? "2 days")
+                                    .font(.custom(style: .caption))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
                 }
-                .font(.custom(style: .headline))
-                .frame(maxWidth: .infinity)
             }
-            .tint(Color.gold)
+            .tint(Color.gold.gradient)
             .foregroundStyle(Color.black.opacity(0.9))
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+            .disabled(UserSettings.shared.inviteCredits <= 0)
         }
         .foregroundStyle(Color.black.opacity(0.9))
         .padding()
-        .background(Color.accentColor)
+        .background(Color.accentColor.gradient)
     }
     
     var dailycheckinsSection: some View {

@@ -79,7 +79,7 @@ final class NotificationsVM: ObservableObject {
             
             self.notifications = self.notifications.map({ notification in
                 var new = notification
-                new.readAt = DateFormatter.dateToString(date: Date())
+                new.readAt = .now
                 return new
             })
             await updateUnreadNotificationsCount()

@@ -41,7 +41,7 @@ struct ForYouView: View {
                                                         
                                                         if value.translation.height > dragAmountToRefresh {
                                                             if !self.haptic {
-                                                                UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                                                                HapticManager.shared.impact(style: .heavy)
                                                                 self.haptic = true
                                                             }
                                                         } else {
@@ -53,9 +53,9 @@ struct ForYouView: View {
                                                     if value.translation.height > dragAmountToRefresh {
                                                         if !vm.isLoading && readyToReferesh {
                                                             Task {
-                                                                UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                                                                HapticManager.shared.impact(style: .light)
                                                                 await vm.getForYou(.refresh)
-                                                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                                                HapticManager.shared.notification(type: .success)
                                                             }
                                                         }
                                                     }
@@ -117,9 +117,9 @@ struct ForYouView: View {
                         appData.tappedTwice = nil
                         if !vm.isLoading {
                             Task {
-                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                HapticManager.shared.impact(style: .light)
                                 await vm.getForYou(.refresh)
-                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                HapticManager.shared.notification(type: .success)
                             }
                         }
                     }
