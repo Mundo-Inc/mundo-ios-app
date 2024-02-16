@@ -156,11 +156,15 @@ final class RewardsHubVM: ObservableObject {
             lp.stage = "ref-\((userInviteLinks?.count ?? 0) + 1)"
             
             if let topViewController = UIApplication.shared.topViewController() {
-                buo.showShareSheet(with: lp, andShareText: "Join \(currentUser.name) on Phantom Phood", from: topViewController) { (activityType, completed) in
-                    self.loadingSections.remove(.inviteLink)
-                    if completed {
-                        if let url = URL(string: buo.getShortUrl(with: lp) ?? "") {
-                            self.addInviteLink(url)
+                buo.showShareSheet(with: lp, andShareText: "Join \(currentUser.name) on Phantom Phood", from: topViewController) { (activityType, completed, error) in
+                    if let error {
+                        print(error)
+                    } else {
+                        self.loadingSections.remove(.inviteLink)
+                        if completed {
+                            if let url = URL(string: buo.getShortUrl(with: lp) ?? "") {
+                                self.addInviteLink(url)
+                            }
                         }
                     }
                 }
