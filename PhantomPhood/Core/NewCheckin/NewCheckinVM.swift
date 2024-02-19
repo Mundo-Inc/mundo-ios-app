@@ -10,11 +10,8 @@ import SwiftUI
 
 @MainActor
 final class NewCheckinVM: ObservableObject {
-    private let apiManager = APIManager.shared
-    private let auth = Authentication.shared
     private let toastVM = ToastVM.shared
     private let taskManager = TaskManager.shared
-    private let appData = AppData.shared
     private let placeDM = PlaceDM()
     
     @Published var privacyType: PrivacyType = .PUBLIC
@@ -34,6 +31,7 @@ final class NewCheckinVM: ObservableObject {
         switch idOrData {
         case .id(let placeId):
             Task { [weak self] in
+                self?.loadings.insert(.placeInfo)
                 do {
                     let placeOverview = try await self?.placeDM.getOverview(id: placeId)
                     if let placeOverview {
@@ -44,6 +42,7 @@ final class NewCheckinVM: ObservableObject {
                 } catch {
                     self?.error = "Couldn't fetch place data"
                 }
+                self?.loadings.remove(.placeInfo)
             }
             break
         case .data(let placeData):
@@ -54,6 +53,7 @@ final class NewCheckinVM: ObservableObject {
     
     init(mapPlace: MapPlace) {
         Task { [weak self] in
+            self?.loadings.insert(.placeInfo)
             do {
                 let placeData = try await self?.placeDM.fetch(mapPlace: mapPlace)
                 if let placeData {
@@ -64,6 +64,7 @@ final class NewCheckinVM: ObservableObject {
             } catch {
                 self?.error = "Couldn't fetch place data"
             }
+            self?.loadings.remove(.placeInfo)
         }
     }
     
@@ -107,6 +108,7 @@ final class NewCheckinVM: ObservableObject {
     }
     
     enum Loadings: Hashable {
+        case placeInfo
         case submitting
     }
 }

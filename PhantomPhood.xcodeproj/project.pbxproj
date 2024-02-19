@@ -180,6 +180,7 @@
 		0B4016702B045D56000F1263 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 0B40166F2B045D56000F1263 /* SwiftUIPager */; };
 		0B4016732B046A83000F1263 /* VideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = 0B4016722B046A83000F1263 /* VideoPlayer */; };
 		0B4016752B046AA5000F1263 /* ForYouView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4016742B046AA5000F1263 /* ForYouView.swift */; };
+		0B448E692B832DEC00179D0E /* QuickActionsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B448E682B832DEC00179D0E /* QuickActionsVM.swift */; };
 		0B46814D2AC5EAFB009C5EF9 /* FirstLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B46814C2AC5EAFB009C5EF9 /* FirstLoadingView.swift */; };
 		0B46814F2AC5EB6B009C5EF9 /* CircleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */; };
 		0B4681512AC61D49009C5EF9 /* FeedCheckinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4681502AC61D49009C5EF9 /* FeedCheckinView.swift */; };
@@ -535,6 +536,7 @@
 		0B3B32DE2AF013DD00E1E0B0 /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
 		0B3E73CB2B29E9E00092072F /* Throttle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Throttle.swift; sourceTree = "<group>"; };
 		0B4016742B046AA5000F1263 /* ForYouView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForYouView.swift; sourceTree = "<group>"; };
+		0B448E682B832DEC00179D0E /* QuickActionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsVM.swift; sourceTree = "<group>"; };
 		0B46814C2AC5EAFB009C5EF9 /* FirstLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLoadingView.swift; sourceTree = "<group>"; };
 		0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleLabelView.swift; sourceTree = "<group>"; };
 		0B4681502AC61D49009C5EF9 /* FeedCheckinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCheckinView.swift; sourceTree = "<group>"; };
@@ -1055,6 +1057,15 @@
 			path = Emojis;
 			sourceTree = "<group>";
 		};
+		0B448E672B832DD100179D0E /* QuickActions */ = {
+			isa = PBXGroup;
+			children = (
+				0B6B4AB22B482D2D002C9FE0 /* QuickActionsView.swift */,
+				0B448E682B832DEC00179D0E /* QuickActionsVM.swift */,
+			);
+			path = QuickActions;
+			sourceTree = "<group>";
+		};
 		0B547D832B3F3D1C002C6336 /* CreateNewList */ = {
 			isa = PBXGroup;
 			children = (
@@ -1238,7 +1249,6 @@
 				0B96D66B2AD2E73500612C27 /* LocationManager.swift */,
 				0B1F758A2B47185300097A70 /* MainTabBarView.swift */,
 				0B77EA3A2AAF855500C8DF87 /* PhantomPhoodApp.swift */,
-				0B6B4AB22B482D2D002C9FE0 /* QuickActionsView.swift */,
 				0B77EA3E2AAF855600C8DF87 /* Assets.xcassets */,
 				0B6495582AB1FD04000E57AF /* Core */,
 				0BCD57E32B28B35700A1C914 /* DataManagers */,
@@ -1315,6 +1325,7 @@
 				0B226F622B3325350036B8BE /* StarRating.swift */,
 				0BC84A682AD06F8200D723AA /* WrappingHStack.swift */,
 				0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */,
+				0B448E672B832DD100179D0E /* QuickActions */,
 				0BD9F9872B4DAF4A0040FCDA /* UserActivity */,
 			);
 			path = Components;
@@ -1938,6 +1949,7 @@
 				0B384FA92B2B5DE500C98245 /* UserActivityVM.swift in Sources */,
 				0B026CDC2B5AC7B5002DAD24 /* PhantomCoins.swift in Sources */,
 				0BFEB5F22B7F9451006F6A17 /* CoreDataStack.swift in Sources */,
+				0B448E692B832DEC00179D0E /* QuickActionsVM.swift in Sources */,
 				0BD1942B2B06677600C1C35F /* ForYouItem.swift in Sources */,
 				0B91A7252B57F049007F7969 /* ExploreView.swift in Sources */,
 				0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */,
@@ -2234,7 +2246,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.50.0;
+				MARKETING_VERSION = 0.50.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2272,7 +2284,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.50.0;
+				MARKETING_VERSION = 0.50.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

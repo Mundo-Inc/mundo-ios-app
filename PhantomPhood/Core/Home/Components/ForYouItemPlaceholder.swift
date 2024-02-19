@@ -61,15 +61,15 @@ struct ForYouItemPlaceholder: View {
                         .padding(.horizontal, 10)
                         .padding(.top, 10)
                         .padding(.bottom, 5)
-                        .background(Material.ultraThin.opacity(0.7))
-                        .clipShape(.rect(cornerRadius: 16))
+                        .background(Material.ultraThin.opacity(0.65))
+                        .clipShape(.rect(cornerRadius: 20))
                         .padding(.horizontal)
                         
                         Spacer()
                         
                         VStack(spacing: 5) {
                             HStack {
-                                StarRating(score: 5)
+                                StarRating(score: 5, activeColor: Color.gold)
                                 
                                 Text("(5/5)")
                                     .font(.custom(style: .headline))
@@ -88,6 +88,7 @@ struct ForYouItemPlaceholder: View {
                         .padding(.horizontal)
                         .padding(.trailing, 52)
                         .padding(.trailing)
+                        .padding(.bottom, 20)
                         .frame(maxWidth: .infinity)
                         .background {
                             LinearGradient(colors: [.clear, .black.opacity(0.2), .black.opacity(0.4), .black.opacity(0.5), .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
@@ -128,7 +129,7 @@ struct ForYouItemPlaceholder: View {
                                 Image(.addReaction)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-                                    .frame(height: 22)
+                                    .frame(height: 24)
                                     .foregroundStyle(.white)
                             }
                         
@@ -140,7 +141,7 @@ struct ForYouItemPlaceholder: View {
                                 Image(systemName: "bubble.left")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-                                    .frame(height: 22)
+                                    .frame(height: 24)
                                     .foregroundStyle(.white)
                             }
                         .padding(.horizontal, 5)
