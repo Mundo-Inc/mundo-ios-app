@@ -319,7 +319,16 @@ struct ForYouItem: View {
                                 .transition(.move(edge: .leading))
                         }
                         
-                        VStack(spacing: 5) {
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text("Review")
+                                .font(.custom(style: .caption))
+                                .fontWeight(.medium)
+                                .foregroundStyle(.black)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 4)
+                                .background(Color("Reviewed").opacity(0.8))
+                                .clipShape(.rect(cornerRadius: 5))
+                            
                             if let overallScore = feedReview.scores.overall {
                                 HStack {
                                     StarRating(score: overallScore, activeColor: Color.gold)
@@ -342,8 +351,8 @@ struct ForYouItem: View {
                         .padding(.horizontal)
                         .padding(.trailing, 52)
                         .padding(.trailing)
-                        .padding(.bottom, 8)
-                        .frame(maxWidth: .infinity)
+                        .padding(.bottom, 20)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .background {
                             LinearGradient(colors: [.clear, .black.opacity(0.2), .black.opacity(0.4), .black.opacity(0.5), .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
                                 .allowsHitTesting(false)
@@ -415,7 +424,16 @@ struct ForYouItem: View {
                         
                         Spacer()
                         
-                        VStack(spacing: 5) {
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text("Checkin")
+                                .font(.custom(style: .caption))
+                                .fontWeight(.medium)
+                                .foregroundStyle(.black)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 4)
+                                .background(Color("CheckedIn").opacity(0.8))
+                                .clipShape(.rect(cornerRadius: 5))
+                            
                             if let tags = feedCheckin.tags {
                                 ForEach(tags) { user in
                                     HStack(spacing: 3) {
@@ -441,7 +459,7 @@ struct ForYouItem: View {
                         .padding(.trailing, 52)
                         .padding(.trailing)
                         .padding(.bottom, 8)
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .background {
                             if (feedCheckin.caption != nil && !feedCheckin.caption!.isEmpty) || (feedCheckin.tags != nil && !feedCheckin.tags!.isEmpty) {
                                 LinearGradient(colors: [.clear, .black.opacity(0.2), .black.opacity(0.4), .black.opacity(0.5), .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
@@ -541,7 +559,7 @@ struct ForYouItem: View {
         }
         .frame(maxWidth: .infinity)
     }
-        
+    
     private func playBinding(for videoId: String) -> Binding<Bool> {
         Binding<Bool>(
             get: {
