@@ -65,11 +65,17 @@ struct NotificationsView: View {
     
     func notificationItem(_ data: Notification) -> some View {
         HStack(alignment: .top) {
-            ProfileImage(data.user.profileImage, size: 44, cornerRadius: 10)
-                .frame(width: 44, height: 44)
-                .onTapGesture {
-                    appData.homeNavStack.append(AppRoute.userProfile(userId: data.user.id))
-                }
+            if let user = data.user {
+                ProfileImage(user.profileImage, size: 44, cornerRadius: 10)
+                    .frame(width: 44, height: 44)
+                    .onTapGesture {
+                        appData.homeNavStack.append(AppRoute.userProfile(userId: user.id))
+                    }
+            } else {
+                RoundedRectangle(cornerRadius: 10)
+                    .frame(width: 44, height: 44)
+                    .foregroundStyle(Color.themePrimary)
+            }
             
             Button {
                 if let activity = data.activity {
@@ -81,57 +87,69 @@ struct NotificationsView: View {
                         Group {
                             switch data.type {
                             case NotificationType.comment.rawValue:
-                                Group {
-                                    Text(data.user.name)
-                                        .bold()
-                                    +
-                                    Text(" Commented on your activity.")
+                                if let user = data.user {
+                                    Group {
+                                        Text(user.name)
+                                            .bold()
+                                        +
+                                        Text(" Commented on your activity.")
+                                    }
+                                    .frame(minHeight: 20)
                                 }
-                                .frame(minHeight: 20)
                                 
                                 Text(data.content)
                                     .frame(minHeight: 18)
                             case NotificationType.comment_mention.rawValue:
-                                Group {
-                                    Text(data.user.name)
-                                        .bold()
-                                    +
-                                    Text(" Mentioned you in a comment.")
+                                if let user = data.user {
+                                    Group {
+                                        Text(user.name)
+                                            .bold()
+                                        +
+                                        Text(" Mentioned you in a comment.")
+                                    }
+                                    .frame(minHeight: 20)
                                 }
-                                .frame(minHeight: 20)
                                 
                                 Text(data.content)
                                     .frame(minHeight: 18)
                             case NotificationType.review_mention.rawValue:
-                                Group {
-                                    Text(data.user.name)
-                                        .bold()
-                                    +
-                                    Text(" Mentioned you in a review.")
+                                if let user = data.user {
+                                    Group {
+                                        Text(user.name)
+                                            .bold()
+                                        +
+                                        Text(" Mentioned you in a review.")
+                                    }
+                                    .frame(minHeight: 20)
                                 }
-                                .frame(minHeight: 20)
                                 
                                 Text(data.content)
                                     .frame(minHeight: 18)
                             case NotificationType.xp.rawValue:
-                                Text(data.user.name)
-                                    .bold()
-                                    .frame(minHeight: 20)
+                                if let user = data.user {
+                                    Text(user.name)
+                                        .bold()
+                                        .frame(minHeight: 20)
+                                }
                                 
                                 Text("Got \(data.content) XP")
                                     .frame(minHeight: 18)
                             case NotificationType.level_up.rawValue:
-                                Text(data.user.name)
-                                    .bold()
-                                    .frame(minHeight: 20)
+                                if let user = data.user {
+                                    Text(user.name)
+                                        .bold()
+                                        .frame(minHeight: 20)
+                                }
                                 
                                 Text("Leveled Up")
                                     .frame(minHeight: 18)
                             default:
                                 if !data.content.isEmpty {
-                                    Text(data.user.name)
-                                        .bold()
-                                        .frame(minHeight: 20)
+                                    if let user = data.user {
+                                        Text(user.name)
+                                            .bold()
+                                            .frame(minHeight: 20)
+                                    }
                                     
                                     Text(data.content)
                                         .frame(minHeight: 18)

@@ -17,7 +17,9 @@ enum UserRole: String, Codable {
 }
 
 struct CurrentUserCoreData: Codable, Identifiable {
-    let id, name, username: String
+    let id: String
+    let name: String
+    let username: String
     let profileImage: URL?
     let bio: String?
     let email: Email
@@ -34,10 +36,34 @@ struct CurrentUserCoreData: Codable, Identifiable {
         case id = "_id"
         case name, username, profileImage, bio, email, role, verified, progress
     }
+    
+}
+
+extension CurrentUserCoreData {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        username = try container.decode(String.self, forKey: .username)
+        bio = try container.decodeIfPresent(String.self, forKey: .bio)
+        email = try container.decode(Email.self, forKey: .email)
+        role = try container.decode(UserRole.self, forKey: .role)
+        verified = try container.decode(Bool.self, forKey: .verified)
+        progress = try container.decode(UserProgress.self, forKey: .progress)
+
+        if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
+            profileImage = URL(string: profileImageString)
+        } else {
+            profileImage = nil
+        }
+    }
 }
 
 struct CurrentUserFullData: Codable {
-    let id, name, username: String
+    let id: String
+    let name: String
+    let username: String
     let profileImage: URL?
     var bio: String?
     let email: Email
@@ -55,6 +81,34 @@ struct CurrentUserFullData: Codable {
     enum CodingKeys: String, CodingKey {
         case id = "_id"
         case name, username, profileImage, bio, email, rank, remainingXp, reviewsCount, followersCount, followingCount, totalCheckins, role, verified, progress, acceptedEula
+    }
+}
+
+extension CurrentUserFullData {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        username = try container.decode(String.self, forKey: .username)
+        bio = try container.decodeIfPresent(String.self, forKey: .bio)
+        email = try container.decode(Email.self, forKey: .email)
+        rank = try container.decode(Int.self, forKey: .rank)
+        remainingXp = try container.decode(Int.self, forKey: .remainingXp)
+        reviewsCount = try container.decode(Int.self, forKey: .reviewsCount)
+        followersCount = try container.decode(Int.self, forKey: .followersCount)
+        followingCount = try container.decode(Int.self, forKey: .followingCount)
+        totalCheckins = try container.decode(Int.self, forKey: .totalCheckins)
+        role = try container.decode(UserRole.self, forKey: .role)
+        verified = try container.decode(Bool.self, forKey: .verified)
+        progress = try container.decode(UserProgress.self, forKey: .progress)
+        acceptedEula = try container.decodeIfPresent(Date.self, forKey: .acceptedEula)
+
+        if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
+            profileImage = URL(string: profileImageString)
+        } else {
+            profileImage = nil
+        }
     }
 }
 

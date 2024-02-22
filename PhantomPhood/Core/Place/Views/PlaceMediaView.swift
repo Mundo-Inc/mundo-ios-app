@@ -27,7 +27,7 @@ struct PlaceMediaView: View {
     ]
     
     var body: some View {
-        if let place = placeVM.place, let medias = vm.medias {
+        if placeVM.place != nil, let medias = vm.medias {
             LazyVGrid(columns: gridColumns, spacing: 0) {
                 if medias.isEmpty {
                     Text("No media")

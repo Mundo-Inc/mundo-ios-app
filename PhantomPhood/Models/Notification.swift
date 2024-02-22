@@ -9,7 +9,7 @@ import Foundation
 
 struct Notification: Decodable, Identifiable {
     let id: String
-    let user: UserEssentials
+    let user: UserEssentials?
     let type: String
     var readAt: Date?
     let sent: Bool
@@ -44,6 +44,7 @@ enum NotificationType: String, Decodable, CaseIterable {
     case following_review = "FOLLOWING_REVIEW"
     case xp = "XP"
     case level_up = "LEVEL_UP"
+    case referralReward = "REFERRAL_REWARD"
 }
 
 enum NotificationResourceType: String, Decodable {
