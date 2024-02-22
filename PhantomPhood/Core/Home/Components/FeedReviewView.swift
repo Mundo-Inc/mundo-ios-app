@@ -56,7 +56,7 @@ struct FeedReviewView: View {
                         .padding(.horizontal, 6)
                         .padding(.vertical, 4)
                         .background(Color("Reviewed"))
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                        .clipShape(.rect(cornerRadius: 5))
                     
                     if let place = data.place {
                         NavigationLink(value: AppRoute.place(id: place.id)) {
@@ -102,7 +102,7 @@ struct FeedReviewView: View {
                                         }
                                         if !review.images.isEmpty {
                                             ForEach(review.images) { image in
-                                                if let url = URL(string: image.src) {
+                                                if let url = image.src {
                                                     KFImage.url(url)
                                                         .placeholder {
                                                             RoundedRectangle(cornerRadius: 15)
@@ -112,7 +112,6 @@ struct FeedReviewView: View {
                                                                 }
                                                         }
                                                         .loadDiskFileSynchronously()
-                                                        .cacheMemoryOnly()
                                                         .fade(duration: 0.25)
                                                         .onFailureImage(UIImage(named: "ErrorLoadingImage"))
                                                         .resizable()

@@ -8,25 +8,52 @@
 import Foundation
 
 struct UserDetail: Identifiable, Decodable {
-    let id: String
-    let name: String
-    let username: String
-    let bio: String
-    let remainingXp: Int
-    let verified: Bool
-    let profileImage: String
-    let isFollower: Bool
-    let isFollowing: Bool
-    let followersCount: Int
-    let followingCount: Int
-    let reviewsCount: Int
-    let totalCheckins: Int
-    let rank: Int
+    let id,
+        name,
+        username,
+        bio: String
+    let remainingXp,
+        followersCount,
+        followingCount,
+        reviewsCount,
+        totalCheckins,
+        rank: Int
+    let verified,
+        isFollower,
+        isFollowing: Bool
+    let profileImage: URL?
     let progress: UserProgress
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
         case name, username, bio, remainingXp, verified, profileImage, isFollower, isFollowing, followersCount, followingCount, reviewsCount, totalCheckins, rank, progress
+    }
+}
+
+extension UserDetail {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        username = try container.decode(String.self, forKey: .username)
+        bio = try container.decode(String.self, forKey: .bio)
+        remainingXp = try container.decode(Int.self, forKey: .remainingXp)
+        followersCount = try container.decode(Int.self, forKey: .followersCount)
+        followingCount = try container.decode(Int.self, forKey: .followingCount)
+        reviewsCount = try container.decode(Int.self, forKey: .reviewsCount)
+        totalCheckins = try container.decode(Int.self, forKey: .totalCheckins)
+        rank = try container.decode(Int.self, forKey: .rank)
+        verified = try container.decode(Bool.self, forKey: .verified)
+        isFollower = try container.decode(Bool.self, forKey: .isFollower)
+        isFollowing = try container.decode(Bool.self, forKey: .isFollowing)
+        progress = try container.decode(UserProgress.self, forKey: .progress)
+        
+        let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage)
+        if let profileImageString, !profileImageString.isEmpty {
+            profileImage = URL(string: profileImageString)
+        } else {
+            profileImage = nil
+        }
     }
 }
 

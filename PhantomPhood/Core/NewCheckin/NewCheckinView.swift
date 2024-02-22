@@ -215,7 +215,7 @@ struct NewCheckinView: View {
                 .scrollIndicators(.never)
                 .font(.custom(style: .body))
                 .sheet(isPresented: $vm.isUserSelectorPresented, content: {
-                    if #available(iOS 17.0, *) {
+                    if #available(iOS 16.4, *) {
                         UserSelector(onSelect: { user in
                             if !vm.mentions.contains(where: { $0.id == user.id }) {
                                 vm.mentions.append(user)
@@ -296,7 +296,7 @@ fileprivate struct MentionItem: View {
                 id: "645c1d1ab41f8e12a0d166bc",
                 name: "Eleven Madison Park",
                 location: PlaceLocation(geoLocation: .init(lng: 40.7416519, lat: -73.9898102), address: "11 Madison Ave", city: "New York", state: "New York", country: "US", zip: "NY 10010"),
-                thumbnail: "",
+                thumbnail: nil,
                 categories: ["food"]
             )
         ))

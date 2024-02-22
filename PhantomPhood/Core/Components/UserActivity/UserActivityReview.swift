@@ -101,7 +101,7 @@ struct UserActivityReview: View {
                                             }
                                             if !review.images.isEmpty {
                                                 ForEach(review.images) { image in
-                                                    if let url = URL(string: image.src) {
+                                                    if let url = image.src {
                                                         KFImage.url(url)
                                                             .placeholder {
                                                                 RoundedRectangle(cornerRadius: 15)
@@ -111,7 +111,6 @@ struct UserActivityReview: View {
                                                                     }
                                                             }
                                                             .loadDiskFileSynchronously()
-                                                            .cacheMemoryOnly()
                                                             .fade(duration: 0.25)
                                                             .onFailureImage(UIImage(named: "ErrorLoadingImage"))
                                                             .resizable()

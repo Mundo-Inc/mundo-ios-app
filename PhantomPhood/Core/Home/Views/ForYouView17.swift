@@ -106,14 +106,9 @@ struct ForYouView17: View {
         .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {
             forYouInfoVM.reset()
         }) {
-            if #available(iOS 17.0, *) {
-                ForYouInfoView()
-                    .presentationBackground(.thinMaterial)
-                    .presentationDetents([.medium, .large])
-            } else {
-                ForYouInfoView()
-                    .presentationDetents([.medium, .large])
-            }
+            ForYouInfoView()
+                .presentationBackground(.thinMaterial)
+                .presentationDetents([.medium, .large])
         }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {

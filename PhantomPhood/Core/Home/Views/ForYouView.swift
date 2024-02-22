@@ -129,7 +129,7 @@ struct ForYouView: View {
         .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {
             forYouInfoVM.reset()
         }) {
-            if #available(iOS 17.0, *) {
+            if #available(iOS 16.4, *) {
                 ForYouInfoView()
                     .presentationBackground(.thinMaterial)
                     .presentationDetents([.medium, .large])

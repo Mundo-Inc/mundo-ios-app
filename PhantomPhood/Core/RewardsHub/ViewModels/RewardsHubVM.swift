@@ -145,8 +145,8 @@ final class RewardsHubVM: ObservableObject {
             buo.title = "Join \(currentUser.name) on Phantom Phood"
             buo.contentDescription = "You've been invited by \(currentUser.name) to Phantom Phood. Join friends in your dining experiences."
             
-            if !currentUser.profileImage.isEmpty {
-                buo.imageUrl = currentUser.profileImage
+            if let profileImage = currentUser.profileImage {
+                buo.imageUrl = profileImage.absoluteString
             } else {
                 buo.imageUrl = "https://phantomphood.ai/img/NoProfileImage.jpg"
             }

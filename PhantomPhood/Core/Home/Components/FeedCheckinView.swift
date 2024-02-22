@@ -50,7 +50,7 @@ struct FeedCheckinView: View {
                 if let place = data.place {
                     VStack {
                         NavigationLink(value: AppRoute.place(id: place.id)) {
-                            if let image = checkin.image, let url = URL(string: image.src) {
+                            if let image = checkin.image, let url = image.src {
                                 ZStack {
                                     KFImage.url(url)
                                         .placeholder { progress in
@@ -121,6 +121,7 @@ struct FeedCheckinView: View {
                                             if let caption = checkin.caption, !caption.isEmpty {
                                                 Text(caption)
                                                     .font(.custom(style: .caption))
+                                                    .multilineTextAlignment(.leading)
                                                     .lineLimit(6)
                                                     .frame(maxWidth: .infinity, alignment: .leading)
                                                     .foregroundStyle(.white)

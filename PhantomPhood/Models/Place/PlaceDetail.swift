@@ -37,7 +37,7 @@ struct PlaceDetail: Identifiable, Decodable {
     let otherNames: [String]
     let description: String?
     let location: PlaceLocation
-    let thumbnail: String?
+    let thumbnail: URL?
     let phone: String?
     let website: String?
     let categories: [String]
@@ -45,10 +45,8 @@ struct PlaceDetail: Identifiable, Decodable {
     let scores: PlaceScores
     let reviewCount: Int
     
-    // -
-    let reviews: [PlaceReview]? // Unused
-    let thirdParty: ThirdPartyResults
-    var media: [Media]
+    let thirdParty: ThirdPartyResult
+    let media: [Media]
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
@@ -57,46 +55,91 @@ struct PlaceDetail: Identifiable, Decodable {
 }
 
 extension PlaceDetail {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        otherNames = try container.decode([String].self, forKey: .otherNames)
+        location = try container.decode(PlaceLocation.self, forKey: .location)
+        categories = try container.decode([String].self, forKey: .categories)
+        scores = try container.decode(PlaceScores.self, forKey: .scores)
+        reviewCount = try container.decode(Int.self, forKey: .reviewCount)
+        thirdParty = try container.decode(ThirdPartyResult.self, forKey: .thirdParty)
+        media = try container.decode([Media].self, forKey: .media)
+        
+        amenity = try container.decodeIfPresent(PlaceAmenity.self, forKey: .amenity)
+        description = try container.decodeIfPresent(String.self, forKey: .description)
+        phone = try container.decodeIfPresent(String.self, forKey: .phone)
+        website = try container.decodeIfPresent(String.self, forKey: .website)
+        priceRange = try container.decodeIfPresent(Int.self, forKey: .priceRange)
+
+        let thumbnailString = try container.decodeIfPresent(String.self, forKey: .thumbnail)
+        if let thumbnailString = thumbnailString, !thumbnailString.isEmpty {
+            thumbnail = URL(string: thumbnailString)
+        } else {
+            thumbnail = nil
+        }
+    }
+}
+
+extension PlaceDetail {
     
     // MARK: - Structs
     
-    struct GoogleResults: Decodable {
+    struct GoogleResult: Decodable {
         let rating: Double
         let reviewCount: Int
-        let reviews: [GoogleReviews]?
-        let thumbnail: String?
+        let reviews: [GoogleReview]?
+        let thumbnail: URL?
+        let openingHours: OpenningHours?
         
-        struct GoogleReviews: Decodable {
-            let author_name: String
+        struct GoogleReview: Decodable {
+            let authorName: String
             let language: String?
-            let original_language: String?
-            let profile_photo_url: String?
+            let originalLanguage: String?
+            let profilePhotoUrl: String?
             let rating: Int
-            let relative_time_description: String
+            let relativeTimeDescription: String
             let text: String
             let time: Int
             let translated: Bool
         }
+        
+        struct OpenningHours: Decodable {
+            let openNow: Bool
+            let periods: [Periods]
+            let weekdayText: [String]
+            
+            struct Periods: Decodable {
+                let close: DayTime
+                let open: DayTime
+                
+                struct DayTime: Decodable {
+                    let day: Int
+                    let time: String
+                }
+            }
+        }
     }
     
-    struct YelpResults: Decodable, Identifiable {
+    struct YelpResult: Decodable, Identifiable {
         let id: String
         let reviewCount: Int
         let rating: Double
         let phone: String
         let photos: [String]
         let url: String?
-        let thumbnail: String?
-        let categories: [Categories]?
+        let thumbnail: URL?
+        let categories: [YCategory]?
         let transactions: [String]?
         let price: String?
-        let reviews: [YelpReviews]?
+        let reviews: [YelpReview]?
         
-        struct YelpReviews: Identifiable, Decodable {
+        struct YelpReview: Identifiable, Decodable {
             struct YelpUser: Identifiable, Decodable {
                 let id: String
-                let profile_url: String
-                let image_url: String?
+                let profileUrl: String
+                let imageUrl: String?
                 let name: String
             }
             
@@ -104,18 +147,19 @@ extension PlaceDetail {
             let url: String
             let text: String
             let rating: Int
-            let time_created: String
+            let timeCreated: String
             let user: YelpUser
         }
         
-        struct Categories: Decodable {
+        /// Yelp Category
+        struct YCategory: Decodable {
             let title: String
             let alias: String
         }
     }
     
-    struct ThirdPartyResults: Decodable {
-        let google: GoogleResults?
-        let yelp: YelpResults?
+    struct ThirdPartyResult: Decodable {
+        let google: GoogleResult?
+        let yelp: YelpResult?
     }
 }

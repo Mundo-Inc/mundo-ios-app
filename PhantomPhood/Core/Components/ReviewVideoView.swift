@@ -9,12 +9,12 @@ import SwiftUI
 import AVKit
 
 struct ReviewVideoView: View {
-    let url: URL?
-    let mute: Bool
+    private let url: URL?
+    private let mute: Bool
     @State private var player = AVPlayer()
     
-    init(url: String, mute: Bool = false) {
-        if let theURL = URL(string: url) {
+    init(string: String, mute: Bool = false) {
+        if let theURL = URL(string: string) {
             self.url = theURL
         } else {
             self.url = nil
@@ -22,7 +22,7 @@ struct ReviewVideoView: View {
         self.mute = mute
     }
     
-    init(url: URL, mute: Bool = false) {
+    init(url: URL?, mute: Bool = false) {
         self.url = url
         self.mute = mute
     }
@@ -84,7 +84,7 @@ struct PlayerViewController: UIViewControllerRepresentable {
         Color.green
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         
-        ReviewVideoView(url: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/2a667b01b413fd08fd00a60b2f5ba3e1.mp4", mute: true).frame(width: 200, height: 200)
+        ReviewVideoView(url: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/2a667b01b413fd08fd00a60b2f5ba3e1.mp4"), mute: true).frame(width: 200, height: 200)
             
             
     }

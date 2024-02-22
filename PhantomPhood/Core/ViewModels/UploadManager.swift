@@ -99,16 +99,17 @@ final class UploadManager {
     
     /// API response type on uploading media
     struct ResponseData: Decodable, Identifiable {
-        let _id: String
+        let id: String
         let user: String
         let key: String
-        let src: String
+        let src: URL?
         let type: String
         let usecase: String
         let createdAt: Date
         
-        var id: String {
-            self._id
+        enum CodingKeys: String, CodingKey {
+            case id = "_id"
+            case user, key, src, type, usecase, createdAt
         }
     }
     

@@ -12,7 +12,7 @@ struct UserEssentials: Identifiable, Decodable {
     let name: String
     let username: String
     let verified: Bool
-    let profileImage: String
+    let profileImage: URL?
     let progress: CompactUserProgress
     
     struct CompactUserProgress: Decodable {
@@ -23,6 +23,24 @@ struct UserEssentials: Identifiable, Decodable {
     enum CodingKeys: String, CodingKey {
         case id = "_id"
         case name, username, verified, profileImage, progress
+    }
+}
+
+extension UserEssentials {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        username = try container.decode(String.self, forKey: .username)
+        verified = try container.decode(Bool.self, forKey: .verified)
+        progress = try container.decode(CompactUserProgress.self, forKey: .progress)
+
+        let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage)
+        if let profileImageString, !profileImageString.isEmpty {
+            profileImage = URL(string: profileImageString)
+        } else {
+            profileImage = nil
+        }
     }
 }
 

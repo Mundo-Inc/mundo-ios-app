@@ -9,25 +9,20 @@ import Foundation
 
 @MainActor
 class PlaceMediaVM: ObservableObject {
-    private let apiManager = APIManager.shared
-    private let auth = Authentication.shared
     private let placeDM = PlaceDM()
     
-    let placeId: String
+    private let placeVM: PlaceVM
     
-    init(placeId: String) {
-        self.placeId = placeId
-        Task {
-            await fetch(type: .refresh)
-        }
+    init(placeVM: PlaceVM) {
+        self.placeVM = placeVM
     }
     
     @Published var isLoading: Bool = false
-    @Published var medias: [MediaWithUser] = []
+    @Published var medias: [MediaWithUser]? = nil
     
     var page = 1
     func fetch(type: FetchType) async {
-        if isLoading { return }
+        guard let placeId = placeVM.place?.id, !isLoading else { return }
 
         if type == .refresh {
             page = 1
@@ -39,8 +34,11 @@ class PlaceMediaVM: ObservableObject {
             
             if page == 1 {
                 medias = data.data
+            } else if var currentMedias = medias {
+                currentMedias.append(contentsOf: data.data)
+                self.medias = currentMedias
             } else {
-                medias.append(contentsOf: data.data)
+                medias = data.data
             }
             page += 1
         } catch {

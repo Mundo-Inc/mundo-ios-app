@@ -26,26 +26,24 @@ struct MediasView: View {
                                 ReviewVideoView(url: media.src)
                                     .frame(maxWidth: UIScreen.main.bounds.size.width, maxHeight: UIScreen.main.bounds.size.height)
                                     .clipShape(RoundedRectangle(cornerRadius: 15))
-                            } else if media.type == .image {
-                                if let url = URL(string: media.src) {
-                                    KFImage.url(url)
-                                        .placeholder {
-                                            RoundedRectangle(cornerRadius: 15)
-                                                .foregroundStyle(Color.themePrimary)
-                                                .overlay {
-                                                    ProgressView()
-                                                }
-                                        }
-                                        .loadDiskFileSynchronously()
-                                        .cacheMemoryOnly()
-                                        .fade(duration: 0.25)
-                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(maxWidth: UIScreen.main.bounds.size.width, maxHeight: UIScreen.main.bounds.size.height)
-                                        .contentShape(RoundedRectangle(cornerRadius: 15))
-                                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                                }
+                            } else if media.type == .image, let url = media.src {
+                                KFImage.url(url)
+                                    .placeholder {
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .foregroundStyle(Color.themePrimary)
+                                            .overlay {
+                                                ProgressView()
+                                            }
+                                    }
+                                    .loadDiskFileSynchronously()
+                                    .cacheMemoryOnly()
+                                    .fade(duration: 0.25)
+                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(maxWidth: UIScreen.main.bounds.size.width, maxHeight: UIScreen.main.bounds.size.height)
+                                    .contentShape(RoundedRectangle(cornerRadius: 15))
+                                    .clipShape(RoundedRectangle(cornerRadius: 15))
                             }
                         }
                     }
@@ -94,8 +92,8 @@ struct MediasView: View {
     return MediasView(vm: vm)
         .onAppear {
             vm.show(medias: [
-                .init(id: "Test1", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/af9ddd441be2d1d48450e96aaaed0658.jpg", caption: nil, type: .image),
-                .init(id: "Test2", src: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/2a667b01b413fd08fd00a60b2f5ba3e1.mp4", caption: nil, type: .video)
+                .init(id: "Test1", src: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/af9ddd441be2d1d48450e96aaaed0658.jpg"), caption: nil, type: .image),
+                .init(id: "Test2", src: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/2a667b01b413fd08fd00a60b2f5ba3e1.mp4"), caption: nil, type: .video)
             ])
         }
 }

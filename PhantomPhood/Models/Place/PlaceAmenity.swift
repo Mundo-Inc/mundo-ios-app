@@ -5,7 +5,6 @@
 //  Created by Kia Abdi on 1/26/24.
 //
 
-import Foundation
 import SwiftUI
 
 enum PlaceAmenity: String, Decodable {

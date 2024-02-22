@@ -39,8 +39,8 @@ struct AddReviewView: View {
                 VStack(spacing: 0) {
                     VStack {
                         HStack {
-                            if let thumbnail = place.thumbnail, let url = URL(string: thumbnail) {
-                                KFImage.url(url)
+                            if let thumbnail = place.thumbnail {
+                                KFImage.url(thumbnail)
                                     .placeholder {
                                         RoundedRectangle(cornerRadius: 10)
                                             .foregroundStyle(Color.themePrimary)

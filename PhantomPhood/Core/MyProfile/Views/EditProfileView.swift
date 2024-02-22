@@ -89,8 +89,8 @@ struct EditProfileView: View {
                             case .empty:
                                 if let user = auth.currentUser {
                                     Group {
-                                        if let url = URL(string: user.profileImage) {
-                                            KFImage.url(url)
+                                        if let profileImage = user.profileImage {
+                                            KFImage.url(profileImage)
                                                 .placeholder {
                                                     RoundedRectangle(cornerRadius: 15)
                                                         .foregroundStyle(.tertiary)
@@ -182,7 +182,7 @@ struct EditProfileView: View {
                             }
                             
                             if let user = auth.currentUser {
-                                Text(user.profileImage.isEmpty ? "Add" : vm.isDeleting ? "Removing" : "Edit")
+                                Text(user.profileImage == nil ? "Add" : vm.isDeleting ? "Removing" : "Edit")
                                     .font(.custom(style: .caption))
                                     .foregroundStyle(Color.accentColor)
 
@@ -191,7 +191,7 @@ struct EditProfileView: View {
                         .scaleEffect(vm.isDeleting ? 0.8 : 1)
                         .offset(x: vm.isDeleting ? 10 : 0)
                         
-                        if let user = auth.currentUser, !user.profileImage.isEmpty {
+                        if let user = auth.currentUser, user.profileImage != nil {
                             Spacer()
                             
                             Button {

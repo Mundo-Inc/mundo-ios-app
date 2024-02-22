@@ -9,12 +9,26 @@ import SwiftUI
 import Kingfisher
 
 struct ProfileImage: View {
-    let profileImage: String?
+    let profileImage: URL?
     let size: CGFloat
     let cornerRadius: CGFloat
     
-    init(_ profileImage: String?, size: CGFloat? = nil, cornerRadius: CGFloat? = nil) {
-        self.profileImage = profileImage
+    init(_ string: String?, size: CGFloat? = nil, cornerRadius: CGFloat? = nil) {
+        if let string, let url = URL(string: string) {
+            self.profileImage = url
+        } else {
+            self.profileImage = nil
+        }
+        self.size = size ?? 80
+        if let cornerRadius {
+            self.cornerRadius = cornerRadius >= self.size / 2 ? self.size / 2 : cornerRadius
+        } else {
+            self.cornerRadius = self.size / 2
+        }
+    }
+    
+    init(_ url: URL?, size: CGFloat? = nil, cornerRadius: CGFloat? = nil) {
+        self.profileImage = url
         self.size = size ?? 80
         if let cornerRadius {
             self.cornerRadius = cornerRadius >= self.size / 2 ? self.size / 2 : cornerRadius
@@ -36,7 +50,7 @@ struct ProfileImage: View {
     }
     
     var body: some View {
-        if let profileImage, !profileImage.isEmpty, let url = URL(string: profileImage) {
+        if let profileImage {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .foregroundStyle(Color(.profileImageStroke))
                 .shadow(color: Color.black.opacity(0.25), radius: shadowSize, y: shadowSize)
@@ -44,7 +58,7 @@ struct ProfileImage: View {
                     RoundedRectangle(cornerRadius: innerCornerRadius)
                         .foregroundStyle(Color(.profileImageBG))
                         .overlay {
-                            KFImage.url(url)
+                            KFImage.url(profileImage)
                                 .placeholder {
                                     RoundedRectangle(cornerRadius: innerCornerRadius)
                                         .foregroundStyle(.tertiary)

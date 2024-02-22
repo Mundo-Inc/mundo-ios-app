@@ -72,7 +72,7 @@ struct ForYouItem: View {
                             TabView(selection: $tabPage) {
                                 ForEach(feedReview.videos) { video in
                                     ZStack {
-                                        if let url = URL(string: video.src) {
+                                        if let url = video.src {
                                             VideoPlayer(url: url, play: playBinding(for: video.id), time: $time)
                                                 .onStateChanged { state in
                                                     videosState.updateValue(state, forKey: video.id)
@@ -111,7 +111,7 @@ struct ForYouItem: View {
                                 }
                                 
                                 ForEach(feedReview.images) { image in
-                                    if let url = URL(string: image.src) {
+                                    if let url = image.src {
                                         KFImage.url(url)
                                             .placeholder { progress in
                                                 Rectangle()
@@ -138,7 +138,7 @@ struct ForYouItem: View {
                             .tabViewStyle(PageTabViewStyle())
                         }
                     } else {
-                        if let image = feedReview.images.first, let url = URL(string: image.src) {
+                        if let image = feedReview.images.first, let url = image.src {
                             KFImage.url(url)
                                 .placeholder { progress in
                                     Rectangle()
@@ -160,7 +160,7 @@ struct ForYouItem: View {
                                 .ignoresSafeArea(edges: .top)
                         } else if let video = feedReview.videos.first {
                             ZStack {
-                                if let url = URL(string: video.src) {
+                                if let url = video.src {
                                     VideoPlayer(url: url, play: playBinding(for: video.id), time: $time)
                                         .onStateChanged { state in
                                             videosState.updateValue(state, forKey: video.id)
@@ -200,7 +200,7 @@ struct ForYouItem: View {
                         }
                     }
                 case .checkin(let feedCheckin):
-                    if let image = feedCheckin.image, let url = URL(string: image.src) {
+                    if let image = feedCheckin.image, let url = image.src {
                         KFImage.url(url)
                             .placeholder { progress in
                                 Rectangle()
@@ -425,7 +425,7 @@ struct ForYouItem: View {
                         Spacer()
                         
                         VStack(alignment: .leading, spacing: 5) {
-                            Text("Checkin")
+                            Text("Check in")
                                 .font(.custom(style: .caption))
                                 .fontWeight(.medium)
                                 .foregroundStyle(.black)

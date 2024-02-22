@@ -8,12 +8,16 @@
 import SwiftUI
 
 struct StarRating: View {
-    let score: CGFloat
+    let score: Double?
     let activeColor: Color
     let size: CGFloat
     
-    init(score: CGFloat, activeColor: Color = Color.accentColor, size: CGFloat = 14) {
-        self.score = max(min(abs(score), 5), 0)
+    init(score: Double?, activeColor: Color = Color.accentColor, size: CGFloat = 14) {
+        if let score {
+            self.score = max(min(abs(score), 5), 0)
+        } else {
+            self.score = nil
+        }
         self.activeColor = activeColor
         self.size = size
     }
@@ -25,11 +29,12 @@ struct StarRating: View {
                     ZStack(alignment: .leading) {
                         Rectangle()
                             .foregroundStyle(activeColor)
-                            .frame(width: (score / 5) * geometry.size.width)
+                            .frame(width: (score ?? 0 / 5) * geometry.size.width)
                     }
                 })
                 .mask(starsView)
             }
+            .redacted(reason: score == nil ? .placeholder : [])
     }
     
     private var starsView: some View {

@@ -15,17 +15,14 @@ final class AddToListVM: ObservableObject {
     private let toastManager = ToastVM.shared
     private let placeVM: PlaceVM
     
-    @Published var lists: [CompactUserPlacesList] = []
+    @Published var lists: [CompactUserPlacesList]? = nil
     @Published var actionsList: [ActionItem] = []
     @Published var isLoading: Bool = false
     
     @Published var isAddListPresented = false
     
-    let placeId: String
-    
-    init(placeVM: PlaceVM, placeId: String) {
+    init(placeVM: PlaceVM) {
         self.placeVM = placeVM
-        self.placeId = placeId
         
         Task {
             await fetchLists()
@@ -47,7 +44,7 @@ final class AddToListVM: ObservableObject {
     }
     
     func submit() async {
-        guard !actionsList.isEmpty else { return }
+        guard let placeId = placeVM.place?.id, !actionsList.isEmpty else { return }
         
         self.isLoading = true
         for item in actionsList {
@@ -66,7 +63,7 @@ final class AddToListVM: ObservableObject {
         toastManager.toast(.init(type: .success, title: "Success", message: "Lists updated successfully"))
         self.isLoading = false
         withAnimation {
-            self.placeVM.isAddToListPresented = false
+            self.placeVM.presentedSheet = nil
         }
         await self.placeVM.updateIncludedLists()
     }

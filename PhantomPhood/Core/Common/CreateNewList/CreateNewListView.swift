@@ -241,7 +241,7 @@ struct CreateNewListView: View {
             }
         }
         .sheet(isPresented: $selectReactionsVM.isPresented, content: {
-            if #available(iOS 17.0, *) {
+            if #available(iOS 16.4, *) {
                 SelectReactionsView(vm: selectReactionsVM)
                     .presentationBackground(.thinMaterial)
             } else {
@@ -249,7 +249,7 @@ struct CreateNewListView: View {
             }
         })
         .sheet(isPresented: $vm.showAddListCollaborators, content: {
-            if #available(iOS 17.0, *) {
+            if #available(iOS 16.4, *) {
                 UserSelector(onSelect: { user in
                     if !vm.collaborators.contains(where: { $0.user.id == user.id }) {
                         vm.collaborators.append(.init(user: user, access: .edit))

@@ -170,7 +170,7 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
                 name: "Dwayne",
                 username: "DwayneTheRock",
                 verified: true,
-                profileImage: "",
+                profileImage: nil,
                 progress: .init(level: 7, xp: 300)
             ),
             comments: [
@@ -184,7 +184,7 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
                         name: "Dwayne",
                         username: "DwayneTheRock",
                         verified: true,
-                        profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                        profileImage: URL(string: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
                         progress: .init(level: 7, xp: 300)
                     ),
                     likes: 4,
@@ -204,7 +204,7 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
                 name: "Dwayne",
                 username: "DwayneTheRock",
                 verified: true,
-                profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                profileImage: URL(string: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
                 progress: .init(level: 52, xp: 3000)
             ),
             comments: [
@@ -218,7 +218,7 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
                         name: "Dwayne",
                         username: "DwayneTheRock",
                         verified: true,
-                        profileImage: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                        profileImage: URL(string: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
                         progress: .init(level: 80, xp: 10000)
                     ),
                     likes: 4,

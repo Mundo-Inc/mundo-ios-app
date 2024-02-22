@@ -83,8 +83,8 @@ struct MapActivityView: View {
             }
             
             Group {
-                if let place, let thumbnail = place.thumbnail, !thumbnail.isEmpty, let url = URL(string: thumbnail) {
-                    KFImage.url(url)
+                if let place, let thumbnail = place.thumbnail {
+                    KFImage.url(thumbnail)
                         .placeholder {
                             RoundedRectangle(cornerRadius: 15)
                                 .frame(maxWidth: .infinity)

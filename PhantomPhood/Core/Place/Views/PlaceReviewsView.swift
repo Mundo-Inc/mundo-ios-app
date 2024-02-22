@@ -8,141 +8,77 @@
 import SwiftUI
 
 struct PlaceReviewsView: View {
-    @ObservedObject private var vm: PlaceVM
-    @StateObject private var placeReviewsVM: PlaceReviewsVM
+    @ObservedObject private var placeVM: PlaceVM
+    @StateObject private var vm: PlaceReviewsVM
     
-    init(placeId: String, vm: PlaceVM) {
-        self._vm = ObservedObject(wrappedValue: vm)
-        self._placeReviewsVM = StateObject(wrappedValue: PlaceReviewsVM(placeId: placeId))
+    init(placeVM: PlaceVM) {
+        self._vm = StateObject(wrappedValue: PlaceReviewsVM(placeVM: placeVM))
+        self._placeVM = ObservedObject(wrappedValue: placeVM)
     }
     
     @StateObject var mediasViewModel = MediasVM()
     
     var body: some View {
-        VStack(alignment: .leading) {
-            VStack {
-                Text("Overall score")
-                    .font(.custom(style: .headline))
-                    .bold()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                
-                Grid {
-                    if let drinkQuality = vm.place?.scores.drinkQuality {
-                        GridRow {
-                            Text("Drink Quality")
-                                .foregroundStyle(.secondary)
-                                .gridColumnAlignment(.leading)
-                            
-                            PlaceScoreRange(score: drinkQuality)
-                            
-                            Text(String(format: "%.1f", drinkQuality))
-                                .gridColumnAlignment(.trailing)
-                        }
+        VStack {
+            Group {
+                if let total = vm.total {
+                    if total == 0 {
+                        Text("No Phantom Review")
+                    } else {
+                        Text(total > 1 ? "\(total.formattedWithSuffix()) Phantom Reviews" : "1 Phantom Review")
                     }
-                    if let foodQuality = vm.place?.scores.foodQuality {
-                        GridRow {
-                            Text("Food Quality")
-                                .foregroundStyle(.secondary)
-                                .gridColumnAlignment(.leading)
-                            
-                            PlaceScoreRange(score: foodQuality)
-                            
-                            Text(String(format: "%.1f", foodQuality))
-                                .gridColumnAlignment(.trailing)
-                        }
-                    }
-                    if let atmosphere = vm.place?.scores.atmosphere {
-                        GridRow {
-                            Text("Atmosphere")
-                                .foregroundStyle(.secondary)
-                                .gridColumnAlignment(.leading)
-                            
-                            PlaceScoreRange(score: atmosphere)
-                            
-                            Text(String(format: "%.1f", atmosphere))
-                                .gridColumnAlignment(.trailing)
-                        }
-                    }
-                    if let service = vm.place?.scores.service {
-                        GridRow {
-                            Text("Service")
-                                .foregroundStyle(.secondary)
-                                .gridColumnAlignment(.leading)
-                            
-                            PlaceScoreRange(score: service)
-                            
-                            Text(String(format: "%.1f", service))
-                                .gridColumnAlignment(.trailing)
-                        }
-                    }
-                    if let value = vm.place?.scores.value {
-                        GridRow {
-                            Text("Value")
-                                .foregroundStyle(.secondary)
-                                .gridColumnAlignment(.leading)
-                            
-                            PlaceScoreRange(score: value)
-                            
-                            Text(String(format: "%.1f", value))
-                                .gridColumnAlignment(.trailing)
-                        }
-                    }
+                } else {
+                    Text("10 Reviews")
+                        .redacted(reason: .placeholder)
                 }
-                .font(.custom(style: .body))
-                .fontWeight(.medium)
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal)
-                
-                VStack {
-                    HStack {
-                        Text("Reviews")
-                            .bold()
-                        if let place = vm.place {
-                            Text("(\(place.reviewCount > 1000 ? String(format: "%.1f", Double(place.reviewCount) / 1000) + "K" : String(place.reviewCount)))")
-                        } else {
-                            Text("100")
-                                .redacted(reason: .placeholder)
-                        }
-                        
-                        Spacer()
-                        
-                        if let place = vm.place {
-                            NavigationLink(value: AppRoute.review(.data(PlaceEssentials(placeDetail: place)))) {
-                                Label(
-                                    title: { Text("Add Review") },
-                                    icon: { Image(systemName: "text.bubble") }
-                                )
-                            }
-                            .buttonStyle(.bordered)
-                            .controlSize(.small)
-                        }
-                    }
-                    .font(.custom(style: .headline))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    
-                    Divider()
-                    
-                    ForEach(placeReviewsVM.reviews.indices, id: \.self) { index in
-                        PlaceReviewView(placeReviewsVM: placeReviewsVM, reviewIndex: index, mediasViewModel: mediasViewModel)
-                            .padding(.horizontal)
-                        
-                        Divider()
-                    }
-                }
-                .padding(.top)
             }
-            .redacted(reason: vm.place == nil ? .placeholder : [])
+            .font(.custom(style: .caption))
+            .foregroundStyle(.secondary)
+            
+            LazyVStack {
+                if !vm.reviews.isEmpty {
+                    ForEach($vm.reviews) { $review in
+                        PlaceReviewItem(review: $review, placeVM: placeVM)
+                    }
+                } else if vm.total == nil {
+                    Group {
+                        RoundedRectangle(cornerRadius: 10)
+                            .onAppear {
+                                Task {
+                                    await vm.fetch(.refresh)
+                                }
+                            }
+                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 10)
+                    }
+                    .frame(height: 200)
+                    .foregroundStyle(Color.themeBorder)
+                    .padding(.horizontal)
+                }
+                
+                if let googleReviews = placeVM.place?.thirdParty.google?.reviews, !googleReviews.isEmpty {
+                    ForEach(googleReviews.indices, id: \.self) { index in
+                        GoogleReviewItem(review: googleReviews[index])
+                    }
+                }
+                
+                if let yelpReviews = placeVM.place?.thirdParty.yelp?.reviews, !yelpReviews.isEmpty {
+                    ForEach(yelpReviews) { review in
+                        YelpReviewItem(review: review)
+                    }
+                }
+                
+                Spacer()
+            }
+            .frame(minHeight: 200)
+            .padding(.bottom, 40)
         }
         .padding(.top)
-        .fullScreenCover(isPresented: $mediasViewModel.show, content: {
-            MediasView(vm: mediasViewModel)
-        })
+        .background(Color.themePrimary)
+        .redacted(reason: placeVM.place == nil ? .placeholder : [])
     }
 }
 
 #Preview {
-    PlaceReviewsView(placeId: "645c1d1ab41f8e12a0d166bc", vm: PlaceVM(id: "645c1d1ab41f8e12a0d166bc"))
+    PlaceReviewsView(placeVM: PlaceVM(id: "645c1d1ab41f8e12a0d166bc"))
 }

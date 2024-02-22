@@ -5,40 +5,42 @@
 //  Created by Kia Abdi on 10/4/23.
 //
 
-import Foundation
 import SwiftUI
 
 @MainActor
 class PlaceReviewsVM: ObservableObject {
-    private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
     private let reactionsDM = ReactionsDM()
     private let placeDM = PlaceDM()
     
-    let placeId: String
+    private let placeVM: PlaceVM
     
-    init(placeId: String) {
-        self.placeId = placeId
-        
-        Task {
-            await self.fetch(type: .refresh)
-        }
+    init(placeVM: PlaceVM) {
+        self.placeVM = placeVM
     }
     
-    @Published var isLoading: Bool = false
+    enum LoadingSection: Hashable {
+        case refresh
+        case new
+    }
+    
+    @Published var loadingSections = Set<LoadingSection>()
     @Published var reviews: [PlaceReview] = []
+    @Published var total: Int? = nil
     
     var page = 1
-    func fetch(type: RefreshNewAction) async {
-        if isLoading { return }
+    func fetch(_ type: RefreshNewAction) async {
+        guard let placeId = placeVM.place?.id, !loadingSections.contains(.new) && !loadingSections.contains(.refresh) else { return }
 
         if type == .refresh {
             page = 1
+            loadingSections.insert(.refresh)
+        } else {
+            loadingSections.insert(.new)
         }
         
-        isLoading = true
         do {
             let data = try await placeDM.getReviews(id: placeId, page: page)
+            self.total = data.total
             if page == 1 {
                 reviews = data.data
             } else {
@@ -48,7 +50,11 @@ class PlaceReviewsVM: ObservableObject {
         } catch {
             print(error)
         }
-        isLoading = false
+        if type == .refresh {
+            loadingSections.remove(.refresh)
+        } else {
+            loadingSections.remove(.new)
+        }
     }
     
     /// Add reaction to item

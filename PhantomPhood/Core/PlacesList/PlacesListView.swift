@@ -199,7 +199,7 @@ struct PlacesListView: View {
                 } onCancel: {
                     vm.editingList = nil
                 }
-
+                
             }
         }
     }
@@ -244,8 +244,8 @@ fileprivate struct PlaceItem: View {
             .padding()
             .background(Color.black.opacity(0.5))
             .background {
-                if let thumbnail = place.place.thumbnail, !thumbnail.isEmpty {
-                    KFImage(URL(string: thumbnail))
+                if let thumbnail = place.place.thumbnail {
+                    KFImage(thumbnail)
                         .placeholder {
                             Color.themePrimary
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)

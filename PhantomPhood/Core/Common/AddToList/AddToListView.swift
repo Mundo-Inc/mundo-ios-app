@@ -13,9 +13,43 @@ struct AddToListView: View {
     
     @State var isAnimating = true
     
-    init(placeVM: PlaceVM, placeId: String) {
-        self._vm = StateObject(wrappedValue: AddToListVM(placeVM: placeVM, placeId: placeId))
+    init(placeVM: PlaceVM) {
+        self._vm = StateObject(wrappedValue: AddToListVM(placeVM: placeVM))
         self._placeVM = ObservedObject(wrappedValue: placeVM)
+    }
+    
+    private var PlaceHolderItem: some View {
+        HStack {
+            RoundedRectangle(cornerRadius: 4)
+                .foregroundStyle(Color.secondary.opacity(0.2))
+                .frame(width: 36)
+                .overlay {
+                    Emoji(symbol: "❤️", isAnimating: $isAnimating, size: 18)
+                }
+            
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text("List Name")
+                
+                Label {
+                    Text("x1")
+                } icon: {
+                    Image(systemName: "mappin.and.ellipse")
+                        .font(.system(size: 12))
+                }
+                .font(.custom(style: .caption))
+                .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            RoundedRectangle(cornerRadius: 5)
+                .frame(width: 20, height: 20)
+                .foregroundStyle(.secondary.opacity(0.2))
+        }
+        .padding(.all, 10)
+        .background(Color.secondary.opacity(0.1))
+        .clipShape(.rect(cornerRadius: 8))
+        .redacted(reason: .placeholder)
     }
     
     var body: some View {
@@ -25,17 +59,19 @@ struct AddToListView: View {
                 .contentShape(.rect)
                 .onTapGesture {
                     withAnimation {
-                        placeVM.isAddToListPresented = false
+                        placeVM.presentedSheet = nil
                     }
                 }
             
             VStack(spacing: 0) {
                 VStack {
-                    Text("Add to List")
-                        .font(.custom(style: .headline))
+                    Text("Lists")
+                        .font(.custom(style: .title2))
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    Text("Adding **\(placeVM.place?.name ?? "Place Name")** to a list")
+                    Text("Add/Remove **\(placeVM.place?.name ?? "Place Name")** from Your Lists")
+                        .foregroundStyle(.secondary)
                         .font(.custom(style: .body))
+                        .fontWeight(.regular)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     Button {
@@ -67,10 +103,16 @@ struct AddToListView: View {
                             vm.isAddListPresented = false
                         }
                     })
-                    
-                    ScrollView {
-                        if let includedLists = placeVM.includedLists, !vm.isLoading {
-                            ForEach(vm.lists) { list in
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+                
+                Divider()
+                
+                ScrollView {
+                    VStack {
+                        if let includedLists = placeVM.includedLists, let lists = vm.lists {
+                            ForEach(lists) { list in
                                 Button {
                                     if includedLists.contains(where: { $0 == list.id }) {
                                         vm.addAction(item: .init(id: list.id, action: .remove))
@@ -79,61 +121,59 @@ struct AddToListView: View {
                                     }
                                 } label: {
                                     HStack {
-                                        Circle()
-                                            .foregroundStyle(.themeBorder)
-                                            .frame(width: 32, height: 32)
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .foregroundStyle(Color.secondary.opacity(0.2))
+                                            .frame(width: 36)
                                             .overlay {
-                                                Emoji(symbol: list.icon, isAnimating: $isAnimating, size: 18)
+                                                Emoji(symbol: list.icon, isAnimating: $isAnimating, size: 20)
                                             }
-                                        Text(list.name)
-                                        Text("(\(list.placesCount))")
                                         
-                                        Spacer()
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(list.name)
+                                            
+                                            Label {
+                                                Text(list.placesCount.description)
+                                            } icon: {
+                                                Image(systemName: "mappin.and.ellipse")
+                                                    .font(.system(size: 12))
+                                            }
+                                            .font(.custom(style: .caption))
+                                            .foregroundStyle(.secondary)
+                                        }
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                         
-                                        RoundedRectangle(cornerRadius: 5)
-                                            .frame(width: 20, height: 20)
-                                            .foregroundStyle(.secondary.opacity(0.2))
-                                            .overlay {
-                                                if vm.isItemSelected(includedLists: includedLists, listId: list.id) {
-                                                    Image(systemName: "checkmark.square.fill")
+                                        if vm.isItemSelected(includedLists: includedLists, listId: list.id) {
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .frame(width: 20, height: 20)
+                                                .foregroundStyle(Color.accentColor.opacity(0.2))
+                                                .overlay {
+                                                    Image(systemName: "checkmark")
+                                                        .font(.system(size: 12))
                                                         .foregroundStyle(Color.accentColor)
                                                 }
-                                            }
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .frame(width: 20, height: 20)
+                                                .foregroundStyle(.secondary.opacity(0.2))
+                                        }
                                     }
                                     .padding(.all, 10)
-                                    .background(vm.isItemSelected(includedLists: includedLists, listId: list.id) ? Color.accentColor.opacity(0.1) : Color.secondary.opacity(0.1))
+                                    .background(vm.isItemSelected(includedLists: includedLists, listId: list.id) ? Color.accentColor.opacity(0.15) : Color.secondary.opacity(0.1))
                                     .clipShape(.rect(cornerRadius: 8))
                                 }
                                 .foregroundStyle(.primary)
                                 .disabled(vm.isLoading)
                             }
                         } else {
-                            // Placeholder
-                            HStack {
-                                Circle()
-                                    .foregroundStyle(.themeBorder)
-                                    .frame(width: 32, height: 32)
-                                    .overlay {
-                                        Emoji(symbol: "❤️", isAnimating: $isAnimating, size: 18)
-                                    }
-                                Text("List Name")
-                                Text("(1)")
-                                
-                                Spacer()
-                                
-                                RoundedRectangle(cornerRadius: 5)
-                                    .frame(width: 20, height: 20)
-                                    .foregroundStyle(.secondary.opacity(0.2))
-                            }
-                            .padding(.all, 10)
-                            .background(Color.secondary.opacity(0.1))
-                            .clipShape(.rect(cornerRadius: 8))
-                            .redacted(reason: .placeholder)
+                            PlaceHolderItem
+                            PlaceHolderItem
+                            PlaceHolderItem
                         }
                     }
-                    .frame(height: 250)
+                    .padding(.top, 8)
                 }
                 .padding(.horizontal)
+                .frame(height: 250)
                 
                 Divider()
                 
@@ -142,7 +182,7 @@ struct AddToListView: View {
                     
                     Button {
                         withAnimation {
-                            placeVM.isAddToListPresented = false
+                            placeVM.presentedSheet = nil
                         }
                     } label: {
                         Text("Cancel")
@@ -158,7 +198,7 @@ struct AddToListView: View {
                         Task {
                             await vm.submit()
                             withAnimation {
-                                placeVM.isAddToListPresented = false
+                                placeVM.presentedSheet = nil
                             }
                         }
                     } label: {
@@ -175,9 +215,9 @@ struct AddToListView: View {
             .clipShape(.rect(cornerRadius: 16))
             .padding(.horizontal)
         }
+        .font(.custom(style: .body))
         .redacted(reason: placeVM.place == nil ? .placeholder : [])
         .frame(maxHeight: .infinity)
-        .background(.thinMaterial)
         .onDisappear {
             self.isAnimating = false
         }

@@ -17,7 +17,8 @@ enum UserRole: String, Codable {
 }
 
 struct CurrentUserCoreData: Codable, Identifiable {
-    let id, name, username, profileImage: String
+    let id, name, username: String
+    let profileImage: URL?
     let bio: String?
     let email: Email
     let role: UserRole
@@ -36,14 +37,15 @@ struct CurrentUserCoreData: Codable, Identifiable {
 }
 
 struct CurrentUserFullData: Codable {
-    let id, name, username, profileImage: String
+    let id, name, username: String
+    let profileImage: URL?
     var bio: String?
     let email: Email
     let rank, remainingXp, reviewsCount, followersCount, followingCount, totalCheckins: Int
     let role: UserRole
     let verified: Bool
     let progress: UserProgress
-    let accepted_eula: Date?
+    let acceptedEula: Date?
     
     struct Email: Codable {
         let address: String
@@ -52,7 +54,7 @@ struct CurrentUserFullData: Codable {
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, username, profileImage, bio, email, rank, remainingXp, reviewsCount, followersCount, followingCount, totalCheckins, role, verified, progress, accepted_eula
+        case name, username, profileImage, bio, email, rank, remainingXp, reviewsCount, followersCount, followingCount, totalCheckins, role, verified, progress, acceptedEula
     }
 }
 

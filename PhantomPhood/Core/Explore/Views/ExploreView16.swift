@@ -121,7 +121,7 @@ struct ExploreView16: View {
                                         ScrollView(.horizontal) {
                                             HStack {
                                                 ForEach(place.media) { media in
-                                                    if let url = URL(string: media.src) {
+                                                    if let url = media.src {
                                                         KFImage.url(url)
                                                             .placeholder {
                                                                 RoundedRectangle(cornerRadius: 15)
@@ -146,8 +146,8 @@ struct ExploreView16: View {
                                         }
                                         .scrollIndicators(.hidden)
                                     } else {
-                                        if let thumbnail = place.thumbnail, let url = URL(string: thumbnail) {
-                                            KFImage.url(url)
+                                        if let thumbnail = place.thumbnail {
+                                            KFImage.url(thumbnail)
                                                 .placeholder {
                                                     RoundedRectangle(cornerRadius: 15)
                                                         .frame(maxWidth: .infinity)
@@ -243,7 +243,7 @@ struct ExploreView16: View {
                 } panToRegion: { region in
                     vm.panToRegion(region)
                 }
-
+                
             }
         }
         .ignoresSafeArea(.keyboard)

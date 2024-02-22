@@ -13,7 +13,7 @@ enum MediaType: String, Decodable {
 }
 struct Media: Identifiable, Decodable {
     let id: String
-    let src: String
+    let src: URL?
     let caption: String?
     let type: MediaType
     
@@ -21,11 +21,23 @@ struct Media: Identifiable, Decodable {
         case id = "_id"
         case src, caption, type
     }
+    
+    var thumbnail: URL? {
+        switch self.type {
+        case .image:
+            return nil
+        case .video:
+            if let src, let url = URL(string: src.absoluteString.replacingOccurrences(of: ".mp4", with: "-thumbnail.jpg")) {
+                return url
+            }
+            return nil
+        }
+    }
 }
 
 struct MediaWithUser: Identifiable, Decodable {
     let id: String
-    let src: String
+    let src: URL?
     let caption: String?
     let type: MediaType
     let user: UserEssentials?
@@ -35,4 +47,21 @@ struct MediaWithUser: Identifiable, Decodable {
         case id = "_id"
         case src, caption, type, user
     }
+    
+    var thumbnail: URL? {
+        switch self.type {
+        case .image:
+            return nil
+        case .video:
+            if let src, let url = URL(string: src.absoluteString.replacingOccurrences(of: ".mp4", with: "-thumbnail.jpg")) {
+                return url
+            }
+            return nil
+        }
+    }
+}
+
+enum MixedMedia {
+    case phantom(MediaWithUser)
+    case yelp(String)
 }

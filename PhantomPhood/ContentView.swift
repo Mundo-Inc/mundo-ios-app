@@ -20,7 +20,7 @@ struct ContentView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            if let user = auth.currentUser, user.accepted_eula != nil, !onboardingVM.isPresented {
+            if let user = auth.currentUser, user.acceptedEula != nil, !onboardingVM.isPresented {
                 TabView(selection: appData.tabViewSelectionHandler) {
                     HomeView()
                         .tag(Tab.home)
@@ -56,7 +56,7 @@ struct ContentView: View {
         }
         .ignoresSafeArea(.keyboard)
         .fullScreenCover(isPresented: Binding(get: {
-            if let user = auth.currentUser, user.accepted_eula != nil {
+            if let user = auth.currentUser, user.acceptedEula != nil {
                 return onboardingVM.isPresented
             }
             return false
@@ -66,7 +66,7 @@ struct ContentView: View {
             OnboardingView(vm: onboardingVM)
         }
         .sheet(isPresented: $selectReactionsVM.isPresented, content: {
-            if #available(iOS 17.0, *) {
+            if #available(iOS 16.4, *) {
                 SelectReactionsView(vm: selectReactionsVM)
                     .presentationBackground(.thinMaterial)
             } else {

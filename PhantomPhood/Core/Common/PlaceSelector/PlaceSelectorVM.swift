@@ -10,7 +10,7 @@ import Combine
 import MapKit
 
 enum SearchTokens: String, Identifiable {
-    case checkin = "Checkin"
+    case checkin = "Check In"
     case addReview = "Add Review"
     
     var id: String {

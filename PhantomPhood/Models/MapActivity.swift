@@ -30,7 +30,7 @@ struct MapActivity: Decodable, Identifiable {
     
     struct ActivitiesData: Decodable {
         let name: String
-        let profileImage: String
+        let profileImage: URL?
         let checkinsCount: Int
         let reviewsCount: Int
     }

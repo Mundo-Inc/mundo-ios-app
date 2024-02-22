@@ -13,7 +13,7 @@ struct PlaceOverview: Identifiable, Decodable {
     let amenity: PlaceAmenity?
     let description: String?
     let location: PlaceLocation
-    let thumbnail: String?
+    let thumbnail: URL?
     let phone: String?
     let website: String?
     let categories: [String]
