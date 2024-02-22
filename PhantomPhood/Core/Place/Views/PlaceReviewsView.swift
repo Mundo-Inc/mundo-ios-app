@@ -16,66 +16,71 @@ struct PlaceReviewsView: View {
         self._placeVM = ObservedObject(wrappedValue: placeVM)
     }
     
-    @StateObject var mediasViewModel = MediasVM()
-    
     var body: some View {
         VStack {
-            Group {
-                if let total = vm.total {
-                    if total == 0 {
-                        Text("No Phantom Review")
+            if let place = placeVM.place {
+                Group {
+                    if let total = vm.total {
+                        if total == 0 {
+                            Text("No Phantom Review")
+                        } else {
+                            Text(total > 1 ? "\(total.formattedWithSuffix()) Phantom Reviews" : "1 Phantom Review")
+                        }
                     } else {
-                        Text(total > 1 ? "\(total.formattedWithSuffix()) Phantom Reviews" : "1 Phantom Review")
+                        Text("10 Phantom Reviews")
+                            .redacted(reason: .placeholder)
                     }
-                } else {
-                    Text("10 Reviews")
-                        .redacted(reason: .placeholder)
                 }
-            }
-            .font(.custom(style: .caption))
-            .foregroundStyle(.secondary)
-            
-            LazyVStack {
-                if !vm.reviews.isEmpty {
+                .font(.custom(style: .caption))
+                .foregroundStyle(.secondary)
+                
+                LazyVStack {
+                    if vm.reviews.isEmpty && vm.total == nil {
+                        ForEach(RepeatItem.create(3)) { _ in
+                            PlaceReviewItem.placeholder
+                                .padding(.horizontal)
+                        }
+                    }
+                    
                     ForEach($vm.reviews) { $review in
                         PlaceReviewItem(review: $review, placeVM: placeVM)
                     }
-                } else if vm.total == nil {
-                    Group {
-                        RoundedRectangle(cornerRadius: 10)
-                            .onAppear {
-                                Task {
-                                    await vm.fetch(.refresh)
-                                }
-                            }
-                        RoundedRectangle(cornerRadius: 10)
-                        RoundedRectangle(cornerRadius: 10)
+                    
+                    if let googleReviews = place.thirdParty.google?.reviews {
+                        ForEach(googleReviews.indices, id: \.self) { index in
+                            GoogleReviewItem(review: googleReviews[index])
+                        }
                     }
-                    .frame(height: 200)
-                    .foregroundStyle(Color.themeBorder)
-                    .padding(.horizontal)
-                }
-                
-                if let googleReviews = placeVM.place?.thirdParty.google?.reviews, !googleReviews.isEmpty {
-                    ForEach(googleReviews.indices, id: \.self) { index in
-                        GoogleReviewItem(review: googleReviews[index])
+                    
+                    if let yelpReviews = place.thirdParty.yelp?.reviews {
+                        ForEach(yelpReviews) { review in
+                            YelpReviewItem(review: review)
+                        }
                     }
+                    
+                    Spacer()
                 }
-                
-                if let yelpReviews = placeVM.place?.thirdParty.yelp?.reviews, !yelpReviews.isEmpty {
-                    ForEach(yelpReviews) { review in
-                        YelpReviewItem(review: review)
+                .frame(minHeight: 200)
+                .padding(.bottom, 30)
+                .onAppear {
+                    Task {
+                        await vm.fetch(.refresh)
                     }
                 }
+            } else {
+                Text("10 Phantom Reviews")
+                    .font(.custom(style: .caption))
+                    .foregroundStyle(.secondary)
+                    .redacted(reason: .placeholder)
                 
-                Spacer()
+                ForEach(RepeatItem.create(3)) { _ in
+                    PlaceReviewItem.placeholder
+                        .padding(.horizontal)
+                }
             }
-            .frame(minHeight: 200)
-            .padding(.bottom, 40)
         }
         .padding(.top)
         .background(Color.themePrimary)
-        .redacted(reason: placeVM.place == nil ? .placeholder : [])
     }
 }
 

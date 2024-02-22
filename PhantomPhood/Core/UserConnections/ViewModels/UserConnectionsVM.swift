@@ -1,16 +1,15 @@
 //
-//  MyConnectionsViewModel.swift
+//  UserConnectionsViewModel.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 10/31/23.
+//  Created by Kia Abdi on 11/1/23.
 //
 
 import Foundation
 
 @MainActor
-class MyConnectionsViewModel: ObservableObject {
+class UserConnectionsVM: ObservableObject {
     private let connectionsDM = ConnectionsDM()
-    private let auth = Authentication.shared
     
     @Published var isLoading: Bool = false
     
@@ -29,8 +28,8 @@ class MyConnectionsViewModel: ObservableObject {
         case new
     }
     
-    func getConnections(type: ConnectionsDM.UserConnectionType, requestType: RequestType) async {
-        guard let userId = auth.currentUser?.id, !isLoading else { return }
+    func getConnections(userId: String, type: ConnectionsDM.UserConnectionType, requestType: RequestType) async {
+        if isLoading { return }
         
         isLoading = true
 
@@ -88,14 +87,14 @@ class MyConnectionsViewModel: ObservableObject {
         isLoading = false
     }
     
-    func loadMore(type: ConnectionsDM.UserConnectionType, currentItem: UserConnection) async {
+    func loadMore(userId: String, type: ConnectionsDM.UserConnectionType, currentItem: UserConnection) async {
         var thresholdIndex: Int
         switch type {
         case .followings:
             if let followings {
                 thresholdIndex = followings.index(followings.endIndex, offsetBy: -5)
                 if followings.firstIndex(where: { $0.id == currentItem.id }) == thresholdIndex {
-                    await getConnections(type: .followings, requestType: .new)
+                    await getConnections(userId: userId, type: .followings, requestType: .new)
                 }
             } else {
                 return
@@ -104,11 +103,12 @@ class MyConnectionsViewModel: ObservableObject {
             if let followers {
                 thresholdIndex = followers.index(followers.endIndex, offsetBy: -5)
                 if followers.firstIndex(where: { $0.id == currentItem.id }) == thresholdIndex {
-                    await getConnections(type: .followers, requestType: .new)
+                    await getConnections(userId: userId, type: .followers, requestType: .new)
                 }
             } else {
                 return
             }
         }
     }
+
 }

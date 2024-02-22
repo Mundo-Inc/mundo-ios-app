@@ -33,6 +33,33 @@ struct MapActivity: Decodable, Identifiable {
         let profileImage: URL?
         let checkinsCount: Int
         let reviewsCount: Int
+        
+        enum CodingKeys: CodingKey {
+            case name
+            case profileImage
+            case checkinsCount
+            case reviewsCount
+        }
+        
+        init(name: String, profileImage: URL?, checkinsCount: Int, reviewsCount: Int) {
+            self.name = name
+            self.profileImage = profileImage
+            self.checkinsCount = checkinsCount
+            self.reviewsCount = reviewsCount
+        }
+        
+        init(from decoder: Decoder) throws {
+            let container: KeyedDecodingContainer<MapActivity.ActivitiesData.CodingKeys> = try decoder.container(keyedBy: MapActivity.ActivitiesData.CodingKeys.self)
+            self.name = try container.decode(String.self, forKey: .name)
+            self.checkinsCount = try container.decode(Int.self, forKey: .checkinsCount)
+            self.reviewsCount = try container.decode(Int.self, forKey: .reviewsCount)
+            
+            if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
+                profileImage = URL(string: profileImageString)
+            } else {
+                profileImage = nil
+            }
+        }
     }
 }
 

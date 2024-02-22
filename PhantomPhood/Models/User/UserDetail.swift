@@ -48,8 +48,7 @@ extension UserDetail {
         isFollowing = try container.decode(Bool.self, forKey: .isFollowing)
         progress = try container.decode(UserProgress.self, forKey: .progress)
         
-        let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage)
-        if let profileImageString, !profileImageString.isEmpty {
+        if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
             profileImage = URL(string: profileImageString)
         } else {
             profileImage = nil

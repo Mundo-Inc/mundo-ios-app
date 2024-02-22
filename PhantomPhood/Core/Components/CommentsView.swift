@@ -36,7 +36,7 @@ struct CommentsView: View {
     var body: some View {
         VStack(spacing: 0) {
             if vm.comments.isEmpty && vm.isLoading {
-                List(0..<1) { _ in
+                List(RepeatItem.create(2)) { _ in
                     HStack(alignment: .top) {
                         VStack(spacing: -15) {
                             ProfileImage("", size: 44, cornerRadius: 10)

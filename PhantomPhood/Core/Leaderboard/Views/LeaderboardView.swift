@@ -58,11 +58,11 @@ struct LeaderboardView: View {
                 ScrollViewReader { proxy in
                     Group {
                         if vm.list.isEmpty {
-                            List(0...20, id: \.self) { index in
+                            List(RepeatItem.create(20)) { item in
                                 HStack {
-                                    Text("#\(index + 1)")
+                                    Text("#\(item.index + 1)")
                                         .font(.custom(style: .headline))
-                                        .foregroundStyle(index == 0 ? Color.gold : index == 1 ? Color.silver : index == 2 ? Color.bronze : Color.secondary.opacity(0.7))
+                                        .foregroundStyle(item.index == 0 ? Color.gold : item.index == 1 ? Color.silver : item.index == 2 ? Color.bronze : Color.secondary.opacity(0.7))
                                         .frame(minWidth: 40)
                                     
                                     ProfileImage("", size: 38, cornerRadius: 10)

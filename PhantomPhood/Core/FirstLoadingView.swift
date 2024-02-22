@@ -94,9 +94,9 @@ struct FirstLoadingView: View {
             }
             .background {
                 VStack(spacing: 0) {
-                    ForEach(0..<verticalRepeats, id: \.self) { _ in
+                    ForEach(RepeatItem.create(verticalRepeats)) { _ in
                         HStack(spacing: 20) {
-                            ForEach(0..<10, id: \.self) { _ in
+                            ForEach(RepeatItem.create(10)) { _ in
                                 Image(.textLogo)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
@@ -107,7 +107,7 @@ struct FirstLoadingView: View {
                         .offset(x: offset)
                         
                         HStack(spacing: 20) {
-                            ForEach(0..<6, id: \.self) { _ in
+                            ForEach(RepeatItem.create(6)) { _ in
                                 Image(.textLogo)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)

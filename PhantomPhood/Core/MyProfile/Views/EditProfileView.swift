@@ -13,7 +13,7 @@ struct EditProfileView: View {
     @Environment(\.dismiss) var dismiss
     
     @ObservedObject private var auth = Authentication.shared
-    @StateObject private var vm = EditProfileViewModel()
+    @StateObject private var vm = EditProfileVM()
     
     var body: some View {
         ZStack {

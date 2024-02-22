@@ -15,7 +15,7 @@ struct UserConnectionsView: View {
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var auth = Authentication.shared
     
-    @StateObject private var vm = UserConnectionsViewModel()
+    @StateObject private var vm = UserConnectionsVM()
     
     init(userId: String, activeTab: UserConnectionsTab = .followers) {
         self.userId = userId

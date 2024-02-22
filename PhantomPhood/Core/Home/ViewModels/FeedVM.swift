@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 @MainActor
-class FeedViewModel: ObservableObject {
+class FeedVM: ObservableObject {
     private let feedDM = FeedDM()
     private let reactionsDM = ReactionsDM()
     

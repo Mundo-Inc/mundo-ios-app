@@ -13,7 +13,7 @@ struct FeedView: View {
     @ObservedObject var commentsViewModel = CommentsVM.shared
     @ObservedObject var mediasViewModel: MediasVM
     
-    @StateObject var vm = FeedViewModel()
+    @StateObject var vm = FeedVM()
     
     var body: some View {
         ZStack {

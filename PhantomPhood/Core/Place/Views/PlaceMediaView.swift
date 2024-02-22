@@ -27,15 +27,60 @@ struct PlaceMediaView: View {
     ]
     
     var body: some View {
-        if let medias = vm.medias {
-            if medias.isEmpty {
-                Text("No media")
-                    .font(.custom(style: .subheadline))
-                    .foregroundStyle(.secondary)
-                    .padding(.vertical)
-                    .padding(.horizontal)
-            } else {
-                LazyVGrid(columns: gridColumns, spacing: 0) {
+        if let place = placeVM.place, let medias = vm.medias {
+            LazyVGrid(columns: gridColumns, spacing: 0) {
+                if medias.isEmpty {
+                    Text("No media")
+                        .font(.custom(style: .subheadline))
+                        .foregroundStyle(.secondary)
+                        .padding(.vertical)
+                        .padding(.horizontal)
+                } else {
+                    if let yelpImages = placeVM.place?.thirdParty.yelp?.photos {
+                        ForEach(yelpImages, id: \.self) { string in
+                            ZStack {
+                                
+                                if let expandedMedia = placeVM.expandedMedia, case .yelp(let s) = expandedMedia, string == s {
+                                    Rectangle()
+                                        .foregroundStyle(Color.themeBorder)
+                                } else if let url = URL(string: string) {
+                                    KFImage.url(url)
+                                        .placeholder {
+                                            Rectangle()
+                                                .foregroundStyle(Color.themePrimary)
+                                                .overlay {
+                                                    ProgressView()
+                                                }
+                                        }
+                                        .loadDiskFileSynchronously()
+                                        .fade(duration: 0.25)
+                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                        .resizable()
+                                        .aspectRatio(2/3, contentMode: .fill)
+                                        .matchedGeometryEffect(id: string.hash, in: namespace)
+                                        .overlay(alignment: .bottomTrailing) {
+                                            Image(.yelpLogo)
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(maxHeight: 30)
+                                                .padding(.leading, 5)
+                                                .padding(.bottom, 5)
+                                        }
+                                        .zIndex(2)
+                                }
+                            }
+                            .padding(.all, 1)
+                            .background(Color.themeBorder)
+                            .frame(maxWidth: .infinity)
+                            .clipped()
+                            .onTapGesture {
+                                withAnimation {
+                                    placeVM.expandedMedia = .yelp(string)
+                                }
+                            }
+                        }
+                    }
+                    
                     ForEach(medias) { media in
                         ZStack {
                             if let expandedMedia = placeVM.expandedMedia, case .phantom(let m) = expandedMedia, media.id == m.id {
@@ -117,51 +162,6 @@ struct PlaceMediaView: View {
                         }
                     }
                     
-                    if let yelpImages = placeVM.place?.thirdParty.yelp?.photos, !yelpImages.isEmpty {
-                        ForEach(yelpImages, id: \.self) { string in
-                            ZStack {
-                                
-                                if let expandedMedia = placeVM.expandedMedia, case .yelp(let s) = expandedMedia, string == s {
-                                    Rectangle()
-                                        .foregroundStyle(Color.themeBorder)
-                                } else if let url = URL(string: string) {
-                                    KFImage.url(url)
-                                        .placeholder {
-                                            Rectangle()
-                                                .foregroundStyle(Color.themePrimary)
-                                                .overlay {
-                                                    ProgressView()
-                                                }
-                                        }
-                                        .loadDiskFileSynchronously()
-                                        .fade(duration: 0.25)
-                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                        .resizable()
-                                        .aspectRatio(2/3, contentMode: .fill)
-                                        .matchedGeometryEffect(id: string.hash, in: namespace)
-                                        .overlay(alignment: .bottomTrailing) {
-                                            Image(.yelpLogo)
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(maxHeight: 30)
-                                                .padding(.leading, 5)
-                                                .padding(.bottom, 5)
-                                        }
-                                        .zIndex(2)
-                                }
-                            }
-                            .padding(.all, 1)
-                            .background(Color.themeBorder)
-                            .frame(maxWidth: .infinity)
-                            .clipped()
-                            .onTapGesture {
-                                withAnimation {
-                                    placeVM.expandedMedia = .yelp(string)
-                                }
-                            }
-                        }
-                    }
-                    
                     Color.clear
                         .frame(width: 0, height: 0)
                         .onAppear {
@@ -170,26 +170,17 @@ struct PlaceMediaView: View {
                             }
                         }
                 }
-                .padding(.bottom, 40)
+            }
+            .padding(.bottom, 40)
+            .onAppear {
+                Task {
+                    await vm.fetch(type: .refresh)
+                }
             }
         } else {
             LazyVGrid(columns: gridColumns, spacing: 0) {
                 Group {
-                    ZStack {
-                        if placeVM.place != nil {
-                            Rectangle()
-                                .foregroundStyle(Color.themePrimary)
-                                .onAppear {
-                                    Task {
-                                        await vm.fetch(type: .refresh)
-                                    }
-                                }
-                        } else {
-                            Rectangle()
-                                .foregroundStyle(Color.themePrimary)
-                        }
-                    }
-                    ForEach(0..<5, id: \.self) { item in
+                    ForEach(RepeatItem.create(6)) { _ in
                         ZStack {
                             Rectangle()
                                 .foregroundStyle(Color.themePrimary)

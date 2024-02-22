@@ -222,7 +222,7 @@ struct PlaceView: View {
                     }
                     .frame(height: 150)
                     .frame(maxWidth: .infinity)
-                    .tabViewStyle(PageTabViewStyle())
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     
                     // MARK: - Action Buttons
                     HStack {

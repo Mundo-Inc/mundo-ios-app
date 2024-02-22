@@ -179,6 +179,53 @@ struct PlaceReviewItem: View {
     }
 }
 
+extension PlaceReviewItem {
+    static var placeholder: some View {
+        VStack {
+            HStack {
+                ProfileImage("", size: 52, cornerRadius: 8)
+                
+                VStack(spacing: 2) {
+                    HStack {
+                        Text("Writer Name")
+                            .font(.custom(style: .headline))
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Text("just now")
+                            .font(.custom(style: .caption))
+                            .foregroundStyle(.secondary)
+                    }
+                    HStack {
+                        Text(String(repeating: "👻", count: 5))
+                            .font(.system(size: 14))
+                        
+                        Spacer()
+                        
+                        Image(.phantomPortrait)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 22)
+                            .clipShape(Circle())
+                            .background(Circle().foregroundStyle(.black))
+                    }
+                }
+            }
+            .padding(.horizontal)
+            
+            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eu nibh sed nunc venenatis lobortis. Donec at porttitor nunc, ut pellentesque odio.")
+                .font(.custom(style: .body))
+                .foregroundStyle(Color.primary.opacity(0.8))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .multilineTextAlignment(.leading)
+                .padding(.horizontal)
+            
+            Divider()
+        }
+        .redacted(reason: .placeholder)
+    }
+}
+
 #Preview {
     VStack {
         PlaceReviewItem(review: .constant(

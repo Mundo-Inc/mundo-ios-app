@@ -62,7 +62,7 @@ struct WrappingHStack: Layout {
 
 #Preview {
     WrappingHStack(horizontalSpacing: 4) {
-        ForEach(0..<25, id: \.self) { _ in
+        ForEach(RepeatItem.create(25)) { _ in
             Text("Test")
         }
     }

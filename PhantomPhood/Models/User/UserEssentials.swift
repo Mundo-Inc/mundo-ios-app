@@ -35,8 +35,7 @@ extension UserEssentials {
         verified = try container.decode(Bool.self, forKey: .verified)
         progress = try container.decode(CompactUserProgress.self, forKey: .progress)
 
-        let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage)
-        if let profileImageString, !profileImageString.isEmpty {
+        if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
             profileImage = URL(string: profileImageString)
         } else {
             profileImage = nil

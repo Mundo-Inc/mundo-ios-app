@@ -495,7 +495,7 @@ struct RewardsHubView: View {
                         }
                     }
                 } else if vm.loadingSections.contains(.missions) {
-                    ForEach(0..<2, id: \.self) { _ in
+                    ForEach(RepeatItem.create(2)) { _ in
                         MissionItem.placeholder
                     }
                 }
@@ -547,7 +547,7 @@ struct RewardsHubView: View {
                             }
                         }
                     } else if vm.loadingSections.contains(.prizes) {
-                        ForEach(0..<2, id: \.self) { _ in
+                        ForEach(RepeatItem.create(2)) { _ in
                             PrizeItem.placeholder
                         }
                     }

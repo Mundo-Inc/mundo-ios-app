@@ -8,12 +8,10 @@
 import Foundation
 import SwiftUI
 import PhotosUI
-import CoreTransferable
 import Combine
-import UIKit
 
 @MainActor
-class EditProfileViewModel: ObservableObject {
+class EditProfileVM: ObservableObject {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
