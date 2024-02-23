@@ -30,8 +30,6 @@ struct AppRouter: View {
                     }
                 } else {
                     FirstLoadingView()
-                        .zIndex(100)
-                        .transition(AnyTransition.opacity.combined(with: .scale(scale: 2)).animation(.easeInOut(duration: 0.5)))
                 }
             } else {
                 WelcomeView()

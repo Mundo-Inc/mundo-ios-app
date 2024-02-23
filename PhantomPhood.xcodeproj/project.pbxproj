@@ -174,6 +174,7 @@
 		0B35B7B72B0E016900822BA6 /* SignInAppleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B35B7B62B0E016900822BA6 /* SignInAppleHelper.swift */; };
 		0B37ABFC2AD7408E00E8D4BC /* ToastVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B37ABFB2AD7408E00E8D4BC /* ToastVM.swift */; };
 		0B383CF32B87852200D68678 /* RepeatItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B383CF22B87852200D68678 /* RepeatItem.swift */; };
+		0B383CF52B87F9A600D68678 /* EnvironmentValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B383CF42B87F9A600D68678 /* EnvironmentValues.swift */; };
 		0B384FA52B2B57B200C98245 /* UserActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B384FA42B2B57B200C98245 /* UserActivityView.swift */; };
 		0B384FA72B2B591000C98245 /* UserActivityDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B384FA62B2B591000C98245 /* UserActivityDM.swift */; };
 		0B384FA92B2B5DE500C98245 /* UserActivityVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B384FA82B2B5DE500C98245 /* UserActivityVM.swift */; };
@@ -534,6 +535,7 @@
 		0B35B7B62B0E016900822BA6 /* SignInAppleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInAppleHelper.swift; sourceTree = "<group>"; };
 		0B37ABFB2AD7408E00E8D4BC /* ToastVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastVM.swift; sourceTree = "<group>"; };
 		0B383CF22B87852200D68678 /* RepeatItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatItem.swift; sourceTree = "<group>"; };
+		0B383CF42B87F9A600D68678 /* EnvironmentValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentValues.swift; sourceTree = "<group>"; };
 		0B384FA42B2B57B200C98245 /* UserActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityView.swift; sourceTree = "<group>"; };
 		0B384FA62B2B591000C98245 /* UserActivityDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityDM.swift; sourceTree = "<group>"; };
 		0B384FA82B2B5DE500C98245 /* UserActivityVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityVM.swift; sourceTree = "<group>"; };
@@ -1109,15 +1111,16 @@
 				0B3B32DE2AF013DD00E1E0B0 /* Binding.swift */,
 				0BCF5D682B5DDEC700D729E2 /* Date.swift */,
 				0BF81DBF2ABDF00300B8892E /* DateFormatter.swift */,
+				0B383CF42B87F9A600D68678 /* EnvironmentValues.swift */,
 				0BF81DC52ABE36EB00B8892E /* Fonts.swift */,
 				0BC5A2042B5FF34E0029A7A9 /* Int.swift */,
+				0BFEB5F32B7FC4AA006F6A17 /* InviteLinkEntity.swift */,
 				0B8AA3CA2AFE8817008284F5 /* MapKit.swift */,
 				0BE3C8872B261DB40048F2A6 /* PhotosPickerItem.swift */,
 				0BF5B4A52AB353CB00DEC403 /* TextField.swift */,
 				0BCD57DC2B28AE4600A1C914 /* UIApplication.swift */,
 				0B2E987F2AB907340013301D /* UIImage.swift */,
 				0BCBC18D2ACDC2FF00992D8E /* View.swift */,
-				0BFEB5F32B7FC4AA006F6A17 /* InviteLinkEntity.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1456,9 +1459,9 @@
 		0BABE9D12B598200003EF70B /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				0BABE9D52B59822B003EF70B /* RewardsHubView.swift */,
-				0BCAE7452B7E6B8E005AD0EF /* PrizeItem.swift */,
 				0BCAE7432B7E6B5D005AD0EF /* MissionItem.swift */,
+				0BCAE7452B7E6B8E005AD0EF /* PrizeItem.swift */,
+				0BABE9D52B59822B003EF70B /* RewardsHubView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2098,6 +2101,7 @@
 				0B46814D2AC5EAFB009C5EF9 /* FirstLoadingView.swift in Sources */,
 				0B7DD5412B14DCC100D2EECB /* VideoPlayerVM.swift in Sources */,
 				0BCAE7442B7E6B5D005AD0EF /* MissionItem.swift in Sources */,
+				0B383CF52B87F9A600D68678 /* EnvironmentValues.swift in Sources */,
 				0BF5B4B42AB3787200DEC403 /* Tab.swift in Sources */,
 				0BDBD3CC2ACB5FCD003B8D2D /* GoogleRatingView.swift in Sources */,
 				0BE3C8882B261DB40048F2A6 /* PhotosPickerItem.swift in Sources */,
@@ -2262,7 +2266,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.50.5;
+				MARKETING_VERSION = 0.50.6;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2300,7 +2304,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.50.5;
+				MARKETING_VERSION = 0.50.6;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

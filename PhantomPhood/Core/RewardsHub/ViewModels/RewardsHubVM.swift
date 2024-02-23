@@ -15,6 +15,7 @@ final class RewardsHubVM: ObservableObject {
     private let auth = Authentication.shared
     private let pcVM = PhantomCoinsVM.shared
     private let rewardsDM = RewardsDM()
+    private let userProfileDM = UserProfileDM()
     
     init() {
         getUserInvites()
@@ -40,14 +41,6 @@ final class RewardsHubVM: ObservableObject {
     @Published var selectedPrize: Prize? = nil
     
     @Published var userInviteLinks: [InviteLinkEntity]? = nil
-    
-    var unconfirmedUserInvites: [InviteLinkEntity] {
-        if let invites = self.userInviteLinks {
-            return invites.filter { $0.referredUser == nil }
-        } else {
-            return []
-        }
-    }
     
     func claimDailyReward() async {
         guard !pcVM.hasClaimedToday && !loadingSections.contains(.dailyReward) else { return }
@@ -174,6 +167,53 @@ final class RewardsHubVM: ObservableObject {
         }
     }
     
+    func assignReferredUsers() async {
+        guard let userInviteLinks else { return }
+        
+        do {
+            let usersResponse = try await userProfileDM.getReferredUsers()
+            
+            guard !usersResponse.data.isEmpty else { return }
+            
+            let pendingInvites = userInviteLinks.filter { $0.referredUser == nil }
+            
+            guard !pendingInvites.isEmpty else { return }
+            
+            if let lastAccept = userInviteLinks.last(where: { $0.referredUser != nil }) {
+                print("Last accepted")
+                print(lastAccept.referredUser!)
+            } else {
+                print("No last accept set")
+                return
+                for index in 0..<pendingInvites.count {
+                    if (usersResponse.data.count - 1) - index >= 0 {
+                        pendingInvites[index].referredUser = usersResponse.data[(usersResponse.data.count - 1) - index].id
+                        pendingInvites[index].confirmedAt = usersResponse.data[(usersResponse.data.count - 1) - index].createdAt
+                        print(usersResponse.data[(usersResponse.data.count - 1) - index].id)
+                    } else {
+                        break
+                    }
+                }
+                
+                try CoreDataStack.shared.saveContext()
+            }
+            
+            /// get pending invites
+            ///     if exists   |   else exit
+            ///     get latest accepted invite
+            ///         if exists
+            ///             check users to match
+            ///                 if exists and if more users exist
+            ///                     assign from end of users (with filtering) to remaining pending invites
+            ///                 else
+            ///                     assign from end of users to remaining pending invites
+            ///         else
+            ///             assign from end of users to remaining pending invites
+        } catch {
+            print(error)
+        }
+    }
+    
     // MARK: - Core Data
     
     func getUserInvites() {
@@ -211,6 +251,9 @@ final class RewardsHubVM: ObservableObject {
             }
             
             self.userInviteLinks = data
+            Task {
+                await assignReferredUsers()
+            }
         } catch {
             print(error)
         }

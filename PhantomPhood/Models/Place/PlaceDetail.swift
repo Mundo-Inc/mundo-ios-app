@@ -73,8 +73,7 @@ extension PlaceDetail {
         website = try container.decodeIfPresent(String.self, forKey: .website)
         priceRange = try container.decodeIfPresent(Int.self, forKey: .priceRange)
 
-        let thumbnailString = try container.decodeIfPresent(String.self, forKey: .thumbnail)
-        if let thumbnailString = thumbnailString, !thumbnailString.isEmpty {
+        if let thumbnailString = try container.decodeIfPresent(String.self, forKey: .thumbnail), !thumbnailString.isEmpty {
             thumbnail = URL(string: thumbnailString)
         } else {
             thumbnail = nil

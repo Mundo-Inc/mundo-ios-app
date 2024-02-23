@@ -28,7 +28,7 @@ struct RewardsHubView: View {
                     Divider()
                     
                     ScrollView {
-                        referralSection
+                        ReferralSection()
                         
                         dailycheckinsSection
                         
@@ -204,7 +204,8 @@ struct RewardsHubView: View {
         .padding(.bottom)
     }
     
-    var referralSection: some View {
+    @ViewBuilder
+    private func ReferralSection() -> some View {
         VStack {
             HStack(alignment: .top, spacing: 3) {
                 Text("Referral Rewards")
@@ -539,7 +540,7 @@ struct RewardsHubView: View {
                                         .frame(width: 135)
                                     
                                     if let selectedPrize = vm.selectedPrize, selectedPrize.id == item.id {
-                                         EmptyView()
+                                        EmptyView()
                                     } else {
                                         PrizeItem(vm: vm, data: item, namespace: namespace)
                                     }

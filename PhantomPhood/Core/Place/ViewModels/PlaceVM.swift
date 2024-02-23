@@ -17,6 +17,13 @@ final class PlaceVM: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var error: String?
     
+    enum ScoresTab {
+        case googlePhantomYelp
+        case scores
+    }
+    
+    @Published var scoresTabView: ScoresTab = .googlePhantomYelp
+    
     @Published var presentedSheet: Sheets? = nil
     @Published var activeTab: PlaceTab = .media
     @Published var expandedMedia: MixedMedia? = nil

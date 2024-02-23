@@ -81,4 +81,51 @@ final class UserProfileDM {
         
         try await apiManager.requestNoContent("/users/\(id)/block", method: .delete, token: token)
     }
+    
+    func getReferredUsers() async throws -> APIResponseWithPagination<[UserEssentialsWithCreationDate]> {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let data = try await apiManager.requestData("/users/latestReferrals", method: .get, token: token) as APIResponseWithPagination<[UserEssentialsWithCreationDate]>?
+        
+        guard let data = data else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return data
+    }
+    
+    // MARK: - Response Models
+    
+    struct UserEssentialsWithCreationDate: Identifiable, Decodable {
+        let id: String
+        let name: String
+        let username: String
+        let verified: Bool
+        let profileImage: URL?
+        let progress: UserEssentials.CompactUserProgress
+        let createdAt: Date
+        
+        enum CodingKeys: String, CodingKey {
+            case id = "_id"
+            case name, username, verified, profileImage, progress, createdAt
+        }
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            id = try container.decode(String.self, forKey: .id)
+            name = try container.decode(String.self, forKey: .name)
+            username = try container.decode(String.self, forKey: .username)
+            verified = try container.decode(Bool.self, forKey: .verified)
+            progress = try container.decode(UserEssentials.CompactUserProgress.self, forKey: .progress)
+            createdAt = try container.decode(Date.self, forKey: .createdAt)
+
+            if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
+                profileImage = URL(string: profileImageString)
+            } else {
+                profileImage = nil
+            }
+        }
+    }
 }

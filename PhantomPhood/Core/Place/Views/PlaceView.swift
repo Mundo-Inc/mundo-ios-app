@@ -29,6 +29,26 @@ struct PlaceView: View {
     
     var body: some View {
         ZStack {
+            if vm.place != nil {
+                Color.clear
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            if self.vm.scoresTabView == .googlePhantomYelp {
+                                withAnimation {
+                                    self.vm.scoresTabView = .scores
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                    if self.vm.scoresTabView == .scores {
+                                        withAnimation {
+                                            self.vm.scoresTabView = .googlePhantomYelp
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+            }
+            
             ScrollView(.vertical) {
                 VStack(spacing: 15) {
                     // MARK: - Header
@@ -138,7 +158,7 @@ struct PlaceView: View {
                     .redacted(reason: vm.place == nil ? .placeholder : [])
                     
                     // MARK: - Ratings
-                    TabView {
+                    TabView(selection: $vm.scoresTabView) {
                         HStack {
                             VStack(spacing: 12) {
                                 StarRating(score: vm.place?.thirdParty.google?.rating, activeColor: .gold)
@@ -217,8 +237,10 @@ struct PlaceView: View {
                         }
                         .padding(.vertical)
                         .font(.custom(style: .caption))
+                        .tag(PlaceVM.ScoresTab.googlePhantomYelp)
                         
                         ScoresView()
+                            .tag(PlaceVM.ScoresTab.scores)
                     }
                     .frame(height: 150)
                     .frame(maxWidth: .infinity)

@@ -28,8 +28,7 @@ extension PlaceEssentials {
         location = try container.decode(PlaceLocation.self, forKey: .location)
         categories = try container.decode([String].self, forKey: .categories)
         
-        let thumbnailString = try container.decodeIfPresent(String.self, forKey: .thumbnail)
-        if let thumbnailString, !thumbnailString.isEmpty {
+        if let thumbnailString = try container.decodeIfPresent(String.self, forKey: .thumbnail), !thumbnailString.isEmpty {
             thumbnail = URL(string: thumbnailString)
         } else {
             thumbnail = nil

@@ -18,7 +18,8 @@ class PlaceMediaVM: ObservableObject {
     }
     
     @Published var isLoading: Bool = false
-    @Published var medias: [MediaWithUser]? = nil
+    @Published var medias: [MediaWithUser] = []
+    @Published var initialCall = false
     
     var page = 1
     func fetch(type: FetchType) async {
@@ -31,14 +32,11 @@ class PlaceMediaVM: ObservableObject {
         isLoading = true
         do {
             let data = try await placeDM.getMedias(id: placeId, page: page)
-            
+            self.initialCall = true
             if page == 1 {
                 medias = data.data
-            } else if var currentMedias = medias {
-                currentMedias.append(contentsOf: data.data)
-                self.medias = currentMedias
             } else {
-                medias = data.data
+                medias.append(contentsOf: data.data)
             }
             page += 1
         } catch {

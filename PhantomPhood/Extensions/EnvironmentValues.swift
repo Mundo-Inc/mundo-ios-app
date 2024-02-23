@@ -1,0 +1,20 @@
+//
+//  EnvironmentValues.swift
+//  PhantomPhood
+//
+//  Created by Kia Abdi on 2/23/24.
+//
+
+import Foundation
+import SwiftUI
+
+private struct MainWindowSizeKey: EnvironmentKey {
+    static let defaultValue: CGSize = .zero
+}
+
+extension EnvironmentValues {
+    var mainWindowSize: CGSize {
+        get { self[MainWindowSizeKey.self] }
+        set { self[MainWindowSizeKey.self] = newValue }
+    }
+}

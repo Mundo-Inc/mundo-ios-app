@@ -27,19 +27,47 @@ struct PlaceMediaView: View {
     ]
     
     var body: some View {
-        if placeVM.place != nil, let medias = vm.medias {
-            LazyVGrid(columns: gridColumns, spacing: 0) {
-                if medias.isEmpty {
+        LazyVGrid(columns: gridColumns, spacing: 0) {
+            if !vm.initialCall {
+                Group {
+                    if placeVM.place != nil {
+                        ZStack {
+                            Rectangle()
+                                .foregroundStyle(Color.themePrimary)
+                                .onAppear {
+                                    Task {
+                                        await vm.fetch(type: .refresh)
+                                    }
+                                }
+                        }
+                    } else {
+                        ZStack {
+                            Rectangle()
+                                .foregroundStyle(Color.themePrimary)
+                        }
+                    }
+                    ForEach(RepeatItem.create(5)) { _ in
+                        ZStack {
+                            Rectangle()
+                                .foregroundStyle(Color.themePrimary)
+                        }
+                    }
+                }
+                .padding(.all, 1)
+                .background(Color.themeBorder)
+                .aspectRatio(2 / 3, contentMode: .fill)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let place = placeVM.place {
+                if vm.medias.isEmpty {
                     Text("No media")
                         .font(.custom(style: .subheadline))
                         .foregroundStyle(.secondary)
                         .padding(.vertical)
                         .padding(.horizontal)
                 } else {
-                    if let yelpImages = placeVM.place?.thirdParty.yelp?.photos {
+                    if let yelpImages = place.thirdParty.yelp?.photos {
                         ForEach(yelpImages, id: \.self) { string in
                             ZStack {
-                                
                                 if let expandedMedia = placeVM.expandedMedia, case .yelp(let s) = expandedMedia, string == s {
                                     Rectangle()
                                         .foregroundStyle(Color.themeBorder)
@@ -81,7 +109,7 @@ struct PlaceMediaView: View {
                         }
                     }
                     
-                    ForEach(medias) { media in
+                    ForEach(vm.medias) { media in
                         ZStack {
                             if let expandedMedia = placeVM.expandedMedia, case .phantom(let m) = expandedMedia, media.id == m.id {
                                 Rectangle()
@@ -171,29 +199,8 @@ struct PlaceMediaView: View {
                         }
                 }
             }
-            .padding(.bottom, 40)
-            .onAppear {
-                Task {
-                    await vm.fetch(type: .refresh)
-                }
-            }
-        } else {
-            LazyVGrid(columns: gridColumns, spacing: 0) {
-                Group {
-                    ForEach(RepeatItem.create(6)) { _ in
-                        ZStack {
-                            Rectangle()
-                                .foregroundStyle(Color.themePrimary)
-                        }
-                    }
-                }
-                .padding(.all, 1)
-                .background(Color.themeBorder)
-                .aspectRatio(2 / 3, contentMode: .fill)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            .padding(.bottom, 40)
         }
+        .padding(.bottom, 40)
     }
 }
 

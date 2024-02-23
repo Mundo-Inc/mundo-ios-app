@@ -23,7 +23,10 @@ struct PhantomPhoodApp: App {
     
     var body: some Scene {
         WindowGroup {
-            AppRouter()
+            GeometryReader { proxy in
+                AppRouter()
+                    .environment(\.mainWindowSize, proxy.size)
+            }
         }
     }
     
