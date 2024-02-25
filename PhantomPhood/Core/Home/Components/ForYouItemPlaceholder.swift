@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ForYouItemPlaceholder: View {
-    let parentGeometry: GeometryProxy?
+    @Environment(\.mainWindowSize) private var mainWindowSize
+    @Environment(\.mainWindowSafeAreaInsets) private var mainWindowSafeAreaInsets
     
     var body: some View {
         ZStack {
@@ -16,7 +17,7 @@ struct ForYouItemPlaceholder: View {
             
             Rectangle()
                 .foregroundStyle(.clear)
-                .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height - (parentGeometry?.safeAreaInsets.bottom ?? 0))
+                .frame(maxWidth: mainWindowSize.width, maxHeight: mainWindowSize.height)
             
             LinearGradient(colors: [.black.opacity(0.3), .clear, .clear], startPoint: .top, endPoint: .bottom)
                 .allowsHitTesting(false)
@@ -102,6 +103,7 @@ struct ForYouItemPlaceholder: View {
                     
                     VStack(spacing: 8) {
                         Spacer()
+                        
                         Group {
                             Text("😍")
                             
@@ -153,13 +155,12 @@ struct ForYouItemPlaceholder: View {
                 }
             }
             .font(.custom(style: .body))
-            .padding(.top, parentGeometry?.safeAreaInsets.top)
+            .padding(.top, mainWindowSafeAreaInsets.top + 40)
         }
-        .frame(maxWidth: .infinity)
         .redacted(reason: .placeholder)
     }
 }
 
 #Preview {
-    ForYouItemPlaceholder(parentGeometry: nil)
+    ForYouItemPlaceholder()
 }

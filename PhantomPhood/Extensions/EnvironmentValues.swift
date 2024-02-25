@@ -12,9 +12,18 @@ private struct MainWindowSizeKey: EnvironmentKey {
     static let defaultValue: CGSize = .zero
 }
 
+private struct MainWindowSafeAreaInsets: EnvironmentKey {
+    static let defaultValue: EdgeInsets = .init()
+}
+
 extension EnvironmentValues {
     var mainWindowSize: CGSize {
         get { self[MainWindowSizeKey.self] }
         set { self[MainWindowSizeKey.self] = newValue }
+    }
+    
+    var mainWindowSafeAreaInsets: EdgeInsets {
+        get { self[MainWindowSafeAreaInsets.self] }
+        set { self[MainWindowSafeAreaInsets.self] = newValue }
     }
 }

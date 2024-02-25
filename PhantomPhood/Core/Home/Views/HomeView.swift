@@ -21,6 +21,8 @@ struct HomeView: View {
     
     @Namespace private var namespace
     
+    @Environment(\.mainWindowSize) private var mainWindowSize
+    
     var body: some View {
         NavigationStack(path: $appData.homeNavStack) {
             TabView(selection: $appData.homeActiveTab) {
@@ -36,6 +38,7 @@ struct HomeView: View {
                 FeedView(mediasViewModel: mediasViewModel)
                     .tag(HomeTab.followings)
             }
+            .frame(height: mainWindowSize.height)
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .ignoresSafeArea(edges: .top)
             .background(Color.themeBG)

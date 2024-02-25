@@ -245,11 +245,17 @@ struct RewardsHubView: View {
                 HStack {
                     ForEach(userInviteLinks) { link in
                         Group {
-                            if let _ = link.referredUser {
+                            if let referredUser = link.referredUser {
                                 VStack {
-                                    ProfileImage("", size: 50, cornerRadius: 25)
-                                    Text("Name")
-                                        .foregroundStyle(.black.opacity(0.5))
+                                    if let invitedUsersList = vm.invitedUsersList, let found = invitedUsersList.first(where: { $0.id == referredUser }) {
+                                        ProfileImage(found.profileImage, size: 50, cornerRadius: 25)
+                                        Text(found.name)
+                                    } else {
+                                        ProfileImage("", size: 50, cornerRadius: 25)
+                                        Text("Name")
+                                            .foregroundStyle(.black.opacity(0.5))
+                                            .redacted(reason: .placeholder)
+                                    }
                                 }
                             } else if let expiresIn = link.expiresAt.remainingTime(), let url = link.link {
                                 VStack {

@@ -26,6 +26,7 @@ struct PhantomPhoodApp: App {
             GeometryReader { proxy in
                 AppRouter()
                     .environment(\.mainWindowSize, proxy.size)
+                    .environment(\.mainWindowSafeAreaInsets, proxy.safeAreaInsets)
             }
         }
     }

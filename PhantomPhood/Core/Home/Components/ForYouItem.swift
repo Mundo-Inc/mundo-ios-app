@@ -15,22 +15,24 @@ struct ForYouItem: View {
     let index: Int
     @ObservedObject private var forYouVM: ForYouVM
     @ObservedObject private var page: Page
-    let parentGeometry: GeometryProxy?
     
     @ObservedObject private var videoPlayerVM = VideoPlayerVM.shared
     @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
     @ObservedObject private var commentsViewModel = CommentsVM.shared
+    @ObservedObject private var appData = AppData.shared
     
     /// For handling multiple video playback
     @State private var tabPage: String = ""
     
     @State private var videosState: [String:VideoPlayer.State] = [:]
     
-    init(index: Int, forYouVM: ForYouVM, page: Page, parentGeometry: GeometryProxy?) {
+    @Environment(\.mainWindowSize) private var mainWindowSize
+    @Environment(\.mainWindowSafeAreaInsets) private var mainWindowSafeAreaInsets
+    
+    init(index: Int, forYouVM: ForYouVM, page: Page) {
         self.index = index
         self._forYouVM = ObservedObject(wrappedValue: forYouVM)
         self._page = ObservedObject(wrappedValue: page)
-        self.parentGeometry = parentGeometry
         
         switch forYouVM.items[index].resource {
         case .review(let feedReview):
@@ -68,75 +70,73 @@ struct ForYouItem: View {
                         }
                     
                     if feedReview.images.count + feedReview.videos.count > 1 {
-                        ZStack {
-                            TabView(selection: $tabPage) {
-                                ForEach(feedReview.videos) { video in
-                                    ZStack {
-                                        if let url = video.src {
-                                            VideoPlayer(url: url, play: playBinding(for: video.id), time: $time)
-                                                .onStateChanged { state in
-                                                    videosState.updateValue(state, forKey: video.id)
-                                                    switch state {
-                                                    case .playing(let totalDuration):
-                                                        currentVideoTotalDuration = totalDuration
-                                                    default:
-                                                        break
-                                                    }
+                        TabView(selection: $tabPage) {
+                            ForEach(feedReview.videos) { video in
+                                ZStack {
+                                    if let url = video.src {
+                                        VideoPlayer(url: url, play: playBinding(for: video.id), time: $time)
+                                            .onStateChanged { state in
+                                                videosState.updateValue(state, forKey: video.id)
+                                                switch state {
+                                                case .playing(let totalDuration):
+                                                    currentVideoTotalDuration = totalDuration
+                                                default:
+                                                    break
                                                 }
-                                                .autoReplay(true)
-                                                .mute(videoPlayerVM.isMute)
-                                        }
-                                        
-                                        if let state = videosState[video.id] {
-                                            switch state {
-                                            case .loading:
-                                                ProgressView()
-                                            case .error(let err):
-                                                Text("Something went wrong\n\(err.localizedDescription)")
-                                            default:
-                                                EmptyView()
                                             }
+                                            .autoReplay(true)
+                                            .mute(videoPlayerVM.isMute)
+                                    }
+                                    
+                                    if let state = videosState[video.id] {
+                                        switch state {
+                                        case .loading:
+                                            ProgressView()
+                                        case .error(let err):
+                                            Text("Something went wrong\n\(err.localizedDescription)")
+                                        default:
+                                            EmptyView()
                                         }
                                     }
-                                    .overlay(alignment: .bottomLeading) {
-                                        if !time.seconds.isZero, !currentVideoTotalDuration.isZero {
-                                            Rectangle()
-                                                .animation(.linear(duration: 0.1), value: time.seconds)
-                                                .frame(height: 2)
-                                                .frame(width: UIScreen.main.bounds.width * (time.seconds / currentVideoTotalDuration))
-                                                .foregroundStyle(.white)
-                                        }
-                                    }
-                                    .tag(video.id)
                                 }
-                                
-                                ForEach(feedReview.images) { image in
-                                    if let url = image.src {
-                                        KFImage.url(url)
-                                            .placeholder { progress in
-                                                Rectangle()
-                                                    .foregroundStyle(.clear)
-                                                    .frame(maxWidth: 150)
-                                                    .overlay {
-                                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                            .progressViewStyle(LinearProgressViewStyle())
-                                                    }
-                                            }
-                                            .loadDiskFileSynchronously()
-                                            .fade(duration: 0.25)
-                                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height - (parentGeometry?.safeAreaInsets.top ?? 0))
-                                            .contentShape(Rectangle())
-                                            .clipShape(Rectangle())
-                                            .ignoresSafeArea(edges: .top)
-                                            .tag(image.id)
+                                .ignoresSafeArea(edges: .top)
+                                .overlay(alignment: .bottomLeading) {
+                                    if !time.seconds.isZero, !currentVideoTotalDuration.isZero {
+                                        Rectangle()
+                                            .frame(height: 2)
+                                            .frame(width: UIScreen.main.bounds.width * (time.seconds / currentVideoTotalDuration))
+                                            .foregroundStyle(.white)
                                     }
+                                }
+                                .tag(video.id)
+                            }
+                            
+                            ForEach(feedReview.images) { image in
+                                if let url = image.src {
+                                    KFImage.url(url)
+                                        .placeholder { progress in
+                                            Rectangle()
+                                                .foregroundStyle(.clear)
+                                                .frame(maxWidth: 150)
+                                                .overlay {
+                                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                        .progressViewStyle(LinearProgressViewStyle())
+                                                }
+                                        }
+                                        .loadDiskFileSynchronously()
+                                        .fade(duration: 0.25)
+                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: mainWindowSize.width, height: mainWindowSize.height)
+                                        .contentShape(Rectangle())
+                                        .clipShape(Rectangle())
+                                        .ignoresSafeArea(edges: .top)
+                                        .tag(image.id)
                                 }
                             }
-                            .tabViewStyle(PageTabViewStyle())
                         }
+                        .tabViewStyle(PageTabViewStyle())
                     } else {
                         if let image = feedReview.images.first, let url = image.src {
                             KFImage.url(url)
@@ -154,26 +154,24 @@ struct ForYouItem: View {
                                 .onFailureImage(UIImage(named: "ErrorLoadingImage"))
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height - (parentGeometry?.safeAreaInsets.top ?? 0))
+                                .frame(width: mainWindowSize.width, height: mainWindowSize.height)
                                 .contentShape(Rectangle())
                                 .clipShape(Rectangle())
                                 .ignoresSafeArea(edges: .top)
-                        } else if let video = feedReview.videos.first {
+                        } else if let video = feedReview.videos.first, let url = video.src {
                             ZStack {
-                                if let url = video.src {
-                                    VideoPlayer(url: url, play: playBinding(for: video.id), time: $time)
-                                        .onStateChanged { state in
-                                            videosState.updateValue(state, forKey: video.id)
-                                            switch state {
-                                            case .playing(let totalDuration):
-                                                currentVideoTotalDuration = totalDuration
-                                            default:
-                                                break
-                                            }
+                                VideoPlayer(url: url, play: playBinding(for: video.id), time: $time)
+                                    .onStateChanged { state in
+                                        videosState.updateValue(state, forKey: video.id)
+                                        switch state {
+                                        case .playing(let totalDuration):
+                                            currentVideoTotalDuration = totalDuration
+                                        default:
+                                            break
                                         }
-                                        .autoReplay(true)
-                                        .mute(videoPlayerVM.isMute)
-                                }
+                                    }
+                                    .autoReplay(true)
+                                    .mute(videoPlayerVM.isMute)
                                 
                                 if let state = videosState[video.id] {
                                     switch state {
@@ -186,17 +184,16 @@ struct ForYouItem: View {
                                     }
                                 }
                             }
+                            .ignoresSafeArea(edges: .top)
                             .overlay(alignment: .bottomLeading) {
                                 if !time.seconds.isZero, !currentVideoTotalDuration.isZero {
                                     Rectangle()
-                                        .animation(.linear, value: time.seconds)
                                         .frame(height: 2)
                                         .frame(width: UIScreen.main.bounds.width * (time.seconds / currentVideoTotalDuration))
                                         .foregroundStyle(.white)
                                 }
                             }
                             .tag(video.id)
-                            
                         }
                     }
                 case .checkin(let feedCheckin):
@@ -216,7 +213,7 @@ struct ForYouItem: View {
                             .onFailureImage(UIImage(named: "ErrorLoadingImage"))
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height - (parentGeometry?.safeAreaInsets.top ?? 0))
+                            .frame(width: mainWindowSize.width, height: mainWindowSize.height)
                             .contentShape(Rectangle())
                             .clipShape(Rectangle())
                             .ignoresSafeArea(edges: .top)
@@ -253,41 +250,44 @@ struct ForYouItem: View {
                     switch forYouVM.items[index].resource {
                     case .review(let feedReview):
                         HStack {
-                            NavigationLink(value: AppRoute.userProfile(userId: forYouVM.items[index].user.id)) {
-                                VStack(spacing: -15) {
-                                    ProfileImage(forYouVM.items[index].user.profileImage, size: 50)
-                                    
-                                    LevelView(level: forYouVM.items[index].user.progress.level)
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 24, height: 30)
-                                }
+                            VStack(spacing: -15) {
+                                ProfileImage(forYouVM.items[index].user.profileImage, size: 50)
+                                
+                                LevelView(level: forYouVM.items[index].user.progress.level)
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 24, height: 30)
+                            }
+                            .onTapGesture {
+                                appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
                             }
                             
                             VStack {
-                                NavigationLink(value: AppRoute.userProfile(userId: forYouVM.items[index].user.id)) {
-                                    Text(forYouVM.items[index].user.name)
-                                        .font(.custom(style: .headline))
-                                        .frame(height: 18)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                }
-                                .foregroundStyle(.white)
+                                Text(forYouVM.items[index].user.name)
+                                    .font(.custom(style: .headline))
+                                    .frame(height: 18)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .foregroundStyle(.white)
+                                    .onTapGesture {
+                                        appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
+                                    }
                                 
                                 HStack {
                                     if let place = forYouVM.items[index].place {
-                                        NavigationLink(value: AppRoute.place(id: place.id)) {
-                                            HStack {
-                                                if let amenity = place.amenity {
-                                                    Image(systemName: amenity.image)
-                                                } else {
-                                                    Image(systemName: "fork.knife")
-                                                }
-                                                
-                                                Text(place.name)
-                                                    .lineLimit(1)
+                                        HStack {
+                                            if let amenity = place.amenity {
+                                                Image(systemName: amenity.image)
+                                            } else {
+                                                Image(systemName: "fork.knife")
                                             }
-                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            
+                                            Text(place.name)
+                                                .lineLimit(1)
                                         }
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                         .foregroundStyle(.primary)
+                                        .onTapGesture {
+                                            appData.goTo(AppRoute.place(id: place.id))
+                                        }
                                     } else {
                                         Text("-")
                                     }
@@ -367,41 +367,43 @@ struct ForYouItem: View {
                         }
                     case .checkin(let feedCheckin):
                         HStack {
-                            NavigationLink(value: AppRoute.userProfile(userId: forYouVM.items[index].user.id)) {
-                                VStack(spacing: -15) {
-                                    ProfileImage(forYouVM.items[index].user.profileImage, size: 50)
-                                    
-                                    LevelView(level: forYouVM.items[index].user.progress.level)
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 24, height: 30)
-                                }
+                            VStack(spacing: -15) {
+                                ProfileImage(forYouVM.items[index].user.profileImage, size: 50)
+                                
+                                LevelView(level: forYouVM.items[index].user.progress.level)
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 24, height: 30)
+                            }
+                            .onTapGesture {
+                                appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
                             }
                             
                             VStack {
-                                NavigationLink(value: AppRoute.userProfile(userId: forYouVM.items[index].user.id)) {
-                                    Text(forYouVM.items[index].user.name)
-                                        .font(.custom(style: .headline))
-                                        .frame(height: 18)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                }
-                                .foregroundStyle(.white)
+                                Text(forYouVM.items[index].user.name)
+                                    .font(.custom(style: .headline))
+                                    .frame(height: 18)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .foregroundStyle(.white)
+                                    .onTapGesture {
+                                        appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
+                                    }
                                 
                                 HStack {
                                     if let place = forYouVM.items[index].place {
-                                        NavigationLink(value: AppRoute.place(id: place.id)) {
-                                            HStack {
-                                                if let amenity = place.amenity {
-                                                    Image(systemName: amenity.image)
-                                                } else {
-                                                    Image(systemName: "fork.knife")
-                                                }
-                                                
-                                                Text(place.name)
-                                                    .lineLimit(1)
+                                        HStack {
+                                            if let amenity = place.amenity {
+                                                Image(systemName: amenity.image)
+                                            } else {
+                                                Image(systemName: "fork.knife")
                                             }
-                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            
+                                            Text(place.name)
+                                                .lineLimit(1)
                                         }
-                                        .foregroundStyle(.primary)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .onTapGesture {
+                                            appData.goTo(AppRoute.place(id: place.id))
+                                        }
                                     } else {
                                         Text("-")
                                     }
@@ -504,60 +506,56 @@ struct ForYouItem: View {
                                 .font(.custom(style: .caption))
                         }
                         
-                        Button {
-                            selectReactionsViewModel.select { reaction in
-                                let item = forYouVM.items[index]
-                                Task {
-                                    await forYouVM.addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), to: item)
+                        Capsule()
+                            .background(Capsule().foregroundStyle(.white.opacity(0.2)))
+                            .foregroundStyle(.ultraThinMaterial)
+                            .frame(width: 70, height: 34)
+                            .overlay {
+                                Image(.addReaction)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(height: 24)
+                                    .foregroundStyle(.white)
+                            }
+                            .onTapGesture {
+                                selectReactionsViewModel.select { reaction in
+                                    let item = forYouVM.items[index]
+                                    Task {
+                                        await forYouVM.addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), to: item)
+                                    }
                                 }
                             }
-                        } label: {
-                            Capsule()
-                                .background(Capsule().foregroundStyle(.white.opacity(0.2)))
-                                .foregroundStyle(.ultraThinMaterial)
-                                .frame(width: 70, height: 34)
-                                .overlay {
-                                    Image(.addReaction)
+                        
+                        Capsule()
+                            .background(Capsule().foregroundStyle(.white.opacity(0.2)))
+                            .foregroundStyle(.ultraThinMaterial)
+                            .frame(width: 70, height: 34)
+                            .overlay {
+                                HStack {
+                                    if forYouVM.items[index].commentsCount > 0 {
+                                        Text("\(forYouVM.items[index].commentsCount)")
+                                            .font(.custom(style: .body))
+                                    }
+                                    Image(systemName: "bubble.left")
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(height: 24)
-                                        .foregroundStyle(.white)
                                 }
-                        }
-                        
-                        Button {
-                            commentsViewModel.showComments(activityId: forYouVM.items[index].id)
-                        } label: {
-                            Capsule()
-                                .background(Capsule().foregroundStyle(.white.opacity(0.2)))
-                                .foregroundStyle(.ultraThinMaterial)
-                                .frame(width: 70, height: 34)
-                                .overlay {
-                                    HStack {
-                                        if forYouVM.items[index].commentsCount > 0 {
-                                            Text("\(forYouVM.items[index].commentsCount)")
-                                                .font(.custom(style: .body))
-                                        }
-                                        Image(systemName: "bubble.left")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                    }
-                                    .frame(height: 20)
-                                    .foregroundStyle(.white)
-                                }
-                        }
-                        .padding(.horizontal, 5)
+                                .frame(height: 20)
+                                .foregroundStyle(.white)
+                            }
+                            .onTapGesture {
+                                commentsViewModel.showComments(activityId: forYouVM.items[index].id)
+                            }
                     }
                     .frame(width: 52)
                     .padding(.trailing)
                     .padding(.vertical)
-                    .offset(y: -80)
+                    .padding(.bottom, 80)
                 }
             }
+            .padding(.top, mainWindowSafeAreaInsets.top + 40)
             .font(.custom(style: .body))
-            .padding(.top, parentGeometry?.safeAreaInsets.top)
         }
-        .frame(maxWidth: .infinity)
     }
     
     private func playBinding(for videoId: String) -> Binding<Bool> {

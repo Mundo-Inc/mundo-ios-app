@@ -90,6 +90,30 @@ class ForYouVM: ObservableObject {
             })
         }
     }
+    
+    /// Add reaction to item
+    /// - Parameters:
+    ///   - reaction: NewReaction - aanything that conforms to GeneralReactionProtocol
+    ///   - item: FeedItem
+    func addReaction(_ reaction: GeneralReactionProtocol, to item: Binding<FeedItem>) async {
+        HapticManager.shared.impact(style: .light)
+        // add temporary reaction
+        let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: .now)
+        item.wrappedValue.addReaction(tempUserReaction)
+
+        // add reaction to server
+        do {
+            let userReaction = try await reactionsDM.addReaction(type: reaction.type, reaction: reaction.reaction, for: item.id)
+
+            // replace temporary reaction with server reaction
+            item.wrappedValue.removeReaction(tempUserReaction)
+            item.wrappedValue.addReaction(userReaction)
+        } catch {
+            HapticManager.shared.impact(style: .light)
+            // remove temp reaction
+            item.wrappedValue.removeReaction(tempUserReaction)
+        }
+    }
 
     /// Remove reaction from item
     /// - Parameters:
@@ -119,6 +143,23 @@ class ForYouVM: ObservableObject {
                 }
                 return i
             })
+        }
+    }
+    
+    /// Remove reaction from item
+    /// - Parameters:
+    ///   - reaction: UserReaction
+    ///   - item: FeedItem
+    func removeReaction(_ reaction: UserReaction, from item: Binding<FeedItem>) async {
+        // remove temporary reaction
+        item.wrappedValue.removeReaction(reaction)
+
+        // remove reaction from server
+        do {
+            try await reactionsDM.removeReaction(reactionId: reaction.id)
+        } catch {
+            // add temp reaction back
+            item.wrappedValue.addReaction(reaction)
         }
     }
 }

@@ -20,6 +20,8 @@ struct ForYouView17: View {
     
     @State private var scrollPosition: String? = nil
     
+    @Environment(\.mainWindowSize) private var mainWindowSize
+    
     var body: some View {
         ZStack {
             if !vm.items.isEmpty {
@@ -33,74 +35,72 @@ struct ForYouView17: View {
                     }
             }
             
-            GeometryReader(content: { geometry in
-                ScrollView(.vertical) {
-                    LazyVStack(spacing: 0) {
-                        if !vm.items.isEmpty {
-                            ForEach(vm.items.indices, id: \.self) { index in
-                                ForYouItem17(index: index, item: vm.items[index], forYouVM: vm, parentGeometry: geometry, scrollPosition: scrollPosition)
-                                    .frame(width: geometry.size.width, height: geometry.size.height + geometry.safeAreaInsets.top)
-                                    .id(vm.items[index].id)
-                            }
-                        } else {
-                            ForYouItemPlaceholder(parentGeometry: geometry)
-                                .frame(width: geometry.size.width, height: geometry.size.height + geometry.safeAreaInsets.top)
+            ScrollView(.vertical) {
+                LazyVStack(spacing: 0) {
+                    if !vm.items.isEmpty {
+                        ForEach($vm.items) { $item in
+                            ForYouItem17(item: $item, forYouVM: vm, scrollPosition: scrollPosition)
+                                .frame(width: mainWindowSize.width, height: mainWindowSize.height)
+                                .id($item.wrappedValue.id)
                         }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .scrollTargetLayout()
-                }
-                .scrollPosition(id: $scrollPosition)
-                .ignoresSafeArea(edges: .top)
-                .scrollTargetBehavior(.paging)
-                .scrollIndicators(.never)
-                .refreshable {
-                    await vm.getForYou(.refresh)
-                }
-                .onChange(of: scrollPosition) { newValue in
-                    if let scrollPosition = newValue {
-                        guard let itemIndex = vm.items.firstIndex(where: { $0.id == scrollPosition }) else { return }
-                        
-                        switch vm.items[itemIndex].resource {
-                        case .review(let feedReview):
-                            if let first = feedReview.videos.first, videoPlayerVM.playId != first.id {
-                                videoPlayerVM.playId = first.id
-                            } else if videoPlayerVM.playId != nil {
-                                videoPlayerVM.playId = nil
-                            }
-                        default:
-                            if videoPlayerVM.playId != nil {
-                                videoPlayerVM.playId = nil
-                            }
-                        }
-                        
-                        guard itemIndex >= vm.items.count - 5 else { return }
-                        
-                        if !vm.isLoading {
-                            Task {
-                                await vm.getForYou(.new)
-                            }
-                        }
+                    } else {
+                        ForYouItemPlaceholder()
+                            .frame(width: mainWindowSize.width, height: mainWindowSize.height)
                     }
                 }
-                .onChange(of: appData.tappedTwice) {
-                    if appData.tappedTwice == .home {
-                        if let first = vm.items.first {
-                            withAnimation(.bouncy(duration: 1)) {
-                                scrollPosition = first.id
-                            }
+                .frame(maxWidth: .infinity)
+                .scrollTargetLayout()
+            }
+            .scrollPosition(id: $scrollPosition)
+            .ignoresSafeArea(edges: .top)
+            .scrollTargetBehavior(.paging)
+            .scrollIndicators(.never)
+            .refreshable {
+                await vm.getForYou(.refresh)
+            }
+            .onChange(of: scrollPosition) { newValue in
+                if let scrollPosition = newValue {
+                    guard let itemIndex = vm.items.firstIndex(where: { $0.id == scrollPosition }) else { return }
+                    
+                    switch vm.items[itemIndex].resource {
+                    case .review(let feedReview):
+                        if let first = feedReview.videos.first, videoPlayerVM.playId != first.id {
+                            videoPlayerVM.playId = first.id
+                        } else if videoPlayerVM.playId != nil {
+                            videoPlayerVM.playId = nil
                         }
-                        appData.tappedTwice = nil
+                    default:
+                        if videoPlayerVM.playId != nil {
+                            videoPlayerVM.playId = nil
+                        }
+                    }
+                    
+                    guard itemIndex >= vm.items.count - 5 else { return }
+                    
+                    if !vm.isLoading {
                         Task {
-                            if !vm.isLoading {
-                                HapticManager.shared.impact(style: .light)
-                                await vm.getForYou(.refresh)
-                                HapticManager.shared.notification(type: .success)
-                            }
+                            await vm.getForYou(.new)
                         }
                     }
                 }
-            })
+            }
+            .onChange(of: appData.tappedTwice) {
+                if appData.tappedTwice == .home {
+                    if let first = vm.items.first {
+                        withAnimation(.bouncy(duration: 1)) {
+                            scrollPosition = first.id
+                        }
+                    }
+                    appData.tappedTwice = nil
+                    Task {
+                        if !vm.isLoading {
+                            HapticManager.shared.impact(style: .light)
+                            await vm.getForYou(.refresh)
+                            HapticManager.shared.notification(type: .success)
+                        }
+                    }
+                }
+            }
         }
         .environment(\.colorScheme, .dark)
         .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {

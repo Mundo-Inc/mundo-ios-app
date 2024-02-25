@@ -24,89 +24,86 @@ struct ForYouView: View {
     @State private var readyToReferesh = true
     @State private var haptic = false
     
+    @Environment(\.mainWindowSize) private var mainWindowSize
+    
     var body: some View {
         ZStack {
-            GeometryReader(content: { geometry in
-                ZStack {
-                    if !vm.items.isEmpty {
-                        Pager(page: page, data: vm.items.indices, id: \.self) { index in
-                            ForYouItem(index: index, forYouVM: vm, page: page, parentGeometry: geometry)
-                                .if(index == 0, transform: { view in
-                                    view
-                                        .gesture(
-                                            DragGesture()
-                                                .onChanged({ value in
-                                                    if page.index == 0 && value.location.y > value.startLocation.y {
-                                                        draggedAmount = min(abs(value.translation.height) / dragAmountToRefresh, 1)
-                                                        
-                                                        if value.translation.height > dragAmountToRefresh {
-                                                            if !self.haptic {
-                                                                HapticManager.shared.impact(style: .heavy)
-                                                                self.haptic = true
-                                                            }
-                                                        } else {
-                                                            self.haptic = false
-                                                        }
+            if !vm.items.isEmpty {
+                Pager(page: page, data: vm.items.indices, id: \.self) { index in
+                    ForYouItem(index: index, forYouVM: vm, page: page)
+                        .frame(width: mainWindowSize.width, height: mainWindowSize.height)
+                        .if(index == 0, transform: { view in
+                            view
+                                .gesture(
+                                    DragGesture()
+                                        .onChanged({ value in
+                                            if page.index == 0 && value.location.y > value.startLocation.y {
+                                                draggedAmount = min(abs(value.translation.height) / dragAmountToRefresh, 1)
+                                                
+                                                if value.translation.height > dragAmountToRefresh {
+                                                    if !self.haptic {
+                                                        HapticManager.shared.impact(style: .heavy)
+                                                        self.haptic = true
                                                     }
-                                                })
-                                                .onEnded({ value in
-                                                    if value.translation.height > dragAmountToRefresh {
-                                                        if !vm.isLoading && readyToReferesh {
-                                                            Task {
-                                                                HapticManager.shared.impact(style: .light)
-                                                                await vm.getForYou(.refresh)
-                                                                HapticManager.shared.notification(type: .success)
-                                                            }
-                                                        }
+                                                } else {
+                                                    self.haptic = false
+                                                }
+                                            }
+                                        })
+                                        .onEnded({ value in
+                                            if value.translation.height > dragAmountToRefresh {
+                                                if !vm.isLoading && readyToReferesh {
+                                                    Task {
+                                                        HapticManager.shared.impact(style: .light)
+                                                        await vm.getForYou(.refresh)
+                                                        HapticManager.shared.notification(type: .success)
                                                     }
-                                                    
-                                                    if draggedAmount != .zero {
-                                                        withAnimation {
-                                                            draggedAmount = .zero
-                                                        }
-                                                    }
-                                                    readyToReferesh = true
-                                                })
-                                        )
-                                        .blur(radius: draggedAmount < 0.1 ? 0 : draggedAmount * 8)
-                                })
-                        }
-                        .singlePagination()
-                        .pagingPriority(.simultaneous)
-                        //                        .delaysTouches(false)
-                        .bounces(false)
-                        .vertical()
-                        .onPageChanged({ pageIndex in
-                            // set playId
-                            if page.index >= 0 && vm.items.count >= pageIndex + 1 {
-                                switch vm.items[pageIndex].resource {
-                                case .review(let feedReview):
-                                    if let first = feedReview.videos.first, videoPlayerVM.playId != first.id {
-                                        videoPlayerVM.playId = first.id
-                                    } else if videoPlayerVM.playId != nil {
-                                        videoPlayerVM.playId = nil
-                                    }
-                                default:
-                                    break
-                                }
-                            }
-                            
-                            guard pageIndex >= vm.items.count - 5 else { return }
-                            
-                            if !vm.isLoading {
-                                Task {
-                                    await vm.getForYou(.new)
-                                }
-                            }
+                                                }
+                                            }
+                                            
+                                            if draggedAmount != .zero {
+                                                withAnimation {
+                                                    draggedAmount = .zero
+                                                }
+                                            }
+                                            readyToReferesh = true
+                                        })
+                                )
+                                .blur(radius: draggedAmount < 0.1 ? 0 : draggedAmount * 8)
                         })
-                        .overlay(alignment: .top) {
-                            ProgressView(value: draggedAmount)
-                                .opacity(draggedAmount < 0.1 ? 0 : draggedAmount * 0.5 + 0.5)
+                }
+                .singlePagination()
+                .pagingPriority(.simultaneous)
+                //                .delaysTouches(false)
+                .bounces(false)
+                .vertical()
+                .onPageChanged({ pageIndex in
+                    // set playId
+                    if page.index >= 0 && vm.items.count >= pageIndex + 1 {
+                        switch vm.items[pageIndex].resource {
+                        case .review(let feedReview):
+                            if let first = feedReview.videos.first, videoPlayerVM.playId != first.id {
+                                videoPlayerVM.playId = first.id
+                            } else if videoPlayerVM.playId != nil {
+                                videoPlayerVM.playId = nil
+                            }
+                        default:
+                            break
                         }
-                        .environment(\.colorScheme, .dark)
-                    } else {
-                        ForYouItemPlaceholder(parentGeometry: geometry)
                     }
+                    
+                    guard pageIndex >= vm.items.count - 5 else { return }
+                    
+                    if !vm.isLoading {
+                        Task {
+                            await vm.getForYou(.new)
+                        }
+                    }
+                })
+                .frame(width: mainWindowSize.width, height: mainWindowSize.height)
+                .overlay(alignment: .top) {
+                    ProgressView(value: draggedAmount)
+                        .opacity(draggedAmount < 0.1 ? 0 : draggedAmount * 0.5 + 0.5)
                 }
                 .ignoresSafeArea(edges: .top)
                 .onChange(of: appData.tappedTwice) { tapped in
@@ -124,8 +121,13 @@ struct ForYouView: View {
                         }
                     }
                 }
-            })
+            } else {
+                ForYouItemPlaceholder()
+                    .frame(width: mainWindowSize.width, height: mainWindowSize.height)
+                    .ignoresSafeArea(edges: .top)
+            }
         }
+        .environment(\.colorScheme, .dark)
         .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {
             forYouInfoVM.reset()
         }) {

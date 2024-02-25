@@ -97,6 +97,9 @@ struct FirstLoadingView: View {
                     Text("Weird, It should not take this long")
                         .foregroundStyle(.white.opacity(0.7))
                         .padding(.horizontal)
+                    
+                    Color.clear
+                        .frame(height: 30)
                 } else if retries >= 3 {
                     Button {
                         if let url = URL(string: "mailto:admin@phantomphood.com") {
@@ -120,6 +123,9 @@ struct FirstLoadingView: View {
                     } label: {
                         Text("Sign Out")
                     }
+                } else {
+                    Color.clear
+                        .frame(height: 50)
                 }
             }
             .font(.custom(style: .subheadline))

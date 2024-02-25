@@ -42,6 +42,8 @@ final class RewardsHubVM: ObservableObject {
     
     @Published var userInviteLinks: [InviteLinkEntity]? = nil
     
+    @Published var invitedUsersList: [UserProfileDM.UserEssentialsWithCreationDate]? = nil
+    
     func claimDailyReward() async {
         guard !pcVM.hasClaimedToday && !loadingSections.contains(.dailyReward) else { return }
         
@@ -157,6 +159,7 @@ final class RewardsHubVM: ObservableObject {
                         if completed {
                             if let url = URL(string: buo.getShortUrl(with: lp) ?? "") {
                                 self.addInviteLink(url)
+                                self.getUserInvites()
                             }
                         }
                     }
@@ -172,43 +175,29 @@ final class RewardsHubVM: ObservableObject {
         
         do {
             let usersResponse = try await userProfileDM.getReferredUsers()
+            self.invitedUsersList = usersResponse.data
             
             guard !usersResponse.data.isEmpty else { return }
             
             let pendingInvites = userInviteLinks.filter { $0.referredUser == nil }
             
-            guard !pendingInvites.isEmpty else { return }
-            
-            if let lastAccept = userInviteLinks.last(where: { $0.referredUser != nil }) {
-                print("Last accepted")
-                print(lastAccept.referredUser!)
-            } else {
-                print("No last accept set")
-                return
-                for index in 0..<pendingInvites.count {
-                    if (usersResponse.data.count - 1) - index >= 0 {
-                        pendingInvites[index].referredUser = usersResponse.data[(usersResponse.data.count - 1) - index].id
-                        pendingInvites[index].confirmedAt = usersResponse.data[(usersResponse.data.count - 1) - index].createdAt
-                        print(usersResponse.data[(usersResponse.data.count - 1) - index].id)
+            for user in usersResponse.data {
+                if !userInviteLinks.contains(where: { inviteLinkEntity in
+                    if let referredUser = inviteLinkEntity.referredUser {
+                        return referredUser == user.id
+                    }
+                    return false
+                }) {
+                    if let first = pendingInvites.first {
+                        first.referredUser = user.id
+                        first.confirmedAt = .now
+                        
+                        saveCoreData()
                     } else {
-                        break
+                        addInviteLink(referredUser: user.id)
                     }
                 }
-                
-                try CoreDataStack.shared.saveContext()
             }
-            
-            /// get pending invites
-            ///     if exists   |   else exit
-            ///     get latest accepted invite
-            ///         if exists
-            ///             check users to match
-            ///                 if exists and if more users exist
-            ///                     assign from end of users (with filtering) to remaining pending invites
-            ///                 else
-            ///                     assign from end of users to remaining pending invites
-            ///         else
-            ///             assign from end of users to remaining pending invites
         } catch {
             print(error)
         }
@@ -259,6 +248,7 @@ final class RewardsHubVM: ObservableObject {
         }
     }
     
+    /// Also changes UserSettings.shared.inviteCredits
     func addInviteLink(_ link: URL) {
         let context = CoreDataStack.shared.viewContext
         let inviteLink = InviteLinkEntity(context: context)
@@ -270,10 +260,19 @@ final class RewardsHubVM: ObservableObject {
         saveCoreData()
     }
     
+    func addInviteLink(referredUser: String) {
+        let context = CoreDataStack.shared.viewContext
+        let inviteLink = InviteLinkEntity(context: context)
+        inviteLink.referredUser = referredUser
+        inviteLink.createdAt = .now
+        inviteLink.confirmedAt = .now
+        
+        saveCoreData()
+    }
+    
     private func saveCoreData() {
         do {
             try CoreDataStack.shared.saveContext()
-            getUserInvites()
         } catch {
             print(error)
         }
