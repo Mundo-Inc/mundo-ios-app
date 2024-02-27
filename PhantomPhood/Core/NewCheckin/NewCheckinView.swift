@@ -9,8 +9,7 @@ import SwiftUI
 import PhotosUI
 
 struct NewCheckinView: View {
-    @ObservedObject private var auth = Authentication.shared
-    @StateObject private var pickerVM = PickerVM()
+    @StateObject private var pickerVM = PickerVM(limitToOne: true)
     
     @StateObject private var vm: NewCheckinVM
     
@@ -47,7 +46,7 @@ struct NewCheckinView: View {
                         
                         TextField("(Optional) - Caption", text: $vm.caption, axis: .vertical)
                             .lineLimit(5...15)
-                            .disabled(vm.loadings.contains(.submitting))
+                            .disabled(vm.loadingSections.contains(.submitting))
                             .padding()
                             .background {
                                 RoundedRectangle(cornerRadius: 10)
@@ -61,7 +60,7 @@ struct NewCheckinView: View {
                             }
                             Button {
                                 withAnimation {
-                                    vm.isUserSelectorPresented = true
+                                    vm.presentedSheet = .userSelector
                                 }
                             } label: {
                                 HStack {
@@ -77,7 +76,7 @@ struct NewCheckinView: View {
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
-                            .disabled(vm.loadings.contains(.submitting))
+                            .disabled(vm.loadingSections.contains(.submitting))
                             .foregroundStyle(Color.accentColor)
                         }
                         .padding()
@@ -94,14 +93,22 @@ struct NewCheckinView: View {
                                 .font(.custom(style: .caption))
                                 .foregroundStyle(Color.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.bottom, 8)
                             
-                            PhotosPicker(
-                                selection: $pickerVM.selection,
-                                maxSelectionCount: 1,
-                                matching: .any(of: [.images]),
-                                photoLibrary: .shared()
-                            ) {
-                                if pickerVM.mediaItems.isEmpty {
+                            if pickerVM.mediaItems.isEmpty {
+                                Menu {
+                                    Button {
+                                        vm.presentedSheet = .photosPicker
+                                    } label: {
+                                        Text("Choose From Library")
+                                    }
+                                    
+                                    Button {
+                                        vm.presentedSheet = .camera
+                                    } label: {
+                                        Text("Take a Photo")
+                                    }
+                                } label: {
                                     Label {
                                         Text("Add Photo")
                                             .fontWeight(.medium)
@@ -113,67 +120,121 @@ struct NewCheckinView: View {
                                     .padding(.vertical, 12)
                                     .background(Color.accentColor)
                                     .clipShape(.rect(cornerRadius: 10))
-                                } else {
-                                    ZStack(alignment: .topTrailing) {
-                                        ForEach(pickerVM.mediaItems) { item in
-                                            switch item.state {
-                                            case .empty:
-                                                VStack {
-                                                    Text("Loading")
-                                                        .font(.custom(style: .caption))
-                                                    
-                                                    ProgressView()
-                                                        .controlSize(.regular)
-                                                }
-                                            case .loading:
-                                                VStack {
-                                                    Text("Loading")
-                                                        .font(.custom(style: .caption))
-                                                    
-                                                    ProgressView()
-                                                        .controlSize(.regular)
-                                                }
-                                            case .loaded(let mediaData):
-                                                switch mediaData {
-                                                case .image(let uiImage):
-                                                    Image(uiImage: uiImage)
-                                                        .resizable()
-                                                        .aspectRatio(contentMode: .fill)
-                                                        .frame(maxWidth: .infinity)
-                                                        .clipShape(.rect(cornerRadius: 10))
-                                                case .movie(let url):
-                                                    ReviewVideoView(url: url, mute: true)
-                                                        .frame(width: 110, height: 140)
-                                                        .clipShape(.rect(cornerRadius: 10))
-                                                }
-                                            case .failure(let error):
-                                                Text("Error: \(error.localizedDescription)")
-                                                    .frame(width: 110, height: 140)
-                                            }
+                                }
+                                .controlSize(.large)
+                                .disabled(vm.loadingSections.contains(.submitting))
+                            } else {
+                                HStack {
+                                    Menu {
+                                        Button {
+                                            vm.presentedSheet = .photosPicker
+                                        } label: {
+                                            Text("Choose From Library")
                                         }
                                         
                                         Button {
-                                            withAnimation {
-                                                self.pickerVM.selection.removeAll()
-                                            }
+                                            vm.presentedSheet = .camera
                                         } label: {
-                                            Image(systemName: "minus.circle.fill")
-                                                .font(.system(size: 22))
-                                                .foregroundStyle(Color.red)
-                                                .padding(8)
-                                                .background(RoundedRectangle(cornerRadius: 8).foregroundStyle(Color.black.opacity(0.5)))
-                                                .shadow(color: Color.black.opacity(0.2), radius: 2, x: 0, y: 1)
+                                            Text("Take a Photo")
                                         }
-                                        .padding(.trailing, 5)
-                                        .padding(.top, 5)
+                                    } label: {
+                                        HStack {
+                                            ForEach(pickerVM.mediaItems) { item in
+                                                switch item.state {
+                                                case .empty:
+                                                    VStack {
+                                                        Text("Loading")
+                                                            .font(.custom(style: .caption))
+                                                        
+                                                        ProgressView()
+                                                            .controlSize(.regular)
+                                                    }
+                                                case .loading:
+                                                    VStack {
+                                                        Text("Loading")
+                                                            .font(.custom(style: .caption))
+                                                        
+                                                        ProgressView()
+                                                            .controlSize(.regular)
+                                                    }
+                                                case .loaded(let mediaData):
+                                                    switch mediaData {
+                                                    case .image(let uiImage):
+                                                        Image(uiImage: uiImage)
+                                                            .resizable()
+                                                            .aspectRatio(contentMode: .fit)
+                                                            .frame(maxWidth: .infinity)
+                                                            .clipShape(.rect(cornerRadius: 10))
+                                                    case .movie(let url):
+                                                        ReviewVideoView(url: url, mute: true)
+                                                            .frame(width: 110, height: 140)
+                                                            .clipShape(.rect(cornerRadius: 10))
+                                                    }
+                                                case .failure(let error):
+                                                    Text("Error: \(error.localizedDescription)")
+                                                        .frame(width: 110, height: 140)
+                                                }
+                                            }
+                                        }
+                                        .frame(maxWidth: .infinity)
                                     }
+                                    .controlSize(.large)
+                                    .disabled(vm.loadingSections.contains(.submitting))
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    VStack(alignment: .leading) {
+                                        Group {
+                                            if let first = pickerVM.mediaItems.first {
+                                                if case .loaded(let mediaData) = first.state, case .image(let uiImage) = mediaData, first.source == .camera {
+                                                    Button {
+                                                        let imageSaver = ImageSaver { _, error, _ in
+                                                            if error == nil {
+                                                                withAnimation {
+                                                                    vm.savedImageId = first.id
+                                                                }
+                                                            }
+                                                        }
+                                                        
+                                                        imageSaver.writeToPhotoAlbum(uiImage: uiImage)
+                                                    } label: {
+                                                        if #available(iOS 17.0, *) {
+                                                            Label(vm.savedImageId == first.id ? "Saved" : "Save to Library", systemImage: vm.savedImageId == first.id ? "checkmark.circle" : "square.and.arrow.down")
+                                                                .contentTransition(.symbolEffect(.replace.upUp.byLayer))
+                                                        } else {
+                                                            Label(vm.savedImageId == first.id ? "Saved" : "Save to Library", systemImage: vm.savedImageId == first.id ? "checkmark.circle" : "square.and.arrow.down")
+                                                        }
+                                                    }
+                                                    .foregroundStyle(vm.savedImageId == first.id ? Color.white : Color.accentColor)
+                                                    
+                                                    Divider()
+                                                }
+                                                
+                                                Button {
+                                                    withAnimation {
+                                                        pickerVM.removeItem(first)
+                                                    }
+                                                } label: {
+                                                    Label("Remove", systemImage: "minus.circle")
+                                                }
+                                            }
+                                        }
+                                        .controlSize(.large)
+                                        
+                                        Spacer()
+                                    }
+                                    .onDisappear {
+                                        vm.savedImageId = nil
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
-                            .disabled(vm.loadings.contains(.submitting))
-                            .controlSize(.large)
-                            .padding(.top, 8)
                         }
+                        .font(.custom(style: .body))
                         .padding()
+                        .photosPicker(isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: NewCheckinVM.Sheets.photosPicker), selection: $pickerVM.selection, maxSelectionCount: 1, matching: .any(of: [.images]), photoLibrary: .shared())
+                        .fullScreenCover(isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: NewCheckinVM.Sheets.camera)) {
+                            CameraView(onCompletion: pickerVM.cameraHandler)
+                        }
                         
                         Section {
                             if vm.isAdvancedSettingsVisible {
@@ -209,31 +270,25 @@ struct NewCheckinView: View {
                         }
                         .padding(.horizontal)
                     }
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 40)
                 }
                 .scrollDismissesKeyboard(.interactively)
                 .scrollIndicators(.never)
                 .font(.custom(style: .body))
-                .sheet(isPresented: $vm.isUserSelectorPresented, content: {
+                .sheet(isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: NewCheckinVM.Sheets.userSelector), content: {
                     if #available(iOS 16.4, *) {
-                        UserSelector(onSelect: { user in
+                        UserSelector { user in
                             if !vm.mentions.contains(where: { $0.id == user.id }) {
                                 vm.mentions.append(user)
                             }
-                            vm.isUserSelectorPresented = false
-                        }, onCancel: {
-                            vm.isUserSelectorPresented = false
-                        })
+                        }
                         .presentationBackground(.thinMaterial)
                     } else {
-                        UserSelector(onSelect: { user in
+                        UserSelector { user in
                             if !vm.mentions.contains(where: { $0.id == user.id }) {
                                 vm.mentions.append(user)
                             }
-                            vm.isUserSelectorPresented = false
-                        }, onCancel: {
-                            vm.isUserSelectorPresented = false
-                        })
+                        }
                     }
                 })
             }
@@ -248,14 +303,14 @@ struct NewCheckinView: View {
                     }
                 } label: {
                     HStack {
-                        if vm.loadings.contains(.submitting) {
+                        if vm.loadingSections.contains(.submitting) {
                             ProgressView()
                         }
                         
                         Text("Submit")
                     }
                 }
-                .disabled(vm.loadings.contains(.placeInfo) || vm.loadings.contains(.submitting) || vm.error != nil)
+                .disabled(vm.loadingSections.contains(.placeInfo) || vm.loadingSections.contains(.submitting) || vm.error != nil)
                 .font(.custom(style: .body))
                 .buttonStyle(.borderedProminent)
                 .controlSize(.mini)

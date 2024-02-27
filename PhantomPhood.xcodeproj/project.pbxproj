@@ -50,6 +50,13 @@
 		0B226F672B33589C0036B8BE /* ProfileAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B226F662B33589C0036B8BE /* ProfileAchievements.swift */; };
 		0B226F692B3359F40036B8BE /* Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B226F682B3359F40036B8BE /* Achievement.swift */; };
 		0B226F6B2B336B170036B8BE /* UserProfileAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B226F6A2B336B170036B8BE /* UserProfileAchievements.swift */; };
+		0B2694A92B8E3C10004FA5C8 /* CameraError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2694A82B8E3C10004FA5C8 /* CameraError.swift */; };
+		0B2694AB2B8E3C22004FA5C8 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2694AA2B8E3C22004FA5C8 /* CameraPreview.swift */; };
+		0B2694AD2B8E3C43004FA5C8 /* CameraVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2694AC2B8E3C43004FA5C8 /* CameraVM.swift */; };
+		0B2694AF2B8E3C64004FA5C8 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2694AE2B8E3C64004FA5C8 /* CameraView.swift */; };
+		0B2694B22B8E3CC0004FA5C8 /* PhotoCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2694B12B8E3CC0004FA5C8 /* PhotoCaptureView.swift */; };
+		0B2694B42B8E3CC8004FA5C8 /* PhotoCaptureVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2694B32B8E3CC8004FA5C8 /* PhotoCaptureVM.swift */; };
+		0B2694B62B8E90C4004FA5C8 /* ImageSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2694B52B8E90C4004FA5C8 /* ImageSaver.swift */; };
 		0B27AE192B752F7500C97559 /* RouteScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B27AE182B752F7500C97559 /* RouteScheme.swift */; };
 		0B27AE1C2B7575A300C97559 /* SignInVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B27AE1B2B7575A200C97559 /* SignInVM.swift */; };
 		0B27AE1F2B75786400C97559 /* ReportDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B27AE1E2B75786400C97559 /* ReportDM.swift */; };
@@ -414,6 +421,13 @@
 		0B226F662B33589C0036B8BE /* ProfileAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAchievements.swift; sourceTree = "<group>"; };
 		0B226F682B3359F40036B8BE /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
 		0B226F6A2B336B170036B8BE /* UserProfileAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileAchievements.swift; sourceTree = "<group>"; };
+		0B2694A82B8E3C10004FA5C8 /* CameraError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraError.swift; sourceTree = "<group>"; };
+		0B2694AA2B8E3C22004FA5C8 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
+		0B2694AC2B8E3C43004FA5C8 /* CameraVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraVM.swift; sourceTree = "<group>"; };
+		0B2694AE2B8E3C64004FA5C8 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		0B2694B12B8E3CC0004FA5C8 /* PhotoCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureView.swift; sourceTree = "<group>"; };
+		0B2694B32B8E3CC8004FA5C8 /* PhotoCaptureVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureVM.swift; sourceTree = "<group>"; };
+		0B2694B52B8E90C4004FA5C8 /* ImageSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaver.swift; sourceTree = "<group>"; };
 		0B27AE182B752F7500C97559 /* RouteScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteScheme.swift; sourceTree = "<group>"; };
 		0B27AE1B2B7575A200C97559 /* SignInVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInVM.swift; sourceTree = "<group>"; };
 		0B27AE1E2B75786400C97559 /* ReportDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportDM.swift; sourceTree = "<group>"; };
@@ -937,6 +951,27 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		0B2694A72B8E3BFA004FA5C8 /* CameraView */ = {
+			isa = PBXGroup;
+			children = (
+				0B2694A82B8E3C10004FA5C8 /* CameraError.swift */,
+				0B2694AA2B8E3C22004FA5C8 /* CameraPreview.swift */,
+				0B2694AE2B8E3C64004FA5C8 /* CameraView.swift */,
+				0B2694AC2B8E3C43004FA5C8 /* CameraVM.swift */,
+				0B2694B02B8E3CB1004FA5C8 /* PhotoCapture */,
+			);
+			path = CameraView;
+			sourceTree = "<group>";
+		};
+		0B2694B02B8E3CB1004FA5C8 /* PhotoCapture */ = {
+			isa = PBXGroup;
+			children = (
+				0B2694B12B8E3CC0004FA5C8 /* PhotoCaptureView.swift */,
+				0B2694B32B8E3CC8004FA5C8 /* PhotoCaptureVM.swift */,
+			);
+			path = PhotoCapture;
+			sourceTree = "<group>";
+		};
 		0B27AE1A2B752F8600C97559 /* Routing */ = {
 			isa = PBXGroup;
 			children = (
@@ -1097,6 +1132,7 @@
 			children = (
 				0BF81DC32ABE369500B8892E /* CustomFonts.swift */,
 				0BC2E3112B2207820002649D /* ImageHelper.swift */,
+				0B2694B52B8E90C4004FA5C8 /* ImageSaver.swift */,
 				0BE1E17D2AD5B84A00645AA0 /* Location.swift */,
 				0B3E73CB2B29E9E00092072F /* Throttle.swift */,
 				0B6495522AB0A51F000E57AF /* Validator.swift */,
@@ -1276,8 +1312,8 @@
 				0B77EA402AAF855600C8DF87 /* Preview Content */,
 				0B9EF27F2B302E070025F464 /* Services */,
 				0BCF5D6C2B5DEA7A00D729E2 /* SoundEffects */,
-				0B95AD412B7EEE1F00F6E85B /* UserDataContainer.xcdatamodeld */,
 				0B6495512AB0A4EF000E57AF /* Utils */,
+				0B95AD412B7EEE1F00F6E85B /* UserDataContainer.xcdatamodeld */,
 			);
 			path = PhantomPhood;
 			sourceTree = "<group>";
@@ -1585,6 +1621,7 @@
 			children = (
 				0B6B4AB42B484A7F002C9FE0 /* AddReview */,
 				0B9C026D2B45C258000C4774 /* AddToList */,
+				0B2694A72B8E3BFA004FA5C8 /* CameraView */,
 				0B547D832B3F3D1C002C6336 /* CreateNewList */,
 				0B29207F2B55902E0026DDDE /* PlaceSelector */,
 				0BF10B912B35D0B100522E60 /* ProfileActivities */,
@@ -1918,6 +1955,7 @@
 				0B026CDA2B5AB959002DAD24 /* Mission.swift in Sources */,
 				0B1610D42B63237800DCAFA5 /* UserDetail.swift in Sources */,
 				0BC2E3102B22076D0002649D /* VideoHelper.swift in Sources */,
+				0B2694B62B8E90C4004FA5C8 /* ImageSaver.swift in Sources */,
 				0BCBC1902ACDEDDE00992D8E /* PlaceReviewsVM.swift in Sources */,
 				0B0E6D222ABB077B00EC62EE /* UserActivityItemTemplate.swift in Sources */,
 				0B4016752B046AA5000F1263 /* ForYouView.swift in Sources */,
@@ -1937,6 +1975,7 @@
 				0B6839922AEC335D0082661A /* ReportView.swift in Sources */,
 				0B013EF02AB78BA5003CB57F /* EditProfileView.swift in Sources */,
 				0B1610C62B62A14E00DCAFA5 /* NewCheckinView.swift in Sources */,
+				0B2694A92B8E3C10004FA5C8 /* CameraError.swift in Sources */,
 				0BCD57E52B28B38000A1C914 /* MapDM.swift in Sources */,
 				0B64C4CD2AB4CCA1009F0D43 /* DataCard.swift in Sources */,
 				0B01836A2AB3C179008E887F /* UserProfileView.swift in Sources */,
@@ -1944,6 +1983,7 @@
 				0B76C9D32B712F120013CE3E /* AnimatedStarRating.swift in Sources */,
 				0B0253052B18CE64003702AF /* PlaceIcon.swift in Sources */,
 				0BD9F98F2B4DB5CC0040FCDA /* UserActivityReview.swift in Sources */,
+				0B2694B22B8E3CC0004FA5C8 /* PhotoCaptureView.swift in Sources */,
 				0B0253032B18CB24003702AF /* ForYouInfoView.swift in Sources */,
 				0BC84A6B2AD071EE00D723AA /* SelectReactionsView.swift in Sources */,
 				0B0E6D282ABB242700EC62EE /* Comment.swift in Sources */,
@@ -2000,6 +2040,7 @@
 				0BA038412AF24CE6000A2B33 /* UserConnectionsVM.swift in Sources */,
 				0B547D7E2B3EEC61002C6336 /* UserPlacesList.swift in Sources */,
 				0B6495532AB0A51F000E57AF /* Validator.swift in Sources */,
+				0B2694AB2B8E3C22004FA5C8 /* CameraPreview.swift in Sources */,
 				0BD9F98D2B4DB5770040FCDA /* UserActivityLevelUp.swift in Sources */,
 				0BC84A6F2AD0A83900D723AA /* PlaceMediaView.swift in Sources */,
 				0B1610CF2B631ED900DCAFA5 /* RegionPlace.swift in Sources */,
@@ -2038,6 +2079,7 @@
 				0B93B86F2B83CA63004AECEF /* PlaceVM.swift in Sources */,
 				0BF5B4A92AB3758000DEC403 /* HomeView.swift in Sources */,
 				0B013EEE2AB7559E003CB57F /* LevelView.swift in Sources */,
+				0B2694AD2B8E3C43004FA5C8 /* CameraVM.swift in Sources */,
 				0B1610D82B63245700DCAFA5 /* UserConnection.swift in Sources */,
 				0BC2E3162B2207EB0002649D /* TaskManager.swift in Sources */,
 				0BB0C9592B30B3F00013DEAE /* Emoji.swift in Sources */,
@@ -2088,6 +2130,7 @@
 				0B695D7E2AF15EEE00C11870 /* ConnectionsDM.swift in Sources */,
 				0B77EA502AAF8C3B00C8DF87 /* WelcomeView.swift in Sources */,
 				0B1610C82B631DE000DCAFA5 /* PlaceOverview.swift in Sources */,
+				0B2694AF2B8E3C64004FA5C8 /* CameraView.swift in Sources */,
 				0B384FA52B2B57B200C98245 /* UserActivityView.swift in Sources */,
 				0B226F692B3359F40036B8BE /* Achievement.swift in Sources */,
 				0BC5A2052B5FF34E0029A7A9 /* Int.swift in Sources */,
@@ -2099,6 +2142,7 @@
 				0B2D20E92B4632D600D4F0C1 /* UserProfileListsVM.swift in Sources */,
 				0BB437292B7673DD002B57D1 /* AchievementsEnum.swift in Sources */,
 				0B46814D2AC5EAFB009C5EF9 /* FirstLoadingView.swift in Sources */,
+				0B2694B42B8E3CC8004FA5C8 /* PhotoCaptureVM.swift in Sources */,
 				0B7DD5412B14DCC100D2EECB /* VideoPlayerVM.swift in Sources */,
 				0BCAE7442B7E6B5D005AD0EF /* MissionItem.swift in Sources */,
 				0B383CF52B87F9A600D68678 /* EnvironmentValues.swift in Sources */,
@@ -2253,9 +2297,11 @@
 				INFOPLIST_FILE = PhantomPhood/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Phantom Phood";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to let you capture and upload photos/videos directly.";
 				INFOPLIST_KEY_NSContactsUsageDescription = "This helps you and others to find people to follow and helps you connect and interact with people you already follow. Your contacts will be synced and securely stored in Phantom Phood's servers.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app requires your device location to be able to show the nearest places to you and to personalize suggestions";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app requires your device location to be able to show the nearest places to you and to personalize suggestions";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This app requires this permission to save images/videos to your gallery";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -2266,7 +2312,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.50.7;
+				MARKETING_VERSION = 0.51.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2291,9 +2337,11 @@
 				INFOPLIST_FILE = PhantomPhood/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Phantom Phood";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to let you capture and upload photos/videos directly.";
 				INFOPLIST_KEY_NSContactsUsageDescription = "This helps you and others to find people to follow and helps you connect and interact with people you already follow. Your contacts will be synced and securely stored in Phantom Phood's servers.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app requires your device location to be able to show the nearest places to you and to personalize suggestions";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app requires your device location to be able to show the nearest places to you and to personalize suggestions";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This app requires this permission to save images/videos to your gallery";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -2304,7 +2352,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.50.7;
+				MARKETING_VERSION = 0.51.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -18,20 +18,22 @@ final class NewCheckinVM: ObservableObject {
     @Published var caption: String = ""
     @Published var mentions: [UserEssentials] = []
     
-    @Published var isUserSelectorPresented: Bool = false
+    @Published var presentedSheet: Sheets? = nil
+    
+    @Published var savedImageId: String? = nil
     
     @Published var isAdvancedSettingsVisible: Bool = false
     
     @Published var place: PlaceEssentials? = nil
     @Published var error: String? = nil
     
-    @Published var loadings = Set<Loadings>()
+    @Published var loadingSections = Set<Loadings>()
     
     init(idOrData: IdOrData<PlaceEssentials>) {
         switch idOrData {
         case .id(let placeId):
             Task { [weak self] in
-                self?.loadings.insert(.placeInfo)
+                self?.loadingSections.insert(.placeInfo)
                 do {
                     let placeOverview = try await self?.placeDM.getOverview(id: placeId)
                     if let placeOverview {
@@ -42,7 +44,7 @@ final class NewCheckinVM: ObservableObject {
                 } catch {
                     self?.error = "Couldn't fetch place data"
                 }
-                self?.loadings.remove(.placeInfo)
+                self?.loadingSections.remove(.placeInfo)
             }
             break
         case .data(let placeData):
@@ -53,7 +55,7 @@ final class NewCheckinVM: ObservableObject {
     
     init(mapPlace: MapPlace) {
         Task { [weak self] in
-            self?.loadings.insert(.placeInfo)
+            self?.loadingSections.insert(.placeInfo)
             do {
                 let placeData = try await self?.placeDM.fetch(mapPlace: mapPlace)
                 if let placeData {
@@ -64,14 +66,14 @@ final class NewCheckinVM: ObservableObject {
             } catch {
                 self?.error = "Couldn't fetch place data"
             }
-            self?.loadings.remove(.placeInfo)
+            self?.loadingSections.remove(.placeInfo)
         }
     }
     
     func submit(mediaItems: [MediaItem]) async {
-        guard let place, !loadings.contains(.submitting) else { return }
+        guard let place, !loadingSections.contains(.submitting) else { return }
         
-        loadings.insert(.submitting)
+        loadingSections.insert(.submitting)
         
         taskManager.newTask(.init(title: "New Checkin", medias: mediaItems.compactMap({ mediaItem in
             switch mediaItem.state {
@@ -100,15 +102,21 @@ final class NewCheckinVM: ObservableObject {
                 self.toastVM.toast(.init(type: .error, title: "Error", message: "Couldn't check in"))
             }
             
-            self.loadings.remove(.submitting)
+            self.loadingSections.remove(.submitting)
         }, onError: { error in
             self.toastVM.toast(.init(type: .error, title: "Error", message: "Couldn't check in :("))
-            self.loadings.remove(.submitting)
+            self.loadingSections.remove(.submitting)
         }))
     }
     
     enum Loadings: Hashable {
         case placeInfo
         case submitting
+    }
+    
+    enum Sheets {
+        case camera
+        case photosPicker
+        case userSelector
     }
 }

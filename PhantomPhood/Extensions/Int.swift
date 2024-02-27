@@ -18,7 +18,7 @@ extension Int {
             if value.truncatingRemainder(dividingBy: 1) == 0 {
                 return "\(Int(value))"
             } else {
-                return String(format: "%.1f", value)
+                return String(format: "%.1f", floor(value * 10) / 10)
             }
         }
         

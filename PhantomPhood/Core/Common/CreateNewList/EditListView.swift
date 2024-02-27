@@ -15,7 +15,7 @@ struct EditListView: View {
     @Environment(\.dismiss) private var dismiss
     
     // Creating new instance because of the sheet
-    @StateObject var selectReactionsVM = SelectReactionsVM()
+    @StateObject private var selectReactionsVM = SelectReactionsVM()
     
     init(originalList: UserPlacesList, onSuccess: @escaping (UserPlacesList) -> Void = { _ in }, onCancel: @escaping () -> Void = {}) {
         self._vm = StateObject(wrappedValue: EditListVM(originalList: originalList, onSuccess: onSuccess, onCancel: onCancel))
@@ -242,24 +242,18 @@ struct EditListView: View {
         })
         .sheet(isPresented: $vm.showAddListCollaborators, content: {
             if #available(iOS 16.4, *) {
-                UserSelector(onSelect: { user in
+                UserSelector { user in
                     if !vm.collaborators.contains(where: { $0.user.id == user.id }) {
                         vm.collaborators.append(.init(user: user, access: .edit))
                     }
-                    vm.showAddListCollaborators = false
-                }, onCancel: {
-                    vm.showAddListCollaborators = false
-                })
+                }
                 .presentationBackground(.thinMaterial)
             } else {
-                UserSelector(onSelect: { user in
+                UserSelector { user in
                     if !vm.collaborators.contains(where: { $0.user.id == user.id }) {
                         vm.collaborators.append(.init(user: user, access: .edit))
                     }
-                    vm.showAddListCollaborators = false
-                }, onCancel: {
-                    vm.showAddListCollaborators = false
-                })
+                }
             }
         })
         .onDisappear {

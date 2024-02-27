@@ -10,8 +10,8 @@ import PhotosUI
 import Kingfisher
 
 struct AddReviewView: View {
-    @ObservedObject var appData = AppData.shared
-    @StateObject var vm: AddReviewVM
+    @ObservedObject private var appData = AppData.shared
+    @StateObject private var vm: AddReviewVM
     
     init(_ idOrData: IdOrData<PlaceEssentials>) {
         self._vm = StateObject(wrappedValue: AddReviewVM(idOrData: idOrData))
@@ -21,7 +21,7 @@ struct AddReviewView: View {
         self._vm = StateObject(wrappedValue: AddReviewVM(mapPlace: mapPlace))
     }
     
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
     
     let overallScoreEmojis = ["☹️", "😕", "🙂", "😊", "😊"]
     let foodQualityEmojis = ["🤮", "😕", "🙂", "😋", "🤤"]
@@ -31,7 +31,7 @@ struct AddReviewView: View {
     
     @StateObject private var pickerVM = PickerVM()
     
-    @FocusState var textFieldFocused
+    @FocusState private var textFieldFocused
     
     var body: some View {
         ZStack {

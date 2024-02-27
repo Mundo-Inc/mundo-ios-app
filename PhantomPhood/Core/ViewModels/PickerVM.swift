@@ -11,14 +11,18 @@ import SwiftUI
 
 @MainActor
 class PickerVM: ObservableObject {
-    let taskManager = TaskManager.shared
-    
     @Published var selection: [PhotosPickerItem] = [] {
         didSet {
             onSelectionChange()
         }
     }
     @Published private(set) var mediaItems: [MediaItem] = []
+    
+    private let limitToOne: Bool
+    
+    init(limitToOne: Bool = false) {
+        self.limitToOne = limitToOne
+    }
     
     var isReadyToSubmit: Bool {
         mediaItems.allSatisfy({ mediaItem in
@@ -30,13 +34,54 @@ class PickerVM: ObservableObject {
         })
     }
     
+    func cameraHandler(_ data: Data) {
+        if let uiImage = UIImage(data: data) {
+            DispatchQueue.main.async {
+                if self.limitToOne {
+                    if !self.selection.isEmpty {
+                        self.selection.removeAll()
+                    }
+                    self.mediaItems = [MediaItem(id: UUID().uuidString, source: .camera, state: .loaded(.image(uiImage)))]
+                } else {
+                    self.mediaItems.append(MediaItem(id: UUID().uuidString, source: .camera, state: .loaded(.image(uiImage))))
+                }
+                
+            }
+        }
+    }
+    
+    func removeItem(_ item: MediaItem) {
+        if limitToOne {
+            selection.removeAll()
+        } else {
+            if item.source == .camera {
+                if let firstIndex = self.mediaItems.firstIndex(where: { $0.id == item.id }) {
+                    self.mediaItems.remove(at: firstIndex)
+                }
+            } else {
+                if let firstIndex = selection.firstIndex(where: { photoPickerItem in
+                    if let itemIdentifier = photoPickerItem.itemIdentifier {
+                        return itemIdentifier == item.id
+                    }
+                    return false
+                }) {
+                    self.selection.remove(at: firstIndex)
+                }
+            }
+        }
+    }
+    
     private func onSelectionChange() {
-        self.mediaItems.removeAll()
+        if limitToOne {
+            self.mediaItems.removeAll()
+        } else {
+            self.mediaItems.removeAll { $0.source == .gallery }
+        }
         
         for item in selection {
             let id = item.itemIdentifier ?? UUID().uuidString
             let progress = loadTransferable(from: item, id: id)
-            self.mediaItems.append(.init(id: id, state: .loading(progress)))
+            self.mediaItems.append(.init(id: id, source: .gallery, state: .loading(progress)))
         }
     }
     
@@ -101,10 +146,16 @@ class PickerVM: ObservableObject {
 
 struct MediaItem: Identifiable {
     let id: String
+    let source: MediaItemSource
     var state: MediaItemState
     
     func newState(state newState: MediaItemState) -> MediaItem {
-        return MediaItem(id: self.id, state: newState)
+        return MediaItem(id: self.id, source: self.source, state: newState)
+    }
+    
+    enum MediaItemSource {
+        case gallery
+        case camera
     }
 }
 

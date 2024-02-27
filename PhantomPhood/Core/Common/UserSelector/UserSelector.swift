@@ -10,8 +10,8 @@ import SwiftUI
 struct UserSelector: View {
     @StateObject private var vm: UserSelectorVM
     
-    init(onSelect: @escaping (UserEssentials) -> Void = { _ in }, onCancel: @escaping () -> Void = {}) {
-        self._vm = StateObject(wrappedValue: UserSelectorVM(onSelect: onSelect, onCancel: onCancel))
+    init(onSelect: @escaping (UserEssentials) -> Void = { _ in }) {
+        self._vm = StateObject(wrappedValue: UserSelectorVM(onSelect: onSelect))
     }
     
     var body: some View {
@@ -47,9 +47,12 @@ fileprivate struct UserCard: View {
     
     let onSelect: (UserEssentials) -> Void
     
+    @Environment(\.dismiss) private var dismiss
+    
     var body: some View {
         Button {
             self.onSelect(user)
+            dismiss()
         } label: {
             HStack {
                 ProfileImage(user.profileImage, size: 42, cornerRadius: 10)

@@ -14,7 +14,6 @@ final class UserSelectorVM: ObservableObject {
     private let searchDM = SearchDM()
     
     let onSelect: (UserEssentials) -> Void
-    let onCancel: () -> Void
     
     @Published var searchText = ""
     @Published var isLoading = false
@@ -23,9 +22,8 @@ final class UserSelectorVM: ObservableObject {
     @Published var error: String? = nil
     private var cancellable = [AnyCancellable]()
     
-    init(onSelect: @escaping (UserEssentials) -> Void, onCancel: @escaping () -> Void) {
+    init(onSelect: @escaping (UserEssentials) -> Void) {
         self.onSelect = onSelect
-        self.onCancel = onCancel
         
         Task {
             await self.search("")

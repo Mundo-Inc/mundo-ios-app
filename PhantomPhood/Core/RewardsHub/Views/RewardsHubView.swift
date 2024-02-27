@@ -243,7 +243,7 @@ struct RewardsHubView: View {
             
             if let userInviteLinks = vm.userInviteLinks {
                 HStack {
-                    ForEach(userInviteLinks) { link in
+                    ForEach(userInviteLinks.prefix(upTo: 5)) { link in
                         Group {
                             if let referredUser = link.referredUser {
                                 VStack {
@@ -256,6 +256,9 @@ struct RewardsHubView: View {
                                             .foregroundStyle(.black.opacity(0.5))
                                             .redacted(reason: .placeholder)
                                     }
+                                }
+                                .onTapGesture {
+                                    appData.goTo(AppRoute.userProfile(userId: referredUser))
                                 }
                             } else if let expiresIn = link.expiresAt.remainingTime(), let url = link.link {
                                 VStack {

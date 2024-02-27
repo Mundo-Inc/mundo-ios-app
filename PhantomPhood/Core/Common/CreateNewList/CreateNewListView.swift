@@ -250,24 +250,18 @@ struct CreateNewListView: View {
         })
         .sheet(isPresented: $vm.showAddListCollaborators, content: {
             if #available(iOS 16.4, *) {
-                UserSelector(onSelect: { user in
+                UserSelector { user in
                     if !vm.collaborators.contains(where: { $0.user.id == user.id }) {
                         vm.collaborators.append(.init(user: user, access: .edit))
                     }
-                    vm.showAddListCollaborators = false
-                }, onCancel: {
-                    vm.showAddListCollaborators = false
-                })
+                }
                 .presentationBackground(.thinMaterial)
             } else {
-                UserSelector(onSelect: { user in
+                UserSelector { user in
                     if !vm.collaborators.contains(where: { $0.user.id == user.id }) {
                         vm.collaborators.append(.init(user: user, access: .edit))
                     }
-                    vm.showAddListCollaborators = false
-                }, onCancel: {
-                    vm.showAddListCollaborators = false
-                })
+                }
             }
         })
         .onAppear {
