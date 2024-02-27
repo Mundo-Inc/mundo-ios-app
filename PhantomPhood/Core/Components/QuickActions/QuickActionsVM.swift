@@ -86,11 +86,13 @@ final class QuickActionsVM: ObservableObject {
         default:
             self.isViewingPlace = false
             
+            guard let location = locationManager.location else { return }
+            
             // search for nearest place
             Task {
                 loadingSections.insert(.nearestPlace)
                 do {
-                    let places = try await searchDM.searchAppleMapsPlaces(region: locationManager.region)
+                    let places = try await searchDM.searchAppleMapsPlaces(region: MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 100, longitudinalMeters: 100))
                     if let first = places.first, first.name != nil {
                         self.nearestPlace = first
                         self.isNearestPlace = true

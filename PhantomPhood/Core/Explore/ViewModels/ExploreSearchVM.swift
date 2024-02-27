@@ -141,9 +141,12 @@ final class ExploreSearchVM: ObservableObject {
                 theRegion = region
             } else if let mapRegion {
                 theRegion = mapRegion
+            } else if let location = locationManager.location {
+                theRegion = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 800, longitudinalMeters: 800)
             } else {
-                theRegion = locationManager.region
+                theRegion = MKCoordinateRegion()
             }
+            
             do {
                 let mapItems = try await searchDM.searchAppleMapsPlaces(region: theRegion, q: value, categories: categories)
                 self.placeSearchResults = mapItems

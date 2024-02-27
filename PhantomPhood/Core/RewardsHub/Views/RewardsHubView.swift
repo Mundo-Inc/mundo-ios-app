@@ -243,7 +243,7 @@ struct RewardsHubView: View {
             
             if let userInviteLinks = vm.userInviteLinks {
                 HStack {
-                    ForEach(userInviteLinks.prefix(upTo: 5)) { link in
+                    ForEach(userInviteLinks.count > 5 ? Array(userInviteLinks.prefix(upTo: 5)) : userInviteLinks) { link in
                         Group {
                             if let referredUser = link.referredUser {
                                 VStack {
