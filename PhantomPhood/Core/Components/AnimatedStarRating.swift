@@ -14,7 +14,7 @@ struct AnimatedStarRating: View {
     let size: CGFloat
     
     init(score: CGFloat, activeColor: Color = Color.accentColor, size: CGFloat = 14, show: Bool = true) {
-        self.score = max(min(abs(score), 5), 0)
+        self.score = max(min(score, 5), 0)
         self.activeColor = activeColor
         self.size = size
         self.show = show

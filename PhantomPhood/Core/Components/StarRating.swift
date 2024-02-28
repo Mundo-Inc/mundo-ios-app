@@ -14,7 +14,7 @@ struct StarRating: View {
     
     init(score: Double?, activeColor: Color = Color.accentColor, size: CGFloat = 14) {
         if let score {
-            self.score = max(min(abs(score), 5), 0)
+            self.score = max(min(score, 5), 0)
         } else {
             self.score = nil
         }
@@ -29,7 +29,7 @@ struct StarRating: View {
                     ZStack(alignment: .leading) {
                         Rectangle()
                             .foregroundStyle(activeColor)
-                            .frame(width: (score ?? 0 / 5) * geometry.size.width)
+                            .frame(width: ((score ?? 0) / 5) * geometry.size.width)
                     }
                 })
                 .mask(starsView)
