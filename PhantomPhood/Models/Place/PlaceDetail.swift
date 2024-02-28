@@ -50,7 +50,7 @@ struct PlaceDetail: Identifiable, Decodable {
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, amenity, otherNames, description, location, thumbnail, phone, website, categories, priceRange, scores, reviewCount, reviews, thirdParty, media
+        case name, amenity, otherNames, description, location, thumbnail, phone, website, categories, priceRange, scores, reviewCount, thirdParty, media
     }
 }
 

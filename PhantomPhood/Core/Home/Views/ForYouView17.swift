@@ -39,7 +39,7 @@ struct ForYouView17: View {
                 LazyVStack(spacing: 0) {
                     if !vm.items.isEmpty {
                         ForEach($vm.items) { $item in
-                            ForYouItem17(item: $item, forYouVM: vm, scrollPosition: scrollPosition)
+                            ForYouItem17(item: $item, forYouVM: vm, scrollPosition: $scrollPosition)
                                 .frame(width: mainWindowSize.width, height: mainWindowSize.height)
                                 .id($item.wrappedValue.id)
                         }
