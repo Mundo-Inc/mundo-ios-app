@@ -51,7 +51,7 @@ extension CurrentUserCoreData {
         role = try container.decode(UserRole.self, forKey: .role)
         verified = try container.decode(Bool.self, forKey: .verified)
         progress = try container.decode(UserProgress.self, forKey: .progress)
-
+        
         if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
             profileImage = URL(string: profileImageString)
         } else {
@@ -103,7 +103,7 @@ extension CurrentUserFullData {
         verified = try container.decode(Bool.self, forKey: .verified)
         progress = try container.decode(UserProgress.self, forKey: .progress)
         acceptedEula = try container.decodeIfPresent(Date.self, forKey: .acceptedEula)
-
+        
         if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
             profileImage = URL(string: profileImageString)
         } else {
@@ -112,8 +112,7 @@ extension CurrentUserFullData {
     }
 }
 
-@MainActor
-class Authentication: ObservableObject {
+final class Authentication: ObservableObject {
     static let shared = Authentication()
     
     private let appData = AppData.shared
@@ -132,10 +131,14 @@ class Authentication: ObservableObject {
         }
         
         Auth.auth().addStateDidChangeListener { [weak self] (_, user) in
-            self?.userSession = user
+            DispatchQueue.main.async {
+                self?.userSession = user
+            }
         }
-
-        self.userSession = Auth.auth().currentUser
+        
+        DispatchQueue.main.async {
+            self.userSession = Auth.auth().currentUser
+        }
         
         Task {
             await updateUserInfo()
@@ -162,8 +165,10 @@ class Authentication: ObservableObject {
                     throw URLError(.userAuthenticationRequired)
                 }
                 let user = try await getUserInfo(uid: uid, token: token)
-                self.userSession = result.user
-                self.currentUser = user
+                DispatchQueue.main.async {
+                    self.userSession = result.user
+                    self.currentUser = user
+                }
                 await setDeviceToken()
                 return (true, nil, nil)
             } catch {
@@ -183,9 +188,13 @@ class Authentication: ObservableObject {
                 guard let uid = Auth.auth().currentUser?.uid, let token = await getToken() else {
                     throw URLError(.userAuthenticationRequired)
                 }
-                self.userSession = result.user
+                DispatchQueue.main.async {
+                    self.userSession = result.user
+                }
                 let user = try await getUserInfo(uid: uid, token: token)
-                self.currentUser = user
+                DispatchQueue.main.async {
+                    self.currentUser = user
+                }
                 await setDeviceToken()
                 return (true, nil, nil)
             } catch let error as APIManager.APIError {
@@ -200,9 +209,13 @@ class Authentication: ObservableObject {
                                         guard let uid = Auth.auth().currentUser?.uid, let token = await self.getToken() else {
                                             throw URLError(.userAuthenticationRequired)
                                         }
-                                        self.userSession = result.user
+                                        DispatchQueue.main.async {
+                                            self.userSession = result.user
+                                        }
                                         let user = try await self.getUserInfo(uid: uid, token: token)
-                                        self.currentUser = user
+                                        DispatchQueue.main.async {
+                                            self.currentUser = user
+                                        }
                                         await self.setDeviceToken()
                                     } catch {
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
@@ -211,14 +224,20 @@ class Authentication: ObservableObject {
                                                     guard let uid = Auth.auth().currentUser?.uid, let token = await self.getToken() else {
                                                         throw URLError(.userAuthenticationRequired)
                                                     }
-                                                    self.userSession = result.user
+                                                    DispatchQueue.main.async {
+                                                        self.userSession = result.user
+                                                    }
                                                     let user = try await self.getUserInfo(uid: uid, token: token)
-                                                    self.currentUser = user
+                                                    DispatchQueue.main.async {
+                                                        self.currentUser = user
+                                                    }
                                                     await self.setDeviceToken()
                                                 } catch {
                                                     try Auth.auth().signOut()
-                                                    self.currentUser = nil
-                                                    self.userSession = nil
+                                                    DispatchQueue.main.async {
+                                                        self.currentUser = nil
+                                                        self.userSession = nil
+                                                    }
                                                 }
                                             }
                                         }
@@ -274,8 +293,10 @@ class Authentication: ObservableObject {
         do {
             try Auth.auth().signOut()
             
-            self.currentUser = nil
-            self.userSession = nil
+            DispatchQueue.main.async {
+                self.currentUser = nil
+                self.userSession = nil
+            }
             
             UserSettings.shared.logoutCleanup()
             appData.reset()
@@ -291,15 +312,16 @@ class Authentication: ObservableObject {
             let data = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token) as APIResponse<CurrentUserFullData>?
             
             if let data {
-                self.currentUser = data.data
+                DispatchQueue.main.async {
+                    self.currentUser = data.data
+                }
                 
                 UserSettings.shared.setUserInfo(data.data)
                 
                 await setDeviceToken()
             }
         } catch {
-            print(error)
-            print("DEBUG: Couldn't get user info | Error: \(error.localizedDescription)")
+            print("DEBUG: Couldn't get user info | Error: \(error)")
         }
     }
     func getUserInfo(uid: String, token: String) async throws -> CurrentUserFullData {

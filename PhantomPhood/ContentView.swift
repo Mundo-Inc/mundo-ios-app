@@ -18,33 +18,62 @@ struct ContentView: View {
     
     @State private var showActions: Bool = false
     
+    @StateObject private var actionManager = ActionManager()
+    @StateObject private var alertManager = AlertManager()
+    
+    init() {
+        UITabBar.appearance().isHidden = true
+    }
+    
     var body: some View {
-        VStack(spacing: 0) {
+        ZStack(alignment: .bottom) {
             if let user = auth.currentUser, user.acceptedEula != nil, !onboardingVM.isPresented {
                 TabView(selection: appData.tabViewSelectionHandler) {
-                    HomeView()
-                        .tag(Tab.home)
-                        .toolbar(.hidden, for: .tabBar)
+                    Group {
+                        HomeView()
+                            .tag(Tab.home)
+                        
+                        ExploreView()
+                            .tag(Tab.explore)
+                        
+                        RewardsHubView()
+                            .tag(Tab.rewardsHub)
+                        
+                        MyProfile()
+                            .tag(Tab.myProfile)
+                    }
+                    .toolbar(.hidden, for: .tabBar)
+                }
+                .environmentObject(alertManager)
+                .environmentObject(actionManager)
+                .alert("Confirmation", isPresented: Binding(optionalValue: $alertManager.value), presenting: alertManager.value) { item in
+                    Button {
+                        item.callback()
+                    } label: {
+                        Text("Yes")
+                    }
                     
-                    ExploreView()
-                        .tag(Tab.explore)
-                        .toolbar(.hidden, for: .tabBar)
-                    
-                    RewardsHubView()
-                        .tag(Tab.rewardsHub)
-                        .toolbar(.hidden, for: .tabBar)
-                    
-                    MyProfile()
-                        .tag(Tab.myProfile)
-                        .toolbar(.hidden, for: .tabBar)
+                    Button("Cancel", role: .cancel) {
+                        alertManager.value = nil
+                    }
+                } message: { item in
+                    Text(item.message)
+                }
+                .confirmationDialog("Actions", isPresented: Binding(optionalValue: $actionManager.value), presenting: actionManager.value) { value in
+                    ForEach(value) { item in
+                        Button(item.title) {
+                            if let alertMessage = item.alertMessage {
+                                alertManager.value = .init(message: alertMessage, callback: item.callback)
+                            } else {
+                                item.callback()
+                            }
+                        }
+                    }
                 }
             } else {
                 EmptyView()
             }
             
-            Divider()
-        }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
             MainTabBarView(selection: appData.tabViewSelectionHandler, showActions: $showActions)
                 .sheet(isPresented: $showActions) {
                     QuickActionsView()

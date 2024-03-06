@@ -35,6 +35,7 @@ struct RewardsHubView: View {
                         missionsSection
                         
                         prizesSection
+                            .padding(.bottom, 30)
                     }
                     .refreshable {
                         await pcVM.refresh()

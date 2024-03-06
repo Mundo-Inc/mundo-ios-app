@@ -142,6 +142,34 @@ final class PlaceDM {
         return data
     }
     
+    func getGooglePlacesReviews(id: String) async throws -> [GoogleReview] {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let data = try await apiManager.requestData("/places/\(id)/reviews?type=googlePlaces", token: token) as APIResponse<[GoogleReview]>?
+        
+        guard let data else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return data.data
+    }
+    
+    func getYelpReviews(id: String) async throws -> [YelpReview] {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let data = try await apiManager.requestData("/places/\(id)/reviews?type=yelp", token: token) as APIResponse<[YelpReview]>?
+        
+        guard let data else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return data.data
+    }
+    
     func getMedias(id: String, page: Int = 1) async throws -> PaginatedAPIResponse<[MediaWithUser]> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)

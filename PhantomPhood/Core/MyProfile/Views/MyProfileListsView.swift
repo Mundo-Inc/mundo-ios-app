@@ -108,7 +108,7 @@ struct MyProfileListsView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal)
-        .padding(.bottom)
+        .padding(.bottom, 30)
         .font(.custom(style: .body))
         .onDisappear {
             self.isAnimating = false

@@ -43,14 +43,14 @@ struct PlaceDetail: Identifiable, Decodable {
     let categories: [String]
     let priceRange: Int?
     let scores: PlaceScores
-    let reviewCount: Int
+    let activities: PlaceOverview.Activities
     
     let thirdParty: ThirdPartyResult
     let media: [Media]
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, amenity, otherNames, description, location, thumbnail, phone, website, categories, priceRange, scores, reviewCount, thirdParty, media
+        case name, amenity, otherNames, description, location, thumbnail, phone, website, categories, priceRange, scores, activities, thirdParty, media
     }
 }
 
@@ -63,8 +63,8 @@ extension PlaceDetail {
         location = try container.decode(PlaceLocation.self, forKey: .location)
         categories = try container.decode([String].self, forKey: .categories)
         scores = try container.decode(PlaceScores.self, forKey: .scores)
-        reviewCount = try container.decode(Int.self, forKey: .reviewCount)
         thirdParty = try container.decode(ThirdPartyResult.self, forKey: .thirdParty)
+        activities = try container.decode(PlaceOverview.Activities.self, forKey: .activities)
         media = try container.decode([Media].self, forKey: .media)
         
         amenity = try container.decodeIfPresent(PlaceAmenity.self, forKey: .amenity)
@@ -88,21 +88,8 @@ extension PlaceDetail {
     struct GoogleResult: Decodable {
         let rating: Double
         let reviewCount: Int
-        let reviews: [GoogleReview]?
         let thumbnail: URL?
         let openingHours: OpenningHours?
-        
-        struct GoogleReview: Decodable {
-            let authorName: String
-            let language: String?
-            let originalLanguage: String?
-            let profilePhotoUrl: String?
-            let rating: Int
-            let relativeTimeDescription: String
-            let text: String
-            let time: Int
-            let translated: Bool
-        }
         
         struct OpenningHours: Decodable {
             let openNow: Bool
@@ -132,23 +119,6 @@ extension PlaceDetail {
         let categories: [YCategory]?
         let transactions: [String]?
         let price: String?
-        let reviews: [YelpReview]?
-        
-        struct YelpReview: Identifiable, Decodable {
-            struct YelpUser: Identifiable, Decodable {
-                let id: String
-                let profileUrl: String
-                let imageUrl: String?
-                let name: String
-            }
-            
-            let id: String
-            let url: String
-            let text: String
-            let rating: Int
-            let timeCreated: String
-            let user: YelpUser
-        }
         
         /// Yelp Category
         struct YCategory: Decodable {

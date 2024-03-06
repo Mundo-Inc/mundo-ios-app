@@ -16,11 +16,10 @@ final class AddReviewVM: ObservableObject {
         case review
     }
     
-    private let apiManager = APIManager.shared
-    private let auth = Authentication.shared
     private let toastVM = ToastVM.shared
     private let taskManager = TaskManager.shared
     private let placeDM = PlaceDM()
+    private let reviewDM = ReviewDM()
     
     @Published var step: Steps = .recommendation
     
@@ -86,27 +85,9 @@ final class AddReviewVM: ObservableObject {
     }
 
     func submit(mediaItems: [MediaItem]) async {
-        guard let place, !isSubmitting, let token = await auth.getToken() else { return }
+        guard let place, !isSubmitting else { return }
         
         self.isSubmitting = true
-        
-        struct RequestBody: Encodable {
-            let place: String
-            let scores: ScoresBody
-            let content: String
-            let recommend: Bool?
-            let images: [UploadManager.MediaIds]
-            let videos: [UploadManager.MediaIds]
-            
-            struct ScoresBody: Encodable {
-                let overall: Int?
-                let drinkQuality: Int?
-                let foodQuality: Int?
-                let service: Int?
-                let atmosphere: Int?
-                let value: Int?
-            }
-        }
         
         taskManager.newTask(.init(title: "Add Review", medias: mediaItems.compactMap({ mediaItem in
             switch mediaItem.state {
@@ -125,11 +106,9 @@ final class AddReviewVM: ObservableObject {
                 images = []
                 videos = []
             }
-            
-            let body = try self.apiManager.createRequestBody(RequestBody(place: place.id, scores: .init(overall: self.overallScore, drinkQuality: self.drinkQuality, foodQuality: self.foodQuality, service: self.service, atmosphere: self.atmosphere, value: nil), content: self.reviewContent, recommend: self.isRecommended, images: images, videos: videos))
-            
+                        
             do {
-                try await self.apiManager.requestNoContent("/reviews", method: .post, body: body, token: token)
+                try await self.reviewDM.addReview(.init(place: place.id, scores: .init(overall: self.overallScore, drinkQuality: self.drinkQuality, foodQuality: self.foodQuality, service: self.service, atmosphere: self.atmosphere, value: nil), content: self.reviewContent, recommend: self.isRecommended, images: images, videos: videos))
                 
                 self.toastVM.toast(.init(type: .success, title: "Review", message: "We got your review 🙌🏻 Thanks!"))
                 self.place = nil

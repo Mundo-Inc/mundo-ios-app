@@ -17,18 +17,13 @@ final class FeedDM {
     }
     
     func getFeed(page: Int = 1, type: FeedType) async throws -> [FeedItem] {
-        struct FeedResponse: Decodable {
-            let success: Bool
-            let result: [FeedItem]
-        }
-        
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
                 
-        let data = try await apiManager.requestData("/feeds?page=\(page)\(type == .forYou ? "&isForYou=true" : "")", method: .get, token: token) as FeedResponse?
+        let data = try await apiManager.requestData("/feeds?page=\(page)\(type == .forYou ? "&isForYou=true" : "")", method: .get, token: token) as APIResponse<[FeedItem]>?
         if let data = data {
-            return data.result
+            return data.data
         } else {
             throw URLError(.badServerResponse)
         }

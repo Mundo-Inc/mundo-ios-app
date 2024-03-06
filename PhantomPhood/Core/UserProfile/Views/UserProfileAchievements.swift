@@ -72,9 +72,6 @@ struct UserProfileAchievements: View {
             }
         }
         .padding()
+        .padding(.bottom, 30)
     }
 }
-
-//#Preview {
-//    UserProfileAchievements(user: .)
-//}

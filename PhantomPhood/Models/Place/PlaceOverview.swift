@@ -19,11 +19,16 @@ struct PlaceOverview: Identifiable, Decodable {
     let categories: [String]
     let priceRange: Int?
     let scores: PlaceScores
-    let reviewCount: Int
+    let activities: Activities
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, amenity, description, location, thumbnail, phone, website, categories, priceRange, scores, reviewCount
+        case name, amenity, description, location, thumbnail, phone, website, categories, priceRange, scores, activities
+    }
+    
+    struct Activities: Decodable {
+        let reviewCount: Int
+        let checkinCount: Int
     }
 }
 
@@ -40,7 +45,7 @@ extension PlaceOverview {
         categories = try container.decode([String].self, forKey: .categories)
         priceRange = try container.decodeIfPresent(Int.self, forKey: .priceRange)
         scores = try container.decode(PlaceScores.self, forKey: .scores)
-        reviewCount = try container.decode(Int.self, forKey: .reviewCount)
+        activities = try container.decode(Activities.self, forKey: .activities)
 
         if let thumbnailString = try container.decodeIfPresent(String.self, forKey: .thumbnail), !thumbnailString.isEmpty {
             thumbnail = URL(string: thumbnailString)
@@ -63,6 +68,6 @@ extension PlaceOverview {
         self.categories = placeDetail.categories
         self.priceRange = placeDetail.priceRange
         self.scores = placeDetail.scores
-        self.reviewCount = placeDetail.reviewCount
+        self.activities = placeDetail.activities
     }
 }

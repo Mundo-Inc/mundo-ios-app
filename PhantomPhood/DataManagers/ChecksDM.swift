@@ -12,7 +12,7 @@ final class ChecksDM {
     private let auth = Authentication.shared
     
     func checkUsername(_ username: String) async throws {
-        if (await auth.userSession) != nil, let token = await auth.getToken() {
+        if auth.userSession != nil, let token = await auth.getToken() {
             try await apiManager.requestNoContent("/users/username-availability/\(username)", token: token)
         } else {
             try await apiManager.requestNoContent("/users/username-availability/\(username)")

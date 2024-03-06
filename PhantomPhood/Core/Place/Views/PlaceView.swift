@@ -196,7 +196,7 @@ struct PlaceView: View {
                                 .redacted(reason: vm.place == nil ? .placeholder : [])
                                 
                                 Group {
-                                    if let reviewCount = vm.place?.reviewCount {
+                                    if let reviewCount = vm.place?.activities.reviewCount {
                                         Text("^[\(reviewCount) Review](inflect: true)")
                                     } else {
                                         Text("-- Reviews")

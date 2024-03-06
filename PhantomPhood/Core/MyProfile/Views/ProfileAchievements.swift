@@ -79,6 +79,7 @@ struct ProfileAchievements: View {
             }
         }
         .padding()
+        .padding(.bottom, 30)
     }
 }
 

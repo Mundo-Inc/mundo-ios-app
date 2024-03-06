@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct YelpReviewItem: View {
-    let review: PlaceDetail.YelpResult.YelpReview
+    let review: YelpReview
     
     var body: some View {
         VStack {

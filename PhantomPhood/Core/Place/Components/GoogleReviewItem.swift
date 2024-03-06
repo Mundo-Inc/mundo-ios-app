@@ -8,21 +8,21 @@
 import SwiftUI
 
 struct GoogleReviewItem: View {
-    let review: PlaceDetail.GoogleResult.GoogleReview
+    let review: GoogleReview
     
     var body: some View {
         VStack {
             HStack {
-                ProfileImage(review.profilePhotoUrl, size: 52, cornerRadius: 8)
+                ProfileImage(review.authorAttribution.photoUri, size: 52, cornerRadius: 8)
                 
                 VStack(spacing: 2) {
                     HStack {
-                        Text(review.authorName)
+                        Text(review.authorAttribution.displayName)
                             .font(.custom(style: .headline))
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Text(review.relativeTimeDescription)
+                        Text(review.relativePublishTimeDescription)
                             .font(.custom(style: .caption))
                             .foregroundStyle(.secondary)
                     }
@@ -40,7 +40,7 @@ struct GoogleReviewItem: View {
             }
             .padding(.horizontal)
             
-            Text(review.text)
+            Text(review.text.text)
                 .font(.custom(style: .body))
                 .foregroundStyle(Color.primary.opacity(0.8))
                 .frame(maxWidth: .infinity, alignment: .leading)

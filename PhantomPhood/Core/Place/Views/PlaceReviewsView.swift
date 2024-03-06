@@ -18,7 +18,7 @@ struct PlaceReviewsView: View {
     
     var body: some View {
         VStack {
-            if let place = placeVM.place {
+            if placeVM.place != nil {
                 Group {
                     if let total = vm.total {
                         if total == 0 {
@@ -46,16 +46,32 @@ struct PlaceReviewsView: View {
                         PlaceReviewItem(review: $review, placeVM: placeVM)
                     }
                     
-                    if let googleReviews = place.thirdParty.google?.reviews {
+                    if let googleReviews = vm.googleReviews {
                         ForEach(googleReviews.indices, id: \.self) { index in
                             GoogleReviewItem(review: googleReviews[index])
                         }
+                    } else {
+                        PlaceReviewItem.placeholder
+                            .padding(.horizontal)
+                            .onAppear {
+                                Task {
+                                    await vm.fetchGooglePlacesReviews()
+                                }
+                            }
                     }
                     
-                    if let yelpReviews = place.thirdParty.yelp?.reviews {
+                    if let yelpReviews = vm.yelpReviews {
                         ForEach(yelpReviews) { review in
                             YelpReviewItem(review: review)
                         }
+                    } else {
+                        PlaceReviewItem.placeholder
+                            .padding(.horizontal)
+                            .onAppear {
+                                Task {
+                                    await vm.fetchYelpReviews()
+                                }
+                            }
                     }
                     
                     Spacer()

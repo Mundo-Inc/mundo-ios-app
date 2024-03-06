@@ -9,6 +9,11 @@ import SwiftUI
 import Kingfisher
 
 struct FeedReviewView: View {
+    @ObservedObject private var auth = Authentication.shared
+    @ObservedObject private var appData = AppData.shared
+    @ObservedObject private var toastVM = ToastVM.shared
+    @EnvironmentObject private var actionManager: ActionManager
+    
     private let data: FeedItem
     private let addReaction: (NewReaction, FeedItem) async -> Void
     private let removeReaction: (UserReaction, FeedItem) async -> Void
@@ -22,7 +27,6 @@ struct FeedReviewView: View {
         self._mediasViewModel = ObservedObject(wrappedValue: mediasViewModel)
     }
     
-    @State private var showActions = false
     @ObservedObject private var commentsViewModel = CommentsVM.shared
     @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
     
@@ -32,6 +36,17 @@ struct FeedReviewView: View {
             mediasViewModel.show(medias: feedReview.videos + feedReview.images)
         default:
             return
+        }
+    }
+    
+    func deleteReview(id: String) async {
+        let reviewDM = ReviewDM()
+        do {
+            try await reviewDM.remove(reviewId: id)
+            toastVM.toast(.init(type: .success, title: "Success", message: "Your review has been deleted"))
+        } catch {
+            print(error)
+            toastVM.toast(.init(type: .error, title: "Error", message: "Couldn't delete your review"))
         }
     }
     
@@ -71,7 +86,26 @@ struct FeedReviewView: View {
                     Spacer()
                     
                     Button {
-                        showActions = true
+                        if case .review(let review) = data.resource {
+                            if let currentUser = auth.currentUser, currentUser.id == review.writer.id {
+                                actionManager.value = [
+                                    .init(title: "Delete Review", alertMessage: "Are you sure you want to delete this review?", callback: {
+                                        Task {
+                                            await deleteReview(id: review.id)
+                                        }
+                                    }),
+                                    .init(title: "Report", callback: {
+                                        appData.goTo(AppRoute.report(id: review.id, type: .review))
+                                    })
+                                ]
+                            } else {
+                                actionManager.value = [
+                                    .init(title: "Report", callback: {
+                                        appData.goTo(AppRoute.report(id: review.id, type: .review))
+                                    })
+                                ]
+                            }
+                        }
                     } label: {
                         Image(systemName: "ellipsis")
                     }
@@ -174,36 +208,6 @@ struct FeedReviewView: View {
                     
                 default:
                     EmptyView()
-                }
-                
-                if showActions {
-                    VStack {
-                        switch data.resource {
-                        case .review(let review):
-                            NavigationLink(value: AppRoute.report(id: review.id, type: .review)) {
-                                Text("Report")
-                                    .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(.bordered)
-                        default:
-                            EmptyView()
-                        }
-                        Button {
-                            withAnimation {
-                                showActions = false
-                            }
-                        } label: {
-                            Text("Cancel")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.bordered)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding()
-                    .background(Color.themeBG)
-                    .onDisappear {
-                        showActions = false
-                    }
                 }
             }
         } footer: {

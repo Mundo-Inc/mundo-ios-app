@@ -21,10 +21,14 @@ class PlaceReviewsVM: ObservableObject {
     enum LoadingSection: Hashable {
         case refresh
         case new
+        case fetchingGoogleReviews
+        case fetchingYelpReviews
     }
     
     @Published var loadingSections = Set<LoadingSection>()
     @Published var reviews: [PlaceReview] = []
+    @Published var googleReviews: [GoogleReview]? = nil
+    @Published var yelpReviews: [YelpReview]? = nil
     @Published var total: Int? = nil
     
     var page = 1
@@ -55,6 +59,32 @@ class PlaceReviewsVM: ObservableObject {
         } else {
             loadingSections.remove(.new)
         }
+    }
+    
+    func fetchGooglePlacesReviews() async {
+        guard let placeId = placeVM.place?.id, !loadingSections.contains(.fetchingGoogleReviews), googleReviews == nil else { return }
+        
+        loadingSections.insert(.fetchingGoogleReviews)
+        do {
+            let data = try await placeDM.getGooglePlacesReviews(id: placeId)
+            self.googleReviews = data
+        } catch {
+            print(error)
+        }
+        loadingSections.remove(.fetchingGoogleReviews)
+    }
+    
+    func fetchYelpReviews() async {
+        guard let placeId = placeVM.place?.id, !loadingSections.contains(.fetchingYelpReviews), googleReviews == nil else { return }
+        
+        loadingSections.insert(.fetchingYelpReviews)
+        do {
+            let data = try await placeDM.getYelpReviews(id: placeId)
+            self.yelpReviews = data
+        } catch {
+            print(error)
+        }
+        loadingSections.remove(.fetchingYelpReviews)
     }
     
     /// Add reaction to item

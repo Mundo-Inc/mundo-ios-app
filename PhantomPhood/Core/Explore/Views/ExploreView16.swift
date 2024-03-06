@@ -100,7 +100,7 @@ struct ExploreView16: View {
                             VStack {
                                 if let place = vm.selectedPlaceData {
                                     HStack {
-                                        Text("\(place.reviewCount) Reviews")
+                                        Text("\(place.activities.reviewCount) Reviews")
                                         
                                         if let phantomScore = place.scores.phantom {
                                             Divider()

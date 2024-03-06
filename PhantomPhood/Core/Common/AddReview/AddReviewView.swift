@@ -37,7 +37,7 @@ struct AddReviewView: View {
         ZStack {
             if let place = vm.place {
                 VStack(spacing: 0) {
-                    VStack {
+                    VStack(spacing: 5) {
                         HStack {
                             if let thumbnail = place.thumbnail {
                                 KFImage.url(thumbnail)
@@ -292,7 +292,7 @@ struct AddReviewView: View {
                             }
                             .foregroundStyle(.secondary)
                             .padding(.horizontal)
-                            .padding(.top)
+                            .padding(.vertical)
                         }
                     case .review:
                         ScrollView {
@@ -381,6 +381,7 @@ struct AddReviewView: View {
                             .disabled(vm.isSubmitting)
                             .buttonStyle(.bordered)
                             .padding(.horizontal)
+                            .padding(.bottom)
                         }
                         .scrollDismissesKeyboard(.interactively)
                     }

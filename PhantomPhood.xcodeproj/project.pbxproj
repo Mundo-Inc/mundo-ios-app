@@ -21,6 +21,7 @@
 		0B026CDC2B5AC7B5002DAD24 /* PhantomCoins.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CDB2B5AC7B5002DAD24 /* PhantomCoins.swift */; };
 		0B026CDE2B5AC863002DAD24 /* PhantomCoinsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */; };
 		0B026CE02B5AED32002DAD24 /* RewardsHubVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CDF2B5AED32002DAD24 /* RewardsHubVM.swift */; };
+		0B0A38CD2B90BED50088D684 /* PlaceIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0A38CC2B90BED50088D684 /* PlaceIdentifier.swift */; };
 		0B0E6D222ABB077B00EC62EE /* UserActivityItemTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D212ABB077B00EC62EE /* UserActivityItemTemplate.swift */; };
 		0B0E6D262ABB22ED00EC62EE /* FeedLevelUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D252ABB22ED00EC62EE /* FeedLevelUpView.swift */; };
 		0B0E6D282ABB242700EC62EE /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D272ABB242700EC62EE /* Comment.swift */; };
@@ -273,6 +274,8 @@
 		0BA038412AF24CE6000A2B33 /* UserConnectionsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA038402AF24CE6000A2B33 /* UserConnectionsVM.swift */; };
 		0BA43C232B516DCA00F0DDBF /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */; };
 		0BA43C252B517F3100F0DDBF /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA43C242B517F3100F0DDBF /* UserSettings.swift */; };
+		0BAAC8032B98CEFE00FFFC32 /* GoogleReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAAC8022B98CEFE00FFFC32 /* GoogleReview.swift */; };
+		0BAAC8052B98CF0600FFFC32 /* YelpReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAAC8042B98CF0600FFFC32 /* YelpReview.swift */; };
 		0BABE9D62B59822B003EF70B /* RewardsHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BABE9D52B59822B003EF70B /* RewardsHubView.swift */; };
 		0BAE47302ACC68FD001FBDAF /* YelpRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */; };
 		0BAE47322ACC91DF001FBDAF /* PlaceReviewsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAE47312ACC91DF001FBDAF /* PlaceReviewsView.swift */; };
@@ -297,6 +300,9 @@
 		0BC84A6D2AD08A6D00D723AA /* SelectReactionsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A6C2AD08A6D00D723AA /* SelectReactionsVM.swift */; };
 		0BC84A6F2AD0A83900D723AA /* PlaceMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A6E2AD0A83900D723AA /* PlaceMediaView.swift */; };
 		0BC84A712AD0A8B100D723AA /* PlaceMediaVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A702AD0A8B100D723AA /* PlaceMediaVM.swift */; };
+		0BC9BBEF2B922FE100477654 /* ReviewDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC9BBEE2B922FE100477654 /* ReviewDM.swift */; };
+		0BC9BBF62B92495900477654 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC9BBF52B92495900477654 /* AlertManager.swift */; };
+		0BC9BBFC2B924B1A00477654 /* ActionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC9BBFB2B924B1A00477654 /* ActionManager.swift */; };
 		0BCAE7442B7E6B5D005AD0EF /* MissionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCAE7432B7E6B5D005AD0EF /* MissionItem.swift */; };
 		0BCAE7462B7E6B8E005AD0EF /* PrizeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCAE7452B7E6B8E005AD0EF /* PrizeItem.swift */; };
 		0BCBC18E2ACDC2FF00992D8E /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCBC18D2ACDC2FF00992D8E /* View.swift */; };
@@ -392,6 +398,7 @@
 		0B026CDB2B5AC7B5002DAD24 /* PhantomCoins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomCoins.swift; sourceTree = "<group>"; };
 		0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomCoinsVM.swift; sourceTree = "<group>"; };
 		0B026CDF2B5AED32002DAD24 /* RewardsHubVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsHubVM.swift; sourceTree = "<group>"; };
+		0B0A38CC2B90BED50088D684 /* PlaceIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceIdentifier.swift; sourceTree = "<group>"; };
 		0B0E6D212ABB077B00EC62EE /* UserActivityItemTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityItemTemplate.swift; sourceTree = "<group>"; };
 		0B0E6D252ABB22ED00EC62EE /* FeedLevelUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLevelUpView.swift; sourceTree = "<group>"; };
 		0B0E6D272ABB242700EC62EE /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
@@ -634,6 +641,8 @@
 		0BA038402AF24CE6000A2B33 /* UserConnectionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionsVM.swift; sourceTree = "<group>"; };
 		0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		0BA43C242B517F3100F0DDBF /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		0BAAC8022B98CEFE00FFFC32 /* GoogleReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleReview.swift; sourceTree = "<group>"; };
+		0BAAC8042B98CF0600FFFC32 /* YelpReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpReview.swift; sourceTree = "<group>"; };
 		0BABE9D52B59822B003EF70B /* RewardsHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsHubView.swift; sourceTree = "<group>"; };
 		0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpRatingView.swift; sourceTree = "<group>"; };
 		0BAE47312ACC91DF001FBDAF /* PlaceReviewsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceReviewsView.swift; sourceTree = "<group>"; };
@@ -658,6 +667,9 @@
 		0BC84A6C2AD08A6D00D723AA /* SelectReactionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectReactionsVM.swift; sourceTree = "<group>"; };
 		0BC84A6E2AD0A83900D723AA /* PlaceMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMediaView.swift; sourceTree = "<group>"; };
 		0BC84A702AD0A8B100D723AA /* PlaceMediaVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMediaVM.swift; sourceTree = "<group>"; };
+		0BC9BBEE2B922FE100477654 /* ReviewDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewDM.swift; sourceTree = "<group>"; };
+		0BC9BBF52B92495900477654 /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
+		0BC9BBFB2B924B1A00477654 /* ActionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionManager.swift; sourceTree = "<group>"; };
 		0BCAE7432B7E6B5D005AD0EF /* MissionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionItem.swift; sourceTree = "<group>"; };
 		0BCAE7452B7E6B8E005AD0EF /* PrizeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrizeItem.swift; sourceTree = "<group>"; };
 		0BCBC18D2ACDC2FF00992D8E /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
@@ -908,6 +920,7 @@
 				0B1610C92B631DF900DCAFA5 /* PlaceEssentials.swift */,
 				0B1610C72B631DE000DCAFA5 /* PlaceOverview.swift */,
 				0B1610CE2B631ED900DCAFA5 /* RegionPlace.swift */,
+				0B0A38CC2B90BED50088D684 /* PlaceIdentifier.swift */,
 			);
 			path = Place;
 			sourceTree = "<group>";
@@ -926,8 +939,10 @@
 			isa = PBXGroup;
 			children = (
 				0B1610DC2B63265100DCAFA5 /* FeedReview.swift */,
+				0BAAC8022B98CEFE00FFFC32 /* GoogleReview.swift */,
 				0B1610DA2B63263300DCAFA5 /* PlaceReview.swift */,
 				0B1610DE2B63267400DCAFA5 /* ReviewScores.swift */,
+				0BAAC8042B98CF0600FFFC32 /* YelpReview.swift */,
 			);
 			path = Review;
 			sourceTree = "<group>";
@@ -1445,6 +1460,8 @@
 		0B9EF27F2B302E070025F464 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				0BC9BBFB2B924B1A00477654 /* ActionManager.swift */,
+				0BC9BBF52B92495900477654 /* AlertManager.swift */,
 				0B9EF2802B302E1D0025F464 /* ContactsService.swift */,
 				0BFEB5F12B7F9451006F6A17 /* CoreDataStack.swift */,
 				0B86F9342B44339400DD4C85 /* EmojisManager.swift */,
@@ -1561,6 +1578,7 @@
 				0BCD57E42B28B38000A1C914 /* MapDM.swift */,
 				0B997B672AC7139000579C9C /* NotificationsDM.swift */,
 				0B985AE02AC9AFC200019A06 /* PlaceDM.swift */,
+				0BC9BBEE2B922FE100477654 /* ReviewDM.swift */,
 				0BD9F9852B4D91E10040FCDA /* ReactionsDM.swift */,
 				0B27AE1E2B75786400C97559 /* ReportDM.swift */,
 				0B026CD72B5AB4CD002DAD24 /* RewardsDM.swift */,
@@ -1935,6 +1953,7 @@
 			files = (
 				0BAE47302ACC68FD001FBDAF /* YelpRatingView.swift in Sources */,
 				0B6E99122AC7629A00D8CE26 /* LeaderboardDM.swift in Sources */,
+				0BAAC8032B98CEFE00FFFC32 /* GoogleReview.swift in Sources */,
 				0B226F632B3325350036B8BE /* StarRating.swift in Sources */,
 				0B383CF32B87852200D68678 /* RepeatItem.swift in Sources */,
 				0B1610C42B62A14500DCAFA5 /* NewCheckinVM.swift in Sources */,
@@ -1948,6 +1967,7 @@
 				0B13543A2B2CC7EA0076FF40 /* MapActivityView.swift in Sources */,
 				0BABE9D62B59822B003EF70B /* RewardsHubView.swift in Sources */,
 				0B37ABFC2AD7408E00E8D4BC /* ToastVM.swift in Sources */,
+				0BC9BBEF2B922FE100477654 /* ReviewDM.swift in Sources */,
 				0B2920832B5590640026DDDE /* PlaceSelectorVM.swift in Sources */,
 				0BCD57DD2B28AE4600A1C914 /* UIApplication.swift in Sources */,
 				0B997B662AC711A300579C9C /* NotificationsVM.swift in Sources */,
@@ -1963,6 +1983,7 @@
 				0BEC8C862AB7B08600B94AFC /* EditProfileVM.swift in Sources */,
 				0BF81DC02ABDF00300B8892E /* DateFormatter.swift in Sources */,
 				0B547D852B3F3D3B002C6336 /* CreateNewListVM.swift in Sources */,
+				0BC9BBFC2B924B1A00477654 /* ActionManager.swift in Sources */,
 				0BEF7A3C2B0EB2D4001532E7 /* OAuthVM.swift in Sources */,
 				0BF81DC42ABE369500B8892E /* CustomFonts.swift in Sources */,
 				0BB37E9C2ABA52C7009E1272 /* Shaders.metal in Sources */,
@@ -1984,9 +2005,11 @@
 				0B0253052B18CE64003702AF /* PlaceIcon.swift in Sources */,
 				0BD9F98F2B4DB5CC0040FCDA /* UserActivityReview.swift in Sources */,
 				0B2694B22B8E3CC0004FA5C8 /* PhotoCaptureView.swift in Sources */,
+				0BC9BBF62B92495900477654 /* AlertManager.swift in Sources */,
 				0B0253032B18CB24003702AF /* ForYouInfoView.swift in Sources */,
 				0BC84A6B2AD071EE00D723AA /* SelectReactionsView.swift in Sources */,
 				0B0E6D282ABB242700EC62EE /* Comment.swift in Sources */,
+				0B0A38CD2B90BED50088D684 /* PlaceIdentifier.swift in Sources */,
 				0B35B7B72B0E016900822BA6 /* SignInAppleHelper.swift in Sources */,
 				0BEF7A382B0EB278001532E7 /* SignUpOptionsView.swift in Sources */,
 				0B51A8D42ACEC58400DA38DC /* MediasVM.swift in Sources */,
@@ -2049,6 +2072,7 @@
 				0B6495562AB10F5E000E57AF /* APIManager.swift in Sources */,
 				0BF5B4A62AB353CB00DEC403 /* TextField.swift in Sources */,
 				0B9307F32B0709F1005FA1C3 /* ProfileImage.swift in Sources */,
+				0BAAC8052B98CF0600FFFC32 /* YelpReview.swift in Sources */,
 				0B6E990F2AC7627700D8CE26 /* LeaderboardVM.swift in Sources */,
 				0B39A0C52B67E4A10091F246 /* ChecksDM.swift in Sources */,
 				0B6A47C42ABC9806000CBDA3 /* FeedItem.swift in Sources */,
@@ -2312,7 +2336,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.51.3;
+				MARKETING_VERSION = 0.52.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2352,7 +2376,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.51.3;
+				MARKETING_VERSION = 0.52.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

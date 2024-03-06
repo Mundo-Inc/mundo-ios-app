@@ -38,15 +38,15 @@ struct HomeView: View {
                 FeedView(mediasViewModel: mediasViewModel)
                     .tag(HomeTab.followings)
             }
-            .frame(height: mainWindowSize.height)
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            .frame(height: mainWindowSize.height)
             .ignoresSafeArea(edges: .top)
             .background(Color.themeBG)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .handleNavigationDestination()
             
             Divider()
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.hidden, for: .navigationBar)
-                .handleNavigationDestination()
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         NavigationLink(value: AppRoute.notifications) {
