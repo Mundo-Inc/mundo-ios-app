@@ -37,45 +37,29 @@ struct AppRouter: View {
             
             VStack(spacing: 5) {
                 ForEach(toastVM.toasts) { toast in
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 60)
-                            .foregroundStyle(Color.themePrimary)
-                        
-                        HStack {
-                            switch toast.type {
-                            case .success:
-                                Image(systemName: "checkmark.rectangle.stack.fill")
-                                    .font(.system(size: 22))
-                                    .foregroundStyle(.green)
-                            case .error:
-                                Image(systemName: "exclamationmark.bubble.fill")
-                                    .font(.system(size: 22))
-                                    .foregroundStyle(.red)
-                            }
-                            
-                            
-                            VStack {
-                                Text(toast.title)
-                                    .font(.custom(style: .body))
-                                    .bold()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                Text(toast.message)
-                                    .font(.custom(style: .caption))
-                                    .foregroundStyle(.secondary)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                        }
-                        .padding(.horizontal)
+                    VStack {
+                        Text(toast.title)
+                            .font(.custom(style: .headline))
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text(toast.message)
+                            .font(.custom(style: .caption))
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
+                    .padding()
+                    .background(.thinMaterial)
+                    .background {
+                        RoundedRectangle(cornerRadius: 10)
+                            .foregroundStyle(toast.type == .success ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
+                    }
+                    .clipShape(.rect(cornerRadius: 10))
                     .onTapGesture {
                         toastVM.remove(id: toast.id)
                     }
                     .padding(.horizontal)
                     .transition(.asymmetric(insertion: .push(from: .top), removal: .push(from: .bottom)))
                     .animation(.bouncy, value: toastVM.toasts.count)
-                    
                 }
             }
             .animation(.bouncy, value: toastVM.toasts.count)

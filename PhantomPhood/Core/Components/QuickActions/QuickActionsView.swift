@@ -9,6 +9,7 @@ import SwiftUI
 
 struct QuickActionsView: View {
     @StateObject private var vm = QuickActionsVM()
+    private let toastVM = ToastVM.shared
     
     @Environment(\.dismiss) private var dismiss
     
@@ -17,9 +18,8 @@ struct QuickActionsView: View {
             RoundedRectangle(cornerRadius: 3)
                 .frame(width: 36, height: 5)
                 .padding(.top, 5)
+                .padding(.bottom)
                 .foregroundStyle(.tertiary)
-            
-            Spacer()
             
             if vm.loadingSections.contains(.nearestPlace) {
                 ProgressView("Searching Area")
@@ -177,11 +177,52 @@ struct QuickActionsView: View {
                     .clipShape(.rect(cornerRadius: 15))
                 }
                 .foregroundStyle(.primary)
+                
+                Button {
+                    toastVM.toast(.init(type: .success, title: "Coming Soon", message: "Almost there! Check back soon for magic."))
+                    HapticManager.shared.impact(style: .light)
+                } label: {
+                    HStack {
+                        Image(systemName: "house.fill")
+                            .font(.system(size: 28))
+                            .frame(width: 36 , height: 36)
+                        
+                        VStack {
+                            Text("Homemade Moments")
+                                .font(.custom(style: .headline))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            Group {
+                                Text("Share your home cooking experience")
+                            }
+                            .font(.custom(style: .caption))
+                            .multilineTextAlignment(.leading)
+                            .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                    .padding()
+                    .background(Color.themePrimary)
+                    .clipShape(.rect(cornerRadius: 15))
+                    .opacity(0.5)
+                }
+                .foregroundStyle(.primary)
+                .overlay(alignment: .topTrailing) {
+                    Text("Coming Soon".uppercased())
+                        .font(.custom(style: .caption2))
+                        .fontWeight(.medium)
+                        .foregroundStyle(Color.white)
+                        .padding(.horizontal, 5)
+                        .background(Color.accentColor)
+                        .clipShape(.rect(cornerRadius: 10))
+                        .padding(.all, 6)
+                        .opacity(0.8)
+                }
             }
         }
         .font(.custom(style: .body))
         .padding(.horizontal)
-        .presentationDetents([.height(250)])
+        .presentationDetents([.height(350)])
         .onAppear {
             vm.updateIsViewingPlace()
         }

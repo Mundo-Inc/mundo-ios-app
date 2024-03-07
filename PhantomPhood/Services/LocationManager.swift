@@ -37,14 +37,18 @@ class LocationManager: NSObject, ObservableObject {
     
     @objc private func appDidEnterBackground() {
         guard isAuthorized else { return }
-        locationManager.stopUpdatingLocation()
-        locationManager.startMonitoringSignificantLocationChanges()
+        DispatchQueue.global(qos: .background).async {
+            self.locationManager.stopUpdatingLocation()
+            self.locationManager.startMonitoringSignificantLocationChanges()
+        }
     }
     
     @objc private func appDidBecomeActive() {
         guard isAuthorized else { return }
-        locationManager.stopMonitoringSignificantLocationChanges()
-        locationManager.startUpdatingLocation()
+        DispatchQueue.global(qos: .background).async {
+            self.locationManager.stopMonitoringSignificantLocationChanges()
+            self.locationManager.startUpdatingLocation()
+        }
     }
     
     deinit {
