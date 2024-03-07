@@ -31,19 +31,20 @@ class ForYouVM: ObservableObject {
             page = 1
         }
         
+        self.isLoading = true
         do {
-            self.isLoading = true
             let data = try await feedDM.getFeed(page: self.page, type: .forYou)
+            
             if action == .refresh || self.items.isEmpty {
                 self.items = data
             } else {
                 self.items.append(contentsOf: data)
             }
-            self.isLoading = false
             page += 1
         } catch {
             print(error)
         }
+        self.isLoading = false
     }
 
     /// Add reaction to item

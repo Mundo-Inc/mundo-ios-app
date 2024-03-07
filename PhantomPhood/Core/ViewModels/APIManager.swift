@@ -130,7 +130,7 @@ extension APIManager {
         token: String? = nil,
         contentType: ContentType
     ) throws -> URLRequest {
-        guard var components = URLComponents(string: "\(APIManager.baseURL)/\(endpoint)") else {
+        guard var components = URLComponents(string: "\(APIManager.baseURL)\(endpoint)") else {
             throw URLError(.badURL)
         }
         

@@ -20,8 +20,9 @@ final class FeedDM {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
-                
+        
         let data = try await apiManager.requestData("/feeds?page=\(page)\(type == .forYou ? "&isForYou=true" : "")", method: .get, token: token) as APIResponse<[FeedItem]>?
+        
         if let data = data {
             return data.data
         } else {

@@ -56,7 +56,9 @@ struct ForYouView17: View {
             .scrollTargetBehavior(.paging)
             .scrollIndicators(.never)
             .refreshable {
-                await vm.getForYou(.refresh)
+                Task {
+                    await vm.getForYou(.refresh)
+                }
             }
             .onChange(of: scrollPosition) { newValue in
                 if let scrollPosition = newValue {

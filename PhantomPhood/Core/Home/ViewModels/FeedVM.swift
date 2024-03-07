@@ -35,15 +35,14 @@ class FeedVM: ObservableObject {
             page = 1
         }
         
+        self.isLoading = true
         do {
-            self.isLoading = true
             let data = try await feedDM.getFeed(page: self.page, type: .followings)
             if action == .refresh || self.items.isEmpty {
                 self.items = data
             } else {
                 self.items.append(contentsOf: data)
             }
-            self.isLoading = false
             if self.items.isEmpty && data.isEmpty {
                 await getNabeel()
             }
@@ -51,6 +50,7 @@ class FeedVM: ObservableObject {
         } catch {
             print(error)
         }
+        self.isLoading = false
     }
     
     func loadMore(currentIndex: Int) async {

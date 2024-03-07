@@ -132,13 +132,13 @@ struct FeedView: View {
                         }
                     }
                 }
-                .toolbar(content: {
+                .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         if vm.isLoading {
                             ProgressView()
                         }
                     }
-                })
+                }
                 .scrollIndicators(.hidden)
                 .refreshable {
                     Task {
