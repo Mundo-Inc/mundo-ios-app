@@ -46,6 +46,35 @@ final class UniversalLinkingManager {
                 }
             }
         }),
+        "event": RouteScheme(pattern: ["id"], routeGetter: { components in
+            var id: String?
+            
+            for index in components.indices {
+                switch index {
+                case 0:
+                    id = components[index]
+                default:
+                    break
+                }
+            }
+            
+            guard let id else {
+                throw LinkingError.missingParam
+            }
+            
+            return AppRoute.event(.id(id))
+        }, validator: { components in
+            for index in components.indices {
+                switch index {
+                case 0:
+                    if components[index].isEmpty {
+                        throw LinkingError.badParam
+                    }
+                default:
+                    break
+                }
+            }
+        }),
         "user": RouteScheme(pattern: ["id"], routeGetter: { components in
             if let first = components.first {
                 return AppRoute.userProfile(userId: first)
