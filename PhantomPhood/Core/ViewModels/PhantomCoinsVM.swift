@@ -82,12 +82,12 @@ final class PhantomCoinsVM: ObservableObject {
     }
 
     var hasClaimedToday: Bool {
-        guard let lastClaimDate = phantomCoins?.daily.lastClaimDate else { return false }
-        return Date().timeIntervalSince(lastClaimDate) < 24 * 60 * 60
+        guard let lastClaim = phantomCoins?.daily.lastClaim else { return false }
+        return Date().timeIntervalSince(lastClaim) < 24 * 60 * 60
     }
 
     var nextClaimDate: Date? {
-        guard let lastClaimDate = phantomCoins?.daily.lastClaimDate else { return nil }
-        return lastClaimDate.addingTimeInterval(24 * 60 * 60)
+        guard let lastClaim = phantomCoins?.daily.lastClaim else { return nil }
+        return lastClaim.addingTimeInterval(24 * 60 * 60)
     }
 }

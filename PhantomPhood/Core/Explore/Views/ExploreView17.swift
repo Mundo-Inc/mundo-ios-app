@@ -11,6 +11,8 @@ import Kingfisher
 
 @available(iOS 17.0, *)
 struct ExploreView17: View {
+    private var appData = AppData.shared
+    
     @EnvironmentObject private var exploreSearchVM: ExploreSearchVM
     @Environment(\.dismissSearch) private var dismissSearch
     /// for iOS 17
@@ -20,6 +22,40 @@ struct ExploreView17: View {
         ZStack(alignment: .top) {
             ZStack(alignment: .bottom) {
                 Map(position: $vm.position, selection: $vm.selection) {
+                    if let events = vm.events {
+                        ForEach(events) { event in
+                            Annotation(event.name, coordinate: event.coordinate) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .frame(width: 40, height: 40)
+                                        .foregroundStyle(Color.black)
+                                    
+                                    if let logo = event.logo {
+                                        KFImage.url(logo)
+                                            .placeholder {
+                                                Image(systemName: "arrow.down.circle.dotted")
+                                                    .foregroundStyle(Color.white.opacity(0.5))
+                                            }
+                                            .loadDiskFileSynchronously()
+                                            .fade(duration: 0.25)
+                                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .contentShape(RoundedRectangle(cornerRadius: 5))
+                                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                                            .frame(width: 36, height: 36)
+                                    } else {
+                                        Image(systemName: "laser.burst")
+                                            .foregroundStyle(Color.white.opacity(0.8))
+                                    }
+                                }
+                                .onTapGesture {
+                                    appData.goTo(AppRoute.event(IdOrData.data(event)))
+                                }
+                            }
+                        }
+                    }
+                    
                     ForEach(vm.mapClusterActivities.clustered) { clusteredActivities in
 //                        MapCircle(center: clusteredActivities.location.coordinate, radius: clusteredActivities.radius)
 //                            .foregroundStyle(Color.accentColor.opacity(0.3))
@@ -150,7 +186,7 @@ struct ExploreView17: View {
                     
                     vm.scale = mapCameraUpdateContext.scaleValue
                     
-                    guard !vm.isActiviteisLoading else { return }
+                    guard !vm.loadingSections.contains(.geoActivities) else { return }
                     vm.throttle.call {
                         Task {
                             await vm.updateGeoActivities(for: mapCameraUpdateContext.region)
@@ -353,7 +389,7 @@ struct ExploreView17: View {
             }
             .padding(.bottom, 8)
             .toolbar {
-                if vm.isActiviteisLoading {
+                if vm.loadingSections.contains(.geoActivities) {
                     ToolbarItem(placement: .topBarLeading) {
                         ProgressView()
                     }

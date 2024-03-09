@@ -287,6 +287,16 @@
 		0BB437292B7673DD002B57D1 /* AchievementsEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB437282B7673DD002B57D1 /* AchievementsEnum.swift */; };
 		0BB805862AC203EB0074155D /* FeedReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB805852AC203EB0074155D /* FeedReviewView.swift */; };
 		0BBEFAF32B7E41E800A78FF0 /* Prize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBEFAF22B7E41E800A78FF0 /* Prize.swift */; };
+		0BBFFE1C2B9B57E9003A05B1 /* EventsDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBFFE1B2B9B57E9003A05B1 /* EventsDM.swift */; };
+		0BBFFE1E2B9B5843003A05B1 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBFFE1D2B9B5843003A05B1 /* Event.swift */; };
+		0BBFFE242B9B6C2E003A05B1 /* EventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBFFE232B9B6C2E003A05B1 /* EventView.swift */; };
+		0BBFFE262B9B6C9C003A05B1 /* EventVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBFFE252B9B6C9C003A05B1 /* EventVM.swift */; };
+		0BBFFE282B9B8890003A05B1 /* MediaDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBFFE272B9B8890003A05B1 /* MediaDM.swift */; };
+		0BBFFE2A2B9B99F4003A05B1 /* CheckInDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBFFE292B9B99F4003A05B1 /* CheckInDM.swift */; };
+		0BBFFE2C2B9BDF94003A05B1 /* EventMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBFFE2B2B9BDF94003A05B1 /* EventMediaView.swift */; };
+		0BBFFE2E2B9BDFE1003A05B1 /* EventMediaVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBFFE2D2B9BDFE1003A05B1 /* EventMediaVM.swift */; };
+		0BBFFE312B9BE817003A05B1 /* EventCheckInsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBFFE302B9BE817003A05B1 /* EventCheckInsView.swift */; };
+		0BBFFE332B9BE828003A05B1 /* EventCheckInsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBFFE322B9BE828003A05B1 /* EventCheckInsVM.swift */; };
 		0BC2E3102B22076D0002649D /* VideoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC2E30F2B22076D0002649D /* VideoHelper.swift */; };
 		0BC2E3122B2207820002649D /* ImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC2E3112B2207820002649D /* ImageHelper.swift */; };
 		0BC2E3142B2207B40002649D /* UploadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC2E3132B2207B40002649D /* UploadManager.swift */; };
@@ -654,6 +664,16 @@
 		0BB437282B7673DD002B57D1 /* AchievementsEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsEnum.swift; sourceTree = "<group>"; };
 		0BB805852AC203EB0074155D /* FeedReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedReviewView.swift; sourceTree = "<group>"; };
 		0BBEFAF22B7E41E800A78FF0 /* Prize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prize.swift; sourceTree = "<group>"; };
+		0BBFFE1B2B9B57E9003A05B1 /* EventsDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsDM.swift; sourceTree = "<group>"; };
+		0BBFFE1D2B9B5843003A05B1 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		0BBFFE232B9B6C2E003A05B1 /* EventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventView.swift; sourceTree = "<group>"; };
+		0BBFFE252B9B6C9C003A05B1 /* EventVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventVM.swift; sourceTree = "<group>"; };
+		0BBFFE272B9B8890003A05B1 /* MediaDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDM.swift; sourceTree = "<group>"; };
+		0BBFFE292B9B99F4003A05B1 /* CheckInDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInDM.swift; sourceTree = "<group>"; };
+		0BBFFE2B2B9BDF94003A05B1 /* EventMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMediaView.swift; sourceTree = "<group>"; };
+		0BBFFE2D2B9BDFE1003A05B1 /* EventMediaVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMediaVM.swift; sourceTree = "<group>"; };
+		0BBFFE302B9BE817003A05B1 /* EventCheckInsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCheckInsView.swift; sourceTree = "<group>"; };
+		0BBFFE322B9BE828003A05B1 /* EventCheckInsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCheckInsVM.swift; sourceTree = "<group>"; };
 		0BC2E30F2B22076D0002649D /* VideoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoHelper.swift; sourceTree = "<group>"; };
 		0BC2E3112B2207820002649D /* ImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageHelper.swift; sourceTree = "<group>"; };
 		0BC2E3132B2207B40002649D /* UploadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadManager.swift; sourceTree = "<group>"; };
@@ -1185,6 +1205,7 @@
 				0B6495592AB1FD16000E57AF /* Authenticate */,
 				0BF10B902B35D0AB00522E60 /* Common */,
 				0B77EA4C2AAF875D00C8DF87 /* Components */,
+				0BBFFE222B9B6C1E003A05B1 /* Event */,
 				0BF5B4AB2AB375C200DEC403 /* Explore */,
 				0BF5B4A72AB3757000DEC403 /* Home */,
 				0B0183532AB3BEF4008E887F /* Leaderboard */,
@@ -1348,6 +1369,7 @@
 				0BB437282B7673DD002B57D1 /* AchievementsEnum.swift */,
 				0B0E6D312ABB816F00EC62EE /* Checkin.swift */,
 				0B0E6D272ABB242700EC62EE /* Comment.swift */,
+				0BBFFE1D2B9B5843003A05B1 /* Event.swift */,
 				0B6A47C32ABC9806000CBDA3 /* FeedItem.swift */,
 				0BF17BAA2AF2FDE800D87812 /* GeneralTypes.swift */,
 				0BCD57E62B28BAC300A1C914 /* MapActivity.swift */,
@@ -1544,6 +1566,27 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		0BBFFE222B9B6C1E003A05B1 /* Event */ = {
+			isa = PBXGroup;
+			children = (
+				0BBFFE322B9BE828003A05B1 /* EventCheckInsVM.swift */,
+				0BBFFE2D2B9BDFE1003A05B1 /* EventMediaVM.swift */,
+				0BBFFE252B9B6C9C003A05B1 /* EventVM.swift */,
+				0BBFFE2F2B9BE7F4003A05B1 /* Views */,
+			);
+			path = Event;
+			sourceTree = "<group>";
+		};
+		0BBFFE2F2B9BE7F4003A05B1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0BBFFE302B9BE817003A05B1 /* EventCheckInsView.swift */,
+				0BBFFE2B2B9BDF94003A05B1 /* EventMediaView.swift */,
+				0BBFFE232B9B6C2E003A05B1 /* EventView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		0BCBC1952ACDFEC700992D8E /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
@@ -1570,17 +1613,20 @@
 		0BCD57E32B28B35700A1C914 /* DataManagers */ = {
 			isa = PBXGroup;
 			children = (
+				0BBFFE292B9B99F4003A05B1 /* CheckInDM.swift */,
 				0B39A0C42B67E4A10091F246 /* ChecksDM.swift */,
 				0B695D7D2AF15EEE00C11870 /* ConnectionsDM.swift */,
+				0BBFFE1B2B9B57E9003A05B1 /* EventsDM.swift */,
 				0B6A47C12ABC9157000CBDA3 /* FeedDM.swift */,
 				0B6E99112AC7629A00D8CE26 /* LeaderboardDM.swift */,
 				0B547D7B2B3EEA9B002C6336 /* ListsDM.swift */,
 				0BCD57E42B28B38000A1C914 /* MapDM.swift */,
+				0BBFFE272B9B8890003A05B1 /* MediaDM.swift */,
 				0B997B672AC7139000579C9C /* NotificationsDM.swift */,
 				0B985AE02AC9AFC200019A06 /* PlaceDM.swift */,
-				0BC9BBEE2B922FE100477654 /* ReviewDM.swift */,
 				0BD9F9852B4D91E10040FCDA /* ReactionsDM.swift */,
 				0B27AE1E2B75786400C97559 /* ReportDM.swift */,
+				0BC9BBEE2B922FE100477654 /* ReviewDM.swift */,
 				0B026CD72B5AB4CD002DAD24 /* RewardsDM.swift */,
 				0B29207D2B55876C0026DDDE /* SearchDM.swift */,
 				0B384FA62B2B591000C98245 /* UserActivityDM.swift */,
@@ -1958,6 +2004,7 @@
 				0B383CF32B87852200D68678 /* RepeatItem.swift in Sources */,
 				0B1610C42B62A14500DCAFA5 /* NewCheckinVM.swift in Sources */,
 				0B2920812B5590560026DDDE /* PlaceSelectorView.swift in Sources */,
+				0BBFFE2E2B9BDFE1003A05B1 /* EventMediaVM.swift in Sources */,
 				0B3126E52B6AB0700063FC0E /* OnboardingView.swift in Sources */,
 				0B1610DD2B63265100DCAFA5 /* FeedReview.swift in Sources */,
 				0BD1942D2B06681B00C1C35F /* ForYouVM.swift in Sources */,
@@ -1989,6 +2036,7 @@
 				0BB37E9C2ABA52C7009E1272 /* Shaders.metal in Sources */,
 				0B91A7272B57F157007F7969 /* ExploreView16.swift in Sources */,
 				0B4DE48E2B4C4B540050E39D /* EditListView.swift in Sources */,
+				0BBFFE2A2B9B99F4003A05B1 /* CheckInDM.swift in Sources */,
 				0B77EA3D2AAF855500C8DF87 /* ContentView.swift in Sources */,
 				0B1F758B2B47185300097A70 /* MainTabBarView.swift in Sources */,
 				0B3126E32B6A9FE30063FC0E /* OnboardingVM.swift in Sources */,
@@ -2044,6 +2092,7 @@
 				0B2D20EB2B46334C00D4F0C1 /* UserProfileListsView.swift in Sources */,
 				0BB805862AC203EB0074155D /* FeedReviewView.swift in Sources */,
 				0B47FDA12B11060600F39527 /* AppRouter.swift in Sources */,
+				0BBFFE242B9B6C2E003A05B1 /* EventView.swift in Sources */,
 				0BEE152A2AB50A8800DF7211 /* ProfileStats.swift in Sources */,
 				0B997B632AC70E1A00579C9C /* Notification.swift in Sources */,
 				0B9C02622B4468B3000C4774 /* UserSelectorVM.swift in Sources */,
@@ -2066,6 +2115,7 @@
 				0B2694AB2B8E3C22004FA5C8 /* CameraPreview.swift in Sources */,
 				0BD9F98D2B4DB5770040FCDA /* UserActivityLevelUp.swift in Sources */,
 				0BC84A6F2AD0A83900D723AA /* PlaceMediaView.swift in Sources */,
+				0BBFFE1E2B9B5843003A05B1 /* Event.swift in Sources */,
 				0B1610CF2B631ED900DCAFA5 /* RegionPlace.swift in Sources */,
 				0B997B682AC7139000579C9C /* NotificationsDM.swift in Sources */,
 				0BF17BAB2AF2FDE800D87812 /* GeneralTypes.swift in Sources */,
@@ -2076,6 +2126,7 @@
 				0B6E990F2AC7627700D8CE26 /* LeaderboardVM.swift in Sources */,
 				0B39A0C52B67E4A10091F246 /* ChecksDM.swift in Sources */,
 				0B6A47C42ABC9806000CBDA3 /* FeedItem.swift in Sources */,
+				0BBFFE262B9B6C9C003A05B1 /* EventVM.swift in Sources */,
 				0B1610DF2B63267400DCAFA5 /* ReviewScores.swift in Sources */,
 				0BC84A652AD0339F00D723AA /* ReactionLabel.swift in Sources */,
 				0B997B6E2AC7381700579C9C /* UserProfileDM.swift in Sources */,
@@ -2094,6 +2145,7 @@
 				0BC2E3122B2207820002649D /* ImageHelper.swift in Sources */,
 				0B35B7AD2B0D14D500822BA6 /* SignInWithEmailView.swift in Sources */,
 				0BE8EC7C2ABCD54200512872 /* Utils.swift in Sources */,
+				0BBFFE1C2B9B57E9003A05B1 /* EventsDM.swift in Sources */,
 				0B1E790B2B86C1E100549D71 /* YelpReviewItem.swift in Sources */,
 				0B226F612B331FF10036B8BE /* ForYouItemPlaceholder.swift in Sources */,
 				0BF5B49D2AB292D500DEC403 /* KeychainHelper.swift in Sources */,
@@ -2130,8 +2182,10 @@
 				0B384FA72B2B591000C98245 /* UserActivityDM.swift in Sources */,
 				0BA43C252B517F3100F0DDBF /* UserSettings.swift in Sources */,
 				0B27AE192B752F7500C97559 /* RouteScheme.swift in Sources */,
+				0BBFFE332B9BE828003A05B1 /* EventCheckInsVM.swift in Sources */,
 				0B1610D62B63240B00DCAFA5 /* UserEssentials.swift in Sources */,
 				0B9C026C2B45A3A0000C4774 /* PlacesListVM.swift in Sources */,
+				0BBFFE282B9B8890003A05B1 /* MediaDM.swift in Sources */,
 				0BC84A692AD06F8200D723AA /* WrappingHStack.swift in Sources */,
 				0B95AD402B7EDAF800F6E85B /* HapticManager.swift in Sources */,
 				0BFEB5F42B7FC4AA006F6A17 /* InviteLinkEntity.swift in Sources */,
@@ -2175,10 +2229,12 @@
 				0BE3C8882B261DB40048F2A6 /* PhotosPickerItem.swift in Sources */,
 				0B27AE1F2B75786400C97559 /* ReportDM.swift in Sources */,
 				0B0183702AB3DE8A008E887F /* AuthRoute.swift in Sources */,
+				0BBFFE312B9BE817003A05B1 /* EventCheckInsView.swift in Sources */,
 				0BDBD3CA2ACB32B7003B8D2D /* PhantomScoreView.swift in Sources */,
 				0BE3F1432B5756A200D96EE8 /* ExploreVM.swift in Sources */,
 				0BCAE7462B7E6B8E005AD0EF /* PrizeItem.swift in Sources */,
 				0B547D822B3F33BA002C6336 /* MyProfileListsVM.swift in Sources */,
+				0BBFFE2C2B9BDF94003A05B1 /* EventMediaView.swift in Sources */,
 				0B0E6D342ABB872F00EC62EE /* Reaction.swift in Sources */,
 				0BEF7A3E2B0EB60F001532E7 /* CompleteTheUserInfoView.swift in Sources */,
 				0B226F6B2B336B170036B8BE /* UserProfileAchievements.swift in Sources */,
@@ -2336,7 +2392,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.53.0;
+				MARKETING_VERSION = 0.54.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2376,7 +2432,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.53.0;
+				MARKETING_VERSION = 0.54.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

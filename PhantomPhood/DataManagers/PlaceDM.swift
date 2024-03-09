@@ -187,10 +187,29 @@ final class PlaceDM {
     // MARK: - Structs
     
     struct CheckinRequestBody: Encodable {
-        let place: String
+        let place: String?
+        let event: String?
         let privacyType: PrivacyType?
         let tags: [String]?
         let caption: String?
         let image: String?
+        
+        init(place: String, privacyType: PrivacyType?, tags: [String]?, caption: String?, image: String?) {
+            self.place = place
+            self.event = nil
+            self.privacyType = privacyType
+            self.tags = tags
+            self.caption = caption
+            self.image = image
+        }
+        
+        init(event: String, privacyType: PrivacyType?, tags: [String]?, caption: String?, image: String?) {
+            self.place = nil
+            self.event = event
+            self.privacyType = privacyType
+            self.tags = tags
+            self.caption = caption
+            self.image = image
+        }
     }
 }

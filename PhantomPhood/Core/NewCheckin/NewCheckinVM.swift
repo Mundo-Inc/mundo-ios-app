@@ -25,31 +25,37 @@ final class NewCheckinVM: ObservableObject {
     @Published var isAdvancedSettingsVisible: Bool = false
     
     @Published var place: PlaceEssentials? = nil
+    @Published var event: Event? = nil
     @Published var error: String? = nil
     
     @Published var loadingSections = Set<Loadings>()
     
-    init(idOrData: IdOrData<PlaceEssentials>) {
-        switch idOrData {
-        case .id(let placeId):
-            Task { [weak self] in
-                self?.loadingSections.insert(.placeInfo)
-                do {
-                    let placeOverview = try await self?.placeDM.getOverview(id: placeId)
-                    if let placeOverview {
-                        self?.place = PlaceEssentials(placeOverview: placeOverview)
-                    } else {
-                        self?.error = "Not Found"
+    init(idOrData: IdOrData<PlaceEssentials>, event: Event? = nil) {
+        if let event {
+            self.event = event
+            self.place = event.place
+        } else {
+            switch idOrData {
+            case .id(let placeId):
+                Task { [weak self] in
+                    self?.loadingSections.insert(.placeInfo)
+                    do {
+                        let placeOverview = try await self?.placeDM.getOverview(id: placeId)
+                        if let placeOverview {
+                            self?.place = PlaceEssentials(placeOverview: placeOverview)
+                        } else {
+                            self?.error = "Not Found"
+                        }
+                    } catch {
+                        self?.error = "Couldn't fetch place data"
                     }
-                } catch {
-                    self?.error = "Couldn't fetch place data"
+                    self?.loadingSections.remove(.placeInfo)
                 }
-                self?.loadingSections.remove(.placeInfo)
+                break
+            case .data(let placeData):
+                self.place = placeData
+                break
             }
-            break
-        case .data(let placeData):
-            self.place = placeData
-            break
         }
     }
     
@@ -91,9 +97,17 @@ final class NewCheckinVM: ObservableObject {
             }
             
             do {
-                try await self.placeDM.checkin(body: .init(place: place.id, privacyType: self.privacyType, tags: self.mentions.compactMap({ user in
-                    user.id
-                }), caption: self.caption, image: image?.uploadId))
+                let body: PlaceDM.CheckinRequestBody
+                if let event = self.event {
+                    body = .init(event: event.id, privacyType: self.privacyType, tags: self.mentions.compactMap({ user in
+                        user.id
+                    }), caption: self.caption, image: image?.uploadId)
+                } else {
+                    body = .init(place: place.id, privacyType: self.privacyType, tags: self.mentions.compactMap({ user in
+                        user.id
+                    }), caption: self.caption, image: image?.uploadId)
+                }
+                try await self.placeDM.checkin(body: body)
                 self.toastVM.toast(.init(type: .success, title: "Success", message: "Checked in"))
                 self.place = nil
                 HapticManager.shared.notification(type: .success)

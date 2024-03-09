@@ -222,7 +222,7 @@ struct QuickActionsView: View {
         }
         .font(.custom(style: .body))
         .padding(.horizontal)
-        .presentationDetents([.height(350)])
+        .presentationDetents([.height(vm.isViewingPlace ? 250 : 340), .fraction(0.8)])
         .onAppear {
             vm.updateIsViewingPlace()
         }

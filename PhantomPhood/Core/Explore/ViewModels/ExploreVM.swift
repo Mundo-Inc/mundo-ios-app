@@ -17,16 +17,24 @@ final class ExploreVM17: ObservableObject {
     
     @Published var selectedPlaceData: PlaceDetail? = nil
     
-    private let placeDM = PlaceDM()
     private let mapDM = MapDM()
+    private let placeDM = PlaceDM()
     private let searchDM = SearchDM()
+    private let eventsDM = EventsDM()
     
-    @Published private(set) var isLoading = false
+    enum LoadingSection: Hashable {
+        case fetchPlace
+        case geoActivities
+        case fetchEvents
+    }
+    
+    @Published var events: [Event]? = nil
+    
+    @Published private(set) var loadingSections = Set<LoadingSection>()
     @Published var error: String? = nil
     @Published var searchResults: [MKMapItem]? = nil
     
     @Published private(set) var mapClusterActivities: MapActivityClusters = .init(clustered: [], solo: [])
-    @Published private(set) var isActiviteisLoading = false
     
     private var firstMapActivityDataTime = Date()
     private var mapActiviteis: [MapActivity] = []
@@ -52,6 +60,10 @@ final class ExploreVM17: ObservableObject {
                 await self.updateGeoActivities(for: region)
             }
         }
+        
+        Task {
+            await getEvents()
+        }
     }
     
     // MARK: - Shared Methods
@@ -62,14 +74,14 @@ final class ExploreVM17: ObservableObject {
     
     func fetchPlace(mapItem: MKMapItem) async {
         self.selectedPlaceData = nil
-        self.isLoading = true
+        self.loadingSections.insert(.fetchPlace)
         do {
             let data = try await placeDM.fetch(mapItem: mapItem)
             self.selectedPlaceData = data
         } catch(let err) {
             self.error = err.localizedDescription
         }
-        self.isLoading = false
+        self.loadingSections.remove(.fetchPlace)
     }
     
     func mapClickHandler(coordinate: CLLocationCoordinate2D) async -> MKMapItem? {
@@ -87,16 +99,16 @@ final class ExploreVM17: ObservableObject {
     }
     
     func updateGeoActivities(for region: MKCoordinateRegion) async {
-        guard !self.isActiviteisLoading else { return }
+        guard !self.loadingSections.contains(.geoActivities) else { return }
         
-        self.isActiviteisLoading = true
+        self.loadingSections.insert(.geoActivities)
         do {
             let data = try await self.mapDM.getGeoActivities(for: region)
             self.setMapActiviteis(activities: data, region: region)
         } catch {
             print(error)
         }
-        self.isActiviteisLoading = false
+        self.loadingSections.remove(.geoActivities)
     }
     
     func updateClusters(region: MKCoordinateRegion, force: Bool = false) {
@@ -137,7 +149,7 @@ final class ExploreVM17: ObservableObject {
     
     func fetchPlace(mapFeature: MapFeature) async {
         self.selectedPlaceData = nil
-        self.isLoading = true
+        self.loadingSections.insert(.fetchPlace)
         do {
             let data = try await placeDM.fetch(mapFeature: mapFeature)
             self.selectedPlaceData = data
@@ -145,13 +157,30 @@ final class ExploreVM17: ObservableObject {
             print("Error", err)
             self.error = err.localizedDescription
         }
-        self.isLoading = false
+        self.loadingSections.remove(.fetchPlace)
     }
-
+    
     func panToRegion(_ region: MKCoordinateRegion) {
         position = .region(region)
     }
 }
+
+@available(iOS 17.0, *)
+extension ExploreVM17 {
+    func getEvents() async {
+        guard !self.loadingSections.contains(.fetchEvents) else { return }
+        
+        self.loadingSections.insert(.fetchEvents)
+        do {
+            let data = try await eventsDM.getEvents()
+            self.events = data
+        } catch {
+            print(error)
+        }
+        self.loadingSections.remove(.fetchEvents)
+    }
+}
+
 
 @available(iOS, introduced: 16.0, deprecated: 17.0, message: "Use ExploreVM17 for iOS 17 and above")
 @MainActor
@@ -161,16 +190,24 @@ final class ExploreVM16: ObservableObject {
     
     @Published var selectedPlaceData: PlaceDetail? = nil
     
-    private let placeDM = PlaceDM()
     private let mapDM = MapDM()
+    private let placeDM = PlaceDM()
     private let searchDM = SearchDM()
+    private let eventsDM = EventsDM()
     
-    @Published private(set) var isLoading = false
+    enum LoadingSection: Hashable {
+        case fetchPlace
+        case geoActivities
+        case fetchEvents
+    }
+    
+    @Published var events: [Event]? = nil
+    
+    @Published private(set) var loadingSections = Set<LoadingSection>()
     @Published var error: String? = nil
     @Published var searchResults: [MKMapItem]? = nil
     
     @Published private(set) var mapClusterActivities: MapActivityClusters = .init(clustered: [], solo: [])
-    @Published private(set) var isActiviteisLoading = false
     
     private var firstMapActivityDataTime = Date()
     private var mapActiviteis: [MapActivity] = []
@@ -188,6 +225,10 @@ final class ExploreVM16: ObservableObject {
         if let location = locationManager.location {
             self.centerCoordinate = location.coordinate
         }
+        
+        Task {
+            await getEvents()
+        }
     }
     
     // MARK: - Shared Methods
@@ -198,14 +239,14 @@ final class ExploreVM16: ObservableObject {
     
     func fetchPlace(mapItem: MKMapItem) async {
         self.selectedPlaceData = nil
-        self.isLoading = true
+        self.loadingSections.insert(.fetchPlace)
         do {
             let data = try await placeDM.fetch(mapItem: mapItem)
             self.selectedPlaceData = data
         } catch(let err) {
             self.error = err.localizedDescription
         }
-        self.isLoading = false
+        self.loadingSections.remove(.fetchPlace)
     }
     
     func mapClickHandler(coordinate: CLLocationCoordinate2D) async -> MKMapItem? {
@@ -223,16 +264,16 @@ final class ExploreVM16: ObservableObject {
     }
     
     func updateGeoActivities(for region: MKCoordinateRegion) async {
-        guard !self.isActiviteisLoading else { return }
+        guard !self.loadingSections.contains(.geoActivities) else { return }
         
-        self.isActiviteisLoading = true
+        self.loadingSections.insert(.geoActivities)
         do {
             let data = try await self.mapDM.getGeoActivities(for: region)
             self.setMapActiviteis(activities: data, region: region)
         } catch {
             print(error)
         }
-        self.isActiviteisLoading = false
+        self.loadingSections.remove(.geoActivities)
     }
     
     func updateClusters(region: MKCoordinateRegion, force: Bool = false) {
@@ -273,5 +314,20 @@ final class ExploreVM16: ObservableObject {
     
     func panToRegion(_ region: MKCoordinateRegion) {
         self.centerCoordinate = region.center
+    }
+}
+
+extension ExploreVM16 {
+    func getEvents() async {
+        guard !self.loadingSections.contains(.fetchEvents) else { return }
+        
+        self.loadingSections.insert(.fetchEvents)
+        do {
+            let data = try await eventsDM.getEvents()
+            self.events = data
+        } catch {
+            print(error)
+        }
+        self.loadingSections.remove(.fetchEvents)
     }
 }

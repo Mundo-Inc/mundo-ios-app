@@ -8,38 +8,13 @@
 import Foundation
 import MapKit
 
-enum IdOrData<T: Identifiable>: Hashable {
-    static func ==(lhs: IdOrData<T>, rhs: IdOrData<T>) -> Bool {
-        switch (lhs, rhs) {
-        case let (.id(id1), .id(id2)):
-            return id1 == id2
-        case let (.data(data1), .data(data2)):
-            return data1.id == data2.id
-        default:
-            return false
-        }
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        switch self {
-        case .id(let string):
-            hasher.combine(string)
-        case .data(let t):
-            hasher.combine(t.id)
-        }
-    }
-    
-    case id(String)
-    case data(T)
-}
-
 enum AppRoute: Hashable {
     case notifications
     case leaderboard
     case userActivity(id: String)
     
     // Actions
-    case checkin(IdOrData<PlaceEssentials>)
+    case checkin(IdOrData<PlaceEssentials>, Event? = nil)
     case checkinMapPlace(MapPlace)
     case review(IdOrData<PlaceEssentials>)
     case reviewMapPlace(MapPlace)
@@ -52,6 +27,9 @@ enum AppRoute: Hashable {
     // Place
     case place(id: String, action: PlaceAction? = nil)
     case placeMapPlace(mapPlace: MapPlace, action: PlaceAction? = nil)
+    
+    // Event
+    case event(IdOrData<Event>)
     
     // User
     case userProfile(userId: String)

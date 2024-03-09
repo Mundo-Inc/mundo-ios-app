@@ -53,8 +53,8 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     
                     // Actions
                     
-                case .checkin(let idOrData):
-                    NewCheckinView(idOrData)
+                case .checkin(let idOrData, let event):
+                    NewCheckinView(idOrData, event: event)
                 case .checkinMapPlace(let mapPlace):
                     NewCheckinView(mapPlace: mapPlace)
                 case .review(let idOrData):
@@ -70,6 +70,11 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     PlaceView(id: id, action: action)
                 case .placeMapPlace(let mapPlace, let action):
                     PlaceView(mapPlace: mapPlace, action: action)
+                    
+                    // Event
+                    
+                case .event(let idOrData):
+                    EventView(idOrData)
                     
                     // My Profile
                     

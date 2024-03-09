@@ -18,16 +18,17 @@ struct PlaceScores: Decodable {
 }
 
 struct PlaceLocation: Decodable {
-    struct GeoLocation: Decodable {
-        let lng: Double
-        let lat: Double
-    }
     let geoLocation: GeoLocation
     let address: String?
     let city: String?
     let state: String?
     let country: String?
     let zip: String?
+    
+    struct GeoLocation: Decodable {
+        let lng: Double
+        let lat: Double
+    }
 }
 
 struct PlaceDetail: Identifiable, Decodable {

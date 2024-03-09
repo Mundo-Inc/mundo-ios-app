@@ -7,14 +7,15 @@
 
 import SwiftUI
 import PhotosUI
+import Kingfisher
 
 struct NewCheckinView: View {
     @StateObject private var pickerVM = PickerVM(limitToOne: true)
     
     @StateObject private var vm: NewCheckinVM
     
-    init(_ idOrData: IdOrData<PlaceEssentials>) {
-        self._vm = StateObject(wrappedValue: NewCheckinVM(idOrData: idOrData))
+    init(_ idOrData: IdOrData<PlaceEssentials>, event: Event? = nil) {
+        self._vm = StateObject(wrappedValue: NewCheckinVM(idOrData: idOrData, event: event))
     }
     
     init(mapPlace: MapPlace) {
@@ -31,65 +32,57 @@ struct NewCheckinView: View {
                 ScrollView {
                     VStack(spacing: 0) {
                         VStack {
-                            Text(vm.place?.name ?? "Name Placeholder")
-                                .font(.custom(style: .headline))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            if let event = vm.event {
+                                HStack {
+                                    if let logo = event.logo {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .stroke(Color.themeBorder.opacity(0.3), lineWidth: 2)
+                                            
+                                            KFImage.url(logo)
+                                                .placeholder {
+                                                    Image(systemName: "arrow.down.circle.dotted")
+                                                        .foregroundStyle(Color.white.opacity(0.5))
+                                                }
+                                                .loadDiskFileSynchronously()
+                                                .fade(duration: 0.25)
+                                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .contentShape(RoundedRectangle(cornerRadius: 5))
+                                                .clipShape(RoundedRectangle(cornerRadius: 5))
+                                                .frame(width: 24, height: 24)
+                                        }
+                                        .frame(width: 28, height: 28)
+                                    }
+                                    
+                                    Text(event.name)
+                                        .font(.custom(style: .headline))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            } else {
+                                Text(vm.place?.name ?? "Name Placeholder")
+                                    .font(.custom(style: .headline))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
                             Text(vm.place?.location.address ?? "Address Placeholder")
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
+                        .padding(.top, 5)
                         .padding(.horizontal)
                         .redacted(reason: vm.place == nil ? .placeholder : [])
                         
                         Divider()
-                            .padding(.vertical)
-                        
-                        TextField("(Optional) - Caption", text: $vm.caption, axis: .vertical)
-                            .lineLimit(5...15)
-                            .disabled(vm.loadingSections.contains(.submitting))
-                            .padding()
-                            .background {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .foregroundStyle(Color.themePrimary)
-                            }
-                            .padding(.horizontal)
+                            .padding(.top)
                         
                         VStack {
-                            ForEach(vm.mentions) { user in
-                                MentionItem(vm: vm, user: user)
-                            }
-                            Button {
-                                withAnimation {
-                                    vm.presentedSheet = .userSelector
-                                }
-                            } label: {
-                                HStack {
-                                    Circle()
-                                        .foregroundStyle(Color.themePrimary)
-                                        .frame(width: 28, height: 28)
-                                        .overlay {
-                                            Image(systemName: "plus")
-                                                .font(.system(size: 16))
-                                                .foregroundStyle(Color.accentColor)
-                                        }
-                                    Text("Tag People")
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                }
-                            }
-                            .disabled(vm.loadingSections.contains(.submitting))
-                            .foregroundStyle(Color.accentColor)
-                        }
-                        .padding()
-                        
-                        Divider()
-                        
-                        VStack {
-                            Text("Take a Selfie!")
+                            Text("No filters allowed - take a fun pic of you and your friends!")
                                 .font(.custom(style: .headline))
                                 .fontWeight(.bold)
                                 .foregroundStyle(Color.primary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Take a fun picture of you and your friends having a good time")
+                            Text("Let us know what you're doing - make it as funny as you look (Optional)")
                                 .font(.custom(style: .caption))
                                 .foregroundStyle(Color.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -236,6 +229,61 @@ struct NewCheckinView: View {
                             CameraView(onCompletion: pickerVM.cameraHandler)
                         }
                         
+                        Divider()
+                            .padding(.bottom)
+                        
+                        TextField("(Optional) - Caption", text: $vm.caption, axis: .vertical)
+                            .lineLimit(5...15)
+                            .disabled(vm.loadingSections.contains(.submitting))
+                            .padding()
+                            .background {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .foregroundStyle(Color.themePrimary)
+                            }
+                            .padding(.horizontal)
+                        
+                        Divider()
+                            .padding(.top)
+                        
+                        VStack {
+                            if vm.mentions.isEmpty {
+                                Text("Tag People (Find your fellow friends on the app and tag them!)")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .font(.custom(style: .caption))
+                                    .foregroundStyle(Color.secondary)
+                                    .padding(.bottom, 8)
+                            } else {
+                                ForEach(vm.mentions) { user in
+                                    MentionItem(vm: vm, user: user)
+                                }
+                            }
+                            
+                            Button {
+                                withAnimation {
+                                    vm.presentedSheet = .userSelector
+                                }
+                            } label: {
+                                HStack {
+                                    Circle()
+                                        .foregroundStyle(Color.themePrimary)
+                                        .frame(width: 28, height: 28)
+                                        .overlay {
+                                            Image(systemName: "plus")
+                                                .font(.system(size: 16))
+                                                .foregroundStyle(Color.accentColor)
+                                        }
+                                    Text("Tag People")
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            }
+                            .disabled(vm.loadingSections.contains(.submitting))
+                            .foregroundStyle(Color.accentColor)
+                        }
+                        .padding()
+                        
+                        Divider()
+                            .padding(.bottom)
+                        
                         Section {
                             if vm.isAdvancedSettingsVisible {
                                 Toggle(isOn: Binding(get: {
@@ -270,7 +318,7 @@ struct NewCheckinView: View {
                         }
                         .padding(.horizontal)
                     }
-                    .padding(.bottom, 40)
+                    .padding(.bottom, 60)
                 }
                 .scrollDismissesKeyboard(.interactively)
                 .scrollIndicators(.never)
