@@ -188,6 +188,8 @@
 		0B384FA92B2B5DE500C98245 /* UserActivityVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B384FA82B2B5DE500C98245 /* UserActivityVM.swift */; };
 		0B39A0C52B67E4A10091F246 /* ChecksDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B39A0C42B67E4A10091F246 /* ChecksDM.swift */; };
 		0B3B32DF2AF013DD00E1E0B0 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3B32DE2AF013DD00E1E0B0 /* Binding.swift */; };
+		0B3E50AA2BA08AFF0082078B /* HomeMadeVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3E50A92BA08AFF0082078B /* HomeMadeVM.swift */; };
+		0B3E50AC2BA08B070082078B /* HomeMadeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3E50AB2BA08B070082078B /* HomeMadeView.swift */; };
 		0B3E73CC2B29E9E00092072F /* Throttle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3E73CB2B29E9E00092072F /* Throttle.swift */; };
 		0B4016702B045D56000F1263 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 0B40166F2B045D56000F1263 /* SwiftUIPager */; };
 		0B4016732B046A83000F1263 /* VideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = 0B4016722B046A83000F1263 /* VideoPlayer */; };
@@ -572,6 +574,8 @@
 		0B384FA82B2B5DE500C98245 /* UserActivityVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityVM.swift; sourceTree = "<group>"; };
 		0B39A0C42B67E4A10091F246 /* ChecksDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecksDM.swift; sourceTree = "<group>"; };
 		0B3B32DE2AF013DD00E1E0B0 /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
+		0B3E50A92BA08AFF0082078B /* HomeMadeVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMadeVM.swift; sourceTree = "<group>"; };
+		0B3E50AB2BA08B070082078B /* HomeMadeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMadeView.swift; sourceTree = "<group>"; };
 		0B3E73CB2B29E9E00092072F /* Throttle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Throttle.swift; sourceTree = "<group>"; };
 		0B4016742B046AA5000F1263 /* ForYouView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForYouView.swift; sourceTree = "<group>"; };
 		0B448E682B832DEC00179D0E /* QuickActionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsVM.swift; sourceTree = "<group>"; };
@@ -1142,6 +1146,31 @@
 			path = Emojis;
 			sourceTree = "<group>";
 		};
+		0B3E50A62BA08ADC0082078B /* HomeMade */ = {
+			isa = PBXGroup;
+			children = (
+				0B3E50A82BA08AF00082078B /* ViewModels */,
+				0B3E50A72BA08AEA0082078B /* Views */,
+			);
+			path = HomeMade;
+			sourceTree = "<group>";
+		};
+		0B3E50A72BA08AEA0082078B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0B3E50AB2BA08B070082078B /* HomeMadeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0B3E50A82BA08AF00082078B /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				0B3E50A92BA08AFF0082078B /* HomeMadeVM.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		0B448E672B832DD100179D0E /* QuickActions */ = {
 			isa = PBXGroup;
 			children = (
@@ -1208,6 +1237,7 @@
 				0BBFFE222B9B6C1E003A05B1 /* Event */,
 				0BF5B4AB2AB375C200DEC403 /* Explore */,
 				0BF5B4A72AB3757000DEC403 /* Home */,
+				0B3E50A62BA08ADC0082078B /* HomeMade */,
 				0B0183532AB3BEF4008E887F /* Leaderboard */,
 				0B695D762AF131DD00C11870 /* MyConnections */,
 				0B0183542AB3BEFB008E887F /* MyProfile */,
@@ -2070,6 +2100,7 @@
 				0B997B702AC74BFA00579C9C /* UserProfileStats.swift in Sources */,
 				0B547D7C2B3EEA9B002C6336 /* ListsDM.swift in Sources */,
 				0BCF5D692B5DDEC700D729E2 /* Date.swift in Sources */,
+				0B3E50AC2BA08B070082078B /* HomeMadeView.swift in Sources */,
 				0BC2E3182B2208880002649D /* PickerVM.swift in Sources */,
 				0B547D802B3F33AA002C6336 /* MyProfileListsView.swift in Sources */,
 				0BE3118E2AC4842700CF9BA5 /* ReviewVideoView.swift in Sources */,
@@ -2129,6 +2160,7 @@
 				0BBFFE262B9B6C9C003A05B1 /* EventVM.swift in Sources */,
 				0B1610DF2B63267400DCAFA5 /* ReviewScores.swift in Sources */,
 				0BC84A652AD0339F00D723AA /* ReactionLabel.swift in Sources */,
+				0B3E50AA2BA08AFF0082078B /* HomeMadeVM.swift in Sources */,
 				0B997B6E2AC7381700579C9C /* UserProfileDM.swift in Sources */,
 				0BF10B8F2B35B53A00522E60 /* ProfileActivitiesView.swift in Sources */,
 				0B5EB1C02B56DB6A00497847 /* CustomMapMarker.swift in Sources */,
