@@ -12,9 +12,9 @@ import Combine
 final class ForYouInfoVM: ObservableObject {
     static let shared = ForYouInfoVM()
     
-    private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     private let toastVM = ToastVM.shared
+    private let connectionsDM = ConnectionsDM()
     
     enum FollowAction: String {
         case follow = "Follow"
@@ -46,21 +46,20 @@ final class ForYouInfoVM: ObservableObject {
         $data
             .sink { value in
                 if let value = value {
-                    Task {
-                        self.isLoadingFollowState = true
-                        let followStatus = await self.getFollowStatus(value.user.id)
-                        self.isLoadingFollowState = false
-                        DispatchQueue.main.async {
-                            if let followStatus = followStatus {
+                    Task { [weak self] in
+                        self?.isLoadingFollowState = true
+                        if let followStatus = try? await self?.connectionsDM.followStatus(userId: value.user.id) {
+                            DispatchQueue.main.async {
                                 if followStatus.isFollowing {
-                                    self.followAction = .unfollow
+                                    self?.followAction = .unfollow
                                 } else if followStatus.isFollower {
-                                    self.followAction = .followBack
+                                    self?.followAction = .followBack
                                 } else {
-                                    self.followAction = .follow
+                                    self?.followAction = .follow
                                 }
                             }
                         }
+                        self?.isLoadingFollowState = false
                     }
                 }
             }
@@ -81,11 +80,7 @@ final class ForYouInfoVM: ObservableObject {
     func follow(id: String) async {
         self.isLoadingFollowState = true
         do {
-            guard let token = await auth.getToken() else {
-                throw URLError(.userAuthenticationRequired)
-            }
-            
-            try await apiManager.requestNoContent("/users/\(id)/connections", method: .post, token: token)
+            try await connectionsDM.follow(userId: id)
             
             self.followAction = .unfollow
             
@@ -99,30 +94,5 @@ final class ForYouInfoVM: ObservableObject {
             print("DEBUG: Error following user | Error: \(error.localizedDescription)")
         }
         self.isLoadingFollowState = false
-    }
-    
-    // MARK: - Private methods
-    
-    private func getFollowStatus(_ userId: String) async -> FollowStatus? {
-        guard let token = await auth.getToken() else { return nil }
-        
-        do {
-            let data = try await apiManager.requestData("/users/\(userId)/connections/followStatus", method: .get, token: token) as APIResponse<FollowStatus>?
-            
-            if let data {
-                return data.data
-            }
-        } catch {
-            print("DEBUG: Couldn't get user followStatus | Error: \(error.localizedDescription)")
-        }
-        
-        return nil
-    }
-    
-    // MARK: - Structs
-    
-    struct FollowStatus: Decodable {
-        let isFollowing: Bool
-        let isFollower: Bool
     }
 }

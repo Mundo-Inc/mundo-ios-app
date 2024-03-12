@@ -44,7 +44,7 @@ class PlaceReviewsVM: ObservableObject {
         
         do {
             let data = try await placeDM.getReviews(id: placeId, page: page)
-            self.total = data.total
+            self.total = data.pagination.totalCount
             if page == 1 {
                 reviews = data.data
             } else {
@@ -54,6 +54,7 @@ class PlaceReviewsVM: ObservableObject {
         } catch {
             print(error)
         }
+        
         if type == .refresh {
             loadingSections.remove(.refresh)
         } else {

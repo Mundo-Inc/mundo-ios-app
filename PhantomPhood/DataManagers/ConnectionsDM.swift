@@ -16,21 +16,46 @@ final class ConnectionsDM {
         case followers = "followers"
     }
     
-    func getConnections(userId: String, type: UserConnectionType, page: Int = 1, limit: Int = 30) async throws -> (data: [UserConnection], total: Int) {
-        guard let token = await auth.getToken() else { throw URLError(.userAuthenticationRequired) }
-        
-        struct RequestResponse: Decodable {
-            let success: Bool
-            let data: [UserConnection]
-            let total: Int
+    func getConnections(userId: String, type: UserConnectionType, page: Int = 1, limit: Int = 30) async throws -> APIResponseWithPagination<[UserConnection]> {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/users/\(userId)/connections/\(type.rawValue)?page=\(page)&limit=\(limit)", method: .get, token: token) as RequestResponse?
+        let data = try await apiManager.requestData("/users/\(userId)/connections/\(type.rawValue)?page=\(page)&limit=\(limit)", method: .get, token: token) as APIResponseWithPagination<[UserConnection]>?
         
         guard let data else {
             throw URLError(.badServerResponse)
         }
         
-        return (data: data.data, total: data.total)
+        return data
+    }
+    
+    func follow(userId: String) async throws {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        try await apiManager.requestNoContent("/users/\(userId)/connections", method: .post, token: token)
+    }
+    
+    func followStatus(userId: String) async throws -> FollowStatus {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let data = try await apiManager.requestData("/users/\(userId)/connections/followStatus", method: .get, token: token) as APIResponse<FollowStatus>?
+        
+        guard let data else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return data.data
+    }
+    
+    // MARK: - Structs
+    
+    struct FollowStatus: Decodable {
+        let isFollowing: Bool
+        let isFollower: Bool
     }
 }

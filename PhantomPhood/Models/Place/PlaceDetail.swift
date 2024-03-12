@@ -95,7 +95,7 @@ extension PlaceDetail {
         struct OpenningHours: Decodable {
             let openNow: Bool
             let periods: [Periods]
-            let weekdayText: [String]
+            let weekdayDescriptions: [String]
             
             struct Periods: Decodable {
                 let close: DayTime
@@ -103,7 +103,8 @@ extension PlaceDetail {
                 
                 struct DayTime: Decodable {
                     let day: Int
-                    let time: String
+                    let hour: Int
+                    let minute: Int
                 }
             }
         }

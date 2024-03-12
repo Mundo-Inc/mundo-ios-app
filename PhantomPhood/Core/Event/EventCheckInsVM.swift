@@ -19,6 +19,7 @@ final class EventCheckInsVM: ObservableObject {
     
     @Published var isLoading: Bool = false
     @Published var checkIns: [Checkin]? = nil
+    @Published var total: Int? = nil
     
     var page = 1
     func fetch(type: RefreshNewAction) async {
@@ -30,14 +31,17 @@ final class EventCheckInsVM: ObservableObject {
         
         isLoading = true
         do {
-            let data = try await checkInDM.getCheckins(event: eventId)
+            let data = try await checkInDM.getCheckins(event: eventId, page: page)
+            self.total = data.pagination.totalCount
+            
             if page == 1 {
-                checkIns = data
+                checkIns = data.data
             } else if checkIns != nil {
-                checkIns!.append(contentsOf: data)
+                checkIns!.append(contentsOf: data.data)
             } else {
-                checkIns = data
+                checkIns = data.data
             }
+            
             page += 1
         } catch {
             print(error)

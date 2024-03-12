@@ -342,7 +342,7 @@ struct PlaceView: View {
                     }
                 
                 VStack(alignment: .leading) {
-                    ForEach(openingHours.weekdayText, id: \.self) { hour in
+                    ForEach(openingHours.weekdayDescriptions, id: \.self) { hour in
                         Text(hour)
                     }
                 }

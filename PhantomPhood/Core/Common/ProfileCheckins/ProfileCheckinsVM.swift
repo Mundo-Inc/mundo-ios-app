@@ -10,7 +10,7 @@ import Foundation
 @MainActor
 class ProfileCheckinsVM: ObservableObject {
     private let auth = Authentication.shared
-    private let apiManager = APIManager.shared
+    private let checkInDM = CheckInDM()
     
     @Published var isLoading = false
     @Published var checkins: [Checkin]? = nil
@@ -55,7 +55,7 @@ class ProfileCheckinsVM: ObservableObject {
             uid = nil
         }
         
-        guard let token = await auth.getToken(), let uid else { return }
+        guard let uid else { return }
         
         if type == .refresh {
             self.page = 1
@@ -69,29 +69,22 @@ class ProfileCheckinsVM: ObservableObject {
         self.isLoading = true
         
         do {
-            struct RequestResponse: Decodable {
-                let success: Bool
-                let data: [Checkin]
-                let total: Int
-            }
-            let data = try await apiManager.requestData("/checkins?user=\(uid)&page=\(self.page)", method: .get, token: token) as RequestResponse?
+            let data = try await checkInDM.getCheckins(user: uid, page: self.page)
             
-            if let data {
-                switch type {
-                    
-                case .refresh:
-                    self.checkins = data.data
-                case .new:
-                    if self.checkins != nil {
-                        self.checkins!.append(contentsOf: data.data)
-                    } else {
-                        self.checkins = data.data
-                    }
-                }
+            switch type {
                 
-                self.total = data.total
-                self.page += 1
+            case .refresh:
+                self.checkins = data.data
+            case .new:
+                if self.checkins != nil {
+                    self.checkins!.append(contentsOf: data.data)
+                } else {
+                    self.checkins = data.data
+                }
             }
+            
+            self.total = data.pagination.totalCount
+            self.page += 1
         } catch {
             print(error)
         }

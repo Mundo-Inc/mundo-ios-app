@@ -13,6 +13,7 @@ final class NewCheckinVM: ObservableObject {
     private let toastVM = ToastVM.shared
     private let taskManager = TaskManager.shared
     private let placeDM = PlaceDM()
+    private let checkInDM = CheckInDM()
     
     @Published var privacyType: PrivacyType = .PUBLIC
     @Published var caption: String = ""
@@ -97,7 +98,7 @@ final class NewCheckinVM: ObservableObject {
             }
             
             do {
-                let body: PlaceDM.CheckinRequestBody
+                let body: CheckInDM.CheckinRequestBody
                 if let event = self.event {
                     body = .init(event: event.id, privacyType: self.privacyType, tags: self.mentions.compactMap({ user in
                         user.id
@@ -107,7 +108,7 @@ final class NewCheckinVM: ObservableObject {
                         user.id
                     }), caption: self.caption, image: image?.uploadId)
                 }
-                try await self.placeDM.checkin(body: body)
+                try await self.checkInDM.checkin(body: body)
                 self.toastVM.toast(.init(type: .success, title: "Success", message: "Checked in"))
                 self.place = nil
                 HapticManager.shared.notification(type: .success)

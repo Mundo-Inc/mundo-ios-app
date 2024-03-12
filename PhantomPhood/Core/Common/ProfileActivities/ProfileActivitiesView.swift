@@ -11,7 +11,7 @@ struct ProfileActivitiesView: View {
     @StateObject private var vm: ProfileActivitiesVM
     @StateObject private var mediasVM = MediasVM()
     
-    init(userId: UserIdEnum? = nil, activityType: ProfileActivitiesVM.FeedItemActivityType) {
+    init(userId: UserIdEnum? = nil, activityType: FeedItemActivityType) {
         self._vm = StateObject(wrappedValue: ProfileActivitiesVM(userId: userId, activityType: activityType))
     }
     
@@ -73,7 +73,7 @@ struct ProfileActivitiesView: View {
                 }
                 
                 Picker(selection: $vm.activityType, label: Text("Activity Type")) {
-                    ForEach(ProfileActivitiesVM.FeedItemActivityType.allCases, id: \.self) { item in
+                    ForEach(FeedItemActivityType.allCases, id: \.self) { item in
                         Text(item.title).tag(item.rawValue)
                     }
                 }

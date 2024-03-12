@@ -34,7 +34,7 @@ enum AppRoute: Hashable {
     // User
     case userProfile(userId: String)
     case userConnections(userId: String, initTab: UserConnectionsTab)
-    case userActivities(userId: UserIdEnum, activityType: ProfileActivitiesVM.FeedItemActivityType = .all)
+    case userActivities(userId: UserIdEnum, activityType: FeedItemActivityType = .all)
     case userCheckins(userId: UserIdEnum)
     
     case placesList(listId: String)

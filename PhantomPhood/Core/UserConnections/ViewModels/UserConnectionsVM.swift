@@ -60,24 +60,24 @@ class UserConnectionsVM: ObservableObject {
         }
         
         do {
-            let (data, total) = try await connectionsDM.getConnections(userId: userId, type: type, page: type == .followers ? followersPage : followingsPage, limit: DATA_LIMIT)
+            let connections = try await connectionsDM.getConnections(userId: userId, type: type, page: type == .followers ? followersPage : followingsPage, limit: DATA_LIMIT)
             
             switch type {
             case .followers:
                 self.followersPage += 1
-                self.totalFollowers = total
+                self.totalFollowers = connections.pagination.totalCount
                 if self.followers != nil && requestType == .new {
-                    self.followers!.append(contentsOf: data)
+                    self.followers!.append(contentsOf: connections.data)
                 } else {
-                    self.followers = data
+                    self.followers = connections.data
                 }
             case .followings:
                 self.followingsPage += 1
-                self.totalFollowings = total
+                self.totalFollowings = connections.pagination.totalCount
                 if self.followings != nil && requestType == .new {
-                    self.followings!.append(contentsOf: data)
+                    self.followings!.append(contentsOf: connections.data)
                 } else {
-                    self.followings = data
+                    self.followings = connections.data
                 }
             }
         } catch {

@@ -8,6 +8,7 @@
 import Foundation
 
 enum FeedItemActivityType: String, Decodable, CaseIterable {
+    case all = "ALL"
     case newCheckin = "NEW_CHECKIN"
     case newReview = "NEW_REVIEW"
     case newRecommend = "NEW_RECOMMEND"
@@ -15,6 +16,27 @@ enum FeedItemActivityType: String, Decodable, CaseIterable {
     case gotBadge = "GOT_BADGE"
     case levelUp = "LEVEL_UP"
     case following = "FOLLOWING"
+    
+    var title: String {
+        switch self {
+        case .all:
+            "All"
+        case .newCheckin:
+            "Check-ins"
+        case .newReview:
+            "Reviews"
+        case .newRecommend:
+            "Recommendations"
+        case .addPlace:
+            "Places Added"
+        case .gotBadge:
+            "New Badges"
+        case .levelUp:
+            "Level Ups!"
+        case .following:
+            "Follow Activities"
+        }
+    }
 }
 
 enum FeedItemResourceType: String, Decodable {

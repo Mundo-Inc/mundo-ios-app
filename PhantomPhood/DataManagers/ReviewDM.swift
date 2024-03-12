@@ -11,12 +11,12 @@ final class ReviewDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
-    func getReview(reviewId: String) async throws -> PaginatedAPIResponse<PlaceReview> {
+    func getReview(reviewId: String) async throws -> APIResponseWithPagination<PlaceReview> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/reviews/\(reviewId)", token: token) as PaginatedAPIResponse<PlaceReview>?
+        let data = try await apiManager.requestData("/reviews/\(reviewId)", token: token) as APIResponseWithPagination<PlaceReview>?
         
         guard let data else {
             throw URLError(.badServerResponse)
@@ -25,12 +25,12 @@ final class ReviewDM {
         return data
     }
     
-    func getReviews(writer: String, sort: ReviewSort, page: Int = 1, limit: Int = 10) async throws -> PaginatedAPIResponse<[PlaceReview]> {
+    func getReviews(writer: String, sort: ReviewSort, page: Int = 1, limit: Int = 10) async throws -> APIResponseWithPagination<[PlaceReview]> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/reviews?writer=\(writer)&page=\(page)&limit=\(limit)&sort=\(sort.rawValue)", token: token) as PaginatedAPIResponse<[PlaceReview]>?
+        let data = try await apiManager.requestData("/reviews?writer=\(writer)&page=\(page)&limit=\(limit)&sort=\(sort.rawValue)", token: token) as APIResponseWithPagination<[PlaceReview]>?
         
         guard let data else {
             throw URLError(.badServerResponse)

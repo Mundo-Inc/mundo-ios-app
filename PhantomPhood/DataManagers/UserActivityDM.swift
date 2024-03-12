@@ -24,4 +24,18 @@ final class UserActivityDM {
             throw URLError(.badServerResponse)
         }
     }
+    
+    func getUserActivities(_ userId: String, page: Int, activityType: FeedItemActivityType) async throws -> APIResponseWithPagination<[FeedItem]> {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let data = try await apiManager.requestData("/users/\(userId)/userActivities?page=\(page)\(activityType == .all ? "" : "&type=\(activityType.rawValue)")", method: .get, token: token) as APIResponseWithPagination<[FeedItem]>?
+        
+        if let data = data {
+            return data
+        } else {
+            throw URLError(.badServerResponse)
+        }
+    }
 }

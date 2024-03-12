@@ -10,7 +10,6 @@ import Combine
 
 @MainActor
 final class UserSelectorVM: ObservableObject {
-    private let apiManager = APIManager.shared
     private let searchDM = SearchDM()
     
     let onSelect: (UserEssentials) -> Void
