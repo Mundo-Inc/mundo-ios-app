@@ -31,8 +31,6 @@ struct AddReviewView: View {
     
     @StateObject private var pickerVM = PickerVM()
     
-    @FocusState private var textFieldFocused
-    
     var body: some View {
         ZStack {
             if let place = vm.place {
@@ -66,13 +64,16 @@ struct AddReviewView: View {
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
                                 Text(place.location.address ?? "-")
+                                    .lineLimit(1)
                                     .font(.custom(style: .caption))
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
+                            .foregroundStyle(.secondary)
                             
                             Spacer()
                         }
                         .padding(.horizontal)
+                        .padding(.bottom, 5)
                         
                         Divider()
                     }
@@ -305,7 +306,6 @@ struct AddReviewView: View {
                                 
                                 TextField("Tell us more...", text: $vm.reviewContent, axis: .vertical)
                                     .lineLimit(6...20)
-                                    .focused($textFieldFocused)
                                     .disabled(vm.isSubmitting)
                                     .padding(.all, 10)
                                     .background {
@@ -316,55 +316,7 @@ struct AddReviewView: View {
                             .padding(.horizontal)
                             .padding(.top)
                             
-                            ScrollView(.horizontal) {
-                                HStack {
-                                    ForEach(pickerVM.mediaItems) { item in
-                                        switch item.state {
-                                        case .empty:
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .foregroundStyle(Color.themePrimary)
-                                                .frame(width: 110, height: 140)
-                                                .overlay {
-                                                    VStack {
-                                                        Text("Loading")
-                                                            .font(.custom(style: .caption))
-                                                        ProgressView()
-                                                    }
-                                                }
-                                        case .loading:
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .foregroundStyle(Color.themePrimary)
-                                                .frame(width: 110, height: 140)
-                                                .overlay {
-                                                    VStack {
-                                                        Text("Loading")
-                                                            .font(.custom(style: .caption))
-                                                        ProgressView()
-                                                    }
-                                                }
-                                        case .loaded(let mediaData):
-                                            switch mediaData {
-                                            case .image(let uiImage):
-                                                Image(uiImage: uiImage)
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fill)
-                                                    .frame(width: 110, height: 140)
-                                                    .clipShape(.rect(cornerRadius: 10))
-                                            case .movie(let url):
-                                                ReviewVideoView(url: url, mute: true)
-                                                    .frame(width: 110, height: 140)
-                                                    .clipShape(.rect(cornerRadius: 10))
-                                            }
-                                        case .failure(let error):
-                                            Text("Error: \(error.localizedDescription)")
-                                                .frame(width: 110, height: 140)
-                                        }
-                                    }
-                                }
-                                .font(.custom(style: .subheadline))
-                                .padding(.horizontal)
-                            }
-                            .scrollIndicators(.never)
+                            Divider()
                             
                             PhotosPicker(
                                 selection: $pickerVM.selection,
@@ -373,88 +325,178 @@ struct AddReviewView: View {
                             ) {
                                 Label {
                                     Text(pickerVM.selection.isEmpty ? "Add Images/Videos" : "Edit Images/Videos")
+                                        .fontWeight(.medium)
                                 } icon: {
-                                    Image(systemName: "photo.on.rectangle.fill")
+                                    Image(systemName: "camera.fill")
                                 }
                                 .frame(maxWidth: .infinity)
+                                .foregroundStyle(Color.themeBG)
+                                .padding(.vertical, 12)
+                                .background(Color.accentColor)
+                                .clipShape(.rect(cornerRadius: 10))
                             }
                             .disabled(vm.isSubmitting)
-                            .buttonStyle(.bordered)
+                            .controlSize(.large)
                             .padding(.horizontal)
-                            .padding(.bottom)
+                            
+                            ScrollView(.horizontal) {
+                                HStack {
+                                    ForEach(pickerVM.mediaItems) { item in
+                                        VStack(spacing: 10) {
+                                            switch item.state {
+                                            case .empty:
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .foregroundStyle(Color.themePrimary)
+                                                    .frame(width: 110, height: 140)
+                                                    .overlay {
+                                                        Text("Loading")
+                                                            .font(.custom(style: .caption))
+                                                    }
+                                                
+                                                Circle()
+                                                    .stroke(Color.red.opacity(0.4), lineWidth: 1)
+                                                    .frame(width: 28, height: 28)
+                                                    .overlay {
+                                                        ProgressView()
+                                                    }
+                                            case .loading:
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .foregroundStyle(Color.themePrimary)
+                                                    .frame(width: 110, height: 140)
+                                                    .overlay {
+                                                        Text("Loading")
+                                                            .font(.custom(style: .caption))
+                                                    }
+                                                
+                                                Circle()
+                                                    .stroke(Color.red.opacity(0.4), lineWidth: 1)
+                                                    .frame(width: 28, height: 28)
+                                                    .overlay {
+                                                        ProgressView()
+                                                    }
+                                            case .loaded(let mediaData):
+                                                switch mediaData {
+                                                case .image(let uiImage):
+                                                    Image(uiImage: uiImage)
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fill)
+                                                        .frame(width: 110, height: 140)
+                                                        .clipShape(.rect(cornerRadius: 10))
+                                                    
+                                                    Button {
+                                                        pickerVM.removeItem(item)
+                                                    } label: {
+                                                        Circle()
+                                                            .stroke(Color.red.opacity(0.4), lineWidth: 1)
+                                                            .frame(width: 28, height: 28)
+                                                            .overlay {
+                                                                Image(systemName: "trash")
+                                                                    .foregroundStyle(.red)
+                                                            }
+                                                    }
+                                                    .contentShape(Circle())
+                                                    .controlSize(.mini)
+                                                case .movie(let url):
+                                                    ReviewVideoView(url: url, mute: true)
+                                                        .frame(width: 110, height: 140)
+                                                        .clipShape(.rect(cornerRadius: 10))
+                                                    
+                                                    Button {
+                                                        pickerVM.removeItem(item)
+                                                    } label: {
+                                                        Circle()
+                                                            .stroke(Color.red.opacity(0.4), lineWidth: 1)
+                                                            .frame(width: 28, height: 28)
+                                                            .overlay {
+                                                                Image(systemName: "trash")
+                                                                    .foregroundStyle(.red)
+                                                            }
+                                                    }
+                                                    .contentShape(Circle())
+                                                    .controlSize(.mini)
+                                                }
+                                            case .failure(let error):
+                                                Text("Error: \(error.localizedDescription)")
+                                                    .frame(width: 110, height: 140)
+                                            }
+                                        }
+                                    }
+                                }
+                                .font(.custom(style: .subheadline))
+                                .padding(.horizontal)
+                            }
+                            .scrollIndicators(.never)
+                            .padding(.bottom, 20)
                         }
                         .scrollDismissesKeyboard(.interactively)
                     }
                     
-                    HStack {
-                        if vm.step != .recommendation {
-                            Button {
-                                switch vm.step {
-                                case .scores:
-                                    withAnimation {
-                                        vm.step = .recommendation
+                    VStack {
+                        Divider()
+                        
+                        HStack(spacing: 15) {
+                            if vm.step != .recommendation {
+                                Button {
+                                    switch vm.step {
+                                    case .scores:
+                                        withAnimation {
+                                            vm.step = .recommendation
+                                        }
+                                    case .review:
+                                        withAnimation {
+                                            vm.step = .scores
+                                        }
+                                    default:
+                                        break
                                     }
-                                case .review:
+                                } label: {
+                                    Text("Previous")
+                                        .frame(maxWidth: .infinity)
+                                }
+                                .opacity(vm.isSubmitting ? 0.6 : 1)
+                                .disabled(vm.isSubmitting)
+                            }
+                            
+                            CTAButton {
+                                switch vm.step {
+                                case .recommendation:
                                     withAnimation {
                                         vm.step = .scores
                                     }
-                                default:
-                                    break
-                                }
-                            } label: {
-                                Text("Previous")
-                            }
-                            .opacity(vm.isSubmitting ? 0.6 : 1)
-                            .disabled(vm.isSubmitting)
-                        }
-                        
-                        Spacer()
-                        
-                        switch vm.step {
-                        case .recommendation:
-                            Button {
-                                withAnimation {
-                                    vm.step = .scores
-                                }
-                            } label: {
-                                Text(vm.isRecommended != nil ? "Next" : "Skip")
-                                    .padding(.horizontal)
-                            }
-                            .buttonStyle(.bordered)
-                        case .scores:
-                            Button {
-                                withAnimation {
-                                    vm.step = .review
-                                    textFieldFocused = true
-                                }
-                            } label: {
-                                Text(vm.haveAnyScore ? "Next" : "Skip")
-                                    .padding(.horizontal)
-                            }
-                            .buttonStyle(.bordered)
-                        case .review:
-                            Button {
-                                if pickerVM.isReadyToSubmit {
-                                    Task {
-                                        await vm.submit(mediaItems: pickerVM.mediaItems)
+                                case .scores:
+                                    withAnimation {
+                                        vm.step = .review
+                                    }
+                                case .review:
+                                    if pickerVM.isReadyToSubmit {
+                                        Task {
+                                            await vm.submit(mediaItems: pickerVM.mediaItems)
+                                        }
                                     }
                                 }
                             } label: {
-                                HStack(spacing: 8) {
-                                    if vm.isSubmitting {
-                                        ProgressView()
+                                switch vm.step {
+                                case .recommendation:
+                                    Text(vm.isRecommended != nil ? "Next" : "Skip")
+                                case .scores:
+                                    Text(vm.haveAnyScore ? "Next" : "Skip")
+                                case .review:
+                                    HStack(spacing: 8) {
+                                        if vm.isSubmitting {
+                                            ProgressView()
+                                                .controlSize(.regular)
+                                                .padding(.trailing, 3)
+                                        }
+                                        Text(vm.isSubmitting ? "Submitting" : "Submit")
                                     }
-                                    Text(vm.isSubmitting ? "Submitting" : "Submit")
                                 }
-                                .padding(.horizontal)
                             }
-                            .buttonStyle(.borderedProminent)
-                            .disabled(vm.isSubmitting || !pickerVM.isReadyToSubmit)
+                            .disabled(vm.step == .review && (vm.isSubmitting || !pickerVM.isReadyToSubmit))
                         }
+                        .padding(.horizontal)
                     }
-                    .font(.custom(style: .body))
-                    .padding()
                 }
+                .ignoresSafeArea(.keyboard, edges: .bottom)
             } else if let error = vm.error {
                 Text(error)
             }

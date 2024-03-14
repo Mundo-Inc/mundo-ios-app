@@ -46,17 +46,17 @@ struct Emoji: View {
             if emoji.isAnimated, let gifName = emoji.gifName, isAnimating {
                 AnimatedImage(name: gifName, isAnimating: $isAnimating)
                     .resizable()
-                    .scaledToFit()
+                    .aspectRatio(contentMode: .fit)
             } else if !emoji.unicode.isEmpty && UIImage(named: "Emojis/\(emoji.unicode)") != nil {
                 Image("Emojis/\(emoji.unicode)")
                     .resizable()
-                    .scaledToFit()
+                    .aspectRatio(contentMode: .fit)
             } else {
                 Text(emoji.symbol)
                     .font(.system(size: size * 0.75))
             }
         }
-        .frame(maxWidth: size, maxHeight: size)
+        .frame(width: size, height: size)
     }
 }
 

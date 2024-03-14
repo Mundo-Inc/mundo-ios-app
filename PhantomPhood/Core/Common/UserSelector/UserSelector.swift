@@ -39,6 +39,7 @@ struct UserSelector: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always))
+        .presentationDetents([.fraction(0.99)])
     }
 }
 

@@ -197,7 +197,7 @@ struct CommentsView: View {
                 }.padding(.horizontal)
                 .padding(.vertical, 10)
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.medium, .fraction(0.99)])
     }
 }
 

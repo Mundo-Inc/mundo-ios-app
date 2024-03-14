@@ -27,72 +27,57 @@ struct ContentView: View {
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            if let user = auth.currentUser, user.acceptedEula != nil, !onboardingVM.isPresented {
-                TabView(selection: appData.tabViewSelectionHandler) {
-                    Group {
-                        HomeView()
-                            .tag(Tab.home)
-                        
-                        ExploreView()
-                            .tag(Tab.explore)
-                        
-                        RewardsHubView()
-                            .tag(Tab.rewardsHub)
-                        
-                        MyProfile()
-                            .tag(Tab.myProfile)
-                    }
-                    .toolbar(.hidden, for: .tabBar)
+            TabView(selection: appData.tabViewSelectionHandler) {
+                HomeView()
+                    .tag(Tab.home)
+                
+                ExploreView()
+                    .tag(Tab.explore)
+                
+                RewardsHubView()
+                    .tag(Tab.rewardsHub)
+                
+                MyProfile()
+                    .tag(Tab.myProfile)
+            }
+            .environmentObject(alertManager)
+            .environmentObject(actionManager)
+            .alert("Confirmation", isPresented: Binding(optionalValue: $alertManager.value), presenting: alertManager.value) { item in
+                Button {
+                    item.callback()
+                } label: {
+                    Text("Yes")
                 }
-                .environmentObject(alertManager)
-                .environmentObject(actionManager)
-                .alert("Confirmation", isPresented: Binding(optionalValue: $alertManager.value), presenting: alertManager.value) { item in
-                    Button {
-                        item.callback()
-                    } label: {
-                        Text("Yes")
-                    }
-                    
-                    Button("Cancel", role: .cancel) {
-                        alertManager.value = nil
-                    }
-                } message: { item in
-                    Text(item.message)
+                
+                Button("Cancel", role: .cancel) {
+                    alertManager.value = nil
                 }
-                .confirmationDialog("Actions", isPresented: Binding(optionalValue: $actionManager.value), presenting: actionManager.value) { value in
-                    ForEach(value) { item in
-                        Button(item.title) {
-                            if let alertMessage = item.alertMessage {
-                                alertManager.value = .init(message: alertMessage, callback: item.callback)
-                            } else {
-                                item.callback()
-                            }
+            } message: { item in
+                Text(item.message)
+            }
+            .confirmationDialog("Actions", isPresented: Binding(optionalValue: $actionManager.value), presenting: actionManager.value) { value in
+                ForEach(value) { item in
+                    Button(item.title) {
+                        if let alertMessage = item.alertMessage {
+                            alertManager.value = .init(message: alertMessage, callback: item.callback)
+                        } else {
+                            item.callback()
                         }
                     }
                 }
-            } else {
-                EmptyView()
             }
             
-            MainTabBarView(selection: appData.tabViewSelectionHandler, showActions: $showActions)
-                .sheet(isPresented: $showActions) {
-                    QuickActionsView()
-                }
-                .sheet(isPresented: $placeSelectorVM.isPresented) {
-                    PlaceSelectorView()
-                        .presentationDetents([.fraction(0.99)])
-                }
+            if appData.isRoot {
+                MainTabBarView(selection: appData.tabViewSelectionHandler, showActions: $showActions)
+                    .ignoresSafeArea(edges: .bottom)
+            }
         }
         .ignoresSafeArea(.keyboard)
-        .fullScreenCover(isPresented: Binding(get: {
-            if let user = auth.currentUser, user.acceptedEula != nil {
-                return onboardingVM.isPresented
-            }
-            return false
-        }, set: { value in
-            onboardingVM.isPresented = value
-        })) {
-            OnboardingView(vm: onboardingVM)
+        .sheet(isPresented: $showActions) {
+            QuickActionsView()
+        }
+        .sheet(isPresented: $placeSelectorVM.isPresented) {
+            PlaceSelectorView()
         }
         .sheet(isPresented: $selectReactionsVM.isPresented, content: {
             if #available(iOS 16.4, *) {
@@ -107,6 +92,16 @@ struct ContentView: View {
         }, content: {
             CommentsView()
         })
+        .fullScreenCover(isPresented: Binding(get: {
+            if let user = auth.currentUser, user.acceptedEula != nil {
+                return onboardingVM.isPresented
+            }
+            return false
+        }, set: { value in
+            onboardingVM.isPresented = value
+        })) {
+            OnboardingView(vm: onboardingVM)
+        }
         .onAppear {
             ContactsService.shared.tryToSyncContacts()
         }

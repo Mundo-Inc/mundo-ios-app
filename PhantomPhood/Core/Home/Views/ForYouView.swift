@@ -131,13 +131,13 @@ struct ForYouView: View {
         .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {
             forYouInfoVM.reset()
         }) {
-            if #available(iOS 16.4, *) {
-                ForYouInfoView()
-                    .presentationBackground(.thinMaterial)
-                    .presentationDetents([.medium, .large])
-            } else {
-                ForYouInfoView()
-                    .presentationDetents([.medium, .large])
+            Group {
+                if #available(iOS 16.4, *) {
+                    ForYouInfoView()
+                        .presentationBackground(.thinMaterial)
+                } else {
+                    ForYouInfoView()
+                }
             }
         }
         .toolbar {

@@ -71,6 +71,19 @@ final class AppData: ObservableObject {
         }
     }
     
+    var isRoot: Bool {
+        switch self.activeTab {
+        case .home:
+            self.homeNavStack.isEmpty
+        case .explore:
+            self.exploreNavStack.isEmpty
+        case .rewardsHub:
+            self.rewardsHubNavStack.isEmpty
+        case .myProfile:
+            self.myProfileNavStack.isEmpty
+        }
+    }
+    
     func reset() {
         self.activeTab = .home
         

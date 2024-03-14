@@ -61,171 +61,104 @@ struct QuickActionsView: View {
             
             Spacer()
             
-            if vm.isViewingPlace {
-                Button {
-                    vm.handleCheckin()
-                    dismiss()
-                } label: {
-                    HStack {
-                        Image(systemName: "checkmark.diamond")
-                            .font(.system(size: 28))
-                            .frame(width: 36 , height: 36)
-                        
-                        VStack {
-                            Text("Check-in")
-                                .font(.custom(style: .headline))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Check in to here")
-                                .font(.custom(style: .caption))
-                                .foregroundColor(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                    .padding()
-                    .background(Color.themePrimary)
-                    .clipShape(.rect(cornerRadius: 15))
-                }
-                .foregroundStyle(.primary)
-                
-                Button {
-                    vm.handleReview()
-                    dismiss()
-                } label: {
-                    HStack {
-                        Image(systemName: "star.bubble")
-                            .font(.system(size: 28))
-                            .frame(width: 36 , height: 36)
-                        
-                        VStack {
-                            Text("Review")
-                                .font(.custom(style: .headline))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Add a review to to this place")
-                                .font(.custom(style: .caption))
-                                .multilineTextAlignment(.leading)
-                                .foregroundColor(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                    .padding()
-                    .background(Color.themePrimary)
-                    .clipShape(.rect(cornerRadius: 15))
-                }
-                .foregroundStyle(.primary)
-            } else {
-                Button {
-                    vm.handleCheckin()
-                    dismiss()
-                } label: {
-                    HStack {
-                        Image(systemName: "checkmark.diamond")
-                            .font(.system(size: 28))
-                            .frame(width: 36 , height: 36)
-                        
-                        VStack {
-                            Text("Check-in")
-                                .font(.custom(style: .headline))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Group {
-                                if let nearestPlace = vm.nearestPlace, let name = nearestPlace.name, vm.isNearestPlace {
-                                    Text("Check in to \(name)")
-                                } else {
-                                    Text("Check in to places that you go!")
-                                }
-                            }
-                            .multilineTextAlignment(.leading)
-                            .font(.custom(style: .caption))
-                            .foregroundColor(.secondary)
+            Button {
+                vm.handleCheckin()
+                dismiss()
+            } label: {
+                HStack {
+                    Image(systemName: "checkmark.diamond")
+                        .font(.system(size: 28))
+                        .frame(width: 36 , height: 36)
+                    
+                    VStack {
+                        Text("Check-in")
+                            .font(.custom(style: .headline))
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                    .padding()
-                    .background(Color.themePrimary)
-                    .clipShape(.rect(cornerRadius: 15))
-                }
-                .foregroundStyle(.primary)
-                
-                Button {
-                    vm.handleReview()
-                    dismiss()
-                } label: {
-                    HStack {
-                        Image(systemName: "star.bubble")
-                            .font(.system(size: 28))
-                            .frame(width: 36 , height: 36)
-                        
-                        VStack {
-                            Text("Review")
-                                .font(.custom(style: .headline))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            Group {
-                                if let nearestPlace = vm.nearestPlace, let name = nearestPlace.name, vm.isNearestPlace {
-                                    Text("Add a review to \(name)")
-                                } else {
-                                    Text("Add a review to a place that you’ve been")
-                                }
+                        Group {
+                            if let nearestPlace = vm.nearestPlace, let name = nearestPlace.name, vm.isNearestPlace {
+                                Text("Check in to \(name)")
+                            } else {
+                                Text("Check in to places that you go!")
                             }
-                            .font(.custom(style: .caption))
-                            .multilineTextAlignment(.leading)
-                            .foregroundColor(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
+                        .multilineTextAlignment(.leading)
+                        .font(.custom(style: .caption))
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .padding()
-                    .background(Color.themePrimary)
-                    .clipShape(.rect(cornerRadius: 15))
                 }
-                .foregroundStyle(.primary)
-                
-                Button {
-                    toastVM.toast(.init(type: .success, title: "Coming Soon", message: "Almost there! Check back soon for magic."))
-                    HapticManager.shared.impact(style: .light)
-                } label: {
-                    HStack {
-                        Image(systemName: "house.fill")
-                            .font(.system(size: 28))
-                            .frame(width: 36 , height: 36)
-                        
-                        VStack {
-                            Text("Homemade Moments")
-                                .font(.custom(style: .headline))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            Group {
-                                Text("Share your home cooking experience")
-                            }
-                            .font(.custom(style: .caption))
-                            .multilineTextAlignment(.leading)
-                            .foregroundColor(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                    .padding()
-                    .background(Color.themePrimary)
-                    .clipShape(.rect(cornerRadius: 15))
-                    .opacity(0.5)
-                }
-                .foregroundStyle(.primary)
-                .overlay(alignment: .topTrailing) {
-                    Text("Coming Soon".uppercased())
-                        .font(.custom(style: .caption2))
-                        .fontWeight(.medium)
-                        .foregroundStyle(Color.white)
-                        .padding(.horizontal, 5)
-                        .background(Color.accentColor)
-                        .clipShape(.rect(cornerRadius: 10))
-                        .padding(.all, 6)
-                        .opacity(0.8)
-                }
+                .padding()
+                .background(Color.themePrimary)
+                .clipShape(.rect(cornerRadius: 15))
             }
+            .foregroundStyle(.primary)
+            
+            Button {
+                vm.handleReview()
+                dismiss()
+            } label: {
+                HStack {
+                    Image(systemName: "star.bubble")
+                        .font(.system(size: 28))
+                        .frame(width: 36 , height: 36)
+                    
+                    VStack {
+                        Text("Review")
+                            .font(.custom(style: .headline))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Group {
+                            if let nearestPlace = vm.nearestPlace, let name = nearestPlace.name, vm.isNearestPlace {
+                                Text("Add a review to \(name)")
+                            } else {
+                                Text("Add a review to a place that you’ve been")
+                            }
+                        }
+                        .font(.custom(style: .caption))
+                        .multilineTextAlignment(.leading)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .padding()
+                .background(Color.themePrimary)
+                .clipShape(.rect(cornerRadius: 15))
+            }
+            .foregroundStyle(.primary)
+            
+            Button {
+                AppData.shared.goTo(AppRoute.homeMadeContent)
+                dismiss()
+            } label: {
+                HStack {
+                    Image(systemName: "house.fill")
+                        .font(.system(size: 28))
+                        .frame(width: 36 , height: 36)
+                    
+                    VStack {
+                        Text("Homemade Moments")
+                            .font(.custom(style: .headline))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Group {
+                            Text("Share your home cooking experience")
+                        }
+                        .font(.custom(style: .caption))
+                        .multilineTextAlignment(.leading)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .padding()
+                .background(Color.themePrimary)
+                .clipShape(.rect(cornerRadius: 15))
+            }
+            .foregroundStyle(.primary)
         }
         .font(.custom(style: .body))
         .padding(.horizontal)
-        .presentationDetents([.height(vm.isViewingPlace ? 250 : 340), .fraction(0.8)])
-        .onAppear {
-            vm.updateIsViewingPlace()
-        }
+        .padding(.bottom)
+        .presentationDetents([.height(340), .fraction(0.8)])
     }
 }
 

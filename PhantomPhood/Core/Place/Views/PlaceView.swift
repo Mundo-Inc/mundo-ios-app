@@ -97,7 +97,7 @@ struct PlaceView: View {
                     .redacted(reason: vm.place == nil ? .placeholder : [])
                     
                     // MARK: - Address a nd Open Status
-                    HStack {
+                    HStack(alignment: .top) {
                         VStack(alignment: .leading, spacing: 1) {
                             if let place = vm.place {
                                 if let address = place.location.address {
@@ -117,42 +117,62 @@ struct PlaceView: View {
                         .font(.custom(style: .body))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Group {
-                            if
-                                let place = vm.place,
-                                let googleResults = place.thirdParty.google,
-                                let openingHours = googleResults.openingHours {
-                                if openingHours.openNow {
-                                    Label {
-                                        Text("Open Now")
-                                    } icon: {
-                                        Image(systemName: "clock.badge.checkmark")
+                        VStack(alignment: .leading, spacing: 15) {
+                            if let place = vm.place {
+                                if let googleResults = place.thirdParty.google, let openingHours = googleResults.openingHours {
+                                    Button {
+                                        withAnimation {
+                                            vm.presentedSheet = .openningHours
+                                        }
+                                    } label: {
+                                        if openingHours.openNow {
+                                            Label {
+                                                Text("Open Now")
+                                            } icon: {
+                                                Image(systemName: "clock.badge.checkmark")
+                                            }
+                                            .foregroundStyle(Color.accentColor)
+                                        } else {
+                                            Label {
+                                                Text("Closed")
+                                            } icon: {
+                                                Image(systemName: "clock.badge.xmark")
+                                            }
+                                            .foregroundStyle(.secondary)
+                                        }
                                     }
-                                    .foregroundStyle(Color.green)
-                                } else {
-                                    Label {
-                                        Text("Closed")
-                                    } icon: {
-                                        Image(systemName: "clock.badge.xmark")
-                                    }
-                                    .foregroundStyle(.red)
                                 }
-                            } else if vm.place == nil {
+                                
+                                if let phone = (place.phone ?? place.thirdParty.yelp?.phone), let url = URL(string: "tel://\(phone)") {
+                                    Button {
+                                        UIApplication.shared.open(url)
+                                    } label: {
+                                        Label {
+                                            Text("Call")
+                                        } icon: {
+                                            Image(systemName: "phone.fill.arrow.up.right")
+                                        }
+                                    }
+                                    .foregroundStyle(Color.accentColor)
+                                }
+                            } else {
                                 Label {
                                     Text("--------")
                                 } icon: {
                                     Image(systemName: "clock.badge.checkmark")
                                 }
                                 .redacted(reason: .placeholder)
+                                
+                                Label {
+                                    Text("Call")
+                                } icon: {
+                                    Image(systemName: "phone.fill.arrow.up.right")
+                                }
+                                .redacted(reason: .placeholder)
                             }
                         }
                         .font(.custom(style: .subheadline))
                         .fontWeight(.medium)
-                        .onTapGesture {
-                            withAnimation {
-                                vm.presentedSheet = .openningHours
-                            }
-                        }
                     }
                     .padding(.horizontal)
                     .redacted(reason: vm.place == nil ? .placeholder : [])
@@ -252,15 +272,15 @@ struct PlaceView: View {
                         
                         Spacer()
                         
-                        CallButton()
+                        CheckInButton()
+                        
+                        Spacer()
+                        
+                        ReviewButton()
                         
                         Spacer()
                         
                         SaveButton
-                        
-                        Spacer()
-                        
-                        ShareButton()
                     }
                     .symbolRenderingMode(.hierarchical)
                     .font(.custom(style: .subheadline))
@@ -323,7 +343,26 @@ struct PlaceView: View {
                 ExpandedMedia()
             }
         }
-        .toolbarBackground(.hidden, for: .automatic)
+        .toolbar {
+            if vm.expandedMedia == nil {
+                if let place = vm.place, let url = URL(string: "https://phantomphood.ai/place/\(place.id)") {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        ShareLink(item: url, subject: Text(place.name), message: Text("Check out \(place.name) on Phantom Phood"))
+                    }
+                }
+            } else {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        withAnimation {
+                            vm.expandedMedia = nil
+                        }
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+            }
+        }
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
     
     @ViewBuilder
@@ -510,17 +549,6 @@ struct PlaceView: View {
                             }
                         })
                 )
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            withAnimation {
-                                vm.expandedMedia = nil
-                            }
-                        } label: {
-                            Image(systemName: "xmark")
-                        }
-                    }
-                }
             }
         }
     }
@@ -569,6 +597,76 @@ struct PlaceView: View {
     }
     
     @ViewBuilder
+    private func CheckInButton() -> some View {
+        if let place = vm.place {
+            NavigationLink(value: AppRoute.checkin(.data(.init(placeDetail: place)))) {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(Color.accentColor)
+                    .aspectRatio(1, contentMode: .fit)
+                    .overlay {
+                        VStack {
+                            Image(systemName: "checkmark.seal.fill")
+                                .font(.system(size: 26))
+                                .frame(height: 28)
+                            
+                            Text("CHECK IN")
+                        }
+                    }
+            }
+            .foregroundStyle(Color.black)
+        } else {
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundStyle(Color.accentColor)
+                .aspectRatio(1, contentMode: .fit)
+                .overlay {
+                    VStack {
+                        Image(systemName: "checkmark.seal.fill")
+                            .font(.system(size: 26))
+                            .frame(height: 28)
+                        
+                        Text("CHECK IN")
+                    }
+                }
+                .foregroundStyle(Color.black)
+        }
+    }
+    
+    @ViewBuilder
+    private func ReviewButton() -> some View {
+        if let place = vm.place {
+            NavigationLink(value: AppRoute.review(.data(.init(placeDetail: place)))) {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(Color.accentColor)
+                    .aspectRatio(1, contentMode: .fit)
+                    .overlay {
+                        VStack {
+                            Image(systemName: "square.and.pencil")
+                                .font(.system(size: 26))
+                                .frame(height: 28)
+                            
+                            Text("REVIEW")
+                        }
+                    }
+            }
+            .foregroundStyle(Color.black)
+        } else {
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundStyle(Color.accentColor)
+                .aspectRatio(1, contentMode: .fit)
+                .overlay {
+                    VStack {
+                        Image(systemName: "square.and.pencil")
+                            .font(.system(size: 26))
+                            .frame(height: 28)
+                        
+                        Text("REVIEW")
+                    }
+                }
+                .foregroundStyle(Color.black)
+        }
+    }
+    
+    @ViewBuilder
     private func CallButton() -> some View {
         if let phone = (vm.place?.phone ?? vm.place?.thirdParty.yelp?.phone), let url = URL(string: "tel://\(phone)") {
             Button {
@@ -580,8 +678,8 @@ struct PlaceView: View {
                     .overlay {
                         VStack {
                             Image(systemName: "phone.fill.arrow.up.right")
-                                .font(.system(size: 22))
-                                .frame(height: 24)
+                                .font(.system(size: 26))
+                                .frame(height: 28)
                             
                             Text("CALL")
                         }
@@ -598,8 +696,8 @@ struct PlaceView: View {
                     .overlay {
                         VStack {
                             Image(systemName: "phone.fill.arrow.up.right")
-                                .font(.system(size: 22))
-                                .frame(height: 24)
+                                .font(.system(size: 28))
+                                .frame(height: 26)
                             
                             Text("CALL")
                         }
@@ -623,8 +721,8 @@ struct PlaceView: View {
                     VStack {
                         Image(systemName: (vm.includedLists?.isEmpty ?? true) ? "bookmark" : "bookmark.fill")
                             .opacity(0.8)
-                            .font(.system(size: 22))
-                            .frame(height: 24)
+                            .font(.system(size: 26))
+                            .frame(height: 28)
                         
                         Text((vm.includedLists?.isEmpty ?? true) ? "Save" : "Saved")
                     }
@@ -654,8 +752,8 @@ struct PlaceView: View {
                 .overlay {
                     VStack {
                         Image(systemName: "arrow.triangle.turn.up.right.diamond.fill")
-                            .font(.system(size: 22))
-                            .frame(height: 24)
+                            .font(.system(size: 26))
+                            .frame(height: 28)
                         
                         Text("MAP")
                     }
@@ -674,46 +772,6 @@ struct PlaceView: View {
                     Link("Google Maps", destination: url)
                 }
             }
-        }
-    }
-    
-    @ViewBuilder
-    private func ShareButton() -> some View {
-        if let place = vm.place, let url = URL(string: "https://phantomphood.ai/place/\(place.id)") {
-            ShareLink(item: url, subject: Text(place.name), message: Text("Check out \(place.name) on Phantom Phood")) {
-                RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(Color.themePrimary)
-                    .aspectRatio(1, contentMode: .fit)
-                    .overlay {
-                        VStack {
-                            Image(systemName: "square.and.arrow.up")
-                                .font(.system(size: 22))
-                                .frame(height: 24)
-                            
-                            Text("SHARE")
-                        }
-                    }
-            }
-            .foregroundStyle(Color.accentColor.opacity(0.85))
-        } else {
-            Button {
-                
-            } label: {
-                RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(Color.themePrimary)
-                    .aspectRatio(1, contentMode: .fit)
-                    .overlay {
-                        VStack {
-                            Image(systemName: "square.and.arrow.up")
-                                .font(.system(size: 22))
-                                .frame(height: 24)
-                            
-                            Text("SHARE")
-                        }
-                    }
-            }
-            .disabled(true)
-            .foregroundStyle(Color.accentColor.opacity(0.85))
         }
     }
 }

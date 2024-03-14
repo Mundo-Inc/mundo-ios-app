@@ -112,13 +112,24 @@ struct UserProfileView: View {
                     }
                     .padding(.horizontal)
                     
-                    if let bio = vm.user?.bio, !bio.isEmpty {
-                        Text(bio)
+                    if let user = vm.user {
+                        if !user.bio.isEmpty {
+                            Text(user.bio)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .font(.custom(style: .footnote))
+                                .multilineTextAlignment(.leading)
+                                .padding(.horizontal)
+                                .padding(.top)
+                                .transition(AnyTransition.opacity.animation(.easeIn))
+                        }
+                    } else {
+                        Text("Placeholder bio")
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .font(.custom(style: .footnote))
                             .multilineTextAlignment(.leading)
                             .padding(.horizontal)
                             .padding(.top)
+                            .redacted(reason: .placeholder)
                     }
                     
                     

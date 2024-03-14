@@ -10,8 +10,8 @@ import Foundation
 final class UploadManager {
     static let shared = UploadManager()
     
-    let apiManager = APIManager.shared
-    let auth = Authentication.shared
+    private let apiManager = APIManager.shared
+    private let auth = Authentication.shared
     
     enum UploadManagerError: Error {
         case cantCreateDataFromVideoURL

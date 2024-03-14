@@ -114,6 +114,7 @@ struct PlaceSelectorView<Content>: View where Content : View {
             }
             .opacity(placeSelectorVM.isLoading ? 0.6 : 1)
         }
+        .presentationDetents([.fraction(0.99)])
     }
 }
 

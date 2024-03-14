@@ -29,64 +29,91 @@ struct NewCheckinView: View {
             if let error = vm.error {
                 Text(error)
             } else {
-                ScrollView {
-                    VStack(spacing: 0) {
-                        VStack {
-                            if let event = vm.event {
-                                HStack {
-                                    if let logo = event.logo {
-                                        ZStack {
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .stroke(Color.themeBorder.opacity(0.3), lineWidth: 2)
-                                            
-                                            KFImage.url(logo)
-                                                .placeholder {
-                                                    Image(systemName: "arrow.down.circle.dotted")
-                                                        .foregroundStyle(Color.white.opacity(0.5))
-                                                }
-                                                .loadDiskFileSynchronously()
-                                                .fade(duration: 0.25)
-                                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .contentShape(RoundedRectangle(cornerRadius: 5))
-                                                .clipShape(RoundedRectangle(cornerRadius: 5))
-                                                .frame(width: 24, height: 24)
-                                        }
-                                        .frame(width: 28, height: 28)
+                VStack (spacing: 0) {
+                    VStack(spacing: 5) {
+                        HStack {
+                            if let thumbnail = vm.place?.thumbnail {
+                                KFImage.url(thumbnail)
+                                    .placeholder {
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .foregroundStyle(Color.themePrimary)
+                                            .overlay {
+                                                ProgressView()
+                                            }
                                     }
-                                    
-                                    Text(event.name)
-                                        .font(.custom(style: .headline))
+                                    .loadDiskFileSynchronously()
+                                    .cacheMemoryOnly()
+                                    .fade(duration: 0.25)
+                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .contentShape(RoundedRectangle(cornerRadius: 10))
+                            }
+                            
+                            VStack(spacing: 10) {
+                                if let event = vm.event {
+                                    HStack {
+                                        if let logo = event.logo {
+                                            ZStack {
+                                                RoundedRectangle(cornerRadius: 5)
+                                                    .stroke(Color.themeBorder.opacity(0.3), lineWidth: 2)
+                                                
+                                                KFImage.url(logo)
+                                                    .placeholder {
+                                                        Image(systemName: "arrow.down.circle.dotted")
+                                                            .foregroundStyle(Color.white.opacity(0.5))
+                                                    }
+                                                    .loadDiskFileSynchronously()
+                                                    .fade(duration: 0.25)
+                                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .contentShape(RoundedRectangle(cornerRadius: 5))
+                                                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                                                    .frame(width: 24, height: 24)
+                                            }
+                                            .frame(width: 28, height: 28)
+                                        }
+                                        
+                                        Text(event.name)
+                                            .font(.custom(style: .body))
+                                            .fontWeight(.bold)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                    }
+                                } else {
+                                    Text(vm.place?.name ?? "Name Placeholder")
+                                        .font(.custom(style: .body))
+                                        .fontWeight(.bold)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
-                            } else {
-                                Text(vm.place?.name ?? "Name Placeholder")
-                                    .font(.custom(style: .headline))
+                                Text(vm.place?.location.address ?? "Address Placeholder")
+                                    .lineLimit(1)
+                                    .foregroundStyle(.secondary)
+                                    .font(.custom(style: .caption))
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            Text(vm.place?.location.address ?? "Address Placeholder")
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundStyle(.secondary)
+                            
+                            Spacer()
                         }
-                        .padding(.top, 5)
                         .padding(.horizontal)
+                        .padding(.bottom, 5)
                         .redacted(reason: vm.place == nil ? .placeholder : [])
                         
                         Divider()
-                            .padding(.top)
-                        
+                    }
+                    .background(.ultraThinMaterial)
+                    
+                    ScrollView {
                         VStack {
                             Text("No filters allowed - take a fun pic of you and your friends!")
                                 .font(.custom(style: .headline))
                                 .fontWeight(.bold)
                                 .foregroundStyle(Color.primary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Let us know what you're doing - make it as funny as you look (Optional)")
-                                .font(.custom(style: .caption))
-                                .foregroundStyle(Color.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.bottom, 8)
+                            
                             
                             if pickerVM.mediaItems.isEmpty {
                                 Menu {
@@ -109,7 +136,7 @@ struct NewCheckinView: View {
                                         Image(systemName: "camera.fill")
                                     }
                                     .frame(maxWidth: .infinity)
-                                    .foregroundStyle(Color.themeBG)
+                                    .foregroundStyle(Color.black.opacity(0.85))
                                     .padding(.vertical, 12)
                                     .background(Color.accentColor)
                                     .clipShape(.rect(cornerRadius: 10))
@@ -232,7 +259,7 @@ struct NewCheckinView: View {
                         Divider()
                             .padding(.bottom)
                         
-                        TextField("(Optional) - Caption", text: $vm.caption, axis: .vertical)
+                        TextField("Let us know what you're doing - make it as funny as you look (Optional)", text: $vm.caption, axis: .vertical)
                             .lineLimit(5...15)
                             .disabled(vm.loadingSections.contains(.submitting))
                             .padding()
@@ -250,7 +277,7 @@ struct NewCheckinView: View {
                                 Text("Tag People (Find your fellow friends on the app and tag them!)")
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .font(.custom(style: .caption))
-                                    .foregroundStyle(Color.secondary)
+                                    .foregroundStyle(Color.primary)
                                     .padding(.bottom, 8)
                             } else {
                                 ForEach(vm.mentions) { user in
@@ -317,51 +344,54 @@ struct NewCheckinView: View {
                             }
                         }
                         .padding(.horizontal)
+                        .padding(.bottom, 60)
                     }
-                    .padding(.bottom, 60)
-                }
-                .scrollDismissesKeyboard(.interactively)
-                .scrollIndicators(.never)
-                .font(.custom(style: .body))
-                .sheet(isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: NewCheckinVM.Sheets.userSelector), content: {
-                    if #available(iOS 16.4, *) {
-                        UserSelector { user in
-                            if !vm.mentions.contains(where: { $0.id == user.id }) {
-                                vm.mentions.append(user)
+                    .scrollDismissesKeyboard(.interactively)
+                    .scrollIndicators(.never)
+                    .sheet(isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: NewCheckinVM.Sheets.userSelector)) {
+                        if #available(iOS 16.4, *) {
+                            UserSelector { user in
+                                if !vm.mentions.contains(where: { $0.id == user.id }) {
+                                    vm.mentions.append(user)
+                                }
+                            }
+                            .presentationBackground(.thinMaterial)
+                        } else {
+                            UserSelector { user in
+                                if !vm.mentions.contains(where: { $0.id == user.id }) {
+                                    vm.mentions.append(user)
+                                }
                             }
                         }
-                        .presentationBackground(.thinMaterial)
-                    } else {
-                        UserSelector { user in
-                            if !vm.mentions.contains(where: { $0.id == user.id }) {
-                                vm.mentions.append(user)
-                            }
-                        }
                     }
-                })
-            }
-        }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    Task {
-                        HapticManager.shared.impact(style: .light)
-                        await vm.submit(mediaItems: pickerVM.mediaItems)
-                        dismiss()
-                    }
-                } label: {
-                    HStack {
-                        if vm.loadingSections.contains(.submitting) {
-                            ProgressView()
-                        }
+                    
+                    VStack {
+                        Divider()
                         
-                        Text("Submit")
+                        CTAButton {
+                            Task {
+                                HapticManager.shared.impact(style: .light)
+                                await vm.submit(mediaItems: pickerVM.mediaItems)
+                                dismiss()
+                            }
+                        } label: {
+                            HStack {
+                                if vm.loadingSections.contains(.submitting) {
+                                    ProgressView()
+                                        .controlSize(.regular)
+                                        .padding(.trailing, 3)
+                                        .transition(AnyTransition.opacity)
+                                }
+                                
+                                Text("Submit".uppercased())
+                            }
+                        }
+                        .disabled(vm.loadingSections.contains(.placeInfo) || vm.loadingSections.contains(.submitting) || vm.error != nil)
+                        .padding(.horizontal)
                     }
                 }
-                .disabled(vm.loadingSections.contains(.placeInfo) || vm.loadingSections.contains(.submitting) || vm.error != nil)
+                .ignoresSafeArea(.keyboard, edges: .bottom)
                 .font(.custom(style: .body))
-                .buttonStyle(.borderedProminent)
-                .controlSize(.mini)
             }
         }
         .navigationTitle("Checking in")

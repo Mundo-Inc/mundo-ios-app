@@ -110,7 +110,6 @@ struct ForYouView17: View {
         }) {
             ForYouInfoView()
                 .presentationBackground(.thinMaterial)
-                .presentationDetents([.medium, .large])
         }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {

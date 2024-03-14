@@ -219,12 +219,159 @@ struct ForYouItem: View {
                                 .clipShape(Rectangle())
                                 .ignoresSafeArea(edges: .top)
                         }
+                    case .homemade(let homemade):
+                        Color.clear
+                            .onChange(of: tabPage) { newTab in
+                                if page.index == index {
+                                    if homemade.media.contains(where: { $0.id == newTab && $0.type == .video }) {
+                                        videoPlayerVM.playId = newTab
+                                    } else {
+                                        videoPlayerVM.playId = nil
+                                    }
+                                } else {
+                                    videoPlayerVM.playId = nil
+                                }
+                            }
+                        
+                        if homemade.media.count > 1 {
+                            TabView(selection: $tabPage) {
+                                ForEach(homemade.media) { m in
+                                    if m.type == .video {
+                                        ZStack {
+                                            if let url = m.src {
+                                                VideoPlayer(url: url, play: playBinding(for: m.id), time: $time)
+                                                    .onStateChanged { state in
+                                                        videosState.updateValue(state, forKey: m.id)
+                                                        switch state {
+                                                        case .playing(let totalDuration):
+                                                            currentVideoTotalDuration = totalDuration
+                                                        default:
+                                                            break
+                                                        }
+                                                    }
+                                                    .autoReplay(true)
+                                                    .mute(videoPlayerVM.isMute)
+                                            }
+                                            
+                                            if let state = videosState[m.id] {
+                                                switch state {
+                                                case .loading:
+                                                    ProgressView()
+                                                case .error(let err):
+                                                    Text("Something went wrong\n\(err.localizedDescription)")
+                                                default:
+                                                    EmptyView()
+                                                }
+                                            }
+                                        }
+                                        .ignoresSafeArea(edges: .top)
+                                        .overlay(alignment: .bottomLeading) {
+                                            if !time.seconds.isZero, !currentVideoTotalDuration.isZero {
+                                                Rectangle()
+                                                    .frame(height: 2)
+                                                    .frame(width: mainWindowSize.width * (time.seconds / currentVideoTotalDuration))
+                                                    .foregroundStyle(.white)
+                                            }
+                                        }
+                                        .tag(m.id)
+                                    } else {
+                                        if let url = m.src {
+                                            KFImage.url(url)
+                                                .placeholder { progress in
+                                                    Rectangle()
+                                                        .foregroundStyle(.clear)
+                                                        .frame(maxWidth: 150)
+                                                        .overlay {
+                                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                                .progressViewStyle(LinearProgressViewStyle())
+                                                        }
+                                                }
+                                                .loadDiskFileSynchronously()
+                                                .fade(duration: 0.25)
+                                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: mainWindowSize.width, height: mainWindowSize.height)
+                                                .contentShape(Rectangle())
+                                                .clipShape(Rectangle())
+                                                .ignoresSafeArea(edges: .top)
+                                                .tag(m.id)
+                                        } else {
+                                            EmptyView()
+                                                .tag(m.id)
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                            .tabViewStyle(PageTabViewStyle())
+                        } else {
+                            if let first = homemade.media.first, let url = first.src {
+                                if first.type == .video {
+                                    ZStack {
+                                        VideoPlayer(url: url, play: playBinding(for: first.id), time: $time)
+                                            .onStateChanged { state in
+                                                videosState.updateValue(state, forKey: first.id)
+                                                switch state {
+                                                case .playing(let totalDuration):
+                                                    currentVideoTotalDuration = totalDuration
+                                                default:
+                                                    break
+                                                }
+                                            }
+                                            .autoReplay(true)
+                                            .mute(videoPlayerVM.isMute)
+                                        
+                                        if let state = videosState[first.id] {
+                                            switch state {
+                                            case .loading:
+                                                ProgressView()
+                                            case .error(let err):
+                                                Text("Something went wrong\n\(err.localizedDescription)")
+                                            default:
+                                                EmptyView()
+                                            }
+                                        }
+                                    }
+                                    .ignoresSafeArea(edges: .top)
+                                    .overlay(alignment: .bottomLeading) {
+                                        if !time.seconds.isZero, !currentVideoTotalDuration.isZero {
+                                            Rectangle()
+                                                .frame(height: 2)
+                                                .frame(width: UIScreen.main.bounds.width * (time.seconds / currentVideoTotalDuration))
+                                                .foregroundStyle(.white)
+                                        }
+                                    }
+                                } else {
+                                    KFImage.url(url)
+                                        .placeholder { progress in
+                                            Rectangle()
+                                                .foregroundStyle(.clear)
+                                                .frame(maxWidth: 150)
+                                                .overlay {
+                                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                        .progressViewStyle(LinearProgressViewStyle())
+                                                }
+                                        }
+                                        .loadDiskFileSynchronously()
+                                        .fade(duration: 0.25)
+                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: mainWindowSize.width, height: mainWindowSize.height)
+                                        .contentShape(Rectangle())
+                                        .clipShape(Rectangle())
+                                        .ignoresSafeArea(edges: .top)
+                                }
+                            }
+                        }
                     default:
                         VStack {
                             Text("Unable to load\nPlease Skip this")
                                 .font(.custom(style: .headline))
-                            Text("We'll make sure you won't experience this again in the future updates.")
+                            Text("New features are coming. Please check for app update soon")
                                 .font(.custom(style: .body))
+                                .foregroundStyle(.secondary)
                                 .padding()
                         }
                     }
@@ -469,6 +616,90 @@ struct ForYouItem: View {
                                 LinearGradient(colors: [.clear, .black.opacity(0.2), .black.opacity(0.4), .black.opacity(0.5), .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
                                     .allowsHitTesting(false)
                             }
+                        }
+                    case .homemade(let homemade):
+                        HStack {
+                            VStack(spacing: -15) {
+                                ProfileImage(forYouVM.items[index].user.profileImage, size: 50)
+                                
+                                LevelView(level: forYouVM.items[index].user.progress.level)
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 24, height: 30)
+                            }
+                            .onTapGesture {
+                                appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
+                            }
+                            
+                            VStack {
+                                Text(forYouVM.items[index].user.name)
+                                    .font(.custom(style: .headline))
+                                    .frame(height: 18)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .foregroundStyle(.white)
+                                    .onTapGesture {
+                                        appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
+                                    }
+                                
+                                HStack {
+                                    if let user = forYouVM.items[index].place {
+                                        Text(user.name)
+                                            .lineLimit(1)
+                                    } else {
+                                        Text("-")
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Text(forYouVM.items[index].createdAt.timeElapsed())
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .fontWeight(.semibold)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.top, 10)
+                        .padding(.bottom, 5)
+                        .background(Material.ultraThin.opacity(0.65))
+                        .clipShape(.rect(cornerRadius: 20))
+                        .padding(.horizontal)
+                        
+                        Spacer()
+                        
+                        if videoPlayerVM.playId != nil && videoPlayerVM.isMute {
+                            Image(systemName: "speaker.slash.fill")
+                                .foregroundStyle(.secondary)
+                                .font(.system(size: 24))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.leading)
+                                .transition(.move(edge: .leading))
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text("Home Made")
+                                .font(.custom(style: .caption))
+                                .fontWeight(.medium)
+                                .foregroundStyle(.black)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 4)
+                                .background(Color("Homemade").opacity(0.8))
+                                .clipShape(.rect(cornerRadius: 5))
+                            
+                            Text(homemade.content)
+                                .lineLimit(5)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .foregroundStyle(.white)
+                        }
+                        .padding(.vertical)
+                        .padding(.horizontal)
+                        .padding(.trailing, 52)
+                        .padding(.trailing)
+                        .padding(.bottom, 20)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background {
+                            LinearGradient(colors: [.clear, .black.opacity(0.2), .black.opacity(0.4), .black.opacity(0.5), .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
+                                .allowsHitTesting(false)
                         }
                     default:
                         EmptyView()

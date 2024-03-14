@@ -53,7 +53,7 @@ struct SelectReactionsView: View {
                                     vm.onSelect?(emoji)
                                     vm.isPresented = false
                                 } label: {
-                                    Emoji(emoji, isAnimating: $isAnimating, size: 72)
+                                    Emoji(emoji, isAnimating: $isAnimating, size: 36)
                                 }
                             }
                         })
@@ -66,7 +66,7 @@ struct SelectReactionsView: View {
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         }
         .padding(.top)
-        .presentationDetents([.height(300), .large])
+        .presentationDetents([.height(300), .fraction(0.99)])
         .onAppear {
             if !isAnimating {
                 isAnimating = true

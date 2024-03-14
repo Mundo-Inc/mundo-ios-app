@@ -20,6 +20,7 @@ struct ExploreView: View {
                     .navigationTitle("Explore")
                     .navigationBarTitleDisplayMode(.inline)
                     .handleNavigationDestination()
+                    .padding(.bottom, 50)
             }
             .searchable(text: $exploreSearchVM.text, placement: .navigationBarDrawer(displayMode: .always))
             .searchScopes($exploreSearchVM.scope, activation: SearchScopeActivation.onSearchPresentation) {
@@ -38,6 +39,7 @@ struct ExploreView: View {
                     .navigationTitle("Explore")
                     .navigationBarTitleDisplayMode(.inline)
                     .handleNavigationDestination()
+                    .padding(.bottom, 50)
             }
             .searchable(text: $exploreSearchVM.text, placement: .navigationBarDrawer(displayMode: .always))
             .searchScopes($exploreSearchVM.scope, activation: SearchScopeActivation.onSearchPresentation) {
@@ -56,6 +58,7 @@ struct ExploreView: View {
                     .navigationTitle("Explore")
                     .navigationBarTitleDisplayMode(.inline)
                     .handleNavigationDestination()
+                    .padding(.bottom, 50)
             }
             .searchable(text: $exploreSearchVM.text, placement: .navigationBarDrawer(displayMode: .always))
             .searchScopes($exploreSearchVM.scope) {

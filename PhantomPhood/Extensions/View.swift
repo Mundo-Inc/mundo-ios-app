@@ -63,6 +63,8 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     AddReviewView(mapPlace: mapPlace)
                 case .report(let id, let type):
                     ReportView(id: id, type: type)
+                case .homeMadeContent:
+                    HomeMadeView()
                     
                     // Place
                     

@@ -155,7 +155,7 @@ struct ExploreView17: View {
                 .sheet(isPresented: Binding(optionalValue: $vm.selectedMapActivity), content: {
                     MapActivityView(mapActivity: $vm.selectedMapActivity)
                         .presentationBackground(.thinMaterial)
-                        .presentationDetents([.height(320), .large])
+                        .presentationDetents([.height(320), .fraction(0.99)])
                 })
                 .mapFeatureSelectionDisabled({ item in
                     if let pointOfInterestCategory = item.pointOfInterestCategory {

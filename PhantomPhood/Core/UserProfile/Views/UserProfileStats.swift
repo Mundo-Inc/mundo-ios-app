@@ -53,7 +53,7 @@ struct UserProfileStats: View {
                                 Color(red: 1, green: 0.1, blue: 0.31).opacity(0.15),
                                 Color(red: 0.83, green: 0.37, blue: 1).opacity(0.15)
                             ], startPoint: .topLeading, endPoint: .bottomTrailing),
-                            title: "Followings",
+                            title: "Following",
                             value: user?.followingCount
                         )
                     }

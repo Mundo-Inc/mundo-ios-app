@@ -115,7 +115,7 @@ struct FeedView: View {
                                     case .newCheckin:
                                         FeedCheckinView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
                                     default:
-                                        Text(vm.items[index].activityType.rawValue)
+                                        EmptyView()
                                     }
                                 }
                                 .padding(.horizontal)

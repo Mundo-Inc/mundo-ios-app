@@ -161,6 +161,7 @@ struct ForYouInfoView: View {
                 .padding(.vertical)
             }
         }
+        .presentationDetents([.fraction(0.7), .fraction(0.99)])
     }
     
     private var review: some View {

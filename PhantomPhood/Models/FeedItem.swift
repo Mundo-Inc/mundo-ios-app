@@ -16,6 +16,7 @@ enum FeedItemActivityType: String, Decodable, CaseIterable {
     case gotBadge = "GOT_BADGE"
     case levelUp = "LEVEL_UP"
     case following = "FOLLOWING"
+    case newHomemade = "NEW_HOMEMADE"
     
     var title: String {
         switch self {
@@ -35,6 +36,8 @@ enum FeedItemActivityType: String, Decodable, CaseIterable {
             "Level Ups!"
         case .following:
             "Follow Activities"
+        case .newHomemade:
+            "Home Made"
         }
     }
 }
@@ -44,6 +47,7 @@ enum FeedItemResourceType: String, Decodable {
     case review = "Review"
     case checkin = "Checkin"
     case user = "User"
+    case homemade = "Homemade"
     //    case reaction = "Reaction"
     //    case achievement = "Achievement"
 }
@@ -53,6 +57,7 @@ enum FeedItemResource: Decodable {
     case review(FeedReview)
     case checkin(FeedCheckin)
     case user(UserEssentials)
+    case homemade(HomeMade)
     //    case reaction
     //    case achievement
 }
@@ -128,6 +133,9 @@ struct FeedItem: Identifiable, Decodable, Equatable {
         case .user:
             let value = try container.decode(UserEssentials.self, forKey: .resource)
             resource = .user(value)
+        case .homemade:
+            let value = try container.decode(HomeMade.self, forKey: .resource)
+            resource = .homemade(value)
         }
         
         privacyType = try container.decode(PrivacyType.self, forKey: .privacyType)
