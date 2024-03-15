@@ -69,7 +69,7 @@ class ProfileCheckinsVM: ObservableObject {
         self.isLoading = true
         
         do {
-            let data = try await checkInDM.getCheckins(user: uid, page: self.page)
+            let data = try await checkInDM.getCheckins(user: uid, page: self.page, limit: 500)
             
             switch type {
                 
