@@ -196,7 +196,7 @@ final class VideoHelper {
                                     autoreleasepool {
                                         if let sampleBuffer = videoAssetReaderOutput.copyNextSampleBuffer() {
                                             let presenationTimeStamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
-                                            print(presenationTimeStamp.seconds / duration.seconds)
+//                                            print(presenationTimeStamp.seconds / duration.seconds)
                                             if let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer),
                                                let scaledBuffer = self.scale(buffer: pixelBuffer, toSize: targetSize, withTransform: preferredTransform) {
                                                 if videoAssetWriterInput.isReadyForMoreMediaData {
@@ -217,7 +217,7 @@ final class VideoHelper {
                             autoreleasepool {
                                 if let sampleBuffer = videoAssetReaderOutput.copyNextSampleBuffer() {
                                     let presenationTimeStamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
-                                    print(presenationTimeStamp.seconds / duration.seconds)
+//                                    print(presenationTimeStamp.seconds / duration.seconds)
                                     if let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer),
                                        let scaledBuffer = self.scale(buffer: pixelBuffer, toSize: targetSize, withTransform: preferredTransform) {
                                         if videoAssetWriterInput.isReadyForMoreMediaData {
@@ -268,7 +268,7 @@ final class VideoHelper {
                         autoreleasepool {
                             if let sampleBuffer = videoAssetReaderOutput.copyNextSampleBuffer() {
                                 let presenationTimeStamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
-                                print(presenationTimeStamp.seconds / duration.seconds)
+//                                print(presenationTimeStamp.seconds / duration.seconds)
                                 if let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer),
                                    let scaledBuffer = self.scale(buffer: pixelBuffer, toSize: targetSize, withTransform: preferredTransform) {
                                     if videoAssetWriterInput.isReadyForMoreMediaData {

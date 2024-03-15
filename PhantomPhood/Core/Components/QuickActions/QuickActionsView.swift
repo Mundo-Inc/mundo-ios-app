@@ -159,6 +159,11 @@ struct QuickActionsView: View {
         .padding(.horizontal)
         .padding(.bottom)
         .presentationDetents([.height(340), .fraction(0.8)])
+        .onAppear {
+            Task {
+                await vm.updateNearestPlace()
+            }
+        }
     }
 }
 

@@ -105,6 +105,9 @@ final class UniversalLinkingManager {
                 throw LinkingError.missingParam
             }
         }),
+        "notifications": RouteScheme(pattern: [], routeGetter: { _ in
+            return AppRoute.notifications
+        }),
         "signup": RouteScheme(pattern: ["ref?"], authRouteGetter: { components in
             if let first = components.first {
                 UserDefaults.standard.setValue(first, forKey: UserSettings.Keys.referredBy.rawValue)

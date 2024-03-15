@@ -51,4 +51,20 @@ final class QuickActionsVM: ObservableObject {
             }
         }
     }
+    
+    func updateNearestPlace() async {
+        guard let location = locationManager.location else { return }
+        
+        loadingSections.insert(.nearestPlace)
+        do {
+            let places = try await searchDM.searchAppleMapsPlaces(region: MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 100, longitudinalMeters: 100))
+            if let first = places.first, first.name != nil {
+                self.nearestPlace = first
+                self.isNearestPlace = true
+            }
+        } catch {
+            print(error)
+        }
+        loadingSections.remove(.nearestPlace)
+    }
 }

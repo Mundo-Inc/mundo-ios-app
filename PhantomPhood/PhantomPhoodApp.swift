@@ -132,6 +132,15 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         
         Messaging.messaging().appDidReceiveMessage(userInfo)
         
+        for (key, value) in userInfo {
+            if let stringKey = key as? String {
+                if stringKey == "link", let url = URL(string: "https://phantomphood.ai/\(value)") {
+                    let universalLinkingManager = UniversalLinkingManager()
+                    universalLinkingManager.handleIncomingURL(url)
+                }
+            }
+        }
+        
         completionHandler()
     }
 }
