@@ -20,6 +20,7 @@ struct CameraView: View {
         ZStack {
             PhotoCaptureView(onCompletion: onCompletion)
         }
+        .background(Color.black)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
