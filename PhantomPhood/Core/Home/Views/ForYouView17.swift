@@ -71,6 +71,12 @@ struct ForYouView17: View {
                         } else if videoPlayerVM.playId != nil {
                             videoPlayerVM.playId = nil
                         }
+                    case .homemade(let homemade):
+                        if let first = homemade.media.first, first.type == .video && videoPlayerVM.playId != first.id {
+                            videoPlayerVM.playId = first.id
+                        } else if videoPlayerVM.playId != nil {
+                            videoPlayerVM.playId = nil
+                        }
                     default:
                         if videoPlayerVM.playId != nil {
                             videoPlayerVM.playId = nil
@@ -130,6 +136,12 @@ struct ForYouView17: View {
                 switch vm.items[itemIndex].resource {
                 case .review(let feedReview):
                     if let first = feedReview.videos.first, videoPlayerVM.playId != first.id {
+                        videoPlayerVM.playId = first.id
+                    } else if videoPlayerVM.playId != nil {
+                        videoPlayerVM.playId = nil
+                    }
+                case .homemade(let homemade):
+                    if let first = homemade.media.first, first.type == .video && videoPlayerVM.playId != first.id {
                         videoPlayerVM.playId = first.id
                     } else if videoPlayerVM.playId != nil {
                         videoPlayerVM.playId = nil

@@ -346,7 +346,7 @@ struct NewCheckinView: View {
                         .padding(.horizontal)
                         .padding(.bottom, 60)
                     }
-                    .scrollDismissesKeyboard(.interactively)
+                    .scrollDismissesKeyboard(.immediately)
                     .scrollIndicators(.never)
                     .sheet(isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: NewCheckinVM.Sheets.userSelector)) {
                         if #available(iOS 16.4, *) {

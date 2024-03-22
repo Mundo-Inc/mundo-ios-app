@@ -152,35 +152,14 @@ struct ExploreView17: View {
                     
                     UserAnnotation()
                 }
+                .ignoresSafeArea()
                 .sheet(isPresented: Binding(optionalValue: $vm.selectedMapActivity), content: {
                     MapActivityView(mapActivity: $vm.selectedMapActivity)
                         .presentationBackground(.thinMaterial)
                         .presentationDetents([.height(320), .fraction(0.99)])
                 })
-                .mapFeatureSelectionDisabled({ item in
-                    if let pointOfInterestCategory = item.pointOfInterestCategory {
-                        switch pointOfInterestCategory {
-                        case .cafe:
-                            return false
-                        case .restaurant:
-                            return false
-                        case .bakery:
-                            return false
-                        case .winery:
-                            return false
-                        case .nightlife:
-                            return false
-                        default:
-                            return true
-                        }
-                    } else {
-                        return false
-                    }
-                })
-                .mapControlVisibility(.visible)
-                .mapControls {
-                    MapCompass()
-                }
+                .mapStyle(.standard(emphasis: .automatic, pointsOfInterest: .excludingAll))
+                .mapControlVisibility(.hidden)
                 .onMapCameraChange(frequency: .continuous, { mapCameraUpdateContext in
                     exploreSearchVM.mapRegion = mapCameraUpdateContext.region
                     
@@ -385,14 +364,6 @@ struct ExploreView17: View {
                     .transition(.move(edge: .bottom))
                     .animation(.bouncy, value: vm.selectedMapItem)
                     .zIndex(3)
-                }
-            }
-            .padding(.bottom, 8)
-            .toolbar {
-                if vm.loadingSections.contains(.geoActivities) {
-                    ToolbarItem(placement: .topBarLeading) {
-                        ProgressView()
-                    }
                 }
             }
             .onChange(of: vm.selection) { newValue in

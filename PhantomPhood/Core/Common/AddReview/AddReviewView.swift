@@ -428,7 +428,7 @@ struct AddReviewView: View {
                             .scrollIndicators(.never)
                             .padding(.bottom, 20)
                         }
-                        .scrollDismissesKeyboard(.interactively)
+                        .scrollDismissesKeyboard(.immediately)
                     }
                     
                     VStack {

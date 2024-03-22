@@ -158,9 +158,6 @@ struct HomeMadeView: View {
                                 .font(.custom(style: .headline))
                                 .fontWeight(.bold)
                                 .foregroundStyle(Color.primary)
-                            Text("You will earn additional 20 points by adding an image") // TODO: What is this?
-                                .font(.custom(style: .caption))
-                                .foregroundStyle(Color.secondary)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
@@ -247,7 +244,7 @@ struct HomeMadeView: View {
                         .padding(.bottom, 20)
                     }
                 }
-                .scrollDismissesKeyboard(.interactively)
+                .scrollDismissesKeyboard(.immediately)
             }
             
             VStack {

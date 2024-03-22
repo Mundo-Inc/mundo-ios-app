@@ -63,6 +63,10 @@ struct ForYouItem17: View {
                             if !tabPage.isEmpty && feedReview.videos.contains(where: { $0.id == tabPage })  {
                                 videoPlayerVM.playId = tabPage
                             }
+                        case .homemade(let homemade):
+                            if !tabPage.isEmpty && homemade.media.contains(where: { $0.id == tabPage && $0.type == .video })  {
+                                videoPlayerVM.playId = tabPage
+                            }
                         default:
                             break
                         }

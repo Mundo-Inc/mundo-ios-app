@@ -29,6 +29,18 @@ extension MKPointOfInterestCategory {
 }
 
 extension MKCoordinateRegion {
+    func contains(_ coordinate: CLLocationCoordinate2D) -> Bool {
+        let northEastCorner = CLLocationCoordinate2D(latitude: center.latitude + (span.latitudeDelta / 2.0), longitude: center.longitude + (span.longitudeDelta / 2.0))
+        let southWestCorner = CLLocationCoordinate2D(latitude: center.latitude - (span.latitudeDelta / 2.0), longitude: center.longitude - (span.longitudeDelta / 2.0))
+        
+        return coordinate.latitude >= southWestCorner.latitude &&
+        coordinate.latitude <= northEastCorner.latitude &&
+        coordinate.longitude >= southWestCorner.longitude &&
+        coordinate.longitude <= northEastCorner.longitude
+    }
+}
+
+extension MKCoordinateRegion {
     
     /// Returns northEast and southWest coordinates from MKCoordinateRegion
     var boundariesNESW: (NE: CLLocationCoordinate2D, SW: CLLocationCoordinate2D) {

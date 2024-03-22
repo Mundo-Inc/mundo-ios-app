@@ -117,7 +117,7 @@ final class ExploreVM17: ObservableObject {
             let lastDelta = min(abs(lastClusterRegion.span.longitudeDelta), abs(lastClusterRegion.span.latitudeDelta))
             
             if delta > lastDelta ? 1.0 - (lastDelta / delta) >= 0.3 : 1.0 - (delta / lastDelta) >= 0.3 {
-                self.mapClusterActivities = MapActivityClusters(region: region, items: self.mapActiviteis)
+                self.mapClusterActivities = MapActivityClusters(region: region, items: self.mapActiviteis.filter({ region.contains($0.locationCoordinate) }))
                 self.lastClusterRegion = region
             } else if force {
                 self.mapClusterActivities = MapActivityClusters(region: lastClusterRegion, items: self.mapActiviteis)

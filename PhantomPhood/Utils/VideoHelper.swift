@@ -32,7 +32,7 @@ final class VideoHelper {
         let asset = AVAsset(url: inputURL)
         
         guard let videoTrack = try? await asset.loadTracks(withMediaType: .video).first,
-              let duration = try? await asset.load(.duration),
+              let _ = try? await asset.load(.duration), // duration
               let preferredTransform = try? await videoTrack.load(.preferredTransform),
               let sizeAndOrientation = await VideoHelper.getCorrectedNaturalSize(videoTrack: videoTrack, preferredTransform: preferredTransform),
               let currentBitRate = try? await videoTrack.load(.estimatedDataRate),

@@ -17,6 +17,10 @@ struct MapActivity: Decodable, Identifiable {
     var location: CLLocation {
         .init(latitude: self.coordinates.last ?? 0, longitude: self.coordinates.first ?? 0)
     }
+    
+    var locationCoordinate: CLLocationCoordinate2D {
+        .init(latitude: self.coordinates.last ?? 0, longitude: self.coordinates.first ?? 0)
+    }
 
     var id: String {
         self.placeId
