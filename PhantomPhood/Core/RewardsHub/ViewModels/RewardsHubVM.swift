@@ -214,12 +214,12 @@ final class RewardsHubVM: ObservableObject {
         ]
         
         do {
-            var data = try CoreDataStack.shared.viewContext.fetch(request)
+            var data = try UserDataStack.shared.viewContext.fetch(request)
             
             // remove expired invites (30 days old)
             data = data.compactMap { invite in
                 if let confirmedAt = invite.confirmedAt, confirmedAt.timeIntervalSinceNow < -2592000 {
-                    CoreDataStack.shared.viewContext.delete(invite)
+                    UserDataStack.shared.viewContext.delete(invite)
                     return nil
                 }
                 return invite
@@ -249,8 +249,8 @@ final class RewardsHubVM: ObservableObject {
     }
     
     /// Also changes UserSettings.shared.inviteCredits
-    func addInviteLink(_ link: URL) {
-        let context = CoreDataStack.shared.viewContext
+    private func addInviteLink(_ link: URL) {
+        let context = UserDataStack.shared.viewContext
         let inviteLink = InviteLinkEntity(context: context)
         inviteLink.link = link
         inviteLink.createdAt = .now
@@ -261,7 +261,7 @@ final class RewardsHubVM: ObservableObject {
     }
     
     func addInviteLink(referredUser: String) {
-        let context = CoreDataStack.shared.viewContext
+        let context = UserDataStack.shared.viewContext
         let inviteLink = InviteLinkEntity(context: context)
         inviteLink.referredUser = referredUser
         inviteLink.createdAt = .now
@@ -272,7 +272,7 @@ final class RewardsHubVM: ObservableObject {
     
     private func saveCoreData() {
         do {
-            try CoreDataStack.shared.saveContext()
+            try UserDataStack.shared.saveContext()
         } catch {
             print(error)
         }

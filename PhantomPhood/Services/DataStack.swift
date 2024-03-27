@@ -1,22 +1,22 @@
 //
-//  CoreDataStack.swift
+//  DataStack.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 2/16/24.
+//  Created by Kia Abdi on 3/27/24.
 //
 
 import Foundation
 import CoreData
 
-final class CoreDataStack {
-    static let shared = CoreDataStack()
+final class DataStack {
+    static let shared = DataStack()
     
     private init() {}
     
     // MARK: - Core Data stack
     
     lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "UserDataContainer")
+        let container = NSPersistentContainer(name: "DataContainer")
         
         container.loadPersistentStores { _, error in
             if let error = error as NSError? {
@@ -38,9 +38,8 @@ final class CoreDataStack {
             do {
                 try viewContext.save()
             } catch let error as NSError {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                print("Unresolved error \(error), \(error.userInfo)")
             }
-            
         }
     }
 }

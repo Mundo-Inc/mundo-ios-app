@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import CoreData
+import MapKit
 
 struct PlaceEssentials: Identifiable, Decodable {
     let id: String
@@ -13,6 +15,10 @@ struct PlaceEssentials: Identifiable, Decodable {
     let location: PlaceLocation
     let thumbnail: URL?
     let categories: [String]
+    
+    var coordinates: CLLocationCoordinate2D {
+        .init(latitude: location.geoLocation.lat, longitude: location.geoLocation.lng)
+    }
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
@@ -53,5 +59,33 @@ extension PlaceEssentials {
         self.location = placeOverview.location
         self.thumbnail = placeOverview.thumbnail
         self.categories = placeOverview.categories
+    }
+}
+
+extension PlaceEssentials {
+    init(_ entity: PlaceEntity) {
+        id = entity.id ?? ""
+        name = entity.name ?? ""
+        location = .init(geoLocation: .init(lng: entity.longitude, lat: entity.latitude), address: nil, city: nil, state: nil, country: nil, zip: nil)
+        thumbnail = entity.thumbnail != nil ? URL(string: entity.thumbnail!) : nil
+        categories = []
+    }
+    
+    func createPlaceEntity(context: NSManagedObjectContext) -> PlaceEntity {
+        let placeEntity = PlaceEntity(context: context)
+        placeEntity.id = self.id
+        placeEntity.name = self.name
+        placeEntity.thumbnail = self.thumbnail?.absoluteString
+        placeEntity.latitude = self.location.geoLocation.lat
+        placeEntity.longitude = self.location.geoLocation.lng
+        placeEntity.savedAt = .now
+        
+        do {
+            try context.obtainPermanentIDs(for: [placeEntity])
+        } catch {
+            print("Error obtaining a permanent ID for userEntity: \(error)")
+        }
+        
+        return placeEntity
     }
 }

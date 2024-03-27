@@ -64,7 +64,7 @@ extension CLLocationCoordinate2D: Equatable {
 @available(iOS 17.0, *)
 extension MapCameraUpdateContext {
     var scaleValue: CGFloat {
-        let value = 1.0 / self.region.span.latitudeDelta
+        let value = 1.0 / (self.region.span.latitudeDelta * 8)
         return max(0.4, min(value, 1))
     }
 }

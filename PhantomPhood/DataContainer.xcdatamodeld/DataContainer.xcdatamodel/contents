@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22757" systemVersion="23E214" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="MapActivityEntity" representedClassName="MapActivityEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="activityType" attributeType="String"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="savedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="place" maxCount="1" deletionRule="Nullify" destinationEntity="PlaceEntity" inverseName="mapActivities" inverseEntity="PlaceEntity"/>
+        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="mapActivities" inverseEntity="UserEntity"/>
+    </entity>
+    <entity name="PlaceEntity" representedClassName="PlaceEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="String"/>
+        <attribute name="latitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="longitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="savedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="thumbnail" optional="YES" attributeType="String"/>
+        <relationship name="mapActivities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MapActivityEntity" inverseName="place" inverseEntity="MapActivityEntity"/>
+    </entity>
+    <entity name="RequestedRegionEntity" representedClassName="RequestedRegionEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="height" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="savedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="width" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="x" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="y" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="UserEntity" representedClassName="UserEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="String"/>
+        <attribute name="level" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="profileImage" optional="YES" attributeType="String"/>
+        <attribute name="savedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="username" attributeType="String"/>
+        <attribute name="verified" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="xp" optional="YES" attributeType="Integer 16" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="mapActivities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MapActivityEntity" inverseName="user" inverseEntity="MapActivityEntity"/>
+    </entity>
+</model>

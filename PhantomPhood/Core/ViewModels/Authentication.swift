@@ -67,7 +67,7 @@ struct CurrentUserFullData: Codable {
     let profileImage: URL?
     var bio: String?
     let email: Email
-    let rank, remainingXp, reviewsCount, followersCount, followingCount, totalCheckins: Int
+    let rank, remainingXp, prevLevelXp, reviewsCount, followersCount, followingCount, totalCheckins: Int
     let role: UserRole
     let verified: Bool
     let progress: UserProgress
@@ -80,7 +80,11 @@ struct CurrentUserFullData: Codable {
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, username, profileImage, bio, email, rank, remainingXp, reviewsCount, followersCount, followingCount, totalCheckins, role, verified, progress, acceptedEula
+        case name, username, profileImage, bio, email, rank, remainingXp, prevLevelXp, reviewsCount, followersCount, followingCount, totalCheckins, role, verified, progress, acceptedEula
+    }
+    
+    var levelProgress: Double {
+        Double(self.progress.xp - self.prevLevelXp) / Double(self.progress.xp + self.remainingXp - self.prevLevelXp)
     }
 }
 
@@ -95,6 +99,7 @@ extension CurrentUserFullData {
         email = try container.decode(Email.self, forKey: .email)
         rank = try container.decode(Int.self, forKey: .rank)
         remainingXp = try container.decode(Int.self, forKey: .remainingXp)
+        prevLevelXp = try container.decode(Int.self, forKey: .prevLevelXp)
         reviewsCount = try container.decode(Int.self, forKey: .reviewsCount)
         followersCount = try container.decode(Int.self, forKey: .followersCount)
         followingCount = try container.decode(Int.self, forKey: .followingCount)

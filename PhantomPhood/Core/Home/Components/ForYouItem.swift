@@ -636,26 +636,26 @@ struct ForYouItem: View {
                                     .frame(height: 18)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .foregroundStyle(.white)
+                                    .fontWeight(.semibold)
                                     .onTapGesture {
                                         appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
                                     }
                                 
                                 HStack {
-                                    if let user = forYouVM.items[index].place {
-                                        Text(user.name)
-                                            .lineLimit(1)
-                                    } else {
-                                        Text("-")
-                                    }
+                                    Text("@\(forYouVM.items[index].user.username)")
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(1)
+                                        .fontWeight(.medium)
                                     
                                     Spacer()
                                     
                                     Text(forYouVM.items[index].createdAt.timeElapsed())
                                         .font(.custom(style: .caption))
                                         .foregroundStyle(.secondary)
+                                        .fontWeight(.semibold)
                                 }
                             }
-                            .fontWeight(.semibold)
                         }
                         .padding(.horizontal, 10)
                         .padding(.top, 10)

@@ -11,29 +11,39 @@ import MapKit
 final class MapDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
-    
-    struct GeoActivitiesData: Decodable {
-        let activities: [MapActivity]
-    }
-    
-    func getGeoActivities(for region: MKCoordinateRegion) async throws -> [MapActivity] {
-        let (ne, sw) = region.boundariesNESW
         
+    func getMapActivities(ne: CLLocationCoordinate2D, sw: CLLocationCoordinate2D, startDate: Date, scope: Scope) async throws -> [MapActivity] {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let responseData = try await apiManager.requestData("/map/geoActivities", queryParams: [
+        let responseData = try await apiManager.requestData("/map/mapActivities", queryParams: [
             "northEastLat": String(ne.latitude),
             "northEastLng": String(ne.longitude),
             "southWestLat": String(sw.latitude),
-            "southWestLng": String(sw.longitude)
-        ], token: token) as APIResponse<GeoActivitiesData>?
+            "southWestLng": String(sw.longitude),
+            "startDate": String(Int(startDate.timeIntervalSince1970 * 1000)),
+            "scope": scope.rawValue
+        ], token: token) as APIResponse<[MapActivity]>?
         
         guard let responseData else {
             throw URLError(.badServerResponse)
         }
         
-        return responseData.data.activities
+        return responseData.data
+    }
+    
+    enum Scope: String, CaseIterable {
+        case global = "GLOBAL"
+        case followings = "FOLLOWINGS"
+        
+        var title: String {
+            switch self {
+            case .global:
+                "Global Activities"
+            case .followings:
+                "Followings' Activities"
+            }
+        }
     }
 }

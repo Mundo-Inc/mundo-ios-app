@@ -12,61 +12,19 @@ struct ExploreView: View {
     @StateObject private var exploreSearchVM = ExploreSearchVM()
     
     var body: some View {
-        if #available(iOS 17.0, *) {
-            NavigationStack(path: $appData.exploreNavStack) {
-                ExploreView17()
-                    .ignoresSafeArea(.keyboard)
-                    .toolbarBackground(Color.themePrimary, for: .navigationBar)
-                    .navigationTitle("Explore")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .handleNavigationDestination()
+        NavigationStack(path: $appData.exploreNavStack) {
+            Group {
+                if #available(iOS 17.0, *) {
+                    ExploreView17()
+                } else {
+                    ExploreView16()
+                }
             }
-            .searchable(text: $exploreSearchVM.text, placement: .navigationBarDrawer(displayMode: .always))
-            .searchScopes($exploreSearchVM.scope, activation: SearchScopeActivation.onSearchPresentation) {
-                Text(SearchScopes.places.title)
-                    .tag(SearchScopes.places)
-                
-                Text(SearchScopes.users.title)
-                    .tag(SearchScopes.users)
-            }
-            .environmentObject(exploreSearchVM)
-        } else if #available(iOS 16.4, *) {
-            NavigationStack(path: $appData.exploreNavStack) {
-                ExploreView16()
-                    .ignoresSafeArea(.keyboard)
-                    .toolbarBackground(Color.themePrimary, for: .navigationBar)
-                    .navigationTitle("Explore")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .handleNavigationDestination()
-            }
-            .searchable(text: $exploreSearchVM.text, placement: .navigationBarDrawer(displayMode: .always))
-            .searchScopes($exploreSearchVM.scope, activation: SearchScopeActivation.onSearchPresentation) {
-                Text(SearchScopes.places.title)
-                    .tag(SearchScopes.places)
-                
-                Text(SearchScopes.users.title)
-                    .tag(SearchScopes.users)
-            }
-            .environmentObject(exploreSearchVM)
-        } else {
-            NavigationStack(path: $appData.exploreNavStack) {
-                ExploreView16()
-                    .ignoresSafeArea(.keyboard)
-                    .toolbarBackground(Color.themePrimary, for: .navigationBar)
-                    .navigationTitle("Explore")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .handleNavigationDestination()
-            }
-            .searchable(text: $exploreSearchVM.text, placement: .navigationBarDrawer(displayMode: .always))
-            .searchScopes($exploreSearchVM.scope) {
-                Text(SearchScopes.places.title)
-                    .tag(SearchScopes.places)
-                
-                Text(SearchScopes.users.title)
-                    .tag(SearchScopes.users)
-            }
-            .environmentObject(exploreSearchVM)
+            .toolbarBackground(Color.themePrimary, for: .navigationBar)
+            .navigationBarTitleDisplayMode(.inline)
+            .handleNavigationDestination()
         }
+        .environmentObject(exploreSearchVM)
     }
 }
 

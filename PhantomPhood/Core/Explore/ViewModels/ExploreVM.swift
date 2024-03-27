@@ -8,58 +8,61 @@
 import Foundation
 import SwiftUI
 import MapKit
+import CoreData
+import BranchSDK
+import Combine
 
 @available(iOS 17.0, *)
-@MainActor
 final class ExploreVM17: ObservableObject {
+    private static let intersectionThreshold: Double = 0.5
+    private static let cachedRegionExpirySeconds: Double = 90
     
     // MARK: - Shared
     
-    @Published var selectedPlaceData: PlaceDetail? = nil
-    
-    private let mapDM = MapDM()
-    private let placeDM = PlaceDM()
-    private let searchDM = SearchDM()
+    private let auth = Authentication.shared
+    private let dataStack = DataStack.shared
     private let eventsDM = EventsDM()
-    
-    enum LoadingSection: Hashable {
-        case fetchPlace
-        case geoActivities
-        case fetchEvents
-    }
+    private let mapDM = MapDM()
     
     @Published var events: [Event]? = nil
+    
+    @Published var showSet = Set<String>()
+    @Published var activities: [MapActivity] = []
     
     @Published private(set) var loadingSections = Set<LoadingSection>()
     @Published var error: String? = nil
     @Published var searchResults: [MKMapItem]? = nil
+    @Published var isSearching: Bool = false
+    @Published var startDate: DateOption = .month
+    @Published var activitiesScope: MapDM.Scope = .global
     
-    @Published private(set) var mapClusterActivities: MapActivityClusters = .init(clustered: [], solo: [])
-    
-    private var firstMapActivityDataTime = Date()
-    private var mapActiviteis: [MapActivity] = []
-    /// For changing clusters on zoom change
-    private var lastClusterRegion: MKCoordinateRegion? = nil
-    
+    private var throttles = Set<Throttles>()
+
     // MARK: - Exclusive
     
     @Published var position: MapCameraPosition = .userLocation(fallback: .automatic)
-    @Published var selection: MapFeature? = nil
+    @Published private(set) var scale: CGFloat = 1
     
-    @Published var selectedMapItem: MKMapItem? = nil
+    private(set) var originalItems: [MapActivity] = []
+    private(set) var fetchedAreas: [AreaLevel:[FetchedMapRect]] = [
+        .A: [],
+        .B: [],
+        .C: [],
+    ]
     
-    @Published var throttle = Throttle(interval: 2)
+    private var nextUpdateContext: MapCameraUpdateContext?
     
-    @Published var selectedMapActivity: MapActivity? = nil
-    
-    @Published var scale: CGFloat = 1
+    private var cancellables = [AnyCancellable]()
     
     init() {
-        if let region = MapCameraPosition.userLocation(fallback: .automatic).region {
-            Task {
-                await self.updateGeoActivities(for: region)
+        updateFetchedRegions()
+        
+        $startDate
+            .sink { value in
+                self.getSavedData(startDate: value.getDate)
+                self.removeRequestedRegions()
             }
-        }
+            .store(in: &cancellables)
         
         Task {
             await getEvents()
@@ -68,105 +71,417 @@ final class ExploreVM17: ObservableObject {
     
     // MARK: - Shared Methods
     
-    func setSearchResults(_ searchResults: [MKMapItem]) {
-        self.searchResults = searchResults
+    func panToRegion(_ region: MKCoordinateRegion) {
+        position = .region(region)
     }
     
-    func fetchPlace(mapItem: MKMapItem) async {
-        self.selectedPlaceData = nil
-        self.loadingSections.insert(.fetchPlace)
-        do {
-            let data = try await placeDM.fetch(mapItem: mapItem)
-            self.selectedPlaceData = data
-        } catch(let err) {
-            self.error = err.localizedDescription
-        }
-        self.loadingSections.remove(.fetchPlace)
-    }
+    // MARK: - Exclusive Methods
     
-    func mapClickHandler(coordinate: CLLocationCoordinate2D) async -> MKMapItem? {
-        do {
-            let mapItems = try await searchDM.searchAppleMapsPlaces(region: MKCoordinateRegion(center: coordinate, latitudinalMeters: 50, longitudinalMeters: 50))
-            
-            if let first = mapItems.first {
-                return first
-            } else {
-                return nil
-            }
-        } catch {
-            return nil
-        }
-    }
-    
-    func updateGeoActivities(for region: MKCoordinateRegion) async {
-        guard !self.loadingSections.contains(.geoActivities) else { return }
+    func fetchData(rect: MKMapRect) async {
+        let areaLevel = AreaLevel.categorizeArea(rect.width * rect.height)
+        let fetchRect = getMapRect(rect: rect, areaLevel: areaLevel)
         
-        self.loadingSections.insert(.geoActivities)
+        guard let intersectingRects = shouldFetch(rect: fetchRect, areaLevel: areaLevel) else { return }
+        
+        DispatchQueue.main.async {
+            self.loadingSections.insert(.fetchActivities)
+        }
+        
         do {
-            let data = try await self.mapDM.getGeoActivities(for: region)
-            self.setMapActiviteis(activities: data, region: region)
+            let ne = MKMapPoint(x: fetchRect.maxX, y: fetchRect.minY)
+            let sw = MKMapPoint(x: fetchRect.minX, y: fetchRect.maxY)
+            
+            let data = try await mapDM.getMapActivities(ne: ne.coordinate, sw: sw.coordinate, startDate: startDate.getDate, scope: self.activitiesScope)
+            
+            saveActivites(data)
+            addFetchedRect(fetchRect, areaLevel: areaLevel, intersectingRects: intersectingRects)
+        } catch {
+            print("Error", error)
+        }
+        
+        DispatchQueue.main.async {
+            self.loadingSections.remove(.fetchActivities)
+        }
+    }
+    
+    func getInviteLink() {
+        guard !loadingSections.contains(.inviteLink) else { return }
+                
+        if let currentUser = auth.currentUser {
+            self.loadingSections.insert(.inviteLink)
+            HapticManager.shared.impact(style: .light)
+            
+            let buo: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "signup/\(currentUser.id)")
+            buo.title = "Join \(currentUser.name) on Phantom Phood"
+            buo.contentDescription = "You've been invited by \(currentUser.name) to Phantom Phood. Join friends in your dining experiences."
+            
+            if let profileImage = currentUser.profileImage {
+                buo.imageUrl = profileImage.absoluteString
+            } else {
+                buo.imageUrl = "https://phantomphood.ai/img/NoProfileImage.jpg"
+            }
+            
+            let lp: BranchLinkProperties = BranchLinkProperties()
+            lp.feature = "referral"
+            
+            if let topViewController = UIApplication.shared.topViewController() {
+                buo.showShareSheet(with: lp, andShareText: "Join \(currentUser.name) on Phantom Phood", from: topViewController) { (activityType, completed, error) in
+                    if let error {
+                        print(error)
+                    } else {
+                        self.loadingSections.remove(.inviteLink)
+                        if completed {
+                            if let url = URL(string: buo.getShortUrl(with: lp) ?? "") {
+                                self.addInviteLink(url)
+                            }
+                        }
+                    }
+                }
+            } else {
+                self.loadingSections.remove(.inviteLink)
+            }
+        }
+    }
+    
+    /// Used for updating annotations on demand
+    private var latestMapContext: MapCameraUpdateContext?
+    func onMapCameraChangeHandler(_ context: MapCameraUpdateContext) {
+        self.latestMapContext = context
+        DispatchQueue.main.async {
+            self.scale = context.scaleValue
+        }
+        
+        if !throttles.contains(.fetch) && !loadingSections.contains(.fetchActivities) {
+            throttles.insert(.fetch)
+            
+            Task {
+                await self.fetchData(rect: context.rect)
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.throttles.remove(.fetch)
+            }
+        }
+        
+        guard !throttles.contains(.display) else {
+            self.nextUpdateContext = context
+            return
+        }
+        
+        throttles.insert(.display)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.throttles.remove(.display)
+            if let context = self.nextUpdateContext {
+                DispatchQueue.global(qos: .userInitiated).async {
+                    var newItems = self.originalItems.filter({ context.rect.contains(.init($0.place.coordinates)) })
+                    if newItems.count > 50 {
+                        newItems = Array(newItems.prefix(50))
+                    }
+                    DispatchQueue.main.async {
+                        self.activities = newItems
+                    }
+                }
+            }
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    private func addInviteLink(_ link: URL) {
+        let context = UserDataStack.shared.viewContext
+        let inviteLink = InviteLinkEntity(context: context)
+        inviteLink.link = link
+        inviteLink.createdAt = .now
+        
+        UserSettings.shared.inviteCredits -= 1
+        
+        do {
+            try UserDataStack.shared.saveContext()
         } catch {
             print(error)
         }
-        self.loadingSections.remove(.geoActivities)
     }
     
-    func updateClusters(region: MKCoordinateRegion, force: Bool = false) {
-        if let lastClusterRegion {
-            let delta = min(abs(region.span.longitudeDelta), abs(region.span.latitudeDelta))
-            let lastDelta = min(abs(lastClusterRegion.span.longitudeDelta), abs(lastClusterRegion.span.latitudeDelta))
+    private func addFetchedRect(_ rect: MKMapRect, areaLevel: AreaLevel, intersectingRects: [FetchedMapRect]) {
+        let unitRects = devideRect(rect: rect, areaLevel: areaLevel).filter { r in
+            !intersectingRects.contains { fetchedMapRegion in
+                fetchedMapRegion.rect.midX == r.midX && fetchedMapRegion.rect.midY == r.midY
+            }
+        }
+        
+        for item in unitRects {
+            let entity = RequestedRegionEntity(context: dataStack.viewContext)
+            entity.x = item.origin.x
+            entity.y = item.origin.y
+            entity.width = item.width
+            entity.height = item.height
+            entity.savedAt = .now
             
-            if delta > lastDelta ? 1.0 - (lastDelta / delta) >= 0.3 : 1.0 - (delta / lastDelta) >= 0.3 {
-                self.mapClusterActivities = MapActivityClusters(region: region, items: self.mapActiviteis.filter({ region.contains($0.locationCoordinate) }))
-                self.lastClusterRegion = region
-            } else if force {
-                self.mapClusterActivities = MapActivityClusters(region: lastClusterRegion, items: self.mapActiviteis)
+            do {
+                try dataStack.viewContext.obtainPermanentIDs(for: [entity])
+            } catch {
+                print("Error saving new RequestedRegionEntity", error)
             }
-        } else {
-            self.mapClusterActivities = MapActivityClusters(region: region, items: self.mapActiviteis)
-            self.lastClusterRegion = region
-        }
-    }
-    
-    // MARK: - Private Shared Methods
-    
-    private func setMapActiviteis(activities: [MapActivity], region: MKCoordinateRegion) {
-        if abs(self.firstMapActivityDataTime.timeIntervalSinceNow) > 90 {
-            self.mapActiviteis.removeAll()
-            self.firstMapActivityDataTime = Date()
         }
         
-        self.mapActiviteis.append(contentsOf: activities.filter({ mapActivity in
-            !self.mapActiviteis.contains { prevMapActivity in
-                prevMapActivity.id == mapActivity.id
-            }
-        }))
-        
-        updateClusters(region: region, force: true)
-    }
-    
-    // MARK: - Exlusive Methods
-    
-    func fetchPlace(mapFeature: MapFeature) async {
-        self.selectedPlaceData = nil
-        self.loadingSections.insert(.fetchPlace)
         do {
-            let data = try await placeDM.fetch(mapFeature: mapFeature)
-            self.selectedPlaceData = data
-        } catch(let err) {
-            print("Error", err)
-            self.error = err.localizedDescription
+            try dataStack.saveContext()
+        } catch {
+            print("Error saving new RequestedRegionEntity", error)
         }
-        self.loadingSections.remove(.fetchPlace)
+        
+        updateFetchedRegions()
     }
     
-    func panToRegion(_ region: MKCoordinateRegion) {
-        position = .region(region)
+    private func shouldFetch(rect: MKMapRect, areaLevel: AreaLevel) -> [FetchedMapRect]? {
+        // TODO: Add check for savedAt
+        var itemsToDelete: [FetchedMapRect] = []
+        let now = Date()
+        let fetchedRegions = (fetchedAreas[areaLevel] ?? []).filter { fetchedRegion in
+            if let savedAt = fetchedRegion.entity.savedAt, now.timeIntervalSince(savedAt) > Self.cachedRegionExpirySeconds {
+                itemsToDelete.append(fetchedRegion)
+                return false
+            }
+            return true
+        }
+        
+        if !itemsToDelete.isEmpty {
+            itemsToDelete.forEach { dataStack.viewContext.delete($0.entity) }
+            
+            do {
+                try dataStack.saveContext()
+            } catch {
+                print("Error deleting expired areas")
+            }
+        }
+        
+        var intersectingRects: [FetchedMapRect] = []
+        
+        let totalIntersectionArea = fetchedRegions.reduce(0) { result, fetchedRegion in
+            let intersection = rect.intersection(fetchedRegion.rect)
+            let intersectionValue = intersection.width * intersection.height
+            if intersectionValue > 0 {
+                intersectingRects.append(fetchedRegion)
+            }
+            return result + intersectionValue
+        }
+        
+        if totalIntersectionArea > rect.width * rect.height * Self.intersectionThreshold {
+            return nil
+        }
+        
+        return intersectingRects
+    }
+    
+    private func getMapRect(rect: MKMapRect, areaLevel: AreaLevel) -> MKMapRect {
+        let x = floor(rect.minX / areaLevel.areaUnit) * areaLevel.areaUnit
+        let y = floor(rect.minY / areaLevel.areaUnit) * areaLevel.areaUnit
+        let maxX = ceil(rect.maxX / areaLevel.areaUnit) * areaLevel.areaUnit
+        let maxY = ceil(rect.maxY / areaLevel.areaUnit) * areaLevel.areaUnit
+
+        return MKMapRect(
+            x: x,
+            y: y,
+            width: maxX - x,
+            height: maxY - y
+        )
+    }
+    
+    private func devideRect(rect: MKMapRect, areaLevel: AreaLevel) -> [MKMapRect] {
+        let xCount = Int(rect.width / areaLevel.areaUnit)
+        let yCount = Int(rect.height / areaLevel.areaUnit)
+
+        var rects: [MKMapRect] = []
+
+        for x in 0..<xCount {
+            for y in 0..<yCount {
+                let newRect = MKMapRect(
+                    x: rect.minX + Double(x) * areaLevel.areaUnit,
+                    y: rect.minY + Double(y) * areaLevel.areaUnit,
+                    width: areaLevel.areaUnit,
+                    height: areaLevel.areaUnit
+                )
+                rects.append(newRect)
+            }
+        }
+
+        return rects
+    }
+    
+    private func saveActivites(_ activities: [MapActivity]) {
+        let mapActivitiesIds = activities.map { $0.id }
+        let existingMapActivitiesRequest: NSFetchRequest<MapActivityEntity> = MapActivityEntity.fetchRequest()
+        existingMapActivitiesRequest.predicate = NSPredicate(format: "id IN %@", mapActivitiesIds)
+        
+        do {
+            let existingMapActivities = try dataStack.viewContext.fetch(existingMapActivitiesRequest)
+            
+            let activitiesToAdd = activities.filter { mapActivity in
+                !existingMapActivities.contains { activityEntity in
+                    activityEntity.id == mapActivity.id
+                }
+            }
+            
+            guard !activitiesToAdd.isEmpty else { return }
+            
+            let userIds = Set<String>(activitiesToAdd.map { $0.user.id })
+            let placeIds = Set<String>(activitiesToAdd.map { $0.place.id })
+            
+            let existingUsersRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+            existingUsersRequest.predicate = NSPredicate(format: "id IN %@", Array(userIds))
+            
+            let existingPlacesRequest: NSFetchRequest<PlaceEntity> = PlaceEntity.fetchRequest()
+            existingPlacesRequest.predicate = NSPredicate(format: "id IN %@", Array(placeIds))
+            
+            
+            do {
+                var existingUsers = try dataStack.viewContext.fetch(existingUsersRequest)
+                var existingPlaces = try dataStack.viewContext.fetch(existingPlacesRequest)
+                
+                for activity in activitiesToAdd {
+                    let user: UserEntity
+                    let place: PlaceEntity
+                    if let existingUser = existingUsers.first(where: { $0.id! == activity.user.id }) {
+                        user = existingUser
+                    } else {
+                        user = activity.user.createUserEntity(context: dataStack.viewContext)
+                        existingUsers.append(user)
+                    }
+                    if let existingPlace = existingPlaces.first(where: { $0.id! == activity.place.id }) {
+                        place = existingPlace
+                    } else {
+                        place = activity.place.createPlaceEntity(context: dataStack.viewContext)
+                        existingPlaces.append(place)
+                    }
+                    
+                    let newActivity = MapActivityEntity(context: dataStack.viewContext)
+                    newActivity.id = activity.id
+                    newActivity.activityType = activity.activityType
+                    newActivity.createdAt = activity.createdAt
+                    newActivity.user = user
+                    newActivity.place = place
+                    newActivity.savedAt = .now
+                    
+                    do {
+                        try dataStack.viewContext.obtainPermanentIDs(for: [newActivity])
+                    } catch {
+                        print("Error obtaining a permanent ID for userEntity: \(error)")
+                    }
+                    
+                    user.addToMapActivities(newActivity)
+                    place.addToMapActivities(newActivity)
+                    
+                    originalItems.append(.init(newActivity))
+                }
+            } catch {
+                print("Error fetching CoreData", error)
+            }
+            
+            do {
+                try dataStack.saveContext()
+            } catch {
+                print("Error saving new MapActivityEntity", error)
+            }
+        } catch {
+            print("Error getting existing MapActivityEntity", error)
+        }
+    }
+    
+    private func updateFetchedRegions() {
+        let request = NSFetchRequest<RequestedRegionEntity>(entityName: "RequestedRegionEntity")
+        
+        guard let data = try? dataStack.viewContext.fetch(request) else { return }
+        
+        var result: [AreaLevel:[FetchedMapRect]] = [
+            .A: [],
+            .B: [],
+            .C: [],
+        ]
+        
+        for region in data {
+            guard let width = Double(exactly: region.width), let height = Double(exactly: region.height) else {
+                continue
+            }
+            let level = AreaLevel.categorizeArea(width * height)
+            result[level]?.append(.init(entity: region, rect: MKMapRect(x: region.x, y: region.y, width: width, height: height)))
+        }
+        
+        self.fetchedAreas = result
+    }
+    
+    private func getSavedData(startDate: Date) {
+        let mapActivitiesRequest: NSFetchRequest<MapActivityEntity> = MapActivityEntity.fetchRequest()
+        do {
+            let mapActivities = try dataStack.viewContext.fetch(mapActivitiesRequest)
+            let activities = mapActivities.filter({ entity in
+                if let createdAt = entity.createdAt {
+                    return createdAt >= startDate
+                }
+                return false
+            }).map { MapActivity($0) }
+            originalItems = activities
+            if let latestMapContext {
+                self.onMapCameraChangeHandler(latestMapContext)
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
+    private func removeRequestedRegions() {
+        let fetchedRegionsRequest: NSFetchRequest<RequestedRegionEntity> = RequestedRegionEntity.fetchRequest()
+        
+        do {
+            let fetchedRegions = try dataStack.viewContext.fetch(fetchedRegionsRequest)
+            
+            fetchedRegions.forEach { dataStack.viewContext.delete($0) }
+            
+            try dataStack.saveContext()
+            
+            updateFetchedRegions()
+        } catch {
+            print(error)
+        }
+    }
+    
+    // MARK: - Enums
+    
+    enum LoadingSection: Hashable {
+        case fetchEvents
+        case fetchActivities
+        case inviteLink
+    }
+    
+    enum Throttles: Hashable {
+        case fetch
+        case display
+    }
+    
+    enum DateOption: String, CaseIterable {
+        case day = "Last Day"
+        case week = "Last Week"
+        case month = "Last Month"
+        case year = "Last Year"
+
+        var getDate: Date {
+            switch self {
+            case .day:
+                return Date().addingTimeInterval(-60 * 60 * 24)
+            case .week:
+                return Date().addingTimeInterval(-60 * 60 * 24 * 7)
+            case .month:
+                return Date().addingTimeInterval(-60 * 60 * 24 * 30)
+            case .year:
+                return Date().addingTimeInterval(-60 * 60 * 24 * 365)
+            }
+        }
     }
 }
 
 @available(iOS 17.0, *)
 extension ExploreVM17 {
+    @MainActor
     func getEvents() async {
         guard !self.loadingSections.contains(.fetchEvents) else { return }
         
@@ -190,7 +505,6 @@ final class ExploreVM16: ObservableObject {
     
     @Published var selectedPlaceData: PlaceDetail? = nil
     
-    private let mapDM = MapDM()
     private let placeDM = PlaceDM()
     private let searchDM = SearchDM()
     private let eventsDM = EventsDM()
@@ -206,14 +520,8 @@ final class ExploreVM16: ObservableObject {
     @Published private(set) var loadingSections = Set<LoadingSection>()
     @Published var error: String? = nil
     @Published var searchResults: [MKMapItem]? = nil
-    
-    @Published private(set) var mapClusterActivities: MapActivityClusters = .init(clustered: [], solo: [])
-    
-    private var firstMapActivityDataTime = Date()
-    private var mapActiviteis: [MapActivity] = []
-    /// For changing clusters on zoom change
-    private var lastClusterRegion: MKCoordinateRegion? = nil
-    
+    @Published var isSearching: Bool = false
+        
     // MARK: - Exclusive
     
     private var locationManager = LocationManager.shared
@@ -232,10 +540,6 @@ final class ExploreVM16: ObservableObject {
     }
     
     // MARK: - Shared Methods
-    
-    func setSearchResults(_ searchResults: [MKMapItem]) {
-        self.searchResults = searchResults
-    }
     
     func fetchPlace(mapItem: MKMapItem) async {
         self.selectedPlaceData = nil
@@ -261,53 +565,6 @@ final class ExploreVM16: ObservableObject {
         } catch {
             return nil
         }
-    }
-    
-    func updateGeoActivities(for region: MKCoordinateRegion) async {
-        guard !self.loadingSections.contains(.geoActivities) else { return }
-        
-        self.loadingSections.insert(.geoActivities)
-        do {
-            let data = try await self.mapDM.getGeoActivities(for: region)
-            self.setMapActiviteis(activities: data, region: region)
-        } catch {
-            print(error)
-        }
-        self.loadingSections.remove(.geoActivities)
-    }
-    
-    func updateClusters(region: MKCoordinateRegion, force: Bool = false) {
-        if let lastClusterRegion {
-            let delta = min(abs(region.span.longitudeDelta), abs(region.span.latitudeDelta))
-            let lastDelta = min(abs(lastClusterRegion.span.longitudeDelta), abs(lastClusterRegion.span.latitudeDelta))
-            
-            if delta > lastDelta ? 1.0 - (lastDelta / delta) >= 0.3 : 1.0 - (delta / lastDelta) >= 0.3 {
-                self.mapClusterActivities = MapActivityClusters(region: region, items: self.mapActiviteis)
-                self.lastClusterRegion = region
-            } else if force {
-                self.mapClusterActivities = MapActivityClusters(region: lastClusterRegion, items: self.mapActiviteis)
-            }
-        } else {
-            self.mapClusterActivities = MapActivityClusters(region: region, items: self.mapActiviteis)
-            self.lastClusterRegion = region
-        }
-    }
-    
-    // MARK: - Private Shared Methods
-    
-    private func setMapActiviteis(activities: [MapActivity], region: MKCoordinateRegion) {
-        if abs(self.firstMapActivityDataTime.timeIntervalSinceNow) > 90 {
-            self.mapActiviteis.removeAll()
-            self.firstMapActivityDataTime = Date()
-        }
-        
-        self.mapActiviteis.append(contentsOf: activities.filter({ mapActivity in
-            !self.mapActiviteis.contains { prevMapActivity in
-                prevMapActivity.id == mapActivity.id
-            }
-        }))
-        
-        updateClusters(region: region, force: true)
     }
     
     // MARK: - Exlusive Methods

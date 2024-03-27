@@ -12,8 +12,9 @@ struct ProfileImage: View {
     let profileImage: URL?
     let size: CGFloat
     let cornerRadius: CGFloat
+    let borderColor: Color
     
-    init(_ string: String?, size: CGFloat? = nil, cornerRadius: CGFloat? = nil) {
+    init(_ string: String?, size: CGFloat? = nil, cornerRadius: CGFloat? = nil, borderColor: Color = .profileImageStroke) {
         if let string, let url = URL(string: string) {
             self.profileImage = url
         } else {
@@ -25,9 +26,10 @@ struct ProfileImage: View {
         } else {
             self.cornerRadius = self.size / 2
         }
+        self.borderColor = borderColor
     }
     
-    init(_ url: URL?, size: CGFloat? = nil, cornerRadius: CGFloat? = nil) {
+    init(_ url: URL?, size: CGFloat? = nil, cornerRadius: CGFloat? = nil, borderColor: Color = .profileImageStroke) {
         self.profileImage = url
         self.size = size ?? 80
         if let cornerRadius {
@@ -35,6 +37,7 @@ struct ProfileImage: View {
         } else {
             self.cornerRadius = self.size / 2
         }
+        self.borderColor = borderColor
     }
     
     var strokeSize: CGFloat {
@@ -52,7 +55,7 @@ struct ProfileImage: View {
     var body: some View {
         if let profileImage {
             RoundedRectangle(cornerRadius: cornerRadius)
-                .foregroundStyle(Color(.profileImageStroke))
+                .foregroundStyle(borderColor)
                 .shadow(color: Color.black.opacity(0.25), radius: shadowSize, y: shadowSize)
                 .overlay {
                     RoundedRectangle(cornerRadius: innerCornerRadius)
@@ -78,7 +81,7 @@ struct ProfileImage: View {
                 .frame(width: size, height: size)
         } else {
             RoundedRectangle(cornerRadius: cornerRadius)
-                .foregroundStyle(Color(.profileImageStroke))
+                .foregroundStyle(borderColor)
                 .shadow(color: Color.black.opacity(0.25), radius: shadowSize, y: shadowSize)
                 .overlay {
                     RoundedRectangle(cornerRadius: innerCornerRadius)

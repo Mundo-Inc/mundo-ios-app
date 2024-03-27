@@ -78,15 +78,15 @@ struct ProfileStats: View {
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        ProgressView(value: auth.currentUser == nil ? 0 : Double(auth.currentUser!.progress.xp) / Double(auth.currentUser!.progress.xp + auth.currentUser!.remainingXp))
+                        ProgressView(value: auth.currentUser?.levelProgress ?? 0)
                             .foregroundStyle(.secondary)
                             .progressViewStyle(.linear)
                         
                         
                         HStack(spacing: 0) {
-                            Text("\(auth.currentUser?.progress.xp ?? 1000)")
+                            Text(auth.currentUser != nil ? "\(auth.currentUser!.progress.xp - auth.currentUser!.prevLevelXp)" : "1000")
                                 .foregroundStyle(Color.accentColor)
-                            Text("/\(auth.currentUser == nil ? 3000 : auth.currentUser!.progress.xp + auth.currentUser!.remainingXp)")
+                            Text(auth.currentUser != nil ? "/\(auth.currentUser!.progress.xp + auth.currentUser!.remainingXp - auth.currentUser!.prevLevelXp)" : "3000")
                                 .foregroundStyle(.secondary)
                         }
                         .redacted(reason: auth.currentUser == nil ? .placeholder : [])

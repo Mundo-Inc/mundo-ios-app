@@ -13,6 +13,7 @@ struct UserDetail: Identifiable, Decodable {
         username,
         bio: String
     let remainingXp,
+        prevLevelXp,
         followersCount,
         followingCount,
         reviewsCount,
@@ -26,7 +27,11 @@ struct UserDetail: Identifiable, Decodable {
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, username, bio, remainingXp, verified, profileImage, isFollower, isFollowing, followersCount, followingCount, reviewsCount, totalCheckins, rank, progress
+        case name, username, bio, remainingXp, prevLevelXp, verified, profileImage, isFollower, isFollowing, followersCount, followingCount, reviewsCount, totalCheckins, rank, progress
+    }
+    
+    var levelProgress: Double {
+        Double(self.progress.xp - self.prevLevelXp) / Double(self.progress.xp + self.remainingXp - self.prevLevelXp)
     }
 }
 
@@ -38,6 +43,7 @@ extension UserDetail {
         username = try container.decode(String.self, forKey: .username)
         bio = try container.decode(String.self, forKey: .bio)
         remainingXp = try container.decode(Int.self, forKey: .remainingXp)
+        prevLevelXp = try container.decode(Int.self, forKey: .prevLevelXp)
         followersCount = try container.decode(Int.self, forKey: .followersCount)
         followingCount = try container.decode(Int.self, forKey: .followingCount)
         reviewsCount = try container.decode(Int.self, forKey: .reviewsCount)

@@ -652,26 +652,26 @@ struct ForYouItem17: View {
                                     .frame(height: 18)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .foregroundStyle(.white)
+                                    .fontWeight(.semibold)
                                     .onTapGesture {
                                         appData.goTo(AppRoute.userProfile(userId: item.user.id))
                                     }
                                 
                                 HStack {
-                                    if let user = item.place {
-                                        Text(user.name)
-                                            .lineLimit(1)
-                                    } else {
-                                        Text("-")
-                                    }
+                                    Text("@\(item.user.username)")
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(1)
+                                        .fontWeight(.medium)
                                     
                                     Spacer()
                                     
                                     Text(item.createdAt.timeElapsed())
                                         .font(.custom(style: .caption))
                                         .foregroundStyle(.secondary)
+                                        .fontWeight(.semibold)
                                 }
                             }
-                            .fontWeight(.semibold)
                         }
                         .padding(.horizontal, 10)
                         .padding(.top, 10)

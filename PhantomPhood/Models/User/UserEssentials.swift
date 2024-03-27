@@ -6,8 +6,12 @@
 //
 
 import Foundation
+import SwiftUI
+import CoreData
 
 struct UserEssentials: Identifiable, Decodable {
+    static let colors: [Color] = [.yellow, .cyan, .orange, .purple, .pink, .red, .green, .mint, .teal, .indigo]
+    
     let id: String
     let name: String
     let username: String
@@ -23,6 +27,16 @@ struct UserEssentials: Identifiable, Decodable {
     enum CodingKeys: String, CodingKey {
         case id = "_id"
         case name, username, verified, profileImage, progress
+    }
+    
+    var color: Color {
+        let index = self.id.index(self.id.startIndex, offsetBy: 8)
+        let subHex = String(self.id[..<index])
+        guard let hexValue = UInt64(subHex, radix: 16) else {
+            return Self.colors[0]
+        }
+        
+        return Self.colors[Int(hexValue % 10)]
     }
 }
 
@@ -53,3 +67,35 @@ extension UserEssentials {
         self.progress = CompactUserProgress(level: userDetail.progress.level, xp: userDetail.progress.xp)
     }
 }
+
+extension UserEssentials {
+    init(_ entity: UserEntity) {
+        id = entity.id!
+        name = entity.name!
+        username = entity.username!
+        verified = entity.verified
+        profileImage = entity.profileImage != nil ? URL(string: entity.profileImage!) : nil
+        progress = .init(level: Int(entity.level), xp: Int(entity.xp))
+    }
+    
+    func createUserEntity(context: NSManagedObjectContext) -> UserEntity {
+        let userEntity = UserEntity(context: context)
+        userEntity.id = self.id
+        userEntity.name = self.name
+        userEntity.username = self.username
+        userEntity.verified = self.verified
+        userEntity.profileImage = self.profileImage?.absoluteString
+        userEntity.level = Int16(self.progress.level)
+        userEntity.xp = Int16(self.progress.xp)
+        userEntity.savedAt = .now
+        
+        do {
+            try context.obtainPermanentIDs(for: [userEntity])
+        } catch {
+            print("Error obtaining a permanent ID for userEntity: \(error)")
+        }
+        
+        return userEntity
+    }
+}
+

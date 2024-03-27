@@ -238,12 +238,9 @@ struct ExploreView16: View {
                     .offset(y: 6)
                 }
                 
-                ExploreSearchView(exploreSearchVM: exploreSearchVM) { results in
-                    vm.setSearchResults(results)
-                } panToRegion: { region in
+                ExploreSearchView(exploreSearchVM: exploreSearchVM, isSearching: $vm.isSearching, searchResults: $vm.searchResults) { region in
                     vm.panToRegion(region)
                 }
-                
             }
         }
         .ignoresSafeArea(.keyboard)
