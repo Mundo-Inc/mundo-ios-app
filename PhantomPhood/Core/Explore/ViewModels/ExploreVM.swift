@@ -310,72 +310,47 @@ final class ExploreVM17: ObservableObject {
     }
     
     private func saveActivites(_ activities: [MapActivity]) {
-        let mapActivitiesIds = activities.map { $0.id }
-        let existingMapActivitiesRequest: NSFetchRequest<MapActivityEntity> = MapActivityEntity.fetchRequest()
-        existingMapActivitiesRequest.predicate = NSPredicate(format: "id IN %@", mapActivitiesIds)
+        guard !activities.isEmpty else { return }
+        
+        let context = dataStack.viewContext
         
         do {
-            let existingMapActivities = try dataStack.viewContext.fetch(existingMapActivitiesRequest)
+            let existingActivities = try fetchExistingEntities(MapActivityEntity.self, ids: Set(activities.map { $0.id }), context: context)
+            let existingActivityIDs = Set(existingActivities.map { $0.id })
+            let activitiesToAdd = activities.filter { !existingActivityIDs.contains($0.id) }
             
-            let activitiesToAdd = activities.filter { mapActivity in
-                !existingMapActivities.contains { activityEntity in
-                    activityEntity.id == mapActivity.id
-                }
-            }
-            
+            // Exit if there is nothing to add
             guard !activitiesToAdd.isEmpty else { return }
             
-            let userIds = Set<String>(activitiesToAdd.map { $0.user.id })
-            let placeIds = Set<String>(activitiesToAdd.map { $0.place.id })
+            let existingUsers = try fetchExistingEntities(UserEntity.self, ids: Set(activities.map { $0.user.id }), context: dataStack.viewContext)
+            let existingPlaces = try fetchExistingEntities(PlaceEntity.self, ids: Set(activities.map { $0.place.id }), context: dataStack.viewContext)
             
-            let existingUsersRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-            existingUsersRequest.predicate = NSPredicate(format: "id IN %@", Array(userIds))
+            var users: [String: UserEntity] = [:]
+            existingUsers.forEach { users[$0.id ?? ""] = $0 }
             
-            let existingPlacesRequest: NSFetchRequest<PlaceEntity> = PlaceEntity.fetchRequest()
-            existingPlacesRequest.predicate = NSPredicate(format: "id IN %@", Array(placeIds))
+            var places: [String: PlaceEntity] = [:]
+            existingPlaces.forEach { places[$0.id ?? ""] = $0 }
             
-            
-            do {
-                var existingUsers = try dataStack.viewContext.fetch(existingUsersRequest)
-                var existingPlaces = try dataStack.viewContext.fetch(existingPlacesRequest)
-                
-                for activity in activitiesToAdd {
-                    let user: UserEntity
-                    let place: PlaceEntity
-                    if let existingUser = existingUsers.first(where: { $0.id! == activity.user.id }) {
-                        user = existingUser
-                    } else {
-                        user = activity.user.createUserEntity(context: dataStack.viewContext)
-                        existingUsers.append(user)
-                    }
-                    if let existingPlace = existingPlaces.first(where: { $0.id! == activity.place.id }) {
-                        place = existingPlace
-                    } else {
-                        place = activity.place.createPlaceEntity(context: dataStack.viewContext)
-                        existingPlaces.append(place)
-                    }
-                    
-                    let newActivity = MapActivityEntity(context: dataStack.viewContext)
-                    newActivity.id = activity.id
-                    newActivity.activityType = activity.activityType
-                    newActivity.createdAt = activity.createdAt
-                    newActivity.user = user
-                    newActivity.place = place
-                    newActivity.savedAt = .now
-                    
-                    do {
-                        try dataStack.viewContext.obtainPermanentIDs(for: [newActivity])
-                    } catch {
-                        print("Error obtaining a permanent ID for userEntity: \(error)")
-                    }
-                    
-                    user.addToMapActivities(newActivity)
-                    place.addToMapActivities(newActivity)
-                    
-                    originalItems.append(.init(newActivity))
+            for activity in activitiesToAdd {
+                let user: UserEntity
+                let place: PlaceEntity
+
+                if let existingUser = users[activity.user.id] {
+                    user = existingUser
+                } else {
+                    user = activity.user.createUserEntity(context: dataStack.viewContext)
+                    users[activity.user.id] = user
                 }
-            } catch {
-                print("Error fetching CoreData", error)
+                if let existingPlace = places[activity.place.id] {
+                    place = existingPlace
+                } else {
+                    place = activity.place.createPlaceEntity(context: dataStack.viewContext)
+                    places[activity.place.id] = place
+                }
+                
+                activity.createMapActivityEntity(context: dataStack.viewContext, user: user, place: place)
+                
+                originalItems.append(activity)
             }
             
             do {
@@ -386,6 +361,13 @@ final class ExploreVM17: ObservableObject {
         } catch {
             print("Error getting existing MapActivityEntity", error)
         }
+    }
+        
+    /// Fetches existing entities by IDs.
+    private func fetchExistingEntities<T: NSManagedObject>(_ entityType: T.Type, ids: Set<String>, context: NSManagedObjectContext) throws -> [T] {
+        let request: NSFetchRequest<T> = NSFetchRequest<T>(entityName: String(describing: entityType))
+        request.predicate = NSPredicate(format: "id IN %@", ids)
+        return try context.fetch(request)
     }
     
     private func updateFetchedRegions() {
@@ -419,7 +401,7 @@ final class ExploreVM17: ObservableObject {
                     return createdAt >= startDate
                 }
                 return false
-            }).map { MapActivity($0) }
+            }).compactMap { try? MapActivity($0) }
             originalItems = activities
             if let latestMapContext {
                 self.onMapCameraChangeHandler(latestMapContext)

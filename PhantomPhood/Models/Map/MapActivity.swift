@@ -7,6 +7,7 @@
 
 import Foundation
 import MapKit
+import CoreData
 
 struct MapActivity: Identifiable, Decodable {
     let id: String
@@ -23,14 +24,40 @@ struct MapActivity: Identifiable, Decodable {
     var coordinate: CLLocationCoordinate2D {
         self.place.coordinates
     }
+    
+    @discardableResult
+    func createMapActivityEntity(context: NSManagedObjectContext, user: UserEntity, place: PlaceEntity) -> MapActivityEntity {
+        let mapActivityEntity = MapActivityEntity(context: context)
+        mapActivityEntity.id = self.id
+        mapActivityEntity.activityType = self.activityType
+        mapActivityEntity.createdAt = self.createdAt
+        mapActivityEntity.user = user
+        mapActivityEntity.place = place
+        mapActivityEntity.savedAt = .now
+        
+        do {
+            try context.obtainPermanentIDs(for: [mapActivityEntity])
+        } catch {
+            print("Error obtaining a permanent ID for userEntity: \(error)")
+        }
+
+        user.addToMapActivities(mapActivityEntity)
+        place.addToMapActivities(mapActivityEntity)
+        
+        return mapActivityEntity
+    }
 }
 
 extension MapActivity {
-    init(_ entity: MapActivityEntity) {
-        self.id = entity.id!
-        self.place = PlaceEssentials(entity.place!)
-        self.user = UserEssentials(entity.user!)
-        self.activityType = entity.activityType!
-        self.createdAt = entity.createdAt!
+    init(_ entity: MapActivityEntity) throws {
+        if let id = entity.id, let activityType = entity.activityType, let place = entity.place, let user = entity.user, let createdAt = entity.createdAt {
+            self.id = id
+            self.place = PlaceEssentials(place)
+            self.user = UserEssentials(user)
+            self.activityType = activityType
+            self.createdAt = createdAt
+        } else {
+            throw EntityError.missingStructRequiredData
+        }
     }
 }

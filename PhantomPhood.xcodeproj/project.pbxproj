@@ -229,6 +229,7 @@
 		0B6A47C42ABC9806000CBDA3 /* FeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6A47C32ABC9806000CBDA3 /* FeedItem.swift */; };
 		0B6A47C62ABC998A000CBDA3 /* FeedVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6A47C52ABC998A000CBDA3 /* FeedVM.swift */; };
 		0B6B4AB32B482D2D002C9FE0 /* QuickActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B4AB22B482D2D002C9FE0 /* QuickActionsView.swift */; };
+		0B6CE2522BB566D400FE75A5 /* EntityError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6CE2512BB566D400FE75A5 /* EntityError.swift */; };
 		0B6E990F2AC7627700D8CE26 /* LeaderboardVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6E990E2AC7627700D8CE26 /* LeaderboardVM.swift */; };
 		0B6E99122AC7629A00D8CE26 /* LeaderboardDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6E99112AC7629A00D8CE26 /* LeaderboardDM.swift */; };
 		0B76C9D32B712F120013CE3E /* AnimatedStarRating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76C9D22B712F120013CE3E /* AnimatedStarRating.swift */; };
@@ -617,6 +618,7 @@
 		0B6A47C32ABC9806000CBDA3 /* FeedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedItem.swift; sourceTree = "<group>"; };
 		0B6A47C52ABC998A000CBDA3 /* FeedVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedVM.swift; sourceTree = "<group>"; };
 		0B6B4AB22B482D2D002C9FE0 /* QuickActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsView.swift; sourceTree = "<group>"; };
+		0B6CE2512BB566D400FE75A5 /* EntityError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityError.swift; sourceTree = "<group>"; };
 		0B6E990E2AC7627700D8CE26 /* LeaderboardVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardVM.swift; sourceTree = "<group>"; };
 		0B6E99112AC7629A00D8CE26 /* LeaderboardDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardDM.swift; sourceTree = "<group>"; };
 		0B76C9D22B712F120013CE3E /* AnimatedStarRating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedStarRating.swift; sourceTree = "<group>"; };
@@ -1437,6 +1439,7 @@
 				0B1610D92B63262200DCAFA5 /* Review */,
 				0B27AE1A2B752F8600C97559 /* Routing */,
 				0B1610D22B6321DB00DCAFA5 /* User */,
+				0B6CE2512BB566D400FE75A5 /* EntityError.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2229,6 +2232,7 @@
 				0B0E6D2E2ABB676300EC62EE /* PlaceDetail.swift in Sources */,
 				0B86F9352B44339400DD4C85 /* EmojisManager.swift in Sources */,
 				0BCBC18E2ACDC2FF00992D8E /* View.swift in Sources */,
+				0B6CE2522BB566D400FE75A5 /* EntityError.swift in Sources */,
 				0B62BE902B69A9A5004A3CFE /* ForYouView17.swift in Sources */,
 				0B0E6D262ABB22ED00EC62EE /* FeedLevelUpView.swift in Sources */,
 				0BCBC1942ACDF30600992D8E /* CommentsView.swift in Sources */,
@@ -2429,7 +2433,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PhantomPhood/PhantomPhood.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"PhantomPhood/Preview Content\"";
 				DEVELOPMENT_TEAM = BNPN3KK5A7;
 				ENABLE_PREVIEWS = YES;
@@ -2469,7 +2473,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PhantomPhood/PhantomPhood.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"PhantomPhood/Preview Content\"";
 				DEVELOPMENT_TEAM = BNPN3KK5A7;
 				ENABLE_PREVIEWS = YES;

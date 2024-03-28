@@ -70,9 +70,9 @@ extension UserEssentials {
 
 extension UserEssentials {
     init(_ entity: UserEntity) {
-        id = entity.id!
-        name = entity.name!
-        username = entity.username!
+        id = entity.id ?? ""
+        name = entity.name ?? ""
+        username = entity.username ?? ""
         verified = entity.verified
         profileImage = entity.profileImage != nil ? URL(string: entity.profileImage!) : nil
         progress = .init(level: Int(entity.level), xp: Int(entity.xp))
