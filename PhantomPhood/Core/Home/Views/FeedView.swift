@@ -108,12 +108,16 @@ struct FeedView: View {
                                     switch vm.items[index].activityType {
                                     case .levelUp:
                                         FeedLevelUpView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
+                                        Divider()
                                     case .following:
                                         FeedFollowingView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
+                                        Divider()
                                     case .newReview:
                                         FeedReviewView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction, mediasViewModel: mediasViewModel)
+                                        Divider()
                                     case .newCheckin:
                                         FeedCheckinView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
+                                        Divider()
                                     default:
                                         EmptyView()
                                     }
@@ -126,8 +130,6 @@ struct FeedView: View {
                                         }
                                     }
                                 }
-                                
-                                Divider()
                             }
                         }
                     }

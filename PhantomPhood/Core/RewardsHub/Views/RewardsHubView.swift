@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct RewardsHubView: View {
     @ObservedObject private var appData = AppData.shared
@@ -64,23 +63,19 @@ struct RewardsHubView: View {
                                 .matchedGeometryEffect(id: "\(selectedPrize.id)-bg", in: namespace)
                             
                             HStack(alignment: .top) {
-                                KFImage.url(selectedPrize.thumbnail)
-                                    .placeholder {
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .foregroundStyle(Color.themePrimary)
-                                            .overlay {
-                                                ProgressView()
-                                            }
-                                    }
-                                    .loadDiskFileSynchronously()
-                                    .fade(duration: 0.25)
-                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 135, height: 180)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .contentShape(RoundedRectangle(cornerRadius: 10))
-                                    .matchedGeometryEffect(id: "\(selectedPrize.id)-img", in: namespace)
+                                ImageLoader(selectedPrize.thumbnail, contentMode: .fill) { progress in
+                                    Rectangle()
+                                        .foregroundStyle(.clear)
+                                        .frame(maxWidth: 150)
+                                        .overlay {
+                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                .progressViewStyle(LinearProgressViewStyle())
+                                                .padding(.horizontal)
+                                        }
+                                }
+                                .matchedGeometryEffect(id: "\(selectedPrize.id)-img", in: namespace)
+                                .frame(width: 135, height: 180)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
                                 
                                 VStack {
                                     Text(selectedPrize.title)

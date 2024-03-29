@@ -152,6 +152,15 @@ struct ExploreSearchView: View {
                     .scrollDismissesKeyboard(.interactively)
                     .opacity(exploreSearchVM.isLoading ? 0.6 : 1)
                     .tag(SearchScopes.users)
+                    
+                    List(exploreSearchVM.eventsSearchResult) { event in
+                        EventCard(event: event)
+                            .listRowBackground(Color.clear)
+                    }
+                    .listStyle(.plain)
+                    .scrollDismissesKeyboard(.interactively)
+                    .opacity(exploreSearchVM.isLoading ? 0.6 : 1)
+                    .tag(SearchScopes.events)
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 .transition(AnyTransition.opacity.animation(.easeInOut))
@@ -261,6 +270,35 @@ fileprivate struct UserCard: View {
                 
                 LevelView(level: user.progress.level)
                     .frame(width: 28, height: 28)
+            }
+        }
+        .foregroundStyle(.primary)
+    }
+}
+
+fileprivate struct EventCard: View {
+    let event: Event
+    
+    var body: some View {
+        NavigationLink(value: AppRoute.event(.data(event))) {
+            HStack {
+                ImageLoader(event.logo)
+                    .frame(width: 42, height: 42)
+                    .clipShape(.rect(cornerRadius: 10))
+                
+                VStack {
+                    Text(event.name)
+                        .font(.custom(style: .body))
+                        .bold()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    if let address = event.place.location.address {
+                        Text(address)
+                            .font(.custom(style: .caption))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
         }
         .foregroundStyle(.primary)

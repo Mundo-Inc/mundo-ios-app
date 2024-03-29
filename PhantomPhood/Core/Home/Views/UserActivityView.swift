@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UserActivityView: View {
-    let id: String
+    private let id: String
     
     @ObservedObject private var commentsViewModel = CommentsVM.shared
     
@@ -17,54 +17,47 @@ struct UserActivityView: View {
     
     @Environment(\.dismiss) private var dismiss
     
+    init(id: String) {
+        self.id = id
+        self._vm = StateObject(wrappedValue: UserActivityVM())
+    }
+    
+    init(feedItem: FeedItem) {
+        self.id = feedItem.id
+        self._vm = StateObject(wrappedValue: UserActivityVM(feedItem: feedItem))
+    }
+    
     var body: some View {
-        ZStack {
-            Color.themeBG
-                .ignoresSafeArea()
-                .fullScreenCover(isPresented: $mediasViewModel.show, content: {
-                    MediasView(vm: mediasViewModel)
-                })
-                .onAppear {
-                    Task {
-                        await vm.getActivity(id)
+        ScrollView {
+            if let item = vm.data {
+                Group {
+                    switch item.activityType {
+                    case .levelUp:
+                        UserActivityLevelUp(vm: vm)
+                    case .following:
+                        UserActivityFollowing(vm: vm)
+                    case .newReview:
+                        UserActivityReview(vm: vm, mediasViewModel: mediasViewModel)
+                    case .newCheckin:
+                        UserActivityCheckin(vm: vm)
+                    default:
+                        Text(item.activityType.rawValue)
                     }
                 }
-            
-            ScrollView {
-                if let item = vm.data {
-                    Group {
-                        switch item.activityType {
-                        case .levelUp:
-                            UserActivityLevelUp(vm: vm)
-                        case .following:
-                            UserActivityFollowing(vm: vm)
-                        case .newReview:
-                            UserActivityReview(vm: vm, mediasViewModel: mediasViewModel)
-                        case .newCheckin:
-                            UserActivityCheckin(vm: vm)
-                        default:
-                            Text(item.activityType.rawValue)
-                        }
-                    }
-                    .padding(.horizontal)
-                }
+                .padding()
             }
-            .toolbar(content: {
-                ToolbarItem(placement: .topBarLeading) {
-                    if vm.isLoading {
-                        ProgressView()
-                    }
-                }
-            })
-            .scrollIndicators(.hidden)
-            .refreshable {
-                Task {
-                    if !vm.isLoading {
-                        await vm.getActivity(id)
-                    }
+        }
+        .scrollIndicators(.hidden)
+        .refreshable {
+            Task {
+                if !vm.isLoading {
+                    await vm.getActivity(id, referesh: true)
                 }
             }
         }
+        .fullScreenCover(isPresented: $mediasViewModel.show, content: {
+            MediasView(vm: mediasViewModel)
+        })
         .alert("Error", isPresented: Binding(optionalValue: $vm.error)) {
             Button("OK", role: .cancel) {
                 dismiss()
@@ -74,6 +67,11 @@ struct UserActivityView: View {
                 Text(error)
             } else {
                 Text("Something went wrong :(")
+            }
+        }
+        .onAppear {
+            Task {
+                await vm.getActivity(id)
             }
         }
     }

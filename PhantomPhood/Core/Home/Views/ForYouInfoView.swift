@@ -159,6 +159,7 @@ struct ForYouInfoView: View {
                 }
                 .padding(.horizontal)
                 .padding(.vertical)
+                .padding(.vertical)
             }
         }
         .presentationDetents([.fraction(0.7), .fraction(0.99)])

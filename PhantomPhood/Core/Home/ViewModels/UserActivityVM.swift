@@ -17,7 +17,13 @@ final class UserActivityVM: ObservableObject {
     @Published private(set) var isLoading: Bool = false
     @Published var error: String? = nil
     
-    func getActivity(_ id: String) async {
+    init(feedItem: FeedItem? = nil) {
+        self.data = feedItem
+    }
+    
+    func getActivity(_ id: String, referesh: Bool = false) async {
+        guard referesh || data == nil else { return }
+        
         self.isLoading = true
         do {
             let data = try await userActivityDM.getUserActivity(id)

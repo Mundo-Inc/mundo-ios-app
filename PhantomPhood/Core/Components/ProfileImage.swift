@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct ProfileImage: View {
     let profileImage: URL?
@@ -61,19 +60,10 @@ struct ProfileImage: View {
                     RoundedRectangle(cornerRadius: innerCornerRadius)
                         .foregroundStyle(Color(.profileImageBG))
                         .overlay {
-                            KFImage.url(profileImage)
-                                .placeholder {
-                                    RoundedRectangle(cornerRadius: innerCornerRadius)
-                                        .foregroundStyle(.tertiary)
-                                }
-                                .loadDiskFileSynchronously()
-                                .cacheMemoryOnly()
-                                .fade(duration: 0.25)
-                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .contentShape(RoundedRectangle(cornerRadius: innerCornerRadius))
-                                .clipShape(RoundedRectangle(cornerRadius: innerCornerRadius))
+                            ImageLoader(profileImage, contentMode: .fill) { _ in
+                                RoundedRectangle(cornerRadius: innerCornerRadius)
+                                    .foregroundStyle(.tertiary)
+                            }
                         }
                         .clipShape(RoundedRectangle(cornerRadius: innerCornerRadius))
                         .padding(.all, strokeSize)

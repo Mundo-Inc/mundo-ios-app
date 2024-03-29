@@ -11,12 +11,12 @@ final class EventsDM {
     private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     
-    func getEvents() async throws -> [Event] {
+    func getEvents(q: String? = nil) async throws -> [Event] {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        guard let data = try await apiManager.requestData("/events", token: token) as APIResponse<[Event]>? else {
+        guard let data = try await apiManager.requestData("/events\((q != nil && !q!.isEmpty) ? "?q=\(q!)" : "")", token: token) as APIResponse<[Event]>? else {
             throw URLError(.badServerResponse)
         }
         

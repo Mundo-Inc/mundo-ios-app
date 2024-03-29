@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 import VideoPlayer
 import CoreMedia
 
@@ -134,51 +133,35 @@ struct ForYouItem17: View {
                                 
                                 ForEach(feedReview.images) { image in
                                     if let url = image.src {
-                                        KFImage.url(url)
-                                            .placeholder { progress in
-                                                Rectangle()
-                                                    .foregroundStyle(.clear)
-                                                    .frame(maxWidth: 150)
-                                                    .overlay {
-                                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                            .progressViewStyle(LinearProgressViewStyle())
-                                                    }
-                                            }
-                                            .loadDiskFileSynchronously()
-                                            .fade(duration: 0.25)
-                                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: mainWindowSize.width, height: mainWindowSize.height)
-                                            .contentShape(Rectangle())
-                                            .clipShape(Rectangle())
-                                            .ignoresSafeArea(edges: .top)
-                                            .tag(image.id)
+                                        ImageLoader(url, contentMode: .fill) { progress in
+                                            Rectangle()
+                                                .foregroundStyle(.clear)
+                                                .frame(maxWidth: 150)
+                                                .overlay {
+                                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                        .progressViewStyle(LinearProgressViewStyle())
+                                                        .padding(.horizontal)
+                                                }
+                                        }
+                                        .ignoresSafeArea(edges: .top)
+                                        .tag(image.id)
                                     }
                                 }
                             }
                             .tabViewStyle(PageTabViewStyle())
                         } else {
                             if let image = feedReview.images.first, let url = image.src {
-                                KFImage.url(url)
-                                    .placeholder { progress in
-                                        Rectangle()
-                                            .foregroundStyle(.clear)
-                                            .frame(maxWidth: 150)
-                                            .overlay {
-                                                ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                    .progressViewStyle(LinearProgressViewStyle())
-                                            }
-                                    }
-                                    .loadDiskFileSynchronously()
-                                    .fade(duration: 0.25)
-                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: mainWindowSize.width, height: mainWindowSize.height)
-                                    .contentShape(Rectangle())
-                                    .clipShape(Rectangle())
-                                    .ignoresSafeArea(edges: .top)
+                                ImageLoader(url, contentMode: .fill) { progress in
+                                    Rectangle()
+                                        .foregroundStyle(.clear)
+                                        .frame(maxWidth: 150)
+                                        .overlay {
+                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                .progressViewStyle(LinearProgressViewStyle())
+                                                .padding(.horizontal)
+                                        }
+                                }
+                                .ignoresSafeArea(edges: .top)
                             } else if let video = feedReview.videos.first, let url = video.src {
                                 ZStack {
                                     VideoPlayer(url: url, play: playBinding(for: video.id), time: $time)
@@ -219,25 +202,17 @@ struct ForYouItem17: View {
                         }
                     case .checkin(let feedCheckin):
                         if let image = feedCheckin.image, let url = image.src {
-                            KFImage.url(url)
-                                .placeholder { progress in
-                                    Rectangle()
-                                        .foregroundStyle(.clear)
-                                        .frame(maxWidth: 150)
-                                        .overlay {
-                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                .progressViewStyle(LinearProgressViewStyle())
-                                        }
-                                }
-                                .loadDiskFileSynchronously()
-                                .fade(duration: 0.25)
-                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: mainWindowSize.width, height: mainWindowSize.height)
-                                .contentShape(Rectangle())
-                                .clipShape(Rectangle())
-                                .ignoresSafeArea(edges: .top)
+                            ImageLoader(url, contentMode: .fill) { progress in
+                                Rectangle()
+                                    .foregroundStyle(.clear)
+                                    .frame(maxWidth: 150)
+                                    .overlay {
+                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                            .progressViewStyle(LinearProgressViewStyle())
+                                            .padding(.horizontal)
+                                    }
+                            }
+                            .ignoresSafeArea(edges: .top)
                         }
                     case .homemade(let homemade):
                         Color.clear
@@ -294,26 +269,18 @@ struct ForYouItem17: View {
                                         .tag(m.id)
                                     } else {
                                         if let url = m.src {
-                                            KFImage.url(url)
-                                                .placeholder { progress in
-                                                    Rectangle()
-                                                        .foregroundStyle(.clear)
-                                                        .frame(maxWidth: 150)
-                                                        .overlay {
-                                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                                .progressViewStyle(LinearProgressViewStyle())
-                                                        }
-                                                }
-                                                .loadDiskFileSynchronously()
-                                                .fade(duration: 0.25)
-                                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: mainWindowSize.width, height: mainWindowSize.height)
-                                                .contentShape(Rectangle())
-                                                .clipShape(Rectangle())
-                                                .ignoresSafeArea(edges: .top)
-                                                .tag(m.id)
+                                            ImageLoader(url, contentMode: .fill) { progress in
+                                                Rectangle()
+                                                    .foregroundStyle(.clear)
+                                                    .frame(maxWidth: 150)
+                                                    .overlay {
+                                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                            .progressViewStyle(LinearProgressViewStyle())
+                                                            .padding(.horizontal)
+                                                    }
+                                            }
+                                            .ignoresSafeArea(edges: .top)
+                                            .tag(m.id)
                                         } else {
                                             EmptyView()
                                                 .tag(m.id)
@@ -361,25 +328,17 @@ struct ForYouItem17: View {
                                         }
                                     }
                                 } else {
-                                    KFImage.url(url)
-                                        .placeholder { progress in
-                                            Rectangle()
-                                                .foregroundStyle(.clear)
-                                                .frame(maxWidth: 150)
-                                                .overlay {
-                                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                        .progressViewStyle(LinearProgressViewStyle())
-                                                }
-                                        }
-                                        .loadDiskFileSynchronously()
-                                        .fade(duration: 0.25)
-                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: mainWindowSize.width, height: mainWindowSize.height)
-                                        .contentShape(Rectangle())
-                                        .clipShape(Rectangle())
-                                        .ignoresSafeArea(edges: .top)
+                                    ImageLoader(url, contentMode: .fill) { progress in
+                                        Rectangle()
+                                            .foregroundStyle(.clear)
+                                            .frame(maxWidth: 150)
+                                            .overlay {
+                                                ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                    .progressViewStyle(LinearProgressViewStyle())
+                                                    .padding(.horizontal)
+                                            }
+                                    }
+                                    .ignoresSafeArea(edges: .top)
                                 }
                             }
                         }

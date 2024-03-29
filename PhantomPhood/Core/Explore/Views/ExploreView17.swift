@@ -7,7 +7,6 @@
 
 import SwiftUI
 import MapKit
-import Kingfisher
 
 @available(iOS 17.0, *)
 struct ExploreView17: View {
@@ -24,8 +23,8 @@ struct ExploreView17: View {
                 if let searchResults = vm.searchResults {
                     ForEach(vm.activities.filter({ activity in
                         searchResults.contains { result in
-                            if let name = result.name {
-                                if activity.place.name == name {
+                            if let name = result.name, let first = activity.first {
+                                if first.place.name == name {
                                     return true
                                 }
                             }
@@ -33,90 +32,18 @@ struct ExploreView17: View {
                             return false
                         }
                     })) { item in
-                        Annotation(item.place.name, coordinate: item.place.coordinates) {
-                            ZStack {
-                                if vm.showSet.contains(item.id) {
-                                    ProfileImage(item.user.profileImage, size: 50, cornerRadius: 5, borderColor: item.user.color)
-                                        .transition(AnyTransition.asymmetric(insertion: .scale(scale: 0).animation(.bouncy(duration: 0.5)), removal: .identity.animation(.easeIn(duration: 0))))
-                                } else {
-                                    Color.clear
-                                }
-                            }
-                            .frame(width: 50, height: 50)
-                            .onTapGesture {
-                                vm.panToRegion(.init(center: item.place.coordinates, latitudinalMeters: 20000, longitudinalMeters: 20000))
-                            }
-                            .scaleEffect(vm.scale)
-                            .onAppear {
-                                vm.showSet.insert(item.id)
-                            }
-                            .onDisappear {
-                                vm.showSet.remove(item.id)
-                            }
-                        }
-                        .annotationTitles(vm.scale > 0.8 ? .automatic : .hidden)
+                        CustomAnnotation(item: item)
                     }
                 } else {
                     ForEach(vm.activities) { item in
-                        Annotation(item.place.name, coordinate: item.place.coordinates) {
-                            ZStack {
-                                if vm.showSet.contains(item.id) {
-                                    ProfileImage(item.user.profileImage, size: 50, cornerRadius: 5, borderColor: item.user.color)
-                                        .transition(AnyTransition.asymmetric(insertion: .scale(scale: 0).animation(.bouncy(duration: 0.5)), removal: .identity.animation(.easeIn(duration: 0))))
-                                } else {
-                                    Color.clear
-                                }
-                            }
-                            .frame(width: 50, height: 50)
-                            .onTapGesture {
-                                vm.panToRegion(.init(center: item.place.coordinates, latitudinalMeters: 20000, longitudinalMeters: 20000))
-                            }
-                            .scaleEffect(vm.scale)
-                            .onAppear {
-                                vm.showSet.insert(item.id)
-                            }
-                            .onDisappear {
-                                vm.showSet.remove(item.id)
-                            }
-                        }
-                        .annotationTitles(vm.scale > 0.8 ? .automatic : .hidden)
+                        CustomAnnotation(item: item)
                     }
                 }
                 
-                if let events = vm.events {
-                    ForEach(events) { event in
-                        Annotation(event.name, coordinate: event.coordinate) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 5)
-                                    .frame(width: 40, height: 40)
-                                    .foregroundStyle(Color.black)
+                ForEach(vm.events) { item in
+                    CustomAnnotation(item: item)
+                }
                                 
-                                if let logo = event.logo {
-                                    KFImage.url(logo)
-                                        .placeholder {
-                                            Image(systemName: "arrow.down.circle.dotted")
-                                                .foregroundStyle(Color.white.opacity(0.5))
-                                        }
-                                        .loadDiskFileSynchronously()
-                                        .fade(duration: 0.25)
-                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .contentShape(RoundedRectangle(cornerRadius: 5))
-                                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                                        .frame(width: 36, height: 36)
-                                } else {
-                                    Image(systemName: "laser.burst")
-                                        .foregroundStyle(Color.white.opacity(0.8))
-                                }
-                            }
-                            .onTapGesture {
-                                appData.goTo(AppRoute.event(IdOrData.data(event)))
-                            }
-                        }
-                    }
-                }
-                
                 if let searchResults = vm.searchResults, !searchResults.isEmpty {
                     ForEach(searchResults, id: \.self) { item in
                         Annotation(item.name ?? "Unknown", coordinate: item.placemark.coordinate) {
@@ -133,6 +60,7 @@ struct ExploreView17: View {
                 
                 UserAnnotation()
             }
+            .environmentObject(vm)
             .ignoresSafeArea()
             .mapStyle(.standard(emphasis: .automatic, pointsOfInterest: .excludingAll))
             .mapControlVisibility(.hidden)
@@ -143,6 +71,26 @@ struct ExploreView17: View {
             
             ZStack(alignment: .bottomTrailing) {
                 VStack(alignment: .trailing) {
+                    if let first = vm.events.sorted(by: { a, b in
+                        if let eventA = a.event, let eventB = b.event, let center = vm.latestMapContext?.region.center {
+                            return eventA.place.coordinates.distance(to: center) < eventB.place.coordinates.distance(to: center)
+                        }
+                        
+                        return false
+                    }).first {
+                        Button {
+                            if let event = first.event {
+                                appData.goTo(.event(.data(event)))
+                            }
+                        } label: {
+                            if let event = first.event {
+                                ImageLoader(event.logo)
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(.rect(cornerRadius: 10))
+                            }
+                        }
+                    }
+                    
                     Button {
                         vm.getInviteLink()
                     } label: {
@@ -242,6 +190,103 @@ struct ExploreView17: View {
             ExploreSearchView(exploreSearchVM: exploreSearchVM, isSearching: $vm.isSearching, searchResults: $vm.searchResults) { region in
                 vm.panToRegion(region)
             }
+        }
+        .sheet(item: $vm.presentedSheet) { presentedSheet in
+            switch presentedSheet {
+            case .activityCluster(let clusteredMapActivity):
+                MapActivitySheet(clusteredMapActivity)
+            }
+        }
+    }
+}
+
+@available(iOS 17.0, *)
+fileprivate struct CustomAnnotation: MapContent {
+    let item: ClusteredMapActivity
+    @EnvironmentObject private var vm: ExploreVM17
+    
+    var body: some MapContent {
+        if let event = item.event {
+            Annotation(event.place.name, coordinate: event.place.coordinates) {
+                ImageLoader(event.logo) { _ in
+                    Color.green
+                }
+                .frame(width: 50, height: 50)
+                .clipShape(.rect(cornerRadius: 5))
+                .overlay(alignment: .topTrailing) {
+                    RoundedRectangle(cornerRadius: 5)
+                        .foregroundStyle(Color.themeBG)
+                        .frame(width: 20, height: 20)
+                        .overlay {
+                            Text("\(item.items.count)")
+                                .foregroundStyle(Color.white.opacity(0.7))
+                        }
+                        .font(.custom(style: .caption2))
+                        .offset(x: 5, y: -5)
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    AppData.shared.goTo(.event(.data(event)))
+                }
+                .scaleEffect(vm.scale)
+                .onAppear {
+                    vm.showSet.insert(item.id)
+                }
+                .onDisappear {
+                    vm.showSet.remove(item.id)
+                }
+            }
+            .annotationTitles(vm.scale > 0.8 ? .automatic : .hidden)
+        } else if let first = item.first {
+            Annotation(first.place.name, coordinate: first.place.coordinates) {
+                ZStack {
+                    Group {
+                        if vm.showSet.contains(item.id) {
+                            if item.items.count > 1 {
+                                ForEach(item.items.indices, id: \.self) { i in
+                                    if i < 3 {
+                                        if i == 0 {
+                                            ProfileImage(item.items[0].user.profileImage, size: 50, cornerRadius: 5, borderColor: item.items[0].user.color)
+                                                .zIndex(Double(item.items.count))
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .frame(width: 50, height: 50)
+                                                .shadow(color: Color.black.opacity(0.4), radius: 2)
+                                                .foregroundStyle(item.items[i].user.color)
+                                                .rotationEffect(.degrees(Double(-15 * i)))
+                                                .zIndex(Double(item.items.count - i))
+                                        }
+                                        
+                                    }
+                                }
+                            } else {
+                                ProfileImage(first.user.profileImage, size: 50, cornerRadius: 5, borderColor: first.user.color)
+                            }
+                        }
+                    }
+                    .transition(AnyTransition.asymmetric(insertion: .scale(scale: 0).animation(.bouncy(duration: 0.5)), removal: .identity.animation(.easeIn(duration: 0))))
+                }
+                .frame(width: 50, height: 50)
+                .onTapGesture {
+                    withAnimation {
+                        if let latestMapContext = vm.latestMapContext {
+                            vm.panToRegion(.init(center: first.place.coordinates, span: latestMapContext.region.span).shiftCenter(yPercentage: -0.3))
+                        } else {
+                            vm.panToRegion(.init(center: first.place.coordinates, latitudinalMeters: 9000, longitudinalMeters: 9000).shiftCenter(yPercentage: -0.3))
+                        }
+                        
+                        vm.presentedSheet = .activityCluster(item)
+                    }
+                }
+                .scaleEffect(vm.scale)
+                .onAppear {
+                    vm.showSet.insert(item.id)
+                }
+                .onDisappear {
+                    vm.showSet.remove(item.id)
+                }
+            }
+            .annotationTitles(vm.scale > 0.8 ? .automatic : .hidden)
         }
     }
 }

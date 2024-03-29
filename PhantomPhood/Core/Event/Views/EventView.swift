@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 import VideoPlayer
 import CoreMedia
 
@@ -33,50 +32,60 @@ struct EventView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     HStack(alignment: .top) {
-                        if let thumbnail = vm.event?.place.thumbnail {
-                            KFImage.url(thumbnail)
-                                .placeholder {
-                                    Image(systemName: "arrow.down.circle.dotted")
-                                        .foregroundStyle(Color.white.opacity(0.5))
-                                }
-                                .loadDiskFileSynchronously()
-                                .fade(duration: 0.25)
-                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .contentShape(RoundedRectangle(cornerRadius: 10))
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .frame(width: 80, height: 80)
-                        } else {
-                            RoundedRectangle(cornerRadius: 10)
-                                .frame(width: 80, height: 80)
-                                .foregroundStyle(Color.themePrimary)
-                        }
-                        
-                        VStack {
+                        Group {
                             if let logo = vm.event?.logo {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 5)
-                                        .stroke(Color.themeBorder.opacity(0.3), lineWidth: 2)
-                                    
-                                    KFImage.url(logo)
-                                        .placeholder {
-                                            Image(systemName: "arrow.down.circle.dotted")
-                                                .foregroundStyle(Color.white.opacity(0.5))
+                                ImageLoader(logo, contentMode: .fill) { progress in
+                                    Rectangle()
+                                        .foregroundStyle(.clear)
+                                        .frame(maxWidth: 150)
+                                        .overlay {
+                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                .progressViewStyle(LinearProgressViewStyle())
+                                                .padding(.horizontal)
                                         }
-                                        .loadDiskFileSynchronously()
-                                        .fade(duration: 0.25)
-                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .contentShape(RoundedRectangle(cornerRadius: 5))
-                                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                                        .frame(width: 32, height: 32)
+                                }
+                                .frame(width: 80, height: 80)
+                                .background(RoundedRectangle(cornerRadius: 10).foregroundStyle(Color.themePrimary))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                            } else if let thumbnail = vm.event?.place.thumbnail {
+                                ImageLoader(thumbnail, contentMode: .fill) { progress in
+                                    Rectangle()
+                                        .foregroundStyle(.clear)
+                                        .frame(maxWidth: 150)
+                                        .overlay {
+                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                .progressViewStyle(LinearProgressViewStyle())
+                                                .padding(.horizontal)
+                                        }
+                                }
+                                .frame(width: 80, height: 80)
+                                .background(RoundedRectangle(cornerRadius: 10).foregroundStyle(Color.themePrimary))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                            }
+                        }
+                        .overlay(alignment: .topTrailing) {
+                            if vm.event?.logo != nil, let thumbnail = vm.event?.place.thumbnail {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .foregroundStyle(Color.themeBG)
+                                    
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .frame(width: 30, height: 30)
+                                        .foregroundStyle(Color.themePrimary)
+                                    
+                                    ImageLoader(thumbnail, contentMode: .fit) { _ in
+                                        Image(systemName: "arrow.down.circle.dotted")
+                                            .foregroundStyle(Color.white.opacity(0.5))
+                                    }
+                                    .frame(width: 30, height: 30)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
                                 }
                                 .frame(width: 36, height: 36)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .offset(x: 8, y: -8)
                             }
-                            
+                        }
+                        
+                        VStack(spacing: 5) {
                             Text(vm.event?.name ?? "Event Name")
                                 .font(.custom(style: .title2))
                                 .fontWeight(.bold)
@@ -91,7 +100,7 @@ struct EventView: View {
                         Text(description)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .font(.custom(style: .body))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.primary.opacity(0.8))
                             .padding(.horizontal)
                     }
                     
@@ -175,140 +184,138 @@ struct EventView: View {
             
             ExpandedMedia()
         }
+        .background(Color.themeBG.ignoresSafeArea())
     }
     
     @ViewBuilder
     private func ExpandedMedia() -> some View {
         if let media = vm.expandedMedia {
-            GeometryReader { proxy in
-                ZStack(alignment: .bottom) {
-                    Color.black.opacity(0.8)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .onTapGesture {
-                            withAnimation {
-                                vm.expandedMedia = nil
-                            }
+            ZStack(alignment: .bottom) {
+                Color.black.opacity(0.8)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation {
+                            vm.expandedMedia = nil
                         }
-                    
-                    Group {
-                        if media.type == .image, let url = media.src {
-                            KFImage.url(url)
-                                .placeholder {
-                                    Rectangle()
-                                        .foregroundStyle(Color.themePrimary)
-                                        .overlay {
-                                            ProgressView()
-                                        }
+                    }
+                
+                Group {
+                    if media.type == .image, let url = media.src {
+                        ImageLoader(url, contentMode: .fit) { progress in
+                            Rectangle()
+                                .foregroundStyle(.clear)
+                                .frame(maxWidth: 150)
+                                .overlay {
+                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                        .progressViewStyle(LinearProgressViewStyle())
+                                        .padding(.horizontal)
                                 }
-                                .loadDiskFileSynchronously()
-                                .fade(duration: 0.25)
-                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .matchedGeometryEffect(id: media.id, in: namespace)
-                                .frame(width: proxy.size.width, height: proxy.size.height + proxy.safeAreaInsets.top)
-                                .contentShape(Rectangle())
-                        } else if media.type == .video, let url = media.src {
-                            ZStack(alignment: .bottom) {
-                                VideoPlayer(url: url, play: Binding(get: {
-                                    videoPlayerVM.playId == media.id
-                                }, set: { value in
-                                    if !value {
-                                        videoPlayerVM.playId = nil
-                                    } else {
-                                        videoPlayerVM.playId = media.id
-                                    }
-                                }), time: $videoTime)
-                                .onStateChanged { state in
-                                    videoState = state
-                                    switch state {
-                                    case .playing(let totalDuration):
-                                        videoTotalDuration = totalDuration
-                                    default:
-                                        break
-                                    }
-                                }
-                                .autoReplay(true)
-                                .mute(videoPlayerVM.isMute)
-                                .contentMode(.scaleAspectFill)
-                                .onAppear {
+                        }
+                        .matchedGeometryEffect(id: media.id, in: namespace)
+                    } else if media.type == .video, let url = media.src {
+                        ZStack(alignment: .bottom) {
+                            VideoPlayer(url: url, play: Binding(get: {
+                                videoPlayerVM.playId == media.id
+                            }, set: { value in
+                                if !value {
+                                    videoPlayerVM.playId = nil
+                                } else {
                                     videoPlayerVM.playId = media.id
                                 }
-                                .onDisappear {
-                                    videoPlayerVM.playId = nil
+                            }), time: $videoTime)
+                            .onStateChanged { state in
+                                videoState = state
+                                switch state {
+                                case .playing(let totalDuration):
+                                    videoTotalDuration = totalDuration
+                                default:
+                                    break
                                 }
-                                
-                                if let videoState, case .playing(_) = videoState {
-                                    EmptyView()
-                                } else if let videoState, case .error = videoState {
-                                    Image(systemName: "exclamationmark.triangle")
-                                        .font(.system(size: 50))
-                                        .foregroundStyle(Color.red)
-                                } else {
-                                    if let thumbnail = media.thumbnail {
-                                        KFImage.url(thumbnail)
-                                            .loadDiskFileSynchronously()
-                                            .fade(duration: 0.25)
-                                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .matchedGeometryEffect(id: media.id, in: namespace)
-                                            .frame(width: proxy.size.width, height: proxy.size.height + proxy.safeAreaInsets.top)
-                                            .grayscale(1)
+                            }
+                            .autoReplay(true)
+                            .mute(videoPlayerVM.isMute)
+                            .contentMode(.scaleAspectFill)
+                            .onAppear {
+                                videoPlayerVM.playId = media.id
+                            }
+                            .onDisappear {
+                                videoPlayerVM.playId = nil
+                            }
+                            
+                            if let videoState, case .playing(_) = videoState {
+                                EmptyView()
+                            } else if let videoState, case .error = videoState {
+                                Image(systemName: "exclamationmark.triangle")
+                                    .font(.system(size: 50))
+                                    .foregroundStyle(Color.red)
+                            } else {
+                                if let thumbnail = media.thumbnail {
+                                    ImageLoader(thumbnail, contentMode: .fill) { progress in
+                                        Rectangle()
+                                            .foregroundStyle(.clear)
+                                            .frame(maxWidth: 150)
                                             .overlay {
-                                                ProgressView()
-                                                    .controlSize(.large)
+                                                ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                    .progressViewStyle(LinearProgressViewStyle())
+                                                    .padding(.horizontal)
                                             }
+                                    }
+                                    .matchedGeometryEffect(id: media.id, in: namespace)
+                                    .grayscale(1)
+                                    .overlay {
+                                        ProgressView()
+                                            .controlSize(.large)
                                     }
                                 }
                             }
                         }
                     }
-                    .overlay(alignment: .bottomLeading) {
-                        if let user = media.user {
-                            HStack(spacing: 5) {
-                                ProfileImage(user.profileImage, size: 24, cornerRadius: 12)
-                                
-                                Text(user.name)
-                                    .font(.custom(style: .caption2))
-                                    .lineLimit(1)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            .padding(.leading, 5)
-                            .padding(.bottom, 5)
-                        }
-                    }
-                    .zIndex(2)
-                    .offset(vm.draggedAmount)
-                    .opacity(max(abs(vm.draggedAmount.width), abs(vm.draggedAmount.height)) >= 80 ? 0.5 : 1)
                 }
-                .zIndex(1)
-                .ignoresSafeArea(edges: .top)
-                .gesture(
-                    DragGesture()
-                        .onChanged({ value in
-                            vm.draggedAmount = value.translation
-                        })
-                        .onEnded({ value in
-                            if max(abs(value.translation.width), abs(value.translation.height)) >= 80 {
-                                withAnimation {
-                                    vm.expandedMedia = nil
-                                }
-                            }
-                            withAnimation {
-                                vm.draggedAmount = .zero
-                            }
-                        })
-                )
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
+                .overlay(alignment: .bottomLeading) {
+                    if let user = media.user {
+                        HStack(spacing: 5) {
+                            ProfileImage(user.profileImage, size: 24, cornerRadius: 12)
+                            
+                            Text(user.name)
+                                .font(.custom(style: .caption2))
+                                .lineLimit(1)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .padding(.leading, 5)
+                        .padding(.bottom, 5)
+                    }
+                }
+                .zIndex(2)
+                .offset(vm.draggedAmount)
+                .opacity(max(abs(vm.draggedAmount.width), abs(vm.draggedAmount.height)) >= 80 ? 0.5 : 1)
+            }
+            .zIndex(1)
+            .ignoresSafeArea(edges: .top)
+            .gesture(
+                DragGesture()
+                    .onChanged({ value in
+                        vm.draggedAmount = value.translation
+                    })
+                    .onEnded({ value in
+                        if max(abs(value.translation.width), abs(value.translation.height)) >= 80 {
                             withAnimation {
                                 vm.expandedMedia = nil
                             }
-                        } label: {
-                            Image(systemName: "xmark")
                         }
+                        withAnimation {
+                            vm.draggedAmount = .zero
+                        }
+                    })
+            )
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        withAnimation {
+                            vm.expandedMedia = nil
+                        }
+                    } label: {
+                        Image(systemName: "xmark")
                     }
                 }
             }
@@ -327,8 +334,8 @@ struct EventView: View {
                 .overlay {
                     VStack {
                         Image(systemName: "arrow.triangle.turn.up.right.diamond.fill")
-                            .font(.system(size: 22))
-                            .frame(height: 24)
+                            .font(.system(size: 26))
+                            .frame(height: 28)
                         
                         Text("MAP")
                     }
@@ -356,18 +363,19 @@ struct EventView: View {
             if let event = vm.event {
                 NavigationLink(value: AppRoute.checkin(.data(event.place), event)) {
                     RoundedRectangle(cornerRadius: 10)
-                        .foregroundStyle(Color.themePrimary)
+                        .foregroundStyle(Color.accentColor)
                         .aspectRatio(1, contentMode: .fit)
                         .overlay {
                             VStack {
                                 Image(systemName: "checkmark.seal.fill")
-                                    .font(.system(size: 22))
-                                    .frame(height: 24)
+                                    .font(.system(size: 26))
+                                    .frame(height: 28)
                                 
-                                Text("Check In".uppercased())
+                                Text("CHECK IN")
                             }
                         }
                 }
+                .foregroundStyle(Color.black)
             } else {
                 Button {
                 } label: {
@@ -377,8 +385,8 @@ struct EventView: View {
                         .overlay {
                             VStack {
                                 Image(systemName: "checkmark.seal.fill")
-                                    .font(.system(size: 22))
-                                    .frame(height: 24)
+                                    .font(.system(size: 26))
+                                    .frame(height: 28)
                                 
                                 Text("Check In".uppercased())
                             }
@@ -399,8 +407,8 @@ struct EventView: View {
                     .overlay {
                         VStack {
                             Image(systemName: "square.and.arrow.up")
-                                .font(.system(size: 22))
-                                .frame(height: 24)
+                                .font(.system(size: 26))
+                                .frame(height: 28)
                             
                             Text("SHARE")
                         }
@@ -417,8 +425,8 @@ struct EventView: View {
                     .overlay {
                         VStack {
                             Image(systemName: "square.and.arrow.up")
-                                .font(.system(size: 22))
-                                .frame(height: 24)
+                                .font(.system(size: 26))
+                                .frame(height: 28)
                             
                             Text("SHARE")
                         }

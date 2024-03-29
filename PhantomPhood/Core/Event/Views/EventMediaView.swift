@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct EventMediaView: View {
     @StateObject private var vm: EventMediaVM
@@ -44,40 +43,35 @@ struct EventMediaView: View {
                             } else {
                                 Group {
                                     if media.type == .image, let url = media.src {
-                                        KFImage.url(url)
-                                            .placeholder {
-                                                Rectangle()
-                                                    .foregroundStyle(Color.themePrimary)
-                                                    .overlay {
-                                                        ProgressView()
-                                                    }
-                                            }
-                                            .loadDiskFileSynchronously()
-                                            .fade(duration: 0.25)
-                                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                            .resizable()
-                                            .aspectRatio(2/3, contentMode: .fill)
-                                            .matchedGeometryEffect(id: media.id, in: namespace)
+                                        ImageLoader(url, contentMode: .fill) { progress in
+                                            Rectangle()
+                                                .foregroundStyle(.clear)
+                                                .frame(maxWidth: 150)
+                                                .overlay {
+                                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                        .progressViewStyle(LinearProgressViewStyle())
+                                                        .padding(.horizontal)
+                                                }
+                                        }
+                                        .matchedGeometryEffect(id: media.id, in: namespace)
+                                        .aspectRatio(2/3, contentMode: .fill)
                                     } else if let thumbnail = media.thumbnail {
-                                        KFImage.url(thumbnail)
-                                            .placeholder {
-                                                Rectangle()
-                                                    .foregroundStyle(Color.themePrimary)
-                                                    .overlay {
-                                                        ProgressView()
-                                                    }
-                                            }
-                                            .loadDiskFileSynchronously()
-                                            .fade(duration: 0.25)
-                                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                            .resizable()
-                                            .aspectRatio(2/3, contentMode: .fill)
-                                            .matchedGeometryEffect(id: media.id, in: namespace)
-                                            .overlay {
-                                                Image(systemName: "video")
-                                                    .font(.system(size: 50))
-                                                    .foregroundStyle(Color.secondary)
-                                            }
+                                        ImageLoader(thumbnail, contentMode: .fill) { progress in
+                                            Rectangle()
+                                                .foregroundStyle(.clear)
+                                                .frame(maxWidth: 150)
+                                                .overlay {
+                                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                        .progressViewStyle(LinearProgressViewStyle())
+                                                        .padding(.horizontal)
+                                                }
+                                        }
+                                        .matchedGeometryEffect(id: media.id, in: namespace)
+                                        .overlay {
+                                            Image(systemName: "video")
+                                                .font(.system(size: 50))
+                                                .foregroundStyle(Color.secondary)
+                                        }
                                     } else {
                                         Rectangle()
                                             .aspectRatio(2/3, contentMode: .fill)

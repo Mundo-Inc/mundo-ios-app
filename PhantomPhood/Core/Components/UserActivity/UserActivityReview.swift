@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct UserActivityReview: View {
     @ObservedObject private var vm: UserActivityVM
@@ -84,52 +83,44 @@ struct UserActivityReview: View {
                         VStack {
                             if !review.images.isEmpty || !review.videos.isEmpty {
                                 ZStack {
-                                    GeometryReader(content: { geometry in
-                                        TabView {
-                                            if !review.videos.isEmpty {
-                                                ForEach(review.videos) { video in
-                                                    ReviewVideoView(url: video.src, mute: true)
-                                                        .frame(height: 300)
-                                                        .frame(maxWidth: UIScreen.main.bounds.width)
-                                                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                                                        .overlay(alignment: .topTrailing) {
-                                                            Image(systemName: "video")
-                                                                .padding(.top, 8)
-                                                                .padding(.trailing, 5)
-                                                        }
-                                                }
+                                    TabView {
+                                        if !review.videos.isEmpty {
+                                            ForEach(review.videos) { video in
+                                                ReviewVideoView(url: video.src, mute: true)
+                                                    .frame(height: 300)
+                                                    .frame(maxWidth: UIScreen.main.bounds.width)
+                                                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                                                    .overlay(alignment: .topTrailing) {
+                                                        Image(systemName: "video")
+                                                            .padding(.top, 8)
+                                                            .padding(.trailing, 5)
+                                                    }
                                             }
-                                            if !review.images.isEmpty {
-                                                ForEach(review.images) { image in
-                                                    if let url = image.src {
-                                                        KFImage.url(url)
-                                                            .placeholder {
-                                                                RoundedRectangle(cornerRadius: 15)
-                                                                    .foregroundStyle(Color.themePrimary)
-                                                                    .overlay {
-                                                                        ProgressView()
-                                                                    }
+                                        }
+                                        if !review.images.isEmpty {
+                                            ForEach(review.images) { image in
+                                                if let url = image.src {
+                                                    ImageLoader(url, contentMode: .fill) { progress in
+                                                        Rectangle()
+                                                            .foregroundStyle(.clear)
+                                                            .frame(maxWidth: 150)
+                                                            .overlay {
+                                                                ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                                    .progressViewStyle(LinearProgressViewStyle())
                                                             }
-                                                            .loadDiskFileSynchronously()
-                                                            .fade(duration: 0.25)
-                                                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                                            .resizable()
-                                                            .aspectRatio(contentMode: .fill)
-                                                            .frame(height: 300)
-                                                            .frame(maxWidth: UIScreen.main.bounds.width)
-                                                            .contentShape(Rectangle())
-                                                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                                                            .overlay(alignment: .topTrailing) {
-                                                                Image(systemName: "photo")
-                                                                    .padding(.top, 8)
-                                                                    .padding(.trailing, 5)
-                                                            }
+                                                    }
+                                                    .frame(height: 300)
+                                                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                                                    .overlay(alignment: .topTrailing) {
+                                                        Image(systemName: "photo")
+                                                            .padding(.top, 8)
+                                                            .padding(.trailing, 5)
                                                     }
                                                 }
                                             }
                                         }
-                                        .tabViewStyle(.page)
-                                    })
+                                    }
+                                    .tabViewStyle(.page)
                                 }
                                 .onTapGesture {
                                     showMedia()

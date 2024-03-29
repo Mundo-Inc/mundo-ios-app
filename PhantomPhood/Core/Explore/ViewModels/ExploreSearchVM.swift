@@ -81,6 +81,7 @@ enum MapDefaultSearch: String, CaseIterable {
 enum SearchScopes: String, CaseIterable, Identifiable {
     case places
     case users
+    case events
     
     var id: String {
         self.rawValue
@@ -92,6 +93,8 @@ enum SearchScopes: String, CaseIterable, Identifiable {
             "Places"
         case .users:
             "Users"
+        case .events:
+            "Events"
         }
     }
 }
@@ -100,6 +103,7 @@ enum SearchScopes: String, CaseIterable, Identifiable {
 final class ExploreSearchVM: ObservableObject {
     private let locationManager = LocationManager.shared
     private let searchDM = SearchDM()
+    private let eventsDM = EventsDM()
     
     var mapRegion: MKCoordinateRegion? = nil
     
@@ -108,6 +112,7 @@ final class ExploreSearchVM: ObservableObject {
     
     @Published var placeSearchResults: [MKMapItem] = []
     @Published var userSearchResults: [UserEssentials] = []
+    @Published var eventsSearchResult: [Event] = []
     @Published var isLoading: Bool = false
     @Published var error: String? = nil
     
@@ -157,6 +162,22 @@ final class ExploreSearchVM: ObservableObject {
             do {
                 let data = try await searchDM.searchUsers(q: value)
                 self.userSearchResults = data
+            } catch let error as APIManager.APIError {
+                switch error {
+                case .serverError(let serverError):
+                    self.error = serverError.message
+                    break
+                default:
+                    self.error = "Unknown Error"
+                    break
+                }
+            } catch {
+                self.error = error.localizedDescription
+            }
+        } else if self.scope == .events {
+            do {
+                let data = try await eventsDM.getEvents(q: value)
+                self.eventsSearchResult = data
             } catch let error as APIManager.APIError {
                 switch error {
                 case .serverError(let serverError):

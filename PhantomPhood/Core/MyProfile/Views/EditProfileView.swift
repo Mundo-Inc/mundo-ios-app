@@ -7,7 +7,6 @@
 
 import SwiftUI
 import PhotosUI
-import Kingfisher
 
 struct EditProfileView: View {
     @Environment(\.dismiss) var dismiss
@@ -90,20 +89,16 @@ struct EditProfileView: View {
                                 if let user = auth.currentUser {
                                     Group {
                                         if let profileImage = user.profileImage {
-                                            KFImage.url(profileImage)
-                                                .placeholder {
-                                                    RoundedRectangle(cornerRadius: 15)
-                                                        .foregroundStyle(.tertiary)
-                                                        .overlay {
-                                                            ProgressView()
-                                                        }
-                                                }
-                                                .loadDiskFileSynchronously()
-                                                .cacheMemoryOnly()
-                                                .fade(duration: 0.25)
-                                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
+                                            ImageLoader(profileImage, contentMode: .fill) { progress in
+                                                Rectangle()
+                                                    .foregroundStyle(.clear)
+                                                    .frame(maxWidth: 150)
+                                                    .overlay {
+                                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                            .progressViewStyle(LinearProgressViewStyle())
+                                                            .padding(.horizontal)
+                                                    }
+                                            }
                                         } else {
                                             RoundedRectangle(cornerRadius: 15)
                                                 .foregroundStyle(.tertiary)

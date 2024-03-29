@@ -7,7 +7,6 @@
 
 import SwiftUI
 import PhotosUI
-import Kingfisher
 
 struct AddReviewView: View {
     @ObservedObject private var appData = AppData.shared
@@ -37,25 +36,15 @@ struct AddReviewView: View {
                 VStack(spacing: 0) {
                     VStack(spacing: 5) {
                         HStack {
-                            if let thumbnail = place.thumbnail {
-                                KFImage.url(thumbnail)
-                                    .placeholder {
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .foregroundStyle(Color.themePrimary)
-                                            .overlay {
-                                                ProgressView()
-                                            }
+                            ImageLoader(place.thumbnail, contentMode: .fill) { Progress in
+                                RoundedRectangle(cornerRadius: 10)
+                                    .foregroundStyle(Color.themePrimary)
+                                    .overlay {
+                                        ProgressView()
                                     }
-                                    .loadDiskFileSynchronously()
-                                    .cacheMemoryOnly()
-                                    .fade(duration: 0.25)
-                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 50, height: 50)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .contentShape(RoundedRectangle(cornerRadius: 10))
                             }
+                            .frame(width: 50, height: 50)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                             
                             VStack(spacing: 10) {
                                 Text(place.name)

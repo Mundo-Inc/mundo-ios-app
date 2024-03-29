@@ -24,24 +24,27 @@ final class ExploreVM17: ObservableObject {
     private let eventsDM = EventsDM()
     private let mapDM = MapDM()
     
-    @Published var events: [Event]? = nil
+    @Published var events: [ClusteredMapActivity] = []
+    private var originalEvents: [Event]? = nil
     
     @Published var showSet = Set<String>()
-    @Published var activities: [MapActivity] = []
+    @Published var activities: [ClusteredMapActivity] = []
+    //    @Published var activities: [ClusteredMapActivity] = []
     
     @Published private(set) var loadingSections = Set<LoadingSection>()
     @Published var error: String? = nil
     @Published var searchResults: [MKMapItem]? = nil
     @Published var isSearching: Bool = false
-    @Published var startDate: DateOption = .month
+    @Published var startDate: DateOption = .year
     @Published var activitiesScope: MapDM.Scope = .global
     
     private var throttles = Set<Throttles>()
-
+    
     // MARK: - Exclusive
     
     @Published var position: MapCameraPosition = .userLocation(fallback: .automatic)
     @Published private(set) var scale: CGFloat = 1
+    @Published var presentedSheet: Sheets? = nil
     
     private(set) var originalItems: [MapActivity] = []
     private(set) var fetchedAreas: [AreaLevel:[FetchedMapRect]] = [
@@ -50,7 +53,7 @@ final class ExploreVM17: ObservableObject {
         .C: [],
     ]
     
-    private var nextUpdateContext: MapCameraUpdateContext?
+    var latestMapContext: MapCameraUpdateContext?
     
     private var cancellables = [AnyCancellable]()
     
@@ -106,7 +109,7 @@ final class ExploreVM17: ObservableObject {
     
     func getInviteLink() {
         guard !loadingSections.contains(.inviteLink) else { return }
-                
+        
         if let currentUser = auth.currentUser {
             self.loadingSections.insert(.inviteLink)
             HapticManager.shared.impact(style: .light)
@@ -143,8 +146,6 @@ final class ExploreVM17: ObservableObject {
         }
     }
     
-    /// Used for updating annotations on demand
-    private var latestMapContext: MapCameraUpdateContext?
     func onMapCameraChangeHandler(_ context: MapCameraUpdateContext) {
         self.latestMapContext = context
         DispatchQueue.main.async {
@@ -163,26 +164,56 @@ final class ExploreVM17: ObservableObject {
             }
         }
         
-        guard !throttles.contains(.display) else {
-            self.nextUpdateContext = context
-            return
-        }
+        guard !throttles.contains(.display) else { return }
         
         throttles.insert(.display)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.throttles.remove(.display)
-            if let context = self.nextUpdateContext {
+            if let context = self.latestMapContext {
                 DispatchQueue.global(qos: .userInitiated).async {
-                    var newItems = self.originalItems.filter({ context.rect.contains(.init($0.place.coordinates)) })
-                    if newItems.count > 50 {
-                        newItems = Array(newItems.prefix(50))
-                    }
+                    var (acttivities, events) = self.makeCluster(self.originalItems.filter({ context.rect.contains(.init($0.place.coordinates)) }), events: self.originalEvents?.filter({ context.rect.contains(.init($0.place
+                        .coordinates)) }))
+                    
                     DispatchQueue.main.async {
-                        self.activities = newItems
+                        if acttivities.count > 40 {
+                            acttivities = Array(acttivities.prefix(40))
+                        }
+                        self.events = events
+                        self.activities = acttivities
                     }
                 }
             }
+        }
+    }
+    
+    func makeCluster(_ items: [MapActivity], events: [Event]?) -> ([ClusteredMapActivity], [ClusteredMapActivity]) {
+        /// placeId, activity
+        var dict: [String: [MapActivity]] = [:]
+        
+        for item in items {
+            if dict[item.place.id] == nil {
+                dict[item.place.id] = [item]
+            } else {
+                dict[item.place.id]!.append(item)
+            }
+        }
+        
+        if let events {
+            var clusteredEvents: [ClusteredMapActivity] = []
+            
+            for event in events {
+                if dict[event.place.id] != nil {
+                    clusteredEvents.append(.init(items: dict[event.place.id]!, event: event))
+                    dict.removeValue(forKey: event.place.id)
+                } else {
+                    clusteredEvents.append(.init(items: [], event: event))
+                }
+            }
+            
+            return (dict.values.map { ClusteredMapActivity(items: $0) }, clusteredEvents)
+        } else {
+            return (dict.values.map { ClusteredMapActivity(items: $0) }, [])
         }
     }
     
@@ -279,7 +310,7 @@ final class ExploreVM17: ObservableObject {
         let y = floor(rect.minY / areaLevel.areaUnit) * areaLevel.areaUnit
         let maxX = ceil(rect.maxX / areaLevel.areaUnit) * areaLevel.areaUnit
         let maxY = ceil(rect.maxY / areaLevel.areaUnit) * areaLevel.areaUnit
-
+        
         return MKMapRect(
             x: x,
             y: y,
@@ -291,9 +322,9 @@ final class ExploreVM17: ObservableObject {
     private func devideRect(rect: MKMapRect, areaLevel: AreaLevel) -> [MKMapRect] {
         let xCount = Int(rect.width / areaLevel.areaUnit)
         let yCount = Int(rect.height / areaLevel.areaUnit)
-
+        
         var rects: [MKMapRect] = []
-
+        
         for x in 0..<xCount {
             for y in 0..<yCount {
                 let newRect = MKMapRect(
@@ -305,7 +336,7 @@ final class ExploreVM17: ObservableObject {
                 rects.append(newRect)
             }
         }
-
+        
         return rects
     }
     
@@ -334,7 +365,7 @@ final class ExploreVM17: ObservableObject {
             for activity in activitiesToAdd {
                 let user: UserEntity
                 let place: PlaceEntity
-
+                
                 if let existingUser = users[activity.user.id] {
                     user = existingUser
                 } else {
@@ -362,7 +393,7 @@ final class ExploreVM17: ObservableObject {
             print("Error getting existing MapActivityEntity", error)
         }
     }
-        
+    
     /// Fetches existing entities by IDs.
     private func fetchExistingEntities<T: NSManagedObject>(_ entityType: T.Type, ids: Set<String>, context: NSManagedObjectContext) throws -> [T] {
         let request: NSFetchRequest<T> = NSFetchRequest<T>(entityName: String(describing: entityType))
@@ -440,12 +471,23 @@ final class ExploreVM17: ObservableObject {
         case display
     }
     
+    enum Sheets: Identifiable, Hashable {
+        var id: Int {
+            switch self {
+            case .activityCluster(let clusteredMapActivity):
+                return clusteredMapActivity.hashValue
+            }
+        }
+        
+        case activityCluster(ClusteredMapActivity)
+    }
+    
     enum DateOption: String, CaseIterable {
         case day = "Last Day"
         case week = "Last Week"
         case month = "Last Month"
         case year = "Last Year"
-
+        
         var getDate: Date {
             switch self {
             case .day:
@@ -470,7 +512,7 @@ extension ExploreVM17 {
         self.loadingSections.insert(.fetchEvents)
         do {
             let data = try await eventsDM.getEvents()
-            self.events = data
+            self.originalEvents = data
         } catch {
             print(error)
         }
@@ -497,13 +539,13 @@ final class ExploreVM16: ObservableObject {
         case fetchEvents
     }
     
-    @Published var events: [Event]? = nil
+    private var originalEvents: [Event]? = nil
     
     @Published private(set) var loadingSections = Set<LoadingSection>()
     @Published var error: String? = nil
     @Published var searchResults: [MKMapItem]? = nil
     @Published var isSearching: Bool = false
-        
+    
     // MARK: - Exclusive
     
     private var locationManager = LocationManager.shared
@@ -563,7 +605,7 @@ extension ExploreVM16 {
         self.loadingSections.insert(.fetchEvents)
         do {
             let data = try await eventsDM.getEvents()
-            self.events = data
+            self.originalEvents = data
         } catch {
             print(error)
         }

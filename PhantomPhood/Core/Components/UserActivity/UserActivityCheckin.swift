@@ -37,65 +37,7 @@ struct UserActivityCheckin: View {
                         .clipShape(RoundedRectangle(cornerRadius: 5))
                 }.padding(.bottom)
             } content: {
-                switch data.resource {
-                case .checkin(let checkin):
-                    if let place = data.place {
-                        VStack {
-                            NavigationLink(value: AppRoute.place(id: place.id)) {
-                                HStack {
-                                    Image(systemName: "checkmark.diamond.fill")
-                                        .font(.system(size: 36))
-                                        .frame(width: 40, height: 40)
-                                        .foregroundStyle(LinearGradient(colors: [Color.green, Color.accentColor], startPoint: .topLeading, endPoint: .trailing))
-                                    
-                                    VStack {
-                                        Text(place.name)
-                                            .lineLimit(1)
-                                            .font(.custom(style: .subheadline))
-                                            .foregroundStyle(.primary)
-                                            .bold()
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        
-                                        HStack {
-                                            if let phantomScore = place.scores.phantom {
-                                                Text("👻 \(String(format: "%.0f", phantomScore))")
-                                                    .bold()
-                                                    .foregroundStyle(Color.accentColor)
-                                            } else {
-                                                Text("TBD")
-                                                    .foregroundStyle(.secondary)
-                                            }
-                                            
-                                            if place.scores.phantom != nil && place.priceRange != nil {
-                                                Text(".")
-                                            }
-                                            
-                                            if let priceRange = place.priceRange {
-                                                Text(String(repeating: "$", count: priceRange))
-                                            }
-                                        }
-                                        .font(.custom(style: .subheadline))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.themePrimary)
-                                .clipShape(.rect(cornerRadius: 15))
-                            }
-                            .foregroundStyle(.primary)
-                            
-                            Text("\(checkin.totalCheckins) total checkins")
-                                .foregroundStyle(.secondary)
-                                .font(.custom(style: .caption))
-                                .frame(maxWidth: .infinity, alignment: .trailing)
-                        }
-                    }
-                default:
-                    EmptyView()
-                }
+                CheckInCard(data: data)
             } footer: {
                 WrappingHStack(horizontalSpacing: 4, verticalSpacing: 6) {
                     Button {

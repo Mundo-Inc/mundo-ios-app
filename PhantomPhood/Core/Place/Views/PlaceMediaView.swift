@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct PlaceMediaView: View {
     @StateObject private var vm: PlaceMediaVM
@@ -72,29 +71,27 @@ struct PlaceMediaView: View {
                                     Rectangle()
                                         .foregroundStyle(Color.themeBorder)
                                 } else if let url = URL(string: string) {
-                                    KFImage.url(url)
-                                        .placeholder {
-                                            Rectangle()
-                                                .foregroundStyle(Color.themePrimary)
-                                                .overlay {
-                                                    ProgressView()
-                                                }
-                                        }
-                                        .loadDiskFileSynchronously()
-                                        .fade(duration: 0.25)
-                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                        .resizable()
-                                        .aspectRatio(2/3, contentMode: .fill)
-                                        .matchedGeometryEffect(id: string.hash, in: namespace)
-                                        .overlay(alignment: .bottomTrailing) {
-                                            Image(.yelpLogo)
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(maxHeight: 30)
-                                                .padding(.leading, 5)
-                                                .padding(.bottom, 5)
-                                        }
-                                        .zIndex(2)
+                                    ImageLoader(url, contentMode: .fill) { progress in
+                                        Rectangle()
+                                            .foregroundStyle(.clear)
+                                            .frame(maxWidth: 150)
+                                            .overlay {
+                                                ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                    .progressViewStyle(LinearProgressViewStyle())
+                                                    .padding(.horizontal)
+                                            }
+                                    }
+                                    .matchedGeometryEffect(id: string.hash, in: namespace)
+                                    .aspectRatio(2/3, contentMode: .fill)
+                                    .overlay(alignment: .bottomTrailing) {
+                                        Image(.yelpLogo)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(maxHeight: 30)
+                                            .padding(.leading, 5)
+                                            .padding(.bottom, 5)
+                                    }
+                                    .zIndex(2)
                                 }
                             }
                             .padding(.all, 1)
@@ -117,40 +114,36 @@ struct PlaceMediaView: View {
                             } else {
                                 Group {
                                     if media.type == .image, let url = media.src {
-                                        KFImage.url(url)
-                                            .placeholder {
-                                                Rectangle()
-                                                    .foregroundStyle(Color.themePrimary)
-                                                    .overlay {
-                                                        ProgressView()
-                                                    }
-                                            }
-                                            .loadDiskFileSynchronously()
-                                            .fade(duration: 0.25)
-                                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                            .resizable()
-                                            .aspectRatio(2/3, contentMode: .fill)
-                                            .matchedGeometryEffect(id: media.id, in: namespace)
+                                        ImageLoader(url, contentMode: .fill) { progress in
+                                            Rectangle()
+                                                .foregroundStyle(.clear)
+                                                .frame(maxWidth: 150)
+                                                .overlay {
+                                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                        .progressViewStyle(LinearProgressViewStyle())
+                                                        .padding(.horizontal)
+                                                }
+                                        }
+                                        .matchedGeometryEffect(id: media.id, in: namespace)
+                                        .aspectRatio(2/3, contentMode: .fill)
                                     } else if let thumbnail = media.thumbnail {
-                                        KFImage.url(thumbnail)
-                                            .placeholder {
-                                                Rectangle()
-                                                    .foregroundStyle(Color.themePrimary)
-                                                    .overlay {
-                                                        ProgressView()
-                                                    }
-                                            }
-                                            .loadDiskFileSynchronously()
-                                            .fade(duration: 0.25)
-                                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                            .resizable()
-                                            .aspectRatio(2/3, contentMode: .fill)
-                                            .matchedGeometryEffect(id: media.id, in: namespace)
-                                            .overlay {
-                                                Image(systemName: "video")
-                                                    .font(.system(size: 50))
-                                                    .foregroundStyle(Color.secondary)
-                                            }
+                                        ImageLoader(thumbnail, contentMode: .fill) { progress in
+                                            Rectangle()
+                                                .foregroundStyle(.clear)
+                                                .frame(maxWidth: 150)
+                                                .overlay {
+                                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                        .progressViewStyle(LinearProgressViewStyle())
+                                                        .padding(.horizontal)
+                                                }
+                                        }
+                                        .matchedGeometryEffect(id: media.id, in: namespace)
+                                        .aspectRatio(2/3, contentMode: .fill)
+                                        .overlay {
+                                            Image(systemName: "video")
+                                                .font(.system(size: 50))
+                                                .foregroundStyle(Color.secondary)
+                                        }
                                     } else {
                                         Rectangle()
                                             .aspectRatio(2/3, contentMode: .fill)

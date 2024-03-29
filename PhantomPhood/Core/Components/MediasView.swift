@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct MediasView: View {
     @StateObject var vm: MediasVM
@@ -27,23 +26,17 @@ struct MediasView: View {
                                     .frame(maxWidth: UIScreen.main.bounds.size.width, maxHeight: UIScreen.main.bounds.size.height)
                                     .clipShape(RoundedRectangle(cornerRadius: 15))
                             } else if media.type == .image, let url = media.src {
-                                KFImage.url(url)
-                                    .placeholder {
-                                        RoundedRectangle(cornerRadius: 15)
-                                            .foregroundStyle(Color.themePrimary)
-                                            .overlay {
-                                                ProgressView()
-                                            }
-                                    }
-                                    .loadDiskFileSynchronously()
-                                    .cacheMemoryOnly()
-                                    .fade(duration: 0.25)
-                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(maxWidth: UIScreen.main.bounds.size.width, maxHeight: UIScreen.main.bounds.size.height)
-                                    .contentShape(RoundedRectangle(cornerRadius: 15))
-                                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                                ImageLoader(url, contentMode: .fill) { progress in
+                                    Rectangle()
+                                        .foregroundStyle(.clear)
+                                        .frame(maxWidth: 150)
+                                        .overlay {
+                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                .progressViewStyle(LinearProgressViewStyle())
+                                        }
+                                }
+                                .frame(maxWidth: UIScreen.main.bounds.size.width, maxHeight: UIScreen.main.bounds.size.height)
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
                             }
                         }
                     }

@@ -7,7 +7,6 @@
 
 import SwiftUI
 import PhotosUI
-import Kingfisher
 
 struct NewCheckinView: View {
     @StateObject private var pickerVM = PickerVM(limitToOne: true)
@@ -33,60 +32,48 @@ struct NewCheckinView: View {
                     VStack(spacing: 5) {
                         HStack {
                             if let thumbnail = vm.place?.thumbnail {
-                                KFImage.url(thumbnail)
-                                    .placeholder {
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .foregroundStyle(Color.themePrimary)
-                                            .overlay {
-                                                ProgressView()
+                                ImageLoader(thumbnail, contentMode: .fill) { _ in
+                                    Image(systemName: "arrow.down.circle.dotted")
+                                        .foregroundStyle(Color.white.opacity(0.5))
+                                }
+                                .frame(width: 50, height: 50)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .overlay(alignment: .topTrailing) {
+                                    if let event = vm.event, let logo = event.logo {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .foregroundStyle(Color.themePrimary)
+                                            
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .frame(width: 24, height: 24)
+                                                .foregroundStyle(Color.themeBG)
+                                            
+                                            ImageLoader(logo, contentMode: .fit) { _ in
+                                                Image(systemName: "arrow.down.circle.dotted")
+                                                    .foregroundStyle(Color.white.opacity(0.5))
                                             }
+                                            .frame(width: 24, height: 24)
+                                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                                        }
+                                        .frame(width: 30, height: 30)
+                                        .offset(x: 5, y: -5)
                                     }
-                                    .loadDiskFileSynchronously()
-                                    .cacheMemoryOnly()
-                                    .fade(duration: 0.25)
-                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 50, height: 50)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .contentShape(RoundedRectangle(cornerRadius: 10))
+                                }
                             }
                             
                             VStack(spacing: 10) {
                                 if let event = vm.event {
-                                    HStack {
-                                        if let logo = event.logo {
-                                            ZStack {
-                                                RoundedRectangle(cornerRadius: 5)
-                                                    .stroke(Color.themeBorder.opacity(0.3), lineWidth: 2)
-                                                
-                                                KFImage.url(logo)
-                                                    .placeholder {
-                                                        Image(systemName: "arrow.down.circle.dotted")
-                                                            .foregroundStyle(Color.white.opacity(0.5))
-                                                    }
-                                                    .loadDiskFileSynchronously()
-                                                    .fade(duration: 0.25)
-                                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fit)
-                                                    .contentShape(RoundedRectangle(cornerRadius: 5))
-                                                    .clipShape(RoundedRectangle(cornerRadius: 5))
-                                                    .frame(width: 24, height: 24)
-                                            }
-                                            .frame(width: 28, height: 28)
-                                        }
-                                        
-                                        Text(event.name)
-                                            .font(.custom(style: .body))
-                                            .fontWeight(.bold)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                    }
+                                    Text(event.name)
+                                        .font(.custom(style: .body))
+                                        .fontWeight(.bold)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .lineLimit(1)
                                 } else {
                                     Text(vm.place?.name ?? "Name Placeholder")
                                         .font(.custom(style: .body))
                                         .fontWeight(.bold)
                                         .frame(maxWidth: .infinity, alignment: .leading)
+                                        .lineLimit(1)
                                 }
                                 Text(vm.place?.location.address ?? "Address Placeholder")
                                     .lineLimit(1)
@@ -104,7 +91,7 @@ struct NewCheckinView: View {
                         
                         Divider()
                     }
-                    .background(.ultraThinMaterial)
+                    .background(Color.themePrimary)
                     
                     ScrollView {
                         VStack {

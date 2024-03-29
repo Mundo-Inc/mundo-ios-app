@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 import VideoPlayer
 import CoreMedia
 
@@ -55,16 +54,16 @@ struct PlaceView: View {
                     HStack(spacing: 20) {
                         Group {
                             if let thumbnail = vm.place?.thumbnail {
-                                KFImage.url(thumbnail)
-                                    .placeholder {
-                                        RoundedRectangle(cornerRadius: 15)
-                                            .foregroundStyle(Color.themePrimary)
-                                    }
-                                    .loadDiskFileSynchronously()
-                                    .fade(duration: 0.25)
-                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
+                                ImageLoader(thumbnail, contentMode: .fill) { progress in
+                                    Rectangle()
+                                        .foregroundStyle(.clear)
+                                        .frame(maxWidth: 150)
+                                        .overlay {
+                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                .progressViewStyle(LinearProgressViewStyle())
+                                                .padding(.horizontal)
+                                        }
+                                }
                             } else {
                                 RoundedRectangle(cornerRadius: 15)
                                     .foregroundStyle(Color.themePrimary)
@@ -85,7 +84,6 @@ struct PlaceView: View {
                         }
                         .frame(width: 100, height: 100)
                         .clipShape(.rect(cornerRadius: 15))
-                        .contentShape(RoundedRectangle(cornerRadius: 15))
                         
                         Text(vm.place?.name ?? "Name placeholder")
                             .font(.custom(style: .title2))
@@ -397,159 +395,151 @@ struct PlaceView: View {
     @ViewBuilder
     private func ExpandedMedia() -> some View {
         if let mixedMedia = vm.expandedMedia {
-            GeometryReader { proxy in
-                ZStack(alignment: .bottom) {
-                    Color.black.opacity(0.8)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .onTapGesture {
+            ZStack(alignment: .bottom) {
+                Color.black.opacity(0.8)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation {
+                            vm.expandedMedia = nil
+                        }
+                    }
+                
+                Group {
+                    switch mixedMedia {
+                    case .phantom(let media):
+                        Group {
+                            if media.type == .image, let url = media.src {
+                                ImageLoader(url, contentMode: .fit) { progress in
+                                    Rectangle()
+                                        .foregroundStyle(.clear)
+                                        .frame(maxWidth: 150)
+                                        .overlay {
+                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                .progressViewStyle(LinearProgressViewStyle())
+                                                .padding(.horizontal)
+                                        }
+                                }
+                                .matchedGeometryEffect(id: media.id, in: namespace)
+                            } else if media.type == .video, let url = media.src {
+                                ZStack(alignment: .bottom) {
+                                    VideoPlayer(url: url, play: Binding(get: {
+                                        videoPlayerVM.playId == media.id
+                                    }, set: { value in
+                                        if !value {
+                                            videoPlayerVM.playId = nil
+                                        } else {
+                                            videoPlayerVM.playId = media.id
+                                        }
+                                    }), time: $videoTime)
+                                    .onStateChanged { state in
+                                        videoState = state
+                                        switch state {
+                                        case .playing(let totalDuration):
+                                            videoTotalDuration = totalDuration
+                                        default:
+                                            break
+                                        }
+                                    }
+                                    .autoReplay(true)
+                                    .mute(videoPlayerVM.isMute)
+                                    .contentMode(.scaleAspectFill)
+                                    .onAppear {
+                                        videoPlayerVM.playId = media.id
+                                    }
+                                    .onDisappear {
+                                        videoPlayerVM.playId = nil
+                                    }
+                                    
+                                    if let videoState, case .playing(_) = videoState {
+                                        EmptyView()
+                                    } else if let videoState, case .error = videoState {
+                                        Image(systemName: "exclamationmark.triangle")
+                                            .font(.system(size: 50))
+                                            .foregroundStyle(Color.red)
+                                    } else {
+                                        if let thumbnail = media.thumbnail {
+                                            ImageLoader(thumbnail, contentMode: .fill) { progress in
+                                                Rectangle()
+                                                    .foregroundStyle(.clear)
+                                                    .frame(maxWidth: 150)
+                                                    .overlay {
+                                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                            .progressViewStyle(LinearProgressViewStyle())
+                                                            .padding(.horizontal)
+                                                    }
+                                            }
+                                            .matchedGeometryEffect(id: media.id, in: namespace)
+                                            .grayscale(1)
+                                            .overlay {
+                                                ProgressView()
+                                                    .controlSize(.large)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        .overlay(alignment: .bottomLeading) {
+                            if let user = media.user {
+                                HStack(spacing: 5) {
+                                    ProfileImage(user.profileImage, size: 24, cornerRadius: 12)
+                                    
+                                    Text(user.name)
+                                        .font(.custom(style: .caption2))
+                                        .lineLimit(1)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                                .padding(.leading, 5)
+                                .padding(.bottom, 5)
+                            }
+                        }
+                    case .yelp(let string):
+                        if let url = URL(string: string) {
+                            ImageLoader(url, contentMode: .fit) { progress in
+                                Rectangle()
+                                    .foregroundStyle(.clear)
+                                    .frame(maxWidth: 150)
+                                    .overlay {
+                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                            .progressViewStyle(LinearProgressViewStyle())
+                                            .padding(.horizontal)
+                                    }
+                            }
+                            .matchedGeometryEffect(id: string.hash, in: namespace)
+                            .overlay(alignment: .bottomTrailing) {
+                                Image(.yelpLogo)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(maxHeight: 30)
+                                    .padding(.leading, 5)
+                                    .padding(.bottom, 5)
+                            }
+                        }
+                    }
+                }
+                .zIndex(2)
+                .offset(vm.draggedAmount)
+                .opacity(max(abs(vm.draggedAmount.width), abs(vm.draggedAmount.height)) >= 80 ? 0.5 : 1)
+            }
+            .zIndex(1)
+            .ignoresSafeArea(edges: .top)
+            .gesture(
+                DragGesture()
+                    .onChanged({ value in
+                        vm.draggedAmount = value.translation
+                    })
+                    .onEnded({ value in
+                        if max(abs(value.translation.width), abs(value.translation.height)) >= 80 {
                             withAnimation {
                                 vm.expandedMedia = nil
                             }
                         }
-                    
-                    Group {
-                        switch mixedMedia {
-                        case .phantom(let media):
-                            Group {
-                                if media.type == .image, let url = media.src {
-                                    KFImage.url(url)
-                                        .placeholder {
-                                            Rectangle()
-                                                .foregroundStyle(Color.themePrimary)
-                                                .overlay {
-                                                    ProgressView()
-                                                }
-                                        }
-                                        .loadDiskFileSynchronously()
-                                        .fade(duration: 0.25)
-                                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .matchedGeometryEffect(id: media.id, in: namespace)
-                                        .frame(width: proxy.size.width, height: proxy.size.height + proxy.safeAreaInsets.top)
-                                        .contentShape(Rectangle())
-                                } else if media.type == .video, let url = media.src {
-                                    ZStack(alignment: .bottom) {
-                                        VideoPlayer(url: url, play: Binding(get: {
-                                            videoPlayerVM.playId == media.id
-                                        }, set: { value in
-                                            if !value {
-                                                videoPlayerVM.playId = nil
-                                            } else {
-                                                videoPlayerVM.playId = media.id
-                                            }
-                                        }), time: $videoTime)
-                                        .onStateChanged { state in
-                                            videoState = state
-                                            switch state {
-                                            case .playing(let totalDuration):
-                                                videoTotalDuration = totalDuration
-                                            default:
-                                                break
-                                            }
-                                        }
-                                        .autoReplay(true)
-                                        .mute(videoPlayerVM.isMute)
-                                        .contentMode(.scaleAspectFill)
-                                        .onAppear {
-                                            videoPlayerVM.playId = media.id
-                                        }
-                                        .onDisappear {
-                                            videoPlayerVM.playId = nil
-                                        }
-                                        
-                                        if let videoState, case .playing(_) = videoState {
-                                            EmptyView()
-                                        } else if let videoState, case .error = videoState {
-                                            Image(systemName: "exclamationmark.triangle")
-                                                .font(.system(size: 50))
-                                                .foregroundStyle(Color.red)
-                                        } else {
-                                            if let thumbnail = media.thumbnail {
-                                                KFImage.url(thumbnail)
-                                                    .loadDiskFileSynchronously()
-                                                    .fade(duration: 0.25)
-                                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fill)
-                                                    .matchedGeometryEffect(id: media.id, in: namespace)
-                                                    .frame(width: proxy.size.width, height: proxy.size.height + proxy.safeAreaInsets.top)
-                                                    .grayscale(1)
-                                                    .overlay {
-                                                        ProgressView()
-                                                            .controlSize(.large)
-                                                    }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            .overlay(alignment: .bottomLeading) {
-                                if let user = media.user {
-                                    HStack(spacing: 5) {
-                                        ProfileImage(user.profileImage, size: 24, cornerRadius: 12)
-                                        
-                                        Text(user.name)
-                                            .font(.custom(style: .caption2))
-                                            .lineLimit(1)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                    }
-                                    .padding(.leading, 5)
-                                    .padding(.bottom, 5)
-                                }
-                            }
-                        case .yelp(let string):
-                            if let url = URL(string: string) {
-                                KFImage.url(url)
-                                    .placeholder {
-                                        Rectangle()
-                                            .foregroundStyle(Color.themePrimary)
-                                            .overlay {
-                                                ProgressView()
-                                            }
-                                    }
-                                    .loadDiskFileSynchronously()
-                                    .fade(duration: 0.25)
-                                    .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .matchedGeometryEffect(id: string.hash, in: namespace)
-                                    .frame(width: proxy.size.width, height: proxy.size.height + proxy.safeAreaInsets.top)
-                                    .contentShape(Rectangle())
-                                    .overlay(alignment: .bottomTrailing) {
-                                        Image(.yelpLogo)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(maxHeight: 30)
-                                            .padding(.leading, 5)
-                                            .padding(.bottom, 5)
-                                    }
-                            }
+                        withAnimation {
+                            vm.draggedAmount = .zero
                         }
-                    }
-                    .zIndex(2)
-                    .offset(vm.draggedAmount)
-                    .opacity(max(abs(vm.draggedAmount.width), abs(vm.draggedAmount.height)) >= 80 ? 0.5 : 1)
-                }
-                .zIndex(1)
-                .ignoresSafeArea(edges: .top)
-                .gesture(
-                    DragGesture()
-                        .onChanged({ value in
-                            vm.draggedAmount = value.translation
-                        })
-                        .onEnded({ value in
-                            if max(abs(value.translation.width), abs(value.translation.height)) >= 80 {
-                                withAnimation {
-                                    vm.expandedMedia = nil
-                                }
-                            }
-                            withAnimation {
-                                vm.draggedAmount = .zero
-                            }
-                        })
-                )
-            }
+                    })
+            )
         }
     }
     

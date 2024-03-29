@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct MyConnections: View {
     @State private var activeTab: UserConnectionsTab
@@ -125,7 +124,7 @@ struct MyConnections: View {
             }
         }
         .navigationTitle("Connections")
-        .toolbar(content: {
+        .toolbar {
             ToolbarItem {
                 if vm.isLoading {
                     ProgressView()
@@ -133,7 +132,7 @@ struct MyConnections: View {
                         .animation(.easeInOut, value: vm.isLoading)
                 }
             }
-        })
+        }
     }
 }
 

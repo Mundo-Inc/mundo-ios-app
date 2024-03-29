@@ -38,10 +38,7 @@ extension MKCoordinateRegion {
         coordinate.longitude >= southWestCorner.longitude &&
         coordinate.longitude <= northEastCorner.longitude
     }
-}
 
-extension MKCoordinateRegion {
-    
     /// Returns northEast and southWest coordinates from MKCoordinateRegion
     var boundariesNESW: (NE: CLLocationCoordinate2D, SW: CLLocationCoordinate2D) {
         let center = self.center
@@ -53,11 +50,31 @@ extension MKCoordinateRegion {
 
         return (northEast, southWest)
     }
+
+    /// shifts center by given x and y percentage
+    func shiftCenter(yPercentage: CGFloat = 0, xPercentage: CGFloat = 0) -> MKCoordinateRegion {
+        let center = self.center
+        let halfLatDelta = self.span.latitudeDelta / 2.0
+        let halfLonDelta = self.span.longitudeDelta / 2.0
+
+        let newCenter = CLLocationCoordinate2D(latitude: center.latitude + halfLatDelta * Double(yPercentage), longitude: center.longitude + halfLonDelta * Double(xPercentage))
+        
+        return MKCoordinateRegion(center: newCenter, span: self.span)
+    }
 }
 
 extension CLLocationCoordinate2D: Equatable {
     public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
         return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    }
+    
+    /// Calculates the distance (in meters) to another CLLocationCoordinate2D.
+    /// - Parameter coordinate: The target coordinate to measure the distance to.
+    /// - Returns: The distance in meters as a Double.
+    func distance(to coordinate: CLLocationCoordinate2D) -> CLLocationDistance {
+        let startLocation = CLLocation(latitude: self.latitude, longitude: self.longitude)
+        let endLocation = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        return startLocation.distance(from: endLocation)
     }
 }
 

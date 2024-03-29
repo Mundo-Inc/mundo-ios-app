@@ -7,7 +7,6 @@
 
 import SwiftUI
 import MapKit
-import Kingfisher
 
 struct PlacesListView: View {
     @StateObject private var vm: PlacesListVM
@@ -245,20 +244,16 @@ fileprivate struct PlaceItem: View {
             .background(Color.black.opacity(0.5))
             .background {
                 if let thumbnail = place.place.thumbnail {
-                    KFImage(thumbnail)
-                        .placeholder {
-                            Color.themePrimary
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .overlay {
-                                    ProgressView()
-                                }
-                        }
-                        .loadDiskFileSynchronously()
-                        .fade(duration: 0.25)
-                        .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                        .resizable()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .aspectRatio(contentMode: .fill)
+                    ImageLoader(thumbnail, contentMode: .fill) { progress in
+                        Rectangle()
+                            .foregroundStyle(.clear)
+                            .frame(maxWidth: 150)
+                            .overlay {
+                                ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                    .progressViewStyle(LinearProgressViewStyle())
+                                    .padding(.horizontal)
+                            }
+                    }
                 } else {
                     Color.gray.opacity(0.8)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)

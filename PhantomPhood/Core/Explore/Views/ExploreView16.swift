@@ -7,7 +7,6 @@
 
 import SwiftUI
 import MapKit
-import Kingfisher
 
 @available(iOS, introduced: 16.0, deprecated: 17.0, message: "Use ExploreView17 for iOS 17 and above")
 struct ExploreView16: View {
@@ -122,24 +121,18 @@ struct ExploreView16: View {
                                             HStack {
                                                 ForEach(place.media) { media in
                                                     if let url = media.src {
-                                                        KFImage.url(url)
-                                                            .placeholder {
-                                                                RoundedRectangle(cornerRadius: 15)
-                                                                    .frame(width: 90, height: 120)
-                                                                    .foregroundStyle(Color.themePrimary.opacity(0.4))
-                                                                    .overlay {
-                                                                        ProgressView()
-                                                                    }
-                                                            }
-                                                            .loadDiskFileSynchronously()
-                                                            .cacheMemoryOnly()
-                                                            .fade(duration: 0.25)
-                                                            .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                                            .resizable()
-                                                            .aspectRatio(contentMode: .fill)
-                                                            .contentShape(RoundedRectangle(cornerRadius: 15))
-                                                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                                                            .frame(width: 90, height: 120)
+                                                        ImageLoader(url, contentMode: .fill) { progress in
+                                                            Rectangle()
+                                                                .foregroundStyle(.clear)
+                                                                .frame(maxWidth: 150)
+                                                                .overlay {
+                                                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                                        .progressViewStyle(LinearProgressViewStyle())
+                                                                        .padding(.horizontal)
+                                                                }
+                                                        }
+                                                        .frame(width: 90, height: 120)
+                                                        .clipShape(RoundedRectangle(cornerRadius: 15))
                                                     }
                                                 }
                                             }
@@ -147,26 +140,18 @@ struct ExploreView16: View {
                                         .scrollIndicators(.hidden)
                                     } else {
                                         if let thumbnail = place.thumbnail {
-                                            KFImage.url(thumbnail)
-                                                .placeholder {
-                                                    RoundedRectangle(cornerRadius: 15)
-                                                        .frame(maxWidth: .infinity)
-                                                        .frame(height: 120)
-                                                        .foregroundStyle(Color.themePrimary.opacity(0.4))
-                                                        .overlay {
-                                                            ProgressView()
-                                                        }
-                                                }
-                                                .loadDiskFileSynchronously()
-                                                .cacheMemoryOnly()
-                                                .fade(duration: 0.25)
-                                                .onFailureImage(UIImage(named: "ErrorLoadingImage"))
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(maxWidth: .infinity)
-                                                .frame(height: 120)
-                                                .contentShape(RoundedRectangle(cornerRadius: 15))
-                                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                                            ImageLoader(thumbnail, contentMode: .fill) { progress in
+                                                Rectangle()
+                                                    .foregroundStyle(.clear)
+                                                    .frame(maxWidth: 150)
+                                                    .overlay {
+                                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                            .progressViewStyle(LinearProgressViewStyle())
+                                                            .padding(.horizontal)
+                                                    }
+                                            }
+                                            .frame(height: 120)
+                                            .clipShape(RoundedRectangle(cornerRadius: 15))
                                         } else {
                                             Text("No images found")
                                         }
