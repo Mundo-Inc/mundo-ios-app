@@ -209,7 +209,8 @@ fileprivate struct CustomAnnotation: MapContent {
         if let event = item.event {
             Annotation(event.place.name, coordinate: event.place.coordinates) {
                 ImageLoader(event.logo) { _ in
-                    Color.green
+                    Image(systemName: "arrow.down.circle.dotted")
+                        .foregroundStyle(Color.white.opacity(0.5))
                 }
                 .frame(width: 50, height: 50)
                 .clipShape(.rect(cornerRadius: 5))
