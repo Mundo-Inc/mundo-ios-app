@@ -10,17 +10,10 @@ import SwiftUI
 struct MyConnections: View {
     @State private var activeTab: UserConnectionsTab
     
-    @ObservedObject private var appData = AppData.shared
-    @ObservedObject private var auth = Authentication.shared
-    
     @StateObject private var vm = MyConnectionsVM()
     
     init(activeTab: UserConnectionsTab = .followers) {
         self._activeTab = State(wrappedValue: activeTab)
-    }
-    
-    func gotToUser(_ id: String) {
-        appData.goToUser(id, auth.currentUser?.id)
     }
     
     var body: some View {
@@ -72,7 +65,7 @@ struct MyConnections: View {
                 case .followers:
                     if let connections = vm.followers {
                         ForEach(connections) { connection in
-                            UserCard(connection: connection, goToUser: gotToUser)
+                            UserCard(connection: connection)
                                 .onAppear {
                                     if !vm.isLoading {
                                         Task {
@@ -82,9 +75,9 @@ struct MyConnections: View {
                                 }
                         }
                     } else {
-                        UserCard(connection: UserConnection.dummy, goToUser: gotToUser)
+                        UserCard(connection: UserConnection.dummy)
                             .redacted(reason: .placeholder)
-                        UserCard(connection: UserConnection.dummy, goToUser: gotToUser)
+                        UserCard(connection: UserConnection.dummy)
                             .redacted(reason: .placeholder)
                             .onAppear {
                                 Task {
@@ -95,7 +88,7 @@ struct MyConnections: View {
                 case .followings:
                     if let connections = vm.followings {
                         ForEach(connections) { connection in
-                            UserCard(connection: connection, goToUser: gotToUser)
+                            UserCard(connection: connection)
                                 .onAppear {
                                     if !vm.isLoading {
                                         Task {
@@ -105,9 +98,9 @@ struct MyConnections: View {
                                 }
                         }
                     } else {
-                        UserCard(connection: UserConnection.dummy, goToUser: gotToUser)
+                        UserCard(connection: UserConnection.dummy)
                             .redacted(reason: .placeholder)
-                        UserCard(connection: UserConnection.dummy, goToUser: gotToUser)
+                        UserCard(connection: UserConnection.dummy)
                             .redacted(reason: .placeholder)
                             .onAppear {
                                 Task {
@@ -138,7 +131,6 @@ struct MyConnections: View {
 
 fileprivate struct UserCard: View {
     let connection: UserConnection
-    let goToUser: (String) -> Void
     
     var body: some View {
         HStack(spacing: 10) {
@@ -163,7 +155,7 @@ fileprivate struct UserCard: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-            goToUser(connection.user.id)
+            AppData.shared.goToUser(connection.user.id)
         }
     }
 }

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct RewardsHubView: View {
-    @ObservedObject private var appData = AppData.shared
     @ObservedObject private var auth = Authentication.shared
     @ObservedObject private var pcVM = PhantomCoinsVM.shared
     
@@ -19,143 +18,140 @@ struct RewardsHubView: View {
     @Namespace private var namespace
     
     var body: some View {
-        NavigationStack(path: $appData.rewardsHubNavStack) {
-            ZStack {
-                VStack(spacing: 0) {
-                    header
-                    
-                    Divider()
-                    
-                    ScrollView {
-                        ReferralSection()
-                        
-                        dailycheckinsSection
-                        
-                        missionsSection
-                        
-                        prizesSection
-                            .padding(.bottom, 30)
-                    }
-                    .refreshable {
-                        await pcVM.refresh()
-                        await vm.getMissions()
-                        await vm.getPrizes()
-                    }
-                    .font(.custom(style: .body))
-                    .scrollIndicators(.never)
-                }
+        ZStack {
+            VStack(spacing: 0) {
+                header
                 
-                if let selectedPrize = vm.selectedPrize {
-                    ZStack {
-                        Color.black.opacity(0.85)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .ignoresSafeArea()
-                            .onTapGesture {
-                                withAnimation {
-                                    vm.selectedPrize = nil
-                                }
+                Divider()
+                
+                ScrollView {
+                    ReferralSection()
+                    
+                    dailycheckinsSection
+                    
+                    missionsSection
+                    
+                    prizesSection
+                        .padding(.bottom, 30)
+                }
+                .refreshable {
+                    await pcVM.refresh()
+                    await vm.getMissions()
+                    await vm.getPrizes()
+                }
+                .font(.custom(style: .body))
+                .scrollIndicators(.never)
+            }
+            
+            if let selectedPrize = vm.selectedPrize {
+                ZStack {
+                    Color.black.opacity(0.85)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation {
+                                vm.selectedPrize = nil
                             }
+                        }
+                    
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10)
+                            .foregroundStyle(Color.themePrimary)
+                            .frame(maxWidth: .infinity, maxHeight: 196)
+                            .matchedGeometryEffect(id: "\(selectedPrize.id)-bg", in: namespace)
                         
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 10)
-                                .foregroundStyle(Color.themePrimary)
-                                .frame(maxWidth: .infinity, maxHeight: 196)
-                                .matchedGeometryEffect(id: "\(selectedPrize.id)-bg", in: namespace)
+                        HStack(alignment: .top) {
+                            ImageLoader(selectedPrize.thumbnail, contentMode: .fill) { progress in
+                                Rectangle()
+                                    .foregroundStyle(.clear)
+                                    .frame(maxWidth: 150)
+                                    .overlay {
+                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                            .progressViewStyle(LinearProgressViewStyle())
+                                            .padding(.horizontal)
+                                    }
+                            }
+                            .matchedGeometryEffect(id: "\(selectedPrize.id)-img", in: namespace)
+                            .frame(width: 135, height: 180)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                             
-                            HStack(alignment: .top) {
-                                ImageLoader(selectedPrize.thumbnail, contentMode: .fill) { progress in
-                                    Rectangle()
-                                        .foregroundStyle(.clear)
-                                        .frame(maxWidth: 150)
-                                        .overlay {
-                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                .progressViewStyle(LinearProgressViewStyle())
-                                                .padding(.horizontal)
-                                        }
-                                }
-                                .matchedGeometryEffect(id: "\(selectedPrize.id)-img", in: namespace)
-                                .frame(width: 135, height: 180)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                            VStack {
+                                Text(selectedPrize.title)
+                                    .font(.custom(style: .body))
+                                    .fontWeight(.semibold)
+                                    .multilineTextAlignment(.leading)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                VStack {
-                                    Text(selectedPrize.title)
-                                        .font(.custom(style: .body))
-                                        .fontWeight(.semibold)
-                                        .multilineTextAlignment(.leading)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    
-                                    Text("Our support team will contact you shortly to arrange delivery.")
-                                        .font(.custom(style: .caption))
-                                        .foregroundStyle(.secondary)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    
-                                    Spacer()
-                                    
-                                    Text("Tap 'Redeem' to claim your prize!")
-                                        .font(.custom(style: .caption))
-                                        .foregroundStyle(.secondary)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    
-                                    if let balance = pcVM.balance {
-                                        Button {
-                                            Task {
-                                                await vm.redeemPrize(id: selectedPrize.id)
-                                            }
-                                        } label: {
-                                            ZStack {
-                                                VStack(spacing: 0) {
-                                                    Text(balance >= selectedPrize.amount ? "Redeem".uppercased() : "Not Enough Coin".uppercased())
+                                Text("Our support team will contact you shortly to arrange delivery.")
+                                    .font(.custom(style: .caption))
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                Spacer()
+                                
+                                Text("Tap 'Redeem' to claim your prize!")
+                                    .font(.custom(style: .caption))
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                if let balance = pcVM.balance {
+                                    Button {
+                                        Task {
+                                            await vm.redeemPrize(id: selectedPrize.id)
+                                        }
+                                    } label: {
+                                        ZStack {
+                                            VStack(spacing: 0) {
+                                                Text(balance >= selectedPrize.amount ? "Redeem".uppercased() : "Not Enough Coin".uppercased())
+                                                    .font(.custom(style: .subheadline))
+                                                    .fontWeight(.semibold)
+                                                
+                                                HStack(spacing: 3) {
+                                                    Image(.phantomCoin)
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fit)
+                                                        .frame(width: 18, height: 18)
+                                                        .shadow(color: Color.themeBG.opacity(0.15), radius: 3)
+                                                    
+                                                    Text(selectedPrize.amount.formattedWithSuffix())
                                                         .font(.custom(style: .subheadline))
                                                         .fontWeight(.semibold)
-                                                    
-                                                    HStack(spacing: 3) {
-                                                        Image(.phantomCoin)
-                                                            .resizable()
-                                                            .aspectRatio(contentMode: .fit)
-                                                            .frame(width: 18, height: 18)
-                                                            .shadow(color: Color.themeBG.opacity(0.15), radius: 3)
-                                                        
-                                                        Text(selectedPrize.amount.formattedWithSuffix())
-                                                            .font(.custom(style: .subheadline))
-                                                            .fontWeight(.semibold)
-                                                    }
-                                                }
-                                                .frame(maxWidth: .infinity)
-                                                .opacity(vm.loadingSections.contains(.redeeming) ? 0 : 1)
-                                                
-                                                if vm.loadingSections.contains(.redeeming) {
-                                                    ProgressView()
                                                 }
                                             }
+                                            .frame(maxWidth: .infinity)
+                                            .opacity(vm.loadingSections.contains(.redeeming) ? 0 : 1)
+                                            
+                                            if vm.loadingSections.contains(.redeeming) {
+                                                ProgressView()
+                                            }
                                         }
-                                        .buttonStyle(.borderedProminent)
-                                        .disabled(balance < selectedPrize.amount)
                                     }
+                                    .buttonStyle(.borderedProminent)
+                                    .disabled(balance < selectedPrize.amount)
                                 }
-                                .frame(height: 180)
                             }
-                            .padding(.all, 8)
+                            .frame(height: 180)
                         }
-                        .padding()
+                        .padding(.all, 8)
                     }
-                    .zIndex(5)
+                    .padding()
                 }
+                .zIndex(5)
             }
-            .background {
-                Rectangle()
-                    .fill(.themeBG.gradient)
-                    .ignoresSafeArea()
+        }
+        .background {
+            Rectangle()
+                .fill(.themeBG.gradient)
+                .ignoresSafeArea()
+        }
+        .onAppear {
+            isEmojiAnimating = true
+            Task {
+                await pcVM.refresh()
             }
-            .onAppear {
-                isEmojiAnimating = true
-                Task {
-                    await pcVM.refresh()
-                }
-            }
-            .onDisappear {
-                isEmojiAnimating = false
-            }
-            .handleNavigationDestination()
+        }
+        .onDisappear {
+            isEmojiAnimating = false
         }
     }
     
@@ -254,7 +250,7 @@ struct RewardsHubView: View {
                                     }
                                 }
                                 .onTapGesture {
-                                    appData.goTo(AppRoute.userProfile(userId: referredUser))
+                                    AppData.shared.goTo(AppRoute.userProfile(userId: referredUser))
                                 }
                             } else if let expiresIn = link.expiresAt.remainingTime(), let url = link.link {
                                 VStack {

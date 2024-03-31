@@ -23,7 +23,7 @@ struct FeedView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     Color.clear
-                        .frame(width: 0, height: 0)
+                        .frame(width: 0, height: 50)
                         .id(1)
                     
                     if !vm.isLoading && vm.items.isEmpty {
@@ -150,7 +150,7 @@ struct FeedView: View {
                     }
                 }
                 .onChange(of: appData.tappedTwice) { tapped in
-                    if tapped == .home {
+                    if tapped == .home && appData.homeActiveTab == .following {
                         withAnimation {
                             proxy.scrollTo(1)
                         }

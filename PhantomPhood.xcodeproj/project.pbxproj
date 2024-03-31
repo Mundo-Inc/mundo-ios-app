@@ -268,6 +268,7 @@
 		0B95AD402B7EDAF800F6E85B /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B95AD3F2B7EDAF800F6E85B /* HapticManager.swift */; };
 		0B95AD432B7EEE1F00F6E85B /* UserDataContainer.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0B95AD412B7EEE1F00F6E85B /* UserDataContainer.xcdatamodeld */; };
 		0B96D66C2AD2E73500612C27 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B96D66B2AD2E73500612C27 /* LocationManager.swift */; };
+		0B9844892BB8227D00390579 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9844882BB8227D00390579 /* RootView.swift */; };
 		0B985AE12AC9AFC200019A06 /* PlaceDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B985AE02AC9AFC200019A06 /* PlaceDM.swift */; };
 		0B997B632AC70E1A00579C9C /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B622AC70E1A00579C9C /* Notification.swift */; };
 		0B997B662AC711A300579C9C /* NotificationsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B652AC711A300579C9C /* NotificationsVM.swift */; };
@@ -657,6 +658,7 @@
 		0B95AD3F2B7EDAF800F6E85B /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		0B95AD422B7EEE1F00F6E85B /* UserDataContainer.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UserDataContainer.xcdatamodel; sourceTree = "<group>"; };
 		0B96D66B2AD2E73500612C27 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		0B9844882BB8227D00390579 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		0B985AE02AC9AFC200019A06 /* PlaceDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceDM.swift; sourceTree = "<group>"; };
 		0B997B622AC70E1A00579C9C /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		0B997B652AC711A300579C9C /* NotificationsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsVM.swift; sourceTree = "<group>"; };
@@ -1396,6 +1398,7 @@
 				0BF5B4AF2AB377C600DEC403 /* Info.plist */,
 				0B47FDA02B11060600F39527 /* AppRouter.swift */,
 				0B77EA3C2AAF855500C8DF87 /* ContentView.swift */,
+				0B9844882BB8227D00390579 /* RootView.swift */,
 				0B77EA3A2AAF855500C8DF87 /* PhantomPhoodApp.swift */,
 				0B77EA3E2AAF855600C8DF87 /* Assets.xcassets */,
 				0B6495582AB1FD04000E57AF /* Core */,
@@ -2089,6 +2092,7 @@
 				0BD9F9862B4D91E10040FCDA /* ReactionsDM.swift in Sources */,
 				0B026CDA2B5AB959002DAD24 /* Mission.swift in Sources */,
 				0B1610D42B63237800DCAFA5 /* UserDetail.swift in Sources */,
+				0B9844892BB8227D00390579 /* RootView.swift in Sources */,
 				0BC2E3102B22076D0002649D /* VideoHelper.swift in Sources */,
 				0B2694B62B8E90C4004FA5C8 /* ImageSaver.swift in Sources */,
 				0BCBC1902ACDEDDE00992D8E /* PlaceReviewsVM.swift in Sources */,
@@ -2472,7 +2476,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.61.0;
+				MARKETING_VERSION = 0.62.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2512,7 +2516,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.61.0;
+				MARKETING_VERSION = 0.62.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -24,14 +24,11 @@ struct ForYouView: View {
     @State private var readyToReferesh = true
     @State private var haptic = false
     
-    @Environment(\.mainWindowSize) private var mainWindowSize
-    
     var body: some View {
         ZStack {
             if !vm.items.isEmpty {
                 Pager(page: page, data: vm.items.indices, id: \.self) { index in
                     ForYouItem(index: index, forYouVM: vm, page: page)
-                        .frame(width: mainWindowSize.width, height: mainWindowSize.height)
                         .if(index == 0, transform: { view in
                             view
                                 .gesture(
@@ -74,7 +71,6 @@ struct ForYouView: View {
                 }
                 .singlePagination()
                 .pagingPriority(.simultaneous)
-                //                .delaysTouches(false)
                 .bounces(false)
                 .vertical()
                 .onPageChanged({ pageIndex in
@@ -82,13 +78,29 @@ struct ForYouView: View {
                     if page.index >= 0 && vm.items.count >= pageIndex + 1 {
                         switch vm.items[pageIndex].resource {
                         case .review(let feedReview):
-                            if let first = feedReview.videos.first, videoPlayerVM.playId != first.id {
-                                videoPlayerVM.playId = first.id
+                            if let first = feedReview.videos.first {
+                                if let playId = videoPlayerVM.playId, playId != first.id {
+                                    videoPlayerVM.playId = first.id
+                                } else if videoPlayerVM.playId == nil {
+                                    videoPlayerVM.playId = first.id
+                                }
+                            } else if videoPlayerVM.playId != nil {
+                                videoPlayerVM.playId = nil
+                            }
+                        case .homemade(let homemade):
+                            if let first = homemade.media.first, first.type == .video {
+                                if let playId = videoPlayerVM.playId, playId != first.id {
+                                    videoPlayerVM.playId = first.id
+                                } else if videoPlayerVM.playId == nil {
+                                    videoPlayerVM.playId = first.id
+                                }
                             } else if videoPlayerVM.playId != nil {
                                 videoPlayerVM.playId = nil
                             }
                         default:
-                            break
+                            if videoPlayerVM.playId != nil {
+                                videoPlayerVM.playId = nil
+                            }
                         }
                     }
                     
@@ -100,7 +112,6 @@ struct ForYouView: View {
                         }
                     }
                 })
-                .frame(width: mainWindowSize.width, height: mainWindowSize.height)
                 .overlay(alignment: .top) {
                     ProgressView(value: draggedAmount)
                         .opacity(draggedAmount < 0.1 ? 0 : draggedAmount * 0.5 + 0.5)
@@ -123,7 +134,6 @@ struct ForYouView: View {
                 }
             } else {
                 ForYouItemPlaceholder()
-                    .frame(width: mainWindowSize.width, height: mainWindowSize.height)
                     .ignoresSafeArea(edges: .top)
             }
         }
@@ -140,13 +150,6 @@ struct ForYouView: View {
                 }
             }
         }
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                if vm.isLoading {
-                    ProgressView()
-                }
-            }
-        }
         .onDisappear {
             if videoPlayerVM.playId != nil {
                 videoPlayerVM.playId = nil
@@ -157,8 +160,22 @@ struct ForYouView: View {
                 let item = vm.items[page.index]
                 switch item.resource {
                 case .review(let feedReview):
-                    if let first = feedReview.videos.first, videoPlayerVM.playId != first.id {
-                        videoPlayerVM.playId = first.id
+                    if let first = feedReview.videos.first {
+                        if let playId = videoPlayerVM.playId, playId != first.id {
+                            videoPlayerVM.playId = first.id
+                        } else if videoPlayerVM.playId == nil {
+                            videoPlayerVM.playId = first.id
+                        }
+                    } else if videoPlayerVM.playId != nil {
+                        videoPlayerVM.playId = nil
+                    }
+                case .homemade(let homemade):
+                    if let first = homemade.media.first, first.type == .video {
+                        if let playId = videoPlayerVM.playId, playId != first.id {
+                            videoPlayerVM.playId = first.id
+                        } else if videoPlayerVM.playId == nil {
+                            videoPlayerVM.playId = first.id
+                        }
                     } else if videoPlayerVM.playId != nil {
                         videoPlayerVM.playId = nil
                     }
@@ -171,8 +188,22 @@ struct ForYouView: View {
             if count > 0 && page.index == 0, let firstItem = vm.items.first {
                 switch firstItem.resource {
                 case .review(let feedReview):
-                    if let first = feedReview.videos.first, videoPlayerVM.playId != first.id {
-                        videoPlayerVM.playId = first.id
+                    if let first = feedReview.videos.first {
+                        if let playId = videoPlayerVM.playId, playId != first.id {
+                            videoPlayerVM.playId = first.id
+                        } else if videoPlayerVM.playId == nil {
+                            videoPlayerVM.playId = first.id
+                        }
+                    } else if videoPlayerVM.playId != nil {
+                        videoPlayerVM.playId = nil
+                    }
+                case .homemade(let homemade):
+                    if let first = homemade.media.first, first.type == .video {
+                        if let playId = videoPlayerVM.playId, playId != first.id {
+                            videoPlayerVM.playId = first.id
+                        } else if videoPlayerVM.playId == nil {
+                            videoPlayerVM.playId = first.id
+                        }
                     } else if videoPlayerVM.playId != nil {
                         videoPlayerVM.playId = nil
                     }

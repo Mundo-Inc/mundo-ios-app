@@ -26,181 +26,180 @@ struct ExploreView16: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            ZStack(alignment: .bottom) {
-                Map16(centerCoordinate: $vm.centerCoordinate, annotations: vm.searchResults != nil ? buildAnnotations(from: vm.searchResults!) : [], onTap: { coordinate in
-                    Task {
-                        let mapItem = await vm.mapClickHandler(coordinate: coordinate)
-                        if let mapItem {
-                            if let category = mapItem.pointOfInterestCategory {
-                                if !SearchDM.AcceptablePointOfInterestCategories.contains(category) {
-                                    withAnimation {
-                                        vm.selectedPlace = nil
-                                    }
-                                    return
-                                }
-                            }
-                            withAnimation {
-                                vm.selectedPlace = mapItem
-                            }
-                            await vm.fetchPlace(mapItem: mapItem)
-                        } else {
-                            withAnimation {
-                                vm.selectedPlace = nil
-                            }
-                        }
-                    }
-                }, mapRegion: $exploreSearchVM.mapRegion)
-                
-                if let item = vm.selectedPlace {
-                    VStack {
-                        HStack {
-                            HStack {
-                                if let imageCategory = item.pointOfInterestCategory {
-                                    imageCategory.image
-                                        .renderingMode(.template)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .foregroundStyle(.secondary)
-                                        .frame(height: 32)
-                                }
-                                
-                                VStack {
-                                    Text(item.name ?? "Unknown")
-                                        .lineLimit(1)
-                                        .font(.custom(style: .headline))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .padding(.top)
-                                    
-                                    Group {
-                                        if let distance = distanceFromMe(lat: item.placemark.coordinate.latitude, lng: item.placemark.coordinate.longitude, unit: .miles) {
-                                            Text("\(String(format: "%.1f", distance)) Miles away")
-                                        } else {
-                                            Text("- Miles away")
-                                        }
-                                    }
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .font(.custom(style: .caption))
-                                }
-                                
-                            }
-                            
-                            Button {
+            Map16(centerCoordinate: $vm.centerCoordinate, annotations: vm.searchResults != nil ? buildAnnotations(from: vm.searchResults!) : [], onTap: { coordinate in
+                Task {
+                    let mapItem = await vm.mapClickHandler(coordinate: coordinate)
+                    if let mapItem {
+                        if let category = mapItem.pointOfInterestCategory {
+                            if !SearchDM.AcceptablePointOfInterestCategories.contains(category) {
                                 withAnimation {
                                     vm.selectedPlace = nil
                                 }
-                            } label: {
-                                Image(systemName: "xmark")
-                                    .padding()
+                                return
                             }
                         }
-                        .padding(.leading, 8)
-                        
-                        NavigationLink(value: vm.selectedPlaceData != nil ? AppRoute.place(id: vm.selectedPlaceData!.id) : item.placemark.title != nil ? AppRoute.placeMapPlace(mapPlace: MapPlace(coordinate: item.placemark.coordinate, title: item.placemark.title!)) : nil) {
+                        withAnimation {
+                            vm.selectedPlace = mapItem
+                        }
+                        await vm.fetchPlace(mapItem: mapItem)
+                    } else {
+                        withAnimation {
+                            vm.selectedPlace = nil
+                        }
+                    }
+                }
+            }, mapRegion: $exploreSearchVM.mapRegion)
+            .ignoresSafeArea()
+            
+            if let item = vm.selectedPlace {
+                VStack {
+                    HStack {
+                        HStack {
+                            if let imageCategory = item.pointOfInterestCategory {
+                                imageCategory.image
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .foregroundStyle(.secondary)
+                                    .frame(height: 32)
+                            }
+                            
                             VStack {
-                                if let place = vm.selectedPlaceData {
-                                    HStack {
-                                        Text("\(place.activities.reviewCount) Reviews")
-                                        
-                                        if let phantomScore = place.scores.phantom {
-                                            Divider()
-                                                .frame(maxHeight: 10)
-                                            Text("👻 \(String(format: "%.0f", phantomScore))")
-                                        }
-                                        
-                                        if let priceRange = place.priceRange {
-                                            Divider()
-                                                .frame(maxHeight: 10)
-                                            Text(String(repeating: "$", count: priceRange))
-                                        }
-                                    }
-                                    .font(.custom(style: .body))
+                                Text(item.name ?? "Unknown")
+                                    .lineLimit(1)
+                                    .font(.custom(style: .headline))
                                     .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.top)
+                                
+                                Group {
+                                    if let distance = distanceFromMe(lat: item.placemark.coordinate.latitude, lng: item.placemark.coordinate.longitude, unit: .miles) {
+                                        Text("\(String(format: "%.1f", distance)) Miles away")
+                                    } else {
+                                        Text("- Miles away")
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .font(.custom(style: .caption))
+                            }
+                            
+                        }
+                        
+                        Button {
+                            withAnimation {
+                                vm.selectedPlace = nil
+                            }
+                        } label: {
+                            Image(systemName: "xmark")
+                                .padding()
+                        }
+                    }
+                    .padding(.leading, 8)
+                    
+                    NavigationLink(value: vm.selectedPlaceData != nil ? AppRoute.place(id: vm.selectedPlaceData!.id) : item.placemark.title != nil ? AppRoute.placeMapPlace(mapPlace: MapPlace(coordinate: item.placemark.coordinate, title: item.placemark.title!)) : nil) {
+                        VStack {
+                            if let place = vm.selectedPlaceData {
+                                HStack {
+                                    Text("\(place.activities.reviewCount) Reviews")
                                     
-                                    if !place.media.isEmpty {
-                                        ScrollView(.horizontal) {
-                                            HStack {
-                                                ForEach(place.media) { media in
-                                                    if let url = media.src {
-                                                        ImageLoader(url, contentMode: .fill) { progress in
-                                                            Rectangle()
-                                                                .foregroundStyle(.clear)
-                                                                .frame(maxWidth: 150)
-                                                                .overlay {
-                                                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                                        .progressViewStyle(LinearProgressViewStyle())
-                                                                        .padding(.horizontal)
-                                                                }
-                                                        }
-                                                        .frame(width: 90, height: 120)
-                                                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                                    if let phantomScore = place.scores.phantom {
+                                        Divider()
+                                            .frame(maxHeight: 10)
+                                        Text("👻 \(String(format: "%.0f", phantomScore))")
+                                    }
+                                    
+                                    if let priceRange = place.priceRange {
+                                        Divider()
+                                            .frame(maxHeight: 10)
+                                        Text(String(repeating: "$", count: priceRange))
+                                    }
+                                }
+                                .font(.custom(style: .body))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                if !place.media.isEmpty {
+                                    ScrollView(.horizontal) {
+                                        HStack {
+                                            ForEach(place.media) { media in
+                                                if let url = media.src {
+                                                    ImageLoader(url, contentMode: .fill) { progress in
+                                                        Rectangle()
+                                                            .foregroundStyle(.clear)
+                                                            .frame(maxWidth: 150)
+                                                            .overlay {
+                                                                ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                                    .progressViewStyle(LinearProgressViewStyle())
+                                                                    .padding(.horizontal)
+                                                            }
                                                     }
+                                                    .frame(width: 90, height: 120)
+                                                    .clipShape(RoundedRectangle(cornerRadius: 15))
                                                 }
                                             }
                                         }
-                                        .scrollIndicators(.hidden)
-                                    } else {
-                                        if let thumbnail = place.thumbnail {
-                                            ImageLoader(thumbnail, contentMode: .fill) { progress in
-                                                Rectangle()
-                                                    .foregroundStyle(.clear)
-                                                    .frame(maxWidth: 150)
-                                                    .overlay {
-                                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                            .progressViewStyle(LinearProgressViewStyle())
-                                                            .padding(.horizontal)
-                                                    }
-                                            }
-                                            .frame(height: 120)
-                                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                                        } else {
-                                            Text("No images found")
-                                        }
-                                    }
-                                } else {
-                                    HStack {
-                                        Text("... Reviews")
-                                        Divider()
-                                            .frame(maxHeight: 10)
-                                        Text("Score")
-                                        Divider()
-                                            .frame(maxHeight: 10)
-                                        Text("Price")
-                                    }
-                                    .font(.custom(style: .body))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .redacted(reason: .placeholder)
-                                    
-                                    ScrollView(.horizontal) {
-                                        HStack {
-                                            RoundedRectangle(cornerRadius: 15)
-                                                .frame(width: 90, height: 120)
-                                            RoundedRectangle(cornerRadius: 15)
-                                                .frame(width: 90, height: 120)
-                                            RoundedRectangle(cornerRadius: 15)
-                                                .frame(width: 90, height: 120)
-                                            RoundedRectangle(cornerRadius: 15)
-                                                .frame(width: 90, height: 120)
-                                            RoundedRectangle(cornerRadius: 15)
-                                                .frame(width: 90, height: 120)
-                                        }
                                     }
                                     .scrollIndicators(.hidden)
+                                } else {
+                                    if let thumbnail = place.thumbnail {
+                                        ImageLoader(thumbnail, contentMode: .fill) { progress in
+                                            Rectangle()
+                                                .foregroundStyle(.clear)
+                                                .frame(maxWidth: 150)
+                                                .overlay {
+                                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                        .progressViewStyle(LinearProgressViewStyle())
+                                                        .padding(.horizontal)
+                                                }
+                                        }
+                                        .frame(height: 120)
+                                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                                    } else {
+                                        Text("No images found")
+                                    }
                                 }
+                            } else {
+                                HStack {
+                                    Text("... Reviews")
+                                    Divider()
+                                        .frame(maxHeight: 10)
+                                    Text("Score")
+                                    Divider()
+                                        .frame(maxHeight: 10)
+                                    Text("Price")
+                                }
+                                .font(.custom(style: .body))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .redacted(reason: .placeholder)
+                                
+                                ScrollView(.horizontal) {
+                                    HStack {
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .frame(width: 90, height: 120)
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .frame(width: 90, height: 120)
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .frame(width: 90, height: 120)
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .frame(width: 90, height: 120)
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .frame(width: 90, height: 120)
+                                    }
+                                }
+                                .scrollIndicators(.hidden)
                             }
-                            .padding(.horizontal)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                         }
-                        .foregroundStyle(.primary)
+                        .padding(.horizontal)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     }
-                    .background(.thinMaterial)
-                    .clipShape(.rect(cornerRadius: 15))
-                    .frame(maxHeight: 240)
-                    .padding(.horizontal)
-                    .padding(.bottom)
-                    .transition(.move(edge: .bottom))
-                    .animation(.bouncy, value: vm.selectedPlace)
-                    .zIndex(2)
+                    .foregroundStyle(.primary)
                 }
+                .background(.thinMaterial)
+                .clipShape(.rect(cornerRadius: 15))
+                .frame(maxHeight: 240)
+                .padding(.horizontal)
+                .padding(.bottom)
+                .transition(.move(edge: .bottom))
+                .animation(.bouncy, value: vm.selectedPlace)
+                .zIndex(2)
             }
             
             ZStack {
@@ -228,11 +227,6 @@ struct ExploreView16: View {
                 }
             }
         }
-        .ignoresSafeArea(.keyboard)
-        .toolbarBackground(Color.themePrimary, for: .navigationBar)
-        .navigationTitle("Explore")
-        .navigationBarTitleDisplayMode(.inline)
-        .handleNavigationDestination()
     }
 }
 

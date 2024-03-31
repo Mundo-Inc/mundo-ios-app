@@ -60,14 +60,14 @@ struct ExploreView17: View {
                 
                 UserAnnotation()
             }
-            .environmentObject(vm)
-            .ignoresSafeArea()
             .mapStyle(.standard(emphasis: .automatic, pointsOfInterest: .excludingAll))
             .mapControlVisibility(.hidden)
             .onMapCameraChange(frequency: .continuous, vm.onMapCameraChangeHandler)
             .onMapCameraChange(frequency: .continuous, { mapCameraUpdateContext in
                 exploreSearchVM.mapRegion = mapCameraUpdateContext.region
             })
+            .ignoresSafeArea()
+            .environmentObject(vm)
             
             ZStack(alignment: .bottomTrailing) {
                 VStack(alignment: .trailing) {
@@ -138,7 +138,7 @@ struct ExploreView17: View {
                 }
                 .padding(.trailing, 8)
             }
-            .padding(.bottom, 80)
+            .padding(.bottom)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             
             VStack(alignment: .leading) {

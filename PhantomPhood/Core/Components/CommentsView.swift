@@ -9,29 +9,9 @@ import SwiftUI
 
 struct CommentsView: View {
     @ObservedObject private var vm = CommentsVM.shared
-    @ObservedObject private var appData = AppData.shared
     @ObservedObject private var auth = Authentication.shared
     
     @Environment(\.dismiss) private var dismiss
-    
-    func navigateToUserProfile(userId: String) {
-        if let currentUserId = auth.currentUser?.id, currentUserId == userId {
-            appData.activeTab = .myProfile
-            dismiss()
-            return
-        }
-        switch appData.activeTab {
-        case .home:
-            appData.homeNavStack.append(.userProfile(userId: userId))
-        case .explore:
-            appData.exploreNavStack.append(.userProfile(userId: userId))
-        case .rewardsHub:
-            appData.rewardsHubNavStack.append(.userProfile(userId: userId))
-        case .myProfile:
-            appData.myProfileNavStack.append(.userProfile(userId: userId))
-        }
-        dismiss()
-    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -105,9 +85,10 @@ struct CommentsView: View {
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 24, height: 30)
                             }
-                            .onTapGesture(perform: {
-                                navigateToUserProfile(userId: comment.author.id)
-                            })
+                            .onTapGesture {
+                                dismiss()
+                                AppData.shared.goToUser(comment.author.id)
+                            }
                             
                             HStack {
                                 VStack(alignment: .leading) {
@@ -163,7 +144,7 @@ struct CommentsView: View {
                         .swipeActions {
                             Button {
                                 dismiss()
-                                appData.goTo(AppRoute.report(id: comment.id, type: .comment))
+                                AppData.shared.goTo(AppRoute.report(id: comment.id, type: .comment))
                             } label: {
                                 Text("Report")
                             }

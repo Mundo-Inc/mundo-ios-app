@@ -8,22 +8,18 @@
 import SwiftUI
 
 struct ExploreView: View {
-    @ObservedObject private var appData = AppData.shared
     @StateObject private var exploreSearchVM = ExploreSearchVM()
     
     var body: some View {
-        NavigationStack(path: $appData.exploreNavStack) {
-            Group {
-                if #available(iOS 17.0, *) {
-                    ExploreView17()
-                } else {
-                    ExploreView16()
-                }
+        Group {
+            if #available(iOS 17.0, *) {
+                ExploreView17()
+            } else {
+                ExploreView16()
             }
-            .toolbarBackground(Color.themePrimary, for: .navigationBar)
-            .navigationBarTitleDisplayMode(.inline)
-            .handleNavigationDestination()
         }
+        .toolbarBackground(Color.themePrimary, for: .navigationBar)
+        .navigationBarTitleDisplayMode(.inline)
         .environmentObject(exploreSearchVM)
     }
 }

@@ -192,7 +192,7 @@ fileprivate struct PlaceCard: View {
                                     case .cafe:
                                         Image(systemName: "cup.and.saucer.fill")
                                     case .bakery:
-                                        Image(systemName: "storefront.fill")
+                                        Image(systemName: "birthday.cake.fill")
                                     case .nightlife:
                                         Image(systemName: "mug.fill")
                                     case .winery:

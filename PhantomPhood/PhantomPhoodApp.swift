@@ -19,6 +19,8 @@ struct PhantomPhoodApp: App {
     init() {
         // Network cache configuration
         configureNetworkCache()
+        
+        UITabBar.appearance().isHidden = true
     }
     
     var body: some Scene {

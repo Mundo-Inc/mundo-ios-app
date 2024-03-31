@@ -20,109 +20,99 @@ struct ForYouView17: View {
     
     @State private var scrollPosition: String? = nil
     
-    @Environment(\.mainWindowSize) private var mainWindowSize
-    
     var body: some View {
-        ZStack {
-            if !vm.items.isEmpty {
-                Color.clear
-                    .onAppear {
-                        if scrollPosition == nil {
-                            if let first = vm.items.first {
-                                scrollPosition = first.id
-                            }
-                        }
+        ScrollView(.vertical) {
+            LazyVStack(spacing: 0) {
+                if !vm.items.isEmpty {
+                    ForEach($vm.items) { $item in
+                        ForYouItem17(item: $item, forYouVM: vm, scrollPosition: $scrollPosition)
+                            .containerRelativeFrame(.vertical)
+                            .id($item.wrappedValue.id)
                     }
-            }
-            
-            ScrollView(.vertical) {
-                LazyVStack(spacing: 0) {
-                    if !vm.items.isEmpty {
-                        ForEach($vm.items) { $item in
-                            ForYouItem17(item: $item, forYouVM: vm, scrollPosition: $scrollPosition)
-                                .frame(width: mainWindowSize.width, height: mainWindowSize.height)
-                                .id($item.wrappedValue.id)
-                        }
-                    } else {
-                        ForYouItemPlaceholder()
-                            .frame(width: mainWindowSize.width, height: mainWindowSize.height)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .scrollTargetLayout()
-            }
-            .scrollPosition(id: $scrollPosition)
-            .ignoresSafeArea(edges: .top)
-            .scrollTargetBehavior(.paging)
-            .scrollIndicators(.never)
-            .refreshable {
-                Task {
-                    await vm.getForYou(.refresh)
+                } else {
+                    ForYouItemPlaceholder()
+                        .containerRelativeFrame(.vertical)
                 }
             }
-            .onChange(of: scrollPosition) { newValue in
-                if let scrollPosition = newValue {
-                    guard let itemIndex = vm.items.firstIndex(where: { $0.id == scrollPosition }) else { return }
-                    
-                    switch vm.items[itemIndex].resource {
-                    case .review(let feedReview):
-                        if let first = feedReview.videos.first, videoPlayerVM.playId != first.id {
+            .frame(maxWidth: .infinity)
+            .scrollTargetLayout()
+        }
+        .refreshable {
+            Task {
+                await vm.getForYou(.refresh)
+            }
+        }
+        .scrollPosition(id: $scrollPosition)
+        .scrollTargetBehavior(.paging)
+        .scrollIndicators(.never)
+        .onChange(of: vm.items.isEmpty) { isEmpty in
+            if !isEmpty && scrollPosition == nil, let first = vm.items.first  {
+                scrollPosition = first.id
+            }
+        }
+        .onChange(of: scrollPosition) { newValue in
+            if let scrollPosition = newValue {
+                guard let itemIndex = vm.items.firstIndex(where: { $0.id == scrollPosition }) else { return }
+                
+                switch vm.items[itemIndex].resource {
+                case .review(let feedReview):
+                    if let first = feedReview.videos.first {
+                        if let playId = videoPlayerVM.playId, playId != first.id {
                             videoPlayerVM.playId = first.id
-                        } else if videoPlayerVM.playId != nil {
-                            videoPlayerVM.playId = nil
-                        }
-                    case .homemade(let homemade):
-                        if let first = homemade.media.first, first.type == .video && videoPlayerVM.playId != first.id {
+                        } else if videoPlayerVM.playId == nil {
                             videoPlayerVM.playId = first.id
-                        } else if videoPlayerVM.playId != nil {
-                            videoPlayerVM.playId = nil
                         }
-                    default:
-                        if videoPlayerVM.playId != nil {
-                            videoPlayerVM.playId = nil
-                        }
+                    } else if videoPlayerVM.playId != nil {
+                        videoPlayerVM.playId = nil
                     }
-                    
-                    guard itemIndex >= vm.items.count - 5 else { return }
-                    
-                    if !vm.isLoading {
-                        Task {
-                            await vm.getForYou(.new)
+                case .homemade(let homemade):
+                    if let first = homemade.media.first, first.type == .video {
+                        if let playId = videoPlayerVM.playId, playId != first.id {
+                            videoPlayerVM.playId = first.id
+                        } else if videoPlayerVM.playId == nil {
+                            videoPlayerVM.playId = first.id
                         }
+                    } else if videoPlayerVM.playId != nil {
+                        videoPlayerVM.playId = nil
+                    }
+                default:
+                    if videoPlayerVM.playId != nil {
+                        videoPlayerVM.playId = nil
                     }
                 }
-            }
-            .onChange(of: appData.tappedTwice) {
-                if appData.tappedTwice == .home {
-                    if let first = vm.items.first {
-                        withAnimation(.bouncy(duration: 1)) {
-                            scrollPosition = first.id
-                        }
-                    }
-                    appData.tappedTwice = nil
+                
+                guard itemIndex >= vm.items.count - 5 else { return }
+                
+                if !vm.isLoading {
                     Task {
-                        if !vm.isLoading {
-                            HapticManager.shared.impact(style: .light)
-                            await vm.getForYou(.refresh)
-                            HapticManager.shared.notification(type: .success)
-                        }
+                        await vm.getForYou(.new)
                     }
                 }
             }
         }
-        .environment(\.colorScheme, .dark)
+        .onChange(of: appData.tappedTwice) { tapped in
+            if tapped == .home && appData.homeActiveTab == .forYou {
+                if let first = vm.items.first {
+                    withAnimation(.bouncy(duration: 1)) {
+                        scrollPosition = first.id
+                    }
+                }
+                appData.tappedTwice = nil
+                Task {
+                    if !vm.isLoading {
+                        HapticManager.shared.impact(style: .light)
+                        await vm.getForYou(.refresh)
+                        HapticManager.shared.notification(type: .success)
+                    }
+                }
+            }
+        }
+        .ignoresSafeArea(edges: .top)
         .sheet(isPresented: Binding(optionalValue: $forYouInfoVM.data), onDismiss: {
             forYouInfoVM.reset()
         }) {
             ForYouInfoView()
                 .presentationBackground(.thinMaterial)
-        }
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                if vm.isLoading {
-                    ProgressView()
-                }
-            }
         }
         .onDisappear {
             if videoPlayerVM.playId != nil {

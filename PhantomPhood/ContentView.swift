@@ -16,65 +16,39 @@ struct ContentView: View {
     
     @StateObject private var onboardingVM = OnboardingVM()
     
-    @State private var showActions: Bool = false
-    
     @StateObject private var actionManager = ActionManager()
     @StateObject private var alertManager = AlertManager()
     
-    init() {
-        UITabBar.appearance().isHidden = true
-    }
-    
     var body: some View {
-        ZStack(alignment: .bottom) {
-            TabView(selection: appData.tabViewSelectionHandler) {
-                HomeView()
-                    .tag(Tab.home)
-                
-                ExploreView()
-                    .tag(Tab.explore)
-                
-                RewardsHubView()
-                    .tag(Tab.rewardsHub)
-                
-                MyProfile()
-                    .tag(Tab.myProfile)
+        NavigationStack(path: $appData.homeNavStack) {
+            RootView()
+        }
+        .ignoresSafeArea(.keyboard)
+        .environmentObject(alertManager)
+        .environmentObject(actionManager)
+        .alert("Confirmation", isPresented: Binding(optionalValue: $alertManager.value), presenting: alertManager.value) { item in
+            Button {
+                item.callback()
+            } label: {
+                Text("Yes")
             }
-            .environmentObject(alertManager)
-            .environmentObject(actionManager)
-            .alert("Confirmation", isPresented: Binding(optionalValue: $alertManager.value), presenting: alertManager.value) { item in
-                Button {
-                    item.callback()
-                } label: {
-                    Text("Yes")
-                }
-                
-                Button("Cancel", role: .cancel) {
-                    alertManager.value = nil
-                }
-            } message: { item in
-                Text(item.message)
+            
+            Button("Cancel", role: .cancel) {
+                alertManager.value = nil
             }
-            .confirmationDialog("Actions", isPresented: Binding(optionalValue: $actionManager.value), presenting: actionManager.value) { value in
-                ForEach(value) { item in
-                    Button(item.title) {
-                        if let alertMessage = item.alertMessage {
-                            alertManager.value = .init(message: alertMessage, callback: item.callback)
-                        } else {
-                            item.callback()
-                        }
+        } message: { item in
+            Text(item.message)
+        }
+        .confirmationDialog("Actions", isPresented: Binding(optionalValue: $actionManager.value), presenting: actionManager.value) { value in
+            ForEach(value) { item in
+                Button(item.title) {
+                    if let alertMessage = item.alertMessage {
+                        alertManager.value = .init(message: alertMessage, callback: item.callback)
+                    } else {
+                        item.callback()
                     }
                 }
             }
-            
-            if appData.isRoot {
-                MainTabBarView(selection: appData.tabViewSelectionHandler, showActions: $showActions)
-                    .ignoresSafeArea(edges: .bottom)
-            }
-        }
-        .ignoresSafeArea(.keyboard)
-        .sheet(isPresented: $showActions) {
-            QuickActionsView()
         }
         .sheet(isPresented: $placeSelectorVM.isPresented) {
             PlaceSelectorView()
