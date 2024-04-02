@@ -31,6 +31,53 @@ final class DataStack {
         return persistentContainer.viewContext
     }
     
+    func removeRequestedRegions() throws {
+        let fetchedRegionsRequest: NSFetchRequest<RequestedRegionEntity> = RequestedRegionEntity.fetchRequest()
+        
+        let fetchedRegions = try persistentContainer.viewContext.fetch(fetchedRegionsRequest)
+        
+        fetchedRegions.forEach { persistentContainer.viewContext.delete($0) }
+        
+        try saveContext()
+    }
+    
+    func removeMapActivities() throws {
+        let mapActivitiesRequest: NSFetchRequest<MapActivityEntity> = MapActivityEntity.fetchRequest()
+        
+        let mapActivities = try persistentContainer.viewContext.fetch(mapActivitiesRequest)
+        
+        mapActivities.forEach { persistentContainer.viewContext.delete($0) }
+        
+        try saveContext()
+    }
+    
+    func removeUsers() throws {
+        let usersRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        
+        let users = try persistentContainer.viewContext.fetch(usersRequest)
+        
+        users.forEach { persistentContainer.viewContext.delete($0) }
+        
+        try saveContext()
+    }
+    
+    func removePlaces() throws {
+        let placesRequest: NSFetchRequest<PlaceEntity> = PlaceEntity.fetchRequest()
+        
+        let places = try persistentContainer.viewContext.fetch(placesRequest)
+        
+        places.forEach { persistentContainer.viewContext.delete($0) }
+        
+        try saveContext()
+    }
+    
+    func deleteAll() throws {
+        try? removeRequestedRegions()
+        try? removeMapActivities()
+        try? removeUsers()
+        try? removePlaces()
+    }
+    
     // MARK: - Core Data Saving support
     
     func saveContext() throws {

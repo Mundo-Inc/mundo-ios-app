@@ -161,7 +161,6 @@ struct ExploreView17: View {
                     .background(RoundedRectangle(cornerRadius: 25).foregroundStyle(Color.accentColor))
                 }
                 .foregroundStyle(Color.black)
-                .disabled(true)
                 
                 Menu {
                     Picker("Start Date", selection: $vm.startDate) {
@@ -271,7 +270,8 @@ fileprivate struct CustomAnnotation: MapContent {
                 .onTapGesture {
                     withAnimation {
                         if let latestMapContext = vm.latestMapContext {
-                            vm.panToRegion(.init(center: first.place.coordinates, span: latestMapContext.region.span).shiftCenter(yPercentage: -0.3))
+                            let span = latestMapContext.region.span.latitudeDelta < 0.3 ? latestMapContext.region.span : .init(latitudeDelta: 0.2, longitudeDelta: 0.15)
+                            vm.panToRegion(.init(center: first.place.coordinates, span: span).shiftCenter(yPercentage: -0.3))
                         } else {
                             vm.panToRegion(.init(center: first.place.coordinates, latitudinalMeters: 9000, longitudinalMeters: 9000).shiftCenter(yPercentage: -0.3))
                         }

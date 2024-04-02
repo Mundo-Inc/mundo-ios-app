@@ -40,7 +40,7 @@ struct MapActivity: Identifiable, Decodable {
         } catch {
             print("Error obtaining a permanent ID for userEntity: \(error)")
         }
-
+        
         user.addToMapActivities(mapActivityEntity)
         place.addToMapActivities(mapActivityEntity)
         

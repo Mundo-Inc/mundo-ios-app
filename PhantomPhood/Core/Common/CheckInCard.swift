@@ -39,6 +39,7 @@ struct CheckInCard: View {
                                             .progressViewStyle(LinearProgressViewStyle())
                                     }
                             }
+                            .frame(minHeight: 300)
                             .clipShape(RoundedRectangle(cornerRadius: 15))
                             
                             if checkin.caption != nil || (checkin.tags != nil && !checkin.tags!.isEmpty) {

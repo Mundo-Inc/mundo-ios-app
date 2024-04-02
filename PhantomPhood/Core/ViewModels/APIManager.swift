@@ -146,7 +146,7 @@ extension APIManager {
         var request = URLRequest(url: finalURL)
         request.httpMethod = method.rawValue
         request.addValue(contentType.headerValue, forHTTPHeaderField: "Content-Type")
-                
+        
         // Set Authorization token if available
         if let authToken = token {
             request.addValue(authToken, forHTTPHeaderField: "Authorization")
@@ -205,7 +205,7 @@ extension APIManager {
     enum ContentType {
         case applicationJson
         case multipartFormData(boundary: String)
-
+        
         var headerValue: String {
             switch self {
             case .applicationJson:

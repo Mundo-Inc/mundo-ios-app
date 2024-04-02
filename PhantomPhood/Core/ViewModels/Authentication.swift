@@ -303,6 +303,8 @@ final class Authentication: ObservableObject {
                 self.userSession = nil
             }
             
+            try? DataStack.shared.deleteAll()
+            
             UserSettings.shared.logoutCleanup()
             appData.reset()
         } catch {

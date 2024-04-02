@@ -29,7 +29,6 @@ final class ExploreVM17: ObservableObject {
     
     @Published var showSet = Set<String>()
     @Published var activities: [ClusteredMapActivity] = []
-    //    @Published var activities: [ClusteredMapActivity] = []
     
     @Published private(set) var loadingSections = Set<LoadingSection>()
     @Published var error: String? = nil
@@ -64,6 +63,20 @@ final class ExploreVM17: ObservableObject {
             .sink { value in
                 self.getSavedData(startDate: value.getDate)
                 self.removeRequestedRegions()
+            }
+            .store(in: &cancellables)
+        
+        $activitiesScope
+            .sink { value in
+                if value == .followings {
+                    try? self.dataStack.removeMapActivities()
+                }
+                self.removeRequestedRegions()
+                
+                self.getSavedData(startDate: self.startDate.getDate)
+                if let context = self.latestMapContext {
+                    self.onMapCameraChangeHandler(context)
+                }
             }
             .store(in: &cancellables)
         
@@ -154,9 +167,9 @@ final class ExploreVM17: ObservableObject {
         
         if !throttles.contains(.fetch) && !loadingSections.contains(.fetchActivities) {
             throttles.insert(.fetch)
-            
             Task {
                 await self.fetchData(rect: context.rect)
+                updateAnnotations()
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -170,24 +183,28 @@ final class ExploreVM17: ObservableObject {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.throttles.remove(.display)
-            if let context = self.latestMapContext {
-                DispatchQueue.global(qos: .userInitiated).async {
-                    var (acttivities, events) = self.makeCluster(self.originalItems.filter({ context.rect.contains(.init($0.place.coordinates)) }), events: self.originalEvents?.filter({ context.rect.contains(.init($0.place
-                        .coordinates)) }))
-                    
-                    DispatchQueue.main.async {
-                        if acttivities.count > 40 {
-                            acttivities = Array(acttivities.prefix(40))
-                        }
-                        self.events = events
-                        self.activities = acttivities
+            self.updateAnnotations()
+        }
+    }
+    
+    private func updateAnnotations() {
+        if let context = self.latestMapContext {
+            DispatchQueue.global(qos: .userInitiated).async {
+                var (acttivities, events) = self.makeCluster(self.originalItems.filter({ context.rect.contains(.init($0.place.coordinates)) }), events: self.originalEvents?.filter({ context.rect.contains(.init($0.place
+                    .coordinates)) }))
+                
+                DispatchQueue.main.async {
+                    if acttivities.count > 40 {
+                        acttivities = Array(acttivities.prefix(40))
                     }
+                    self.events = events
+                    self.activities = acttivities
                 }
             }
         }
     }
     
-    func makeCluster(_ items: [MapActivity], events: [Event]?) -> ([ClusteredMapActivity], [ClusteredMapActivity]) {
+    private func makeCluster(_ items: [MapActivity], events: [Event]?) -> ([ClusteredMapActivity], [ClusteredMapActivity]) {
         /// placeId, activity
         var dict: [String: [MapActivity]] = [:]
         
@@ -346,15 +363,15 @@ final class ExploreVM17: ObservableObject {
         let context = dataStack.viewContext
         
         do {
-            let existingActivities = try fetchExistingEntities(MapActivityEntity.self, ids: Set(activities.map { $0.id }), context: context)
-            let existingActivityIDs = Set(existingActivities.map { $0.id })
+            let existingActivities = try fetchExistingEntities(MapActivityEntity.self, ids: Set(activities.compactMap { $0.id }), context: context)
+            let existingActivityIDs = Set(existingActivities.compactMap { $0.id })
             let activitiesToAdd = activities.filter { !existingActivityIDs.contains($0.id) }
             
             // Exit if there is nothing to add
             guard !activitiesToAdd.isEmpty else { return }
             
-            let existingUsers = try fetchExistingEntities(UserEntity.self, ids: Set(activities.map { $0.user.id }), context: dataStack.viewContext)
-            let existingPlaces = try fetchExistingEntities(PlaceEntity.self, ids: Set(activities.map { $0.place.id }), context: dataStack.viewContext)
+            let existingUsers = try fetchExistingEntities(UserEntity.self, ids: Set(activities.compactMap { $0.user.id }), context: dataStack.viewContext)
+            let existingPlaces = try fetchExistingEntities(PlaceEntity.self, ids: Set(activities.compactMap { $0.place.id }), context: dataStack.viewContext)
             
             var users: [String: UserEntity] = [:]
             existingUsers.forEach { users[$0.id ?? ""] = $0 }
@@ -443,14 +460,8 @@ final class ExploreVM17: ObservableObject {
     }
     
     private func removeRequestedRegions() {
-        let fetchedRegionsRequest: NSFetchRequest<RequestedRegionEntity> = RequestedRegionEntity.fetchRequest()
-        
         do {
-            let fetchedRegions = try dataStack.viewContext.fetch(fetchedRegionsRequest)
-            
-            fetchedRegions.forEach { dataStack.viewContext.delete($0) }
-            
-            try dataStack.saveContext()
+            try dataStack.removeRequestedRegions()
             
             updateFetchedRegions()
         } catch {
