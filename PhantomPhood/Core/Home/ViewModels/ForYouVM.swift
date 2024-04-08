@@ -12,9 +12,15 @@ import SwiftUI
 class ForYouVM: ObservableObject {
     private let feedDM = FeedDM()
     private let reactionsDM = ReactionsDM()
+    private let conversationsDM = ConversationsDM()
     
     @Published var items: [FeedItem] = []
-    @Published var isLoading: Bool = false
+    @Published var loadingSections = Set<LoadingSection>()
+    
+    enum LoadingSection: Hashable {
+        case fetchingData
+        case startingConversation
+    }
     
     var page: Int = 1
     
@@ -25,13 +31,13 @@ class ForYouVM: ObservableObject {
     }
     
     func getForYou(_ action: RefreshNewAction) async {
-        guard !isLoading else { return }
+        guard !self.loadingSections.contains(.fetchingData) else { return }
         
         if action == .refresh {
             page = 1
         }
         
-        self.isLoading = true
+        self.loadingSections.insert(.fetchingData)
         do {
             let data = try await feedDM.getFeed(page: self.page, type: .forYou)
             
@@ -44,7 +50,21 @@ class ForYouVM: ObservableObject {
         } catch {
             print(error)
         }
-        self.isLoading = false
+        self.loadingSections.remove(.fetchingData)
+    }
+    
+    func startConversation(with userId: String) async {
+        self.loadingSections.insert(.startingConversation)
+        do {
+            let conversation = try await conversationsDM.createConversation(with: userId)
+            
+            HapticManager.shared.impact(style: .light)
+            
+            AppData.shared.goTo(.conversation(sid: conversation.sid, focusOnTextField: true))
+        } catch {
+            ToastVM.shared.toast(.init(type: .error, title: "Error", message: "Couldn't start a conversation"))
+        }
+        self.loadingSections.remove(.startingConversation)
     }
 
     /// Add reaction to item

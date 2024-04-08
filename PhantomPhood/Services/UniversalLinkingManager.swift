@@ -105,8 +105,8 @@ final class UniversalLinkingManager {
                 throw LinkingError.missingParam
             }
         }),
-        "notifications": RouteScheme(pattern: [], routeGetter: { _ in
-            return AppRoute.notifications
+        "inbox": RouteScheme(pattern: [], routeGetter: { _ in
+            return AppRoute.inbox
         }),
         "signup": RouteScheme(pattern: ["ref?"], authRouteGetter: { components in
             if let first = components.first {

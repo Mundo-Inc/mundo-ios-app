@@ -10,7 +10,7 @@ import Foundation
 struct HomeMade: Identifiable, Decodable {
     let id: String
     let content: String
-    let media: [Media]
+    let media: [MediaItem]
     let user: UserEssentials
     let tags: [UserEssentials]
     let createdAt: Date

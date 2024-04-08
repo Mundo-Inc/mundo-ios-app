@@ -16,6 +16,7 @@ enum LottieFiles: String {
     case friends = "Friends"
     case rewards = "Rewards"
     case rewardLightEffect = "RewardLightEffect"
+    case wanderingGhost = "WanderingGhost"
 }
 
 struct LottieView: UIViewRepresentable {

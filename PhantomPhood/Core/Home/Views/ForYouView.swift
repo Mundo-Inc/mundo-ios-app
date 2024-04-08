@@ -49,7 +49,7 @@ struct ForYouView: View {
                                         })
                                         .onEnded({ value in
                                             if value.translation.height > dragAmountToRefresh {
-                                                if !vm.isLoading && readyToReferesh {
+                                                if !vm.loadingSections.contains(.fetchingData) && readyToReferesh {
                                                     Task {
                                                         HapticManager.shared.impact(style: .light)
                                                         await vm.getForYou(.refresh)
@@ -106,7 +106,7 @@ struct ForYouView: View {
                     
                     guard pageIndex >= vm.items.count - 5 else { return }
                     
-                    if !vm.isLoading {
+                    if !vm.loadingSections.contains(.fetchingData) {
                         Task {
                             await vm.getForYou(.new)
                         }
@@ -123,7 +123,7 @@ struct ForYouView: View {
                             page.update(.moveToFirst)
                         }
                         appData.tappedTwice = nil
-                        if !vm.isLoading {
+                        if !vm.loadingSections.contains(.fetchingData) {
                             Task {
                                 HapticManager.shared.impact(style: .light)
                                 await vm.getForYou(.refresh)

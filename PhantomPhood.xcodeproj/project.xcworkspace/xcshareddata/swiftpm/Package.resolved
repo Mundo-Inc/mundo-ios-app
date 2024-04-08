@@ -1,13 +1,13 @@
 {
-  "originHash" : "571d7fcd4b3fb0f3c2edcee11689f2c8f221a10d8b517328bdd3db54f8c2b265",
+  "originHash" : "9aaf2ff0d62270d663ce583bec4985cc4a62be464c1642a886add550ef6d1065",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/abseil-cpp-binary.git",
       "state" : {
-        "revision" : "7ce7be095bc3ed3c98b009532fe2d7698c132614",
-        "version" : "1.2024011601.0"
+        "revision" : "748c7837511d0e6a507737353af268484e1745e2",
+        "version" : "1.2024011601.1"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/app-check.git",
       "state" : {
-        "revision" : "3e464dad87dad2d29bb29a97836789bf0f8f67d2",
-        "version" : "10.18.1"
+        "revision" : "c218c2054299b15ae577e818bbba16084d3eabe6",
+        "version" : "10.18.2"
       }
     },
     {
@@ -26,6 +26,15 @@
       "state" : {
         "revision" : "7e2c09cbeb3bb799f26c268dbedb26325ea722a9",
         "version" : "1.7.3"
+      }
+    },
+    {
+      "identity" : "conversations-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/twilio/conversations-ios",
+      "state" : {
+        "branch" : "latest",
+        "revision" : "92b8a814fd57fb11dabb0d9c3d2e11b90687c28a"
       }
     },
     {
@@ -78,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/grpc-binary.git",
       "state" : {
-        "revision" : "67043f6389d0e28b38fa02d1c6952afeb04d807f",
-        "version" : "1.62.1"
+        "revision" : "e9fad491d0673bdda7063a0341fb6b47a30c5359",
+        "version" : "1.62.2"
       }
     },
     {
@@ -123,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BranchMetrics/ios-branch-sdk-spm",
       "state" : {
-        "revision" : "1d16f0385527684bad829f345ab241f709a5a55d",
-        "version" : "3.4.0"
+        "revision" : "27a15e443284bbed168d8e06709b675678c2abe7",
+        "version" : "3.4.1"
       }
     },
     {
@@ -150,8 +159,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/airbnb/lottie-ios.git",
       "state" : {
-        "revision" : "7fe8b6f697ae7db4bf0df270119592cb5d502848",
-        "version" : "4.4.1"
+        "revision" : "ab15129d567eda5da0631fcba23de60144a612f4",
+        "version" : "4.4.2"
       }
     },
     {
@@ -206,6 +215,15 @@
       "state" : {
         "revision" : "4ddc04c801aac143090bb14cf26603a3bf9c74cb",
         "version" : "2.5.0"
+      }
+    },
+    {
+      "identity" : "twilsock-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/twilio/twilsock-ios",
+      "state" : {
+        "revision" : "b643e5bbe4131615cb9b950ba549091f0e366441",
+        "version" : "2.0.4"
       }
     },
     {

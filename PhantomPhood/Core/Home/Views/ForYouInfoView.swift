@@ -109,7 +109,7 @@ struct ForYouInfoView: View {
                         }
                         .padding()
                         .onTapGesture {
-                            appData.goTo(AppRoute.userProfile(userId: data.user.id))
+                            appData.goToUser(data.user.id)
                         }
                         
                         review

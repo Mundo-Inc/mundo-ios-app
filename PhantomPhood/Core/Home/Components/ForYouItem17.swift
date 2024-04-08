@@ -53,42 +53,21 @@ struct ForYouItem17: View {
     
     var body: some View {
         ZStack {
-            Color.themePrimary
-                .onChange(of: scrollPosition) { newValue in
-                    if newValue == item.id {
-                        // If user changed to next media, start playing correct media
-                        switch item.resource {
-                        case .review(let feedReview):
-                            if !tabPage.isEmpty && feedReview.videos.contains(where: { $0.id == tabPage })  {
-                                videoPlayerVM.playId = tabPage
-                            }
-                        case .homemade(let homemade):
-                            if !tabPage.isEmpty && homemade.media.contains(where: { $0.id == tabPage && $0.type == .video })  {
-                                videoPlayerVM.playId = tabPage
-                            }
-                        default:
-                            break
-                        }
-                    } else {
-                        time = .zero
-                    }
-                }
-            
-            if appData.activeTab == .home && appData.homeActiveTab == .forYou && appData.homeNavStack.isEmpty { // Stop video if user navigates
-                ZStack {
-                    switch item.resource {
-                    case .review(let feedReview):
-                        Color.clear
-                            .onChange(of: tabPage) { newTab in
-                                if scrollPosition == item.id {
-                                    if feedReview.videos.contains(where: { $0.id == newTab }) {
-                                        videoPlayerVM.playId = newTab
-                                    } else {
-                                        videoPlayerVM.playId = nil
-                                    }
+            if appData.activeTab == .home && appData.homeActiveTab == .forYou && appData.navStack.isEmpty { // Stop video if user navigates
+                switch item.resource {
+                case .review(let feedReview):
+                    Color.clear
+                        .onChange(of: tabPage) { newTab in
+                            if scrollPosition == item.id {
+                                if feedReview.videos.contains(where: { $0.id == newTab }) {
+                                    videoPlayerVM.playId = newTab
+                                } else {
+                                    videoPlayerVM.playId = nil
                                 }
                             }
-                        
+                        }
+                    
+                    Group {
                         if feedReview.images.count + feedReview.videos.count > 1 {
                             TabView(selection: $tabPage) {
                                 ForEach(feedReview.videos) { video in
@@ -143,6 +122,7 @@ struct ForYouItem17: View {
                                                         .padding(.horizontal)
                                                 }
                                         }
+                                        .contentShape(.rect)
                                         .ignoresSafeArea(edges: .top)
                                         .tag(image.id)
                                     }
@@ -161,6 +141,7 @@ struct ForYouItem17: View {
                                                 .padding(.horizontal)
                                         }
                                 }
+                                .contentShape(.rect)
                                 .ignoresSafeArea(edges: .top)
                             } else if let video = feedReview.videos.first, let url = video.src {
                                 ZStack {
@@ -200,32 +181,59 @@ struct ForYouItem17: View {
                                 .tag(video.id)
                             }
                         }
-                    case .checkin(let feedCheckin):
-                        if let image = feedCheckin.image, let url = image.src {
-                            ImageLoader(url, contentMode: .fill) { progress in
-                                Rectangle()
-                                    .foregroundStyle(.clear)
-                                    .frame(maxWidth: 150)
-                                    .overlay {
-                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                            .progressViewStyle(LinearProgressViewStyle())
-                                            .padding(.horizontal)
-                                    }
-                            }
-                            .ignoresSafeArea(edges: .top)
+                    }
+                    .onTapGesture(count: 2, perform: {
+                        Task {
+                            await forYouVM.addReaction(NewReaction(reaction: "❤️", type: .emoji), to: $item)
                         }
-                    case .homemade(let homemade):
-                        Color.clear
-                            .onChange(of: tabPage) { newTab in
-                                if scrollPosition == item.id {
-                                    if homemade.media.contains(where: { $0.id == newTab && $0.type == .video }) {
-                                        videoPlayerVM.playId = newTab
-                                    } else {
-                                        videoPlayerVM.playId = nil
-                                    }
+                    })
+                    .onTapGesture {
+                        if videoPlayerVM.playId != nil {
+                            withAnimation {
+                                videoPlayerVM.isMute = !videoPlayerVM.isMute
+                            }
+                        }
+                    }
+                case .checkin(let feedCheckin):
+                    if let image = feedCheckin.image, let url = image.src {
+                        ImageLoader(url, contentMode: .fill) { progress in
+                            Rectangle()
+                                .foregroundStyle(.clear)
+                                .frame(maxWidth: 150)
+                                .overlay {
+                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                        .progressViewStyle(LinearProgressViewStyle())
+                                        .padding(.horizontal)
+                                }
+                        }
+                        .contentShape(.rect)
+                        .ignoresSafeArea(edges: .top)
+                        .onTapGesture(count: 2, perform: {
+                            Task {
+                                await forYouVM.addReaction(NewReaction(reaction: "❤️", type: .emoji), to: $item)
+                            }
+                        })
+                        .onTapGesture {
+                            if videoPlayerVM.playId != nil {
+                                withAnimation {
+                                    videoPlayerVM.isMute = !videoPlayerVM.isMute
                                 }
                             }
-                        
+                        }
+                    }
+                case .homemade(let homemade):
+                    Color.clear
+                        .onChange(of: tabPage) { newTab in
+                            if scrollPosition == item.id {
+                                if homemade.media.contains(where: { $0.id == newTab && $0.type == .video }) {
+                                    videoPlayerVM.playId = newTab
+                                } else {
+                                    videoPlayerVM.playId = nil
+                                }
+                            }
+                        }
+                    
+                    Group {
                         if homemade.media.count > 1 {
                             TabView(selection: $tabPage) {
                                 ForEach(homemade.media) { m in
@@ -279,6 +287,7 @@ struct ForYouItem17: View {
                                                             .padding(.horizontal)
                                                     }
                                             }
+                                            .contentShape(.rect)
                                             .ignoresSafeArea(edges: .top)
                                             .tag(m.id)
                                         } else {
@@ -338,31 +347,32 @@ struct ForYouItem17: View {
                                                     .padding(.horizontal)
                                             }
                                     }
+                                    .contentShape(.rect)
                                     .ignoresSafeArea(edges: .top)
                                 }
                             }
                         }
-                    default:
-                        VStack {
-                            Text("Unable to load\nPlease Skip this")
-                                .font(.custom(style: .headline))
-                            Text("New features are coming. Please check for app update soon")
-                                .font(.custom(style: .body))
-                                .foregroundStyle(.secondary)
-                                .padding()
+                    }
+                    .onTapGesture(count: 2, perform: {
+                        Task {
+                            await forYouVM.addReaction(NewReaction(reaction: "❤️", type: .emoji), to: $item)
+                        }
+                    })
+                    .onTapGesture {
+                        if videoPlayerVM.playId != nil {
+                            withAnimation {
+                                videoPlayerVM.isMute = !videoPlayerVM.isMute
+                            }
                         }
                     }
-                }
-                .onTapGesture(count: 2, perform: {
-                    Task {
-                        await forYouVM.addReaction(NewReaction(reaction: "❤️", type: .emoji), to: $item)
-                    }
-                })
-                .onTapGesture {
-                    if videoPlayerVM.playId != nil {
-                        withAnimation {
-                            videoPlayerVM.isMute = !videoPlayerVM.isMute
-                        }
+                default:
+                    VStack {
+                        Text("Unable to load\nPlease Skip this")
+                            .font(.custom(style: .headline))
+                        Text("New features are coming. Please check for app update soon")
+                            .font(.custom(style: .body))
+                            .foregroundStyle(.secondary)
+                            .padding()
                     }
                 }
             }
@@ -375,26 +385,43 @@ struct ForYouItem17: View {
                     switch item.resource {
                     case .review(let feedReview):
                         HStack {
-                            VStack(spacing: -15) {
-                                ProfileImage(item.user.profileImage, size: 50)
-                                
-                                LevelView(level: item.user.progress.level)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 24, height: 30)
-                            }
-                            .onTapGesture {
-                                appData.goTo(AppRoute.userProfile(userId: item.user.id))
-                            }
+                            ItemUserProfile()
                             
                             VStack {
-                                Text(item.user.name)
-                                    .font(.custom(style: .headline))
-                                    .frame(height: 18)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .foregroundStyle(.white)
-                                    .onTapGesture {
-                                        appData.goTo(AppRoute.userProfile(userId: item.user.id))
+                                HStack {
+                                    Text(item.user.name)
+                                        .font(.custom(style: .headline))
+                                        .frame(height: 18)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .foregroundStyle(.white)
+                                        .fontWeight(.semibold)
+                                        .onTapGesture {
+                                            appData.goToUser(item.user.id)
+                                        }
+                                    
+                                    if Authentication.shared.currentUser?.id != item.user.id {
+                                        HStack {
+                                            if self.forYouVM.loadingSections.contains(.startingConversation) {
+                                                ProgressView()
+                                                    .controlSize(.mini)
+                                            } else {
+                                                Text("Message")
+                                            }
+                                        }
+                                        .frame(height: 26)
+                                        .frame(maxWidth: 90)
+                                        .font(.custom(style: .footnote))
+                                        .fontWeight(.regular)
+                                        .background(.ultraThinMaterial)
+                                        .clipShape(.rect(cornerRadius: 5))
+                                        .foregroundStyle(Color.primary)
+                                        .onTapGesture {
+                                            Task {
+                                                await self.forYouVM.startConversation(with: item.user.id)
+                                            }
+                                        }
                                     }
+                                }
                                 
                                 HStack {
                                     if let place = item.place {
@@ -491,26 +518,43 @@ struct ForYouItem17: View {
                         }
                     case .checkin(let feedCheckin):
                         HStack {
-                            VStack(spacing: -15) {
-                                ProfileImage(item.user.profileImage, size: 50)
-                                
-                                LevelView(level: item.user.progress.level)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 24, height: 30)
-                            }
-                            .onTapGesture {
-                                appData.goTo(AppRoute.userProfile(userId: item.user.id))
-                            }
+                            ItemUserProfile()
                             
                             VStack {
-                                Text(item.user.name)
-                                    .font(.custom(style: .headline))
-                                    .frame(height: 18)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .foregroundStyle(.white)
-                                    .onTapGesture {
-                                        appData.goTo(AppRoute.userProfile(userId: item.user.id))
+                                HStack {
+                                    Text(item.user.name)
+                                        .font(.custom(style: .headline))
+                                        .frame(height: 18)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .foregroundStyle(.white)
+                                        .fontWeight(.semibold)
+                                        .onTapGesture {
+                                            appData.goToUser(item.user.id)
+                                        }
+                                    
+                                    if Authentication.shared.currentUser?.id != item.user.id {
+                                        HStack {
+                                            if self.forYouVM.loadingSections.contains(.startingConversation) {
+                                                ProgressView()
+                                                    .controlSize(.mini)
+                                            } else {
+                                                Text("Message")
+                                            }
+                                        }
+                                        .frame(height: 26)
+                                        .frame(maxWidth: 90)
+                                        .font(.custom(style: .footnote))
+                                        .fontWeight(.regular)
+                                        .background(.ultraThinMaterial)
+                                        .clipShape(.rect(cornerRadius: 5))
+                                        .foregroundStyle(Color.primary)
+                                        .onTapGesture {
+                                            Task {
+                                                await self.forYouVM.startConversation(with: item.user.id)
+                                            }
+                                        }
                                     }
+                                }
                                 
                                 HStack {
                                     if let place = item.place {
@@ -594,27 +638,43 @@ struct ForYouItem17: View {
                         }
                     case .homemade(let homemade):
                         HStack {
-                            VStack(spacing: -15) {
-                                ProfileImage(item.user.profileImage, size: 50)
-                                
-                                LevelView(level: item.user.progress.level)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 24, height: 30)
-                            }
-                            .onTapGesture {
-                                appData.goTo(AppRoute.userProfile(userId: item.user.id))
-                            }
+                            ItemUserProfile()
                             
                             VStack {
-                                Text(item.user.name)
-                                    .font(.custom(style: .headline))
-                                    .frame(height: 18)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .foregroundStyle(.white)
-                                    .fontWeight(.semibold)
-                                    .onTapGesture {
-                                        appData.goTo(AppRoute.userProfile(userId: item.user.id))
+                                HStack {
+                                    Text(item.user.name)
+                                        .font(.custom(style: .headline))
+                                        .frame(height: 18)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .foregroundStyle(.white)
+                                        .fontWeight(.semibold)
+                                        .onTapGesture {
+                                            appData.goToUser(item.user.id)
+                                        }
+                                    
+                                    if Authentication.shared.currentUser?.id != item.user.id {
+                                        HStack {
+                                            if self.forYouVM.loadingSections.contains(.startingConversation) {
+                                                ProgressView()
+                                                    .controlSize(.mini)
+                                            } else {
+                                                Text("Message")
+                                            }
+                                        }
+                                        .frame(height: 26)
+                                        .frame(maxWidth: 90)
+                                        .font(.custom(style: .footnote))
+                                        .fontWeight(.regular)
+                                        .background(.ultraThinMaterial)
+                                        .clipShape(.rect(cornerRadius: 5))
+                                        .foregroundStyle(Color.primary)
+                                        .onTapGesture {
+                                            Task {
+                                                await self.forYouVM.startConversation(with: item.user.id)
+                                            }
+                                        }
                                     }
+                                }
                                 
                                 HStack {
                                     Text("@\(item.user.username)")
@@ -762,6 +822,25 @@ struct ForYouItem17: View {
             .padding(.top, mainWindowSafeAreaInsets.top + 40)
             .font(.custom(style: .body))
         }
+        .onChange(of: scrollPosition) { newValue in
+            if newValue == item.id {
+                // If user changed to next media, start playing correct media
+                switch item.resource {
+                case .review(let feedReview):
+                    if !tabPage.isEmpty && feedReview.videos.contains(where: { $0.id == tabPage })  {
+                        videoPlayerVM.playId = tabPage
+                    }
+                case .homemade(let homemade):
+                    if !tabPage.isEmpty && homemade.media.contains(where: { $0.id == tabPage && $0.type == .video })  {
+                        videoPlayerVM.playId = tabPage
+                    }
+                default:
+                    break
+                }
+            } else {
+                time = .zero
+            }
+        }
         .onDisappear {
             // Reset tab page to frist media
             switch item.resource {
@@ -772,6 +851,20 @@ struct ForYouItem17: View {
             default:
                 break
             }
+        }
+    }
+    
+    @ViewBuilder
+    private func ItemUserProfile() -> some View {
+        VStack(spacing: -15) {
+            ProfileImage(item.user.profileImage, size: 50)
+            
+            LevelView(level: item.user.progress.level)
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 24, height: 30)
+        }
+        .onTapGesture {
+            appData.goToUser(item.user.id)
         }
     }
     

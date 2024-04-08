@@ -54,7 +54,7 @@ final class ExploreVM17: ObservableObject {
     
     var latestMapContext: MapCameraUpdateContext?
     
-    private var cancellables = [AnyCancellable]()
+    private var cancellables: Set<AnyCancellable> = []
     
     init() {
         updateFetchedRegions()

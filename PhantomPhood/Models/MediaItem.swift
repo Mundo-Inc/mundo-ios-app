@@ -1,5 +1,5 @@
 //
-//  Media.swift
+//  MediaItem.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 1/26/24.
@@ -11,7 +11,7 @@ enum MediaType: String, Decodable {
     case image = "image"
     case video = "video"
 }
-struct Media: Identifiable, Decodable {
+struct MediaItem: Identifiable, Decodable {
     let id: String
     let src: URL?
     let caption: String?

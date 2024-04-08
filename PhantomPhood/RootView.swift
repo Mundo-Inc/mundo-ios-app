@@ -23,7 +23,7 @@ struct RootView: View {
                 RewardsHubView()
                     .tag(Tab.rewardsHub)
                 
-                MyProfile()
+                MyProfileView()
                     .tag(Tab.myProfile)
             }
             

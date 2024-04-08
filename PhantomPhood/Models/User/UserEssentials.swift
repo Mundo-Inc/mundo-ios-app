@@ -78,6 +78,19 @@ extension UserEssentials {
         progress = .init(level: Int(entity.level), xp: Int(entity.xp))
     }
     
+    init(entity: UserEntity) throws {
+        guard let id = entity.id, let name = entity.name, let username = entity.username else {
+            throw CancellationError()
+        }
+        
+        self.id = id
+        self.name = name
+        self.username = username
+        self.verified = entity.verified
+        self.profileImage = entity.profileImage != nil ? URL(string: entity.profileImage!) : nil
+        self.progress = .init(level: Int(entity.level), xp: Int(entity.xp))
+    }
+    
     func createUserEntity(context: NSManagedObjectContext) -> UserEntity {
         let userEntity = UserEntity(context: context)
         userEntity.id = self.id

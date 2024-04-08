@@ -12,20 +12,16 @@ class UserProfileVM: ObservableObject {
     private var id: String? = nil
     
     private let userProfileDM = UserProfileDM()
+    private let conversationsDM = ConversationsDM()
     private let toastManager = ToastVM.shared
     
-    @Published private(set) var isLoading = false
+    @Published private(set) var loadingSections = Set<LoadingSection>()
     @Published private(set) var isFollowing: Bool? = nil
     @Published private(set) var user: UserDetail?
     @Published private(set) var error: String?
     
     @Published var showActions = false
     @Published var blockStatus: BlockStatus? = nil
-    
-    enum BlockStatus {
-        case isBlocked
-        case hasBlocked
-    }
     
     init(id: String) {
         self.id = id
@@ -42,6 +38,7 @@ class UserProfileVM: ObservableObject {
     }
     
     func fetchUser(username: String? = nil) async {
+        self.loadingSections.insert(.fetchingUserData)
         if let id = self.id {
             do {
                 let theUser = try await userProfileDM.fetch(id: id)
@@ -60,7 +57,6 @@ class UserProfileVM: ObservableObject {
                             self.blockStatus = .hasBlocked
                         }
                         self.user = nil
-                        self.isLoading = false
                         self.isFollowing = nil
                     }
                     self.error = serverError.message
@@ -89,7 +85,6 @@ class UserProfileVM: ObservableObject {
                             self.blockStatus = .hasBlocked
                         }
                         self.user = nil
-                        self.isLoading = false
                         self.isFollowing = nil
                     }
                     self.error = serverError.message
@@ -100,62 +95,97 @@ class UserProfileVM: ObservableObject {
                 }
             }
         }
+        self.loadingSections.remove(.fetchingUserData)
     }
-        
+    
     func follow() async {
         guard let id = self.id else { return }
+        
+        self.loadingSections.insert(.followOperation)
         do {
             try await userProfileDM.follow(id: id)
             self.isFollowing = true
-            if let user {
-                toastManager.toast(Toast(type: .success, title: "New Connection", message: "You are now following \(user.name)"))
-            }
+            HapticManager.shared.notification(type: .success)
         } catch {
-            if let user {
-                toastManager.toast(Toast(type: .error, title: "Failed", message: "Failed to follow \(user.name)"))
-            }
+            toastManager.toast(Toast(type: .error, title: "Failed", message: "Failed to follow \(user?.name ?? "this user")"))
         }
+        self.loadingSections.remove(.followOperation)
     }
     
     func unfollow() async {
         guard let id = self.id else { return }
+        
+        self.loadingSections.insert(.followOperation)
         do {
             try await userProfileDM.unfollow(id: id)
             self.isFollowing = false
-            if let user {
-                toastManager.toast(Toast(type: .success, title: "Unfollow", message: "Successfully unfollowed \(user.name)"))
-            }
+            HapticManager.shared.notification(type: .success)
         } catch {
-            if let user {
-                toastManager.toast(Toast(type: .error, title: "Failed", message: "Failed to unfollow \(user.name)"))
-            }
+            toastManager.toast(Toast(type: .error, title: "Failed", message: "Failed to unfollow \(user?.name ?? "this user")"))
         }
+        self.loadingSections.remove(.followOperation)
     }
     
     func block() async {
         guard let id = self.id else { return }
-        self.isLoading = true
+        
+        self.loadingSections.insert(.blockOperation)
         do {
             try await userProfileDM.block(id: id)
             self.user = nil
             self.isFollowing = nil
             self.blockStatus = .isBlocked
+            
+            HapticManager.shared.notification(type: .success)
         } catch {
             print(error)
         }
-        self.isLoading = false
+        self.loadingSections.remove(.blockOperation)
     }
     
     func unblock() async {
         guard let id = self.id else { return }
-        self.isLoading = true
+        
+        self.loadingSections.insert(.blockOperation)
         do {
             try await userProfileDM.unblock(id: id)
             self.blockStatus = nil
             await fetchUser()
+            
+            HapticManager.shared.notification(type: .success)
         } catch {
             print(error)
         }
-        self.isLoading = false
+        self.loadingSections.remove(.blockOperation)
+    }
+    
+    func startConversation() async {
+        guard let id else { return }
+        
+        self.loadingSections.insert(.startingConversation)
+        do {
+            let conversation = try await conversationsDM.createConversation(with: id)
+            
+            HapticManager.shared.impact(style: .light)
+            
+            AppData.shared.goTo(.conversation(sid: conversation.sid, focusOnTextField: true))
+        } catch {
+            ToastVM.shared.toast(.init(type: .error, title: "Error", message: "Couldn't start a conversation with \(self.user?.name ?? "this user")"))
+        }
+        self.loadingSections.remove(.startingConversation)
+    }
+    
+    // MARK: Enums
+    
+    enum BlockStatus {
+        case isBlocked
+        case hasBlocked
+    }
+    
+    enum LoadingSection: Hashable {
+        case fetchingUserData
+        case startingConversation
+        case blockOperation
+        case followOperation
     }
 }

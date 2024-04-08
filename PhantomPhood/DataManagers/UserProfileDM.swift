@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import CoreData
 
 final class UserProfileDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
+    private let dataManager = DataStack.shared
     
     /// No authentication needed
     func getUserEssentials(id: String) async throws -> UserEssentials {
@@ -18,6 +20,38 @@ final class UserProfileDM {
         guard let data = data else {
             throw URLError(.badServerResponse)
         }
+        
+        return data.data
+    }
+    
+    func getUserEssentialsAndUpdate(id: String, returnIfFound: Bool = false, coreDataCompletion: @escaping (UserEssentials) -> Void) async throws -> UserEssentials? {
+        do {
+            let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+            request.predicate = NSPredicate(format: "id == %@", id)
+            request.fetchLimit = 1
+            
+            if let user = try dataManager.viewContext.fetch(request).first,
+               let userEssentials = try? UserEssentials(entity: user),
+               let savedAt = user.savedAt {
+                if Date().timeIntervalSince(savedAt) < 60 * 60 * 24 {
+                    coreDataCompletion(userEssentials)
+                    if returnIfFound {
+                        return nil
+                    }
+                }
+            }
+        } catch {
+            print("DEBUG: Error getting user infor from CoreData")
+        }
+        
+        let data = try await apiManager.requestData("/users/\(id)?view=basic", method: .get) as APIResponse<UserEssentials>?
+        
+        guard let data = data else {
+            throw URLError(.badServerResponse)
+        }
+
+        // update CoreData
+        dataManager.createOrUpdateUser(userEssentials: data.data)
         
         return data.data
     }

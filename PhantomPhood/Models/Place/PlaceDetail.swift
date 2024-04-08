@@ -47,7 +47,7 @@ struct PlaceDetail: Identifiable, Decodable {
     let activities: PlaceOverview.Activities
     
     let thirdParty: ThirdPartyResult
-    let media: [Media]
+    let media: [MediaItem]
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
@@ -66,7 +66,7 @@ extension PlaceDetail {
         scores = try container.decode(PlaceScores.self, forKey: .scores)
         thirdParty = try container.decode(ThirdPartyResult.self, forKey: .thirdParty)
         activities = try container.decode(PlaceOverview.Activities.self, forKey: .activities)
-        media = try container.decode([Media].self, forKey: .media)
+        media = try container.decode([MediaItem].self, forKey: .media)
         
         amenity = try container.decodeIfPresent(PlaceAmenity.self, forKey: .amenity)
         description = try container.decodeIfPresent(String.self, forKey: .description)

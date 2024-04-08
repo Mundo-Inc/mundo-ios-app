@@ -21,14 +21,11 @@ final class NotificationsVM: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var hasMore: Bool = true
     
+    @Published var activeTab: Tab = .messages
+    
     var page: Int = 1
     
-    enum GetNotificationAction {
-        case refresh
-        case new
-    }
-    
-    func getNotifications(_ action: GetNotificationAction) async {
+    func getNotifications(_ action: RefreshNewAction) async {
         if action == .refresh {
             page = 1
         }
@@ -86,5 +83,12 @@ final class NotificationsVM: ObservableObject {
         } catch {
             print(error)
         }
+    }
+    
+    // MARK: Enums
+    
+    enum Tab: String {
+        case messages = "Messages"
+        case notifications = "Notifications"
     }
 }

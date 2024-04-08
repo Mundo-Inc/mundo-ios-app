@@ -131,6 +131,9 @@ struct AppRouter: View {
                 Task {
                     await appGeneralVM.checkVersion()
                 }
+            case .background, .inactive:
+                // Considered as a graceful termination
+                UserDefaults.standard.set(true, forKey: "AppTerminatedGracefully")
             default:
                 break
             }

@@ -11,7 +11,7 @@ import Combine
 @MainActor
 final class MediasVM: ObservableObject {
     @Published var show = false
-    @Published var medias: [Media] = []
+    @Published var medias: [MediaItem] = []
         
     private var cancellables: Set<AnyCancellable> = []
     
@@ -25,7 +25,7 @@ final class MediasVM: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func show(medias: [Media]) {
+    func show(medias: [MediaItem]) {
         self.medias = medias
         self.show = true
     }

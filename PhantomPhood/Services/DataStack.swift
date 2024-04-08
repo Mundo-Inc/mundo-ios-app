@@ -78,14 +78,52 @@ final class DataStack {
         try? removePlaces()
     }
     
+    func createOrUpdateUser(userEssentials: UserEssentials) {
+        do {
+            let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+            request.predicate = NSPredicate(format: "id == %@", userEssentials.id)
+            request.fetchLimit = 1
+            
+            if let user = try self.viewContext.fetch(request).first {
+                user.name = userEssentials.name
+                user.username = userEssentials.username
+                user.verified = userEssentials.verified
+                user.profileImage = userEssentials.profileImage?.absoluteString
+                user.level = Int16(userEssentials.progress.level)
+                user.xp = Int16(userEssentials.progress.xp)
+                user.savedAt = Date()
+                
+                if user.hasChanges {
+                    try self.viewContext.save()
+                }
+            } else {
+                let user = UserEntity(context: self.viewContext)
+                user.id = userEssentials.id
+                user.name = userEssentials.name
+                user.username = userEssentials.username
+                user.verified = userEssentials.verified
+                user.profileImage = userEssentials.profileImage?.absoluteString
+                user.level = Int16(userEssentials.progress.level)
+                user.xp = Int16(userEssentials.progress.xp)
+                user.savedAt = Date()
+                
+                try self.viewContext.save()
+            }
+        } catch {
+            print("DEBUG: Error saving user infor to CoreData", error)
+        }
+    }
+    
     // MARK: - Core Data Saving support
     
     func saveContext() throws {
-        if viewContext.hasChanges {
-            do {
-                try viewContext.save()
-            } catch let error as NSError {
-                print("Unresolved error \(error), \(error.userInfo)")
+        viewContext.perform {
+            if self.viewContext.hasChanges {
+                do {
+                    try self.viewContext.save()
+                } catch let error as NSError {
+                    print("Unresolved error \(error), \(error.userInfo)")
+                }
             }
         }
     }

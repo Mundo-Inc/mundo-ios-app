@@ -12,7 +12,7 @@ struct Checkin: Identifiable, Decodable {
     let createdAt: Date
     let user: UserEssentials
     let place: PlaceEssentials
-    let image: Media?
+    let image: MediaItem?
     let tags: [UserEssentials]?
     let caption: String?
     let userActivityId: String?
@@ -28,7 +28,7 @@ struct FeedCheckin: Identifiable, Decodable {
     let createdAt: Date
     let user: UserEssentials
     let place: PlaceEssentials
-    let image: Media?
+    let image: MediaItem?
     let tags: [UserEssentials]?
     let caption: String?
     let userActivityId: String?

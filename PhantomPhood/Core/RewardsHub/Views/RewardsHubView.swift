@@ -250,7 +250,7 @@ struct RewardsHubView: View {
                                     }
                                 }
                                 .onTapGesture {
-                                    AppData.shared.goTo(AppRoute.userProfile(userId: referredUser))
+                                    AppData.shared.goToUser(referredUser)
                                 }
                             } else if let expiresIn = link.expiresAt.remainingTime(), let url = link.link {
                                 VStack {

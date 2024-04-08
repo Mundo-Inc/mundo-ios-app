@@ -175,7 +175,8 @@ struct CommentsView: View {
                     .opacity(vm.isSubmitting ? 0.6 : 1)
                     .disabled(vm.isSubmitting)
                     .padding(.all, 11)
-                }.padding(.horizontal)
+                }
+                .padding(.horizontal)
                 .padding(.vertical, 10)
         }
         .presentationDetents([.medium, .fraction(0.99)])

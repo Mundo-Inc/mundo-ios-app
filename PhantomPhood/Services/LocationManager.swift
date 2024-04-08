@@ -99,4 +99,8 @@ extension LocationManager: CLLocationManagerDelegate {
         //            try? await UNUserNotificationCenter.current().add(request)
         //        }
     }
+//    
+//    func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
+//        print(error)
+//    }
 }

@@ -84,7 +84,7 @@ final class AddReviewVM: ObservableObject {
         [overallScore, foodQuality, drinkQuality, service, atmosphere].allSatisfy({ $0 != nil })
     }
 
-    func submit(mediaItems: [MediaItem]) async {
+    func submit(mediaItems: [PickerMediaItem]) async {
         guard let place, !isSubmitting else { return }
         
         self.isSubmitting = true

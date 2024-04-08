@@ -8,68 +8,38 @@
 import SwiftUI
 
 struct NotificationsView: View {
-    @ObservedObject private var vm = NotificationsVM.shared
-    @ObservedObject private var appData = AppData.shared
+    @ObservedObject private var notificationsVM = NotificationsVM.shared
+    @ObservedObject private var conversationsManager = ConversationsManager.shared
     
     var body: some View {
-        ZStack {
-            Color.themeBG
-                .ignoresSafeArea()
-                .onAppear {
-                    Task {
-                        await vm.getNotifications(.refresh)
-                    }
-                }
-            
-            if !vm.notifications.isEmpty {
-                Color.clear
-                    .frame(width: 0, height: 0)
+        List {
+            ForEach(notificationsVM.notifications) { notification in
+                NotificationItem(notification)
                     .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
+                        if !notificationsVM.isLoading && !notificationsVM.notifications.isEmpty && notificationsVM.hasMore {
                             Task {
-                                await self.vm.seenNotifications()
+                                await notificationsVM.loadMore(currentItem: notification)
                             }
                         }
                     }
             }
-            
-            List {
-                ForEach(vm.notifications) { notification in
-                    notificationItem(notification)
-                        .onAppear {
-                            if !vm.isLoading && !vm.notifications.isEmpty && vm.hasMore {
-                                Task {
-                                    await vm.loadMore(currentItem: notification)
-                                }
-                            }
-                        }
-                }
-            }
-            .refreshable {
-                if !vm.isLoading {
-                    await vm.getNotifications(.refresh)
-                }
-            }
-            .listStyle(.inset)
         }
-        .navigationTitle("Notifications")
-        .toolbar(content: {
-            ToolbarItem {
-                if vm.isLoading {
-                    ProgressView()
-                        .transition(.opacity)
-                }
+        .refreshable {
+            if !notificationsVM.isLoading {
+                await notificationsVM.getNotifications(.refresh)
             }
-        })
+        }
+        .listStyle(.inset)
     }
     
-    func notificationItem(_ data: Notification) -> some View {
+    @ViewBuilder
+    private func NotificationItem(_ data: Notification) -> some View {
         HStack(alignment: .top) {
             if let user = data.user {
                 ProfileImage(user.profileImage, size: 44, cornerRadius: 10)
                     .frame(width: 44, height: 44)
                     .onTapGesture {
-                        appData.homeNavStack.append(AppRoute.userProfile(userId: user.id))
+                        AppData.shared.goToUser(user.id)
                     }
             } else {
                 RoundedRectangle(cornerRadius: 10)
@@ -79,7 +49,7 @@ struct NotificationsView: View {
             
             Button {
                 if let activity = data.activity {
-                    appData.homeNavStack.append(AppRoute.userActivity(id: activity))
+                    AppData.shared.goTo(AppRoute.userActivity(id: activity))
                 }
             } label: {
                 HStack(alignment: .top) {

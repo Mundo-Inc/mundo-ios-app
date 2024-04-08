@@ -28,6 +28,7 @@ struct HomeView: View {
                     ForYouView(draggedAmount: $draggedAmount, dragAmountToRefresh: dragAmountToRefresh)
                 }
             }
+            .background(Color.themePrimary.ignoresSafeArea())
             .environment(\.colorScheme, .dark)
             .tag(HomeTab.forYou)
             
@@ -123,7 +124,7 @@ struct HomeView: View {
             HStack {
                 Spacer()
                 
-                NavigationLink(value: AppRoute.notifications) {
+                NavigationLink(value: AppRoute.inbox) {
                     Image(systemName: "envelope.fill")
                         .font(.system(size: 20))
                         .frame(width: 40, height: 40)

@@ -50,25 +50,23 @@ struct ForYouItem: View {
     
     var body: some View {
         ZStack {
-            Color.themePrimary
-            
-            if appData.activeTab == .home && appData.homeActiveTab == .forYou && appData.homeNavStack.isEmpty {
-                ZStack {
-                    switch forYouVM.items[index].resource {
-                    case .review(let feedReview):
-                        Color.clear
-                            .onChange(of: tabPage) { newTab in
-                                if page.index == index {
-                                    if feedReview.videos.contains(where: { $0.id == newTab }) {
-                                        videoPlayerVM.playId = newTab
-                                    } else {
-                                        videoPlayerVM.playId = nil
-                                    }
+            if appData.activeTab == .home && appData.homeActiveTab == .forYou && appData.navStack.isEmpty {
+                switch forYouVM.items[index].resource {
+                case .review(let feedReview):
+                    Color.clear
+                        .onChange(of: tabPage) { newTab in
+                            if page.index == index {
+                                if feedReview.videos.contains(where: { $0.id == newTab }) {
+                                    videoPlayerVM.playId = newTab
                                 } else {
                                     videoPlayerVM.playId = nil
                                 }
+                            } else {
+                                videoPlayerVM.playId = nil
                             }
-                        
+                        }
+                    
+                    Group {
                         if feedReview.images.count + feedReview.videos.count > 1 {
                             TabView(selection: $tabPage) {
                                 ForEach(feedReview.videos) { video in
@@ -123,6 +121,7 @@ struct ForYouItem: View {
                                                         .padding(.horizontal)
                                                 }
                                         }
+                                        .contentShape(.rect)
                                         .ignoresSafeArea(edges: .top)
                                         .tag(image.id)
                                     }
@@ -141,6 +140,7 @@ struct ForYouItem: View {
                                                 .padding(.horizontal)
                                         }
                                 }
+                                .contentShape(.rect)
                                 .ignoresSafeArea(edges: .top)
                             } else if let video = feedReview.videos.first, let url = video.src {
                                 ZStack {
@@ -180,34 +180,63 @@ struct ForYouItem: View {
                                 .tag(video.id)
                             }
                         }
-                    case .checkin(let feedCheckin):
-                        if let image = feedCheckin.image, let url = image.src {
-                            ImageLoader(url, contentMode: .fill) { progress in
-                                Rectangle()
-                                    .foregroundStyle(.clear)
-                                    .frame(maxWidth: 150)
-                                    .overlay {
-                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                            .progressViewStyle(LinearProgressViewStyle())
-                                            .padding(.horizontal)
-                                    }
-                            }
-                            .ignoresSafeArea(edges: .top)
+                    }
+                    .onTapGesture(count: 2, perform: {
+                        let item = forYouVM.items[index]
+                        Task {
+                            await forYouVM.addReaction(NewReaction(reaction: "❤️", type: .emoji), to: item)
                         }
-                    case .homemade(let homemade):
-                        Color.clear
-                            .onChange(of: tabPage) { newTab in
-                                if page.index == index {
-                                    if homemade.media.contains(where: { $0.id == newTab && $0.type == .video }) {
-                                        videoPlayerVM.playId = newTab
-                                    } else {
-                                        videoPlayerVM.playId = nil
-                                    }
+                    })
+                    .onTapGesture {
+                        if videoPlayerVM.playId != nil {
+                            withAnimation {
+                                videoPlayerVM.isMute = !videoPlayerVM.isMute
+                            }
+                        }
+                    }
+                case .checkin(let feedCheckin):
+                    if let image = feedCheckin.image, let url = image.src {
+                        ImageLoader(url, contentMode: .fill) { progress in
+                            Rectangle()
+                                .foregroundStyle(.clear)
+                                .frame(maxWidth: 150)
+                                .overlay {
+                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                        .progressViewStyle(LinearProgressViewStyle())
+                                        .padding(.horizontal)
+                                }
+                        }
+                        .contentShape(.rect)
+                        .ignoresSafeArea(edges: .top)
+                        .onTapGesture(count: 2, perform: {
+                            let item = forYouVM.items[index]
+                            Task {
+                                await forYouVM.addReaction(NewReaction(reaction: "❤️", type: .emoji), to: item)
+                            }
+                        })
+                        .onTapGesture {
+                            if videoPlayerVM.playId != nil {
+                                withAnimation {
+                                    videoPlayerVM.isMute = !videoPlayerVM.isMute
+                                }
+                            }
+                        }
+                    }
+                case .homemade(let homemade):
+                    Color.clear
+                        .onChange(of: tabPage) { newTab in
+                            if page.index == index {
+                                if homemade.media.contains(where: { $0.id == newTab && $0.type == .video }) {
+                                    videoPlayerVM.playId = newTab
                                 } else {
                                     videoPlayerVM.playId = nil
                                 }
+                            } else {
+                                videoPlayerVM.playId = nil
                             }
-                        
+                        }
+                    
+                    Group {
                         if homemade.media.count > 1 {
                             TabView(selection: $tabPage) {
                                 ForEach(homemade.media) { m in
@@ -261,6 +290,7 @@ struct ForYouItem: View {
                                                             .padding(.horizontal)
                                                     }
                                             }
+                                            .contentShape(.rect)
                                             .ignoresSafeArea(edges: .top)
                                             .tag(m.id)
                                         } else {
@@ -320,32 +350,33 @@ struct ForYouItem: View {
                                                     .padding(.horizontal)
                                             }
                                     }
+                                    .contentShape(.rect)
                                     .ignoresSafeArea(edges: .top)
                                 }
                             }
                         }
-                    default:
-                        VStack {
-                            Text("Unable to load\nPlease Skip this")
-                                .font(.custom(style: .headline))
-                            Text("New features are coming. Please check for app update soon")
-                                .font(.custom(style: .body))
-                                .foregroundStyle(.secondary)
-                                .padding()
+                    }
+                    .onTapGesture(count: 2, perform: {
+                        let item = forYouVM.items[index]
+                        Task {
+                            await forYouVM.addReaction(NewReaction(reaction: "❤️", type: .emoji), to: item)
+                        }
+                    })
+                    .onTapGesture {
+                        if videoPlayerVM.playId != nil {
+                            withAnimation {
+                                videoPlayerVM.isMute = !videoPlayerVM.isMute
+                            }
                         }
                     }
-                }
-                .onTapGesture(count: 2, perform: {
-                    let item = forYouVM.items[index]
-                    Task {
-                        await forYouVM.addReaction(NewReaction(reaction: "❤️", type: .emoji), to: item)
-                    }
-                })
-                .onTapGesture {
-                    if videoPlayerVM.playId != nil {
-                        withAnimation {
-                            videoPlayerVM.isMute = !videoPlayerVM.isMute
-                        }
+                default:
+                    VStack {
+                        Text("Unable to load\nPlease Skip this")
+                            .font(.custom(style: .headline))
+                        Text("New features are coming. Please check for app update soon")
+                            .font(.custom(style: .body))
+                            .foregroundStyle(.secondary)
+                            .padding()
                     }
                 }
             }
@@ -358,26 +389,43 @@ struct ForYouItem: View {
                     switch forYouVM.items[index].resource {
                     case .review(let feedReview):
                         HStack {
-                            VStack(spacing: -15) {
-                                ProfileImage(forYouVM.items[index].user.profileImage, size: 50)
-                                
-                                LevelView(level: forYouVM.items[index].user.progress.level)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 24, height: 30)
-                            }
-                            .onTapGesture {
-                                appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
-                            }
+                            ItemUserProfile()
                             
                             VStack {
-                                Text(forYouVM.items[index].user.name)
-                                    .font(.custom(style: .headline))
-                                    .frame(height: 18)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .foregroundStyle(.white)
-                                    .onTapGesture {
-                                        appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
+                                HStack {
+                                    Text(forYouVM.items[index].user.name)
+                                        .font(.custom(style: .headline))
+                                        .frame(height: 18)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .foregroundStyle(.white)
+                                        .fontWeight(.semibold)
+                                        .onTapGesture {
+                                            appData.goToUser(forYouVM.items[index].user.id)
+                                        }
+                                    
+                                    if Authentication.shared.currentUser?.id != forYouVM.items[index].user.id {
+                                        HStack {
+                                            if self.forYouVM.loadingSections.contains(.startingConversation) {
+                                                ProgressView()
+                                                    .controlSize(.mini)
+                                            } else {
+                                                Text("Message")
+                                            }
+                                        }
+                                        .frame(height: 26)
+                                        .frame(maxWidth: 90)
+                                        .font(.custom(style: .footnote))
+                                        .fontWeight(.regular)
+                                        .background(.ultraThinMaterial)
+                                        .clipShape(.rect(cornerRadius: 5))
+                                        .foregroundStyle(Color.primary)
+                                        .onTapGesture {
+                                            Task {
+                                                await self.forYouVM.startConversation(with: forYouVM.items[index].user.id)
+                                            }
+                                        }
                                     }
+                                }
                                 
                                 HStack {
                                     if let place = forYouVM.items[index].place {
@@ -475,26 +523,43 @@ struct ForYouItem: View {
                         }
                     case .checkin(let feedCheckin):
                         HStack {
-                            VStack(spacing: -15) {
-                                ProfileImage(forYouVM.items[index].user.profileImage, size: 50)
-                                
-                                LevelView(level: forYouVM.items[index].user.progress.level)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 24, height: 30)
-                            }
-                            .onTapGesture {
-                                appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
-                            }
+                            ItemUserProfile()
                             
                             VStack {
-                                Text(forYouVM.items[index].user.name)
-                                    .font(.custom(style: .headline))
-                                    .frame(height: 18)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .foregroundStyle(.white)
-                                    .onTapGesture {
-                                        appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
+                                HStack {
+                                    Text(forYouVM.items[index].user.name)
+                                        .font(.custom(style: .headline))
+                                        .frame(height: 18)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .foregroundStyle(.white)
+                                        .fontWeight(.semibold)
+                                        .onTapGesture {
+                                            appData.goToUser(forYouVM.items[index].user.id)
+                                        }
+                                    
+                                    if Authentication.shared.currentUser?.id != forYouVM.items[index].user.id {
+                                        HStack {
+                                            if self.forYouVM.loadingSections.contains(.startingConversation) {
+                                                ProgressView()
+                                                    .controlSize(.mini)
+                                            } else {
+                                                Text("Message")
+                                            }
+                                        }
+                                        .frame(height: 26)
+                                        .frame(maxWidth: 90)
+                                        .font(.custom(style: .footnote))
+                                        .fontWeight(.regular)
+                                        .background(.ultraThinMaterial)
+                                        .clipShape(.rect(cornerRadius: 5))
+                                        .foregroundStyle(Color.primary)
+                                        .onTapGesture {
+                                            Task {
+                                                await self.forYouVM.startConversation(with: forYouVM.items[index].user.id)
+                                            }
+                                        }
                                     }
+                                }
                                 
                                 HStack {
                                     if let place = forYouVM.items[index].place {
@@ -578,27 +643,43 @@ struct ForYouItem: View {
                         }
                     case .homemade(let homemade):
                         HStack {
-                            VStack(spacing: -15) {
-                                ProfileImage(forYouVM.items[index].user.profileImage, size: 50)
-                                
-                                LevelView(level: forYouVM.items[index].user.progress.level)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 24, height: 30)
-                            }
-                            .onTapGesture {
-                                appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
-                            }
+                            ItemUserProfile()
                             
                             VStack {
-                                Text(forYouVM.items[index].user.name)
-                                    .font(.custom(style: .headline))
-                                    .frame(height: 18)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .foregroundStyle(.white)
-                                    .fontWeight(.semibold)
-                                    .onTapGesture {
-                                        appData.goTo(AppRoute.userProfile(userId: forYouVM.items[index].user.id))
+                                HStack {
+                                    Text(forYouVM.items[index].user.name)
+                                        .font(.custom(style: .headline))
+                                        .frame(height: 18)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .foregroundStyle(.white)
+                                        .fontWeight(.semibold)
+                                        .onTapGesture {
+                                            appData.goToUser(forYouVM.items[index].user.id)
+                                        }
+                                    
+                                    if Authentication.shared.currentUser?.id != forYouVM.items[index].user.id {
+                                        HStack {
+                                            if self.forYouVM.loadingSections.contains(.startingConversation) {
+                                                ProgressView()
+                                                    .controlSize(.mini)
+                                            } else {
+                                                Text("Message")
+                                            }
+                                        }
+                                        .frame(height: 26)
+                                        .frame(maxWidth: 90)
+                                        .font(.custom(style: .footnote))
+                                        .fontWeight(.regular)
+                                        .background(.ultraThinMaterial)
+                                        .clipShape(.rect(cornerRadius: 5))
+                                        .foregroundStyle(Color.primary)
+                                        .onTapGesture {
+                                            Task {
+                                                await self.forYouVM.startConversation(with: forYouVM.items[index].user.id)
+                                            }
+                                        }
                                     }
+                                }
                                 
                                 HStack {
                                     Text("@\(forYouVM.items[index].user.username)")
@@ -747,6 +828,20 @@ struct ForYouItem: View {
             }
             .padding(.top, mainWindowSafeAreaInsets.top + 40)
             .font(.custom(style: .body))
+        }
+    }
+    
+    @ViewBuilder
+    private func ItemUserProfile() -> some View {
+        VStack(spacing: -15) {
+            ProfileImage(forYouVM.items[index].user.profileImage, size: 50)
+            
+            LevelView(level: forYouVM.items[index].user.progress.level)
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 24, height: 30)
+        }
+        .onTapGesture {
+            appData.goToUser(forYouVM.items[index].user.id)
         }
     }
     

@@ -77,7 +77,7 @@ final class NewCheckinVM: ObservableObject {
         }
     }
     
-    func submit(mediaItems: [MediaItem]) async {
+    func submit(mediaItems: [PickerMediaItem]) async {
         guard let place, !loadingSections.contains(.submitting) else { return }
         
         loadingSections.insert(.submitting)

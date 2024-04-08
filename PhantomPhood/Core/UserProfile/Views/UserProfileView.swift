@@ -71,46 +71,89 @@ struct UserProfileView: View {
                                 .font(.custom(style: .footnote))
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            Group {
-                                if let isFollowing = vm.isFollowing {
-                                    if isFollowing {
-                                        Button {
-                                            Task {
-                                                await vm.unfollow()
-                                            }
-                                        } label: {
-                                            Text("Unfollow")
-                                                .frame(maxWidth: .infinity)
-                                        }
-                                        .buttonStyle(BorderedButtonStyle())
-                                    } else {
-                                        Button {
-                                            Task {
-                                                await vm.follow()
-                                            }
-                                        } label: {
-                                            Text("Follow")
-                                                .frame(maxWidth: .infinity)
-                                        }
-                                        .buttonStyle(BorderedProminentButtonStyle())
-                                    }
-                                } else {
-                                    Button {} label: {
-                                        Text("Loading")
-                                            .frame(maxWidth: .infinity)
-                                    }
-                                    .buttonStyle(BorderedButtonStyle())
-                                }
-                            }
-                            .font(.custom(style: .footnote))
-                            .controlSize(.small)
-                            
                         }
                         .redacted(reason: vm.user == nil ? .placeholder : [])
                         .frame(maxWidth: .infinity)
                     }
                     .padding(.horizontal)
+                    
+                    HStack {
+                        Group {
+                            if let isFollowing = vm.isFollowing {
+                                Button {
+                                    Task {
+                                        if isFollowing {
+                                            await vm.unfollow()
+                                        } else {
+                                            await vm.follow()
+                                        }
+                                    }
+                                } label: {
+                                    HStack {
+                                        if vm.loadingSections.contains(.followOperation) {
+                                            ProgressView()
+                                                .controlSize(.mini)
+                                        } else if isFollowing {
+                                            Text("Unfollow")
+                                        } else {
+                                            Text("Follow")
+                                        }
+                                    }
+                                    .frame(height: 32)
+                                    .frame(maxWidth: .infinity)
+                                    .background(isFollowing ? Color.themeBorder : Color.accentColor)
+                                    .clipShape(.rect(cornerRadius: 5))
+                                    .foregroundStyle(isFollowing ? Color.primary : Color.black)
+                                }
+                            } else {
+                                Button {} label: {
+                                    Text("Loading")
+                                        .frame(height: 32)
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.themeBorder)
+                                        .clipShape(.rect(cornerRadius: 5))
+                                        .foregroundStyle(Color.primary)
+                                }
+                            }
+                        }
+                        .disabled(vm.loadingSections.contains(.followOperation))
+                        
+                        Button {
+                            Task {
+                                await vm.startConversation()
+                            }
+                        } label: {
+                            HStack {
+                                if vm.loadingSections.contains(.startingConversation) {
+                                    ProgressView()
+                                        .controlSize(.mini)
+                                } else {
+                                    Text("Message")
+                                }
+                            }
+                            .frame(height: 32)
+                            .frame(maxWidth: .infinity)
+                            .background(Color.themeBorder)
+                            .clipShape(.rect(cornerRadius: 5))
+                            .foregroundStyle(Color.primary)
+                        }
+                        .disabled(vm.loadingSections.contains(.startingConversation))
+                        
+                        Button {
+                            ToastVM.shared.toast(.init(type: .success, title: "Coming Soon", message: "On it's way!"))
+                        } label: {
+                            Image(systemName: "gift.fill")
+                                .font(.system(size: 18))
+                                .frame(height: 32)
+                                .frame(maxWidth: 70)
+                                .background(Color.yellow)
+                                .clipShape(.rect(cornerRadius: 5))
+                                .foregroundStyle(Color.black)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .font(.custom(style: .footnote))
+                    
                     
                     if let user = vm.user {
                         if !user.bio.isEmpty {
@@ -288,7 +331,7 @@ struct UserProfileView: View {
                     .padding(.bottom)
                     .font(.custom(style: .body))
             }
-            .disabled(vm.isLoading)
+            .disabled(vm.loadingSections.contains(.blockOperation))
         }
     }
 }

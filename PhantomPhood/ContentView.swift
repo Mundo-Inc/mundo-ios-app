@@ -20,10 +20,9 @@ struct ContentView: View {
     @StateObject private var alertManager = AlertManager()
     
     var body: some View {
-        NavigationStack(path: $appData.homeNavStack) {
+        NavigationStack(path: $appData.navStack) {
             RootView()
         }
-        .ignoresSafeArea(.keyboard)
         .environmentObject(alertManager)
         .environmentObject(actionManager)
         .alert("Confirmation", isPresented: Binding(optionalValue: $alertManager.value), presenting: alertManager.value) { item in
@@ -77,6 +76,17 @@ struct ContentView: View {
             OnboardingView(vm: onboardingVM)
         }
         .onAppear {
+            if ConversationsManager.shared.client.conversationsClient == nil {
+                Task {
+                    do {
+                        try await ConversationsManager.shared.client.create()
+                        ConversationsManager.shared.registerForTyping()
+                    } catch {
+                        print("Error creating twilio client")
+                    }
+                }
+            }
+            
             ContactsService.shared.tryToSyncContacts()
         }
     }

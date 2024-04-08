@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 extension View {
     /// Applies the given transform if the given condition evaluates to `true`.
@@ -46,8 +47,8 @@ struct NavigationDestinationViewModifier: ViewModifier {
                 switch route {
                 case .leaderboard:
                     LeaderboardView()
-                case .notifications:
-                    NotificationsView()
+                case .inbox:
+                    InboxView()
                 case .userActivity(let id):
                     UserActivityView(id: id)
                     
@@ -102,6 +103,10 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     
                 case .placesList(let listId):
                     PlacesListView(listId: listId)
+                    
+                    // Conversation
+                case .conversation(let sid, let focusOnTextField):
+                    ConversationView(sid, focusOnTextField: focusOnTextField)
                 }
             }
     }

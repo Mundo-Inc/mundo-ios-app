@@ -47,7 +47,7 @@ class SignUpWithPasswordVM: ObservableObject {
     @Published var suggestedUsersList: [UserEssentials] = []
     @Published var userSearch: String = ""
     
-    private var cancellables = [AnyCancellable]()
+    private var cancellables: Set<AnyCancellable> = []
     
     init() {
         $username

@@ -20,7 +20,6 @@ struct MapActivitySheet: View {
     
     var body: some View {
         VStack {
-            Group {
                 ScrollView(.horizontal) {
                     HStack(spacing: -15) {
                         ForEach(clusteredMapActivity.items.indices, id: \.self) { index in
@@ -31,8 +30,13 @@ struct MapActivitySheet: View {
                                     .offset(x: vm.show ? 0 : -Double(index) * 20.0)
                                     .animation(.bouncy(duration: 0.6).delay(min(0.1 * Double(index), 1)), value: vm.show)
                                     .onTapGesture {
-                                        withAnimation {
-                                            vm.selection = index
+                                        if vm.selection == index {
+                                            AppData.shared.goToUser(clusteredMapActivity.items[index].user.id)
+                                            dismiss()
+                                        } else {
+                                            withAnimation {
+                                                vm.selection = index
+                                            }
                                         }
                                     }
                                 
@@ -46,7 +50,7 @@ struct MapActivitySheet: View {
                                     }
                                     .padding(.trailing, 15)
                                     .onTapGesture {
-                                        AppData.shared.goTo(.userProfile(userId: clusteredMapActivity.items[index].user.id))
+                                        AppData.shared.goToUser(clusteredMapActivity.items[index].user.id)
                                         dismiss()
                                     }
                                 }
@@ -61,8 +65,44 @@ struct MapActivitySheet: View {
                     .padding()
                 }
                 .scrollIndicators(.hidden)
+                .padding(.top)
+            
+            HStack {
+                if clusteredMapActivity.items.count >= vm.selection + 1 && Authentication.shared.currentUser?.id != clusteredMapActivity.items[vm.selection].user.id {
+                    Button {
+                        Task {
+                            await vm.startConversation(with: clusteredMapActivity.items[vm.selection].user.id)
+                            dismiss()
+                        }
+                    } label: {
+                        HStack {
+                            if vm.loadingSections.contains(.startingConversation) {
+                                ProgressView()
+                                    .controlSize(.mini)
+                            } else {
+                                Text("Say Hi to **\(clusteredMapActivity.items[vm.selection].user.name)** 👋")
+                            }
+                        }
+                        .frame(height: 28)
+                        .padding(.horizontal, 8)
+                        .background(Color.themeBorder)
+                        .clipShape(.rect(cornerRadius: 5))
+                        .foregroundStyle(Color.primary)
+                    }
+                } else {
+                    Text("Hi **Me** 👋")
+                        .frame(height: 28)
+                        .padding(.horizontal, 8)
+                        .background(Color.themeBorder)
+                        .clipShape(.rect(cornerRadius: 5))
+                        .foregroundStyle(Color.primary)
+                }
+                
+                
+                Spacer()
             }
-            .padding(.top)
+            .padding(.horizontal)
+            .font(.custom(style: .footnote))
             
             Spacer()
             
@@ -196,7 +236,7 @@ struct MapActivitySheet: View {
                                                     .frame(maxWidth: .infinity, alignment: .leading)
                                             }
                                             .onTapGesture {
-                                                AppData.shared.goTo(.userProfile(userId: user.id))
+                                                AppData.shared.goToUser(user.id)
                                                 dismiss()
                                             }
                                         }

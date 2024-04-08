@@ -305,6 +305,11 @@ final class Authentication: ObservableObject {
             
             try? DataStack.shared.deleteAll()
             
+            let conversationsCoreDataManager = ConversationsCoreDataManager()
+            conversationsCoreDataManager.deleteAll()
+            
+            ConversationsManager.shared.logOutHandler()
+            
             UserSettings.shared.logoutCleanup()
             appData.reset()
         } catch {

@@ -21,7 +21,7 @@ final class HomeMadeVM: ObservableObject {
     
     @Published var finished = false
     
-    func submit(mediaItems: [MediaItem]) async {
+    func submit(mediaItems: [PickerMediaItem]) async {
         guard !self.loadingSections.contains(.submitting) else { return }
         
         self.loadingSections.insert(.submitting)

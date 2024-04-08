@@ -1,5 +1,5 @@
 //
-//  MyProfile.swift
+//  MyProfileView.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 16.09.2023.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MyProfile: View {
+struct MyProfileView: View {
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var auth = Authentication.shared
     
@@ -39,22 +39,56 @@ struct MyProfile: View {
                                 .font(.custom(style: .footnote))
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            Button {
-                                appData.showEditProfile.toggle()
-                            } label: {
-                                Text("Edit Profile")
-                                    .font(.custom(style: .footnote))
-                                    .frame(maxWidth: .infinity)
-                                
-                            }
-                            .buttonStyle(BorderedButtonStyle())
-                            .controlSize(.small)
                         }
                         .redacted(reason: auth.currentUser == nil ? .placeholder : [])
                         .frame(maxWidth: .infinity)
                     }
                     .padding(.horizontal)
+                    
+                    HStack {
+                        Button {
+                            appData.showEditProfile.toggle()
+                        } label: {
+                            Text("Edit profile")
+                                .frame(height: 32)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.themeBorder)
+                                .clipShape(.rect(cornerRadius: 5))
+                                .foregroundStyle(Color.primary)
+                        }
+                        
+                        if let currentUser = auth.currentUser, let url = URL(string: "https://phantomphood.ai/user/@\(currentUser.username)") {
+                            ShareLink(item: url, message: Text("Join \(currentUser.name) on a journey of taste")) {
+                                Text("Share profile")
+                                    .frame(height: 32)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.themeBorder)
+                                    .clipShape(.rect(cornerRadius: 5))
+                                    .foregroundStyle(Color.primary)
+                            }
+                        } else {
+                            Button {} label: {
+                                Text("Share profile")
+                                    .frame(height: 32)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.themeBorder)
+                                    .clipShape(.rect(cornerRadius: 5))
+                                    .foregroundStyle(Color.primary)
+                            }
+                        }
+                        
+                        NavigationLink(value: AppRoute.settings) {
+                            Image(systemName: "gear")
+                                .font(.system(size: 18))
+                                .frame(width: 32, height: 32)
+                                .background(Color.themeBorder)
+                                .clipShape(.rect(cornerRadius: 5))
+                                .foregroundStyle(Color.primary)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top)
+                    .font(.custom(style: .footnote))
                     
                     if let bio = auth.currentUser?.bio, !bio.isEmpty {
                         Text(bio)
@@ -161,31 +195,6 @@ struct MyProfile: View {
                 }
             }
         }
-        .safeAreaInset(edge: .top, spacing: 0, content: {
-            HStack {
-                if let currentUser = auth.currentUser, let url = URL(string: "https://phantomphood.ai/user/@\(currentUser.username)") {
-                    ShareLink(item: url, message: Text("Join \(currentUser.name) on a journey of taste")) {
-                        Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 20))
-                    }
-                } else {
-                    Button {} label: {
-                        Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 20))
-                    }
-                }
-                
-                Spacer()
-                
-                NavigationLink(value: AppRoute.settings) {
-                    Image(systemName: "gear")
-                        .font(.system(size: 20))
-                }
-            }
-            .padding(.horizontal)
-            .padding(.bottom, 8)
-            .background(Color.themePrimary)
-        })
         .fullScreenCover(isPresented: $appData.showEditProfile) {
             EditProfileView()
         }
@@ -200,5 +209,5 @@ struct MyProfile: View {
 }
 
 #Preview {
-    MyProfile()
+    MyProfileView()
 }

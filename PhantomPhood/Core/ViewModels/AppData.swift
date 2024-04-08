@@ -12,18 +12,20 @@ final class AppData: ObservableObject {
     static var shared = AppData()
     private init() {}
     
-    // Active Tab
+    // Main Navigation Stack
+    @Published var navStack: [AppRoute] = []
+    
+    // Authentication Navigation Stack (Only before sign-in)
+    @Published var authNavStack: [AuthRoute] = []
+    
+    // Root Active Tab
     @Published var activeTab: Tab = .home
-        
-    // Home Tab
-    @Published var homeNavStack: [AppRoute] = []
+    
+    // Home Active Tab
     @Published var homeActiveTab: HomeTab = .forYou
     
     @Published var myProfileActiveTab: MyProfileActiveTab = .stats
     @Published var showEditProfile: Bool = false
-    
-    // Authentication Tab (Only before sign-in)
-    @Published var authNavStack: [AuthRoute] = []
     
     @Published var tappedTwice: Tab? = nil
     
@@ -32,16 +34,7 @@ final class AppData: ObservableObject {
             self.activeTab
         } set: {
             if $0 == self.activeTab {
-                switch self.activeTab {
-                case .home:
-                    self.tappedTwice = $0
-                case .explore:
-                    self.tappedTwice = $0
-                case .rewardsHub:
-                    self.tappedTwice = $0
-                case .myProfile:
-                    self.tappedTwice = $0
-                }
+                self.tappedTwice = $0
             } else {
                 self.activeTab = $0
             }
@@ -49,29 +42,39 @@ final class AppData: ObservableObject {
     }
     
     func reset() {
-        self.activeTab = .home
-        
-        self.homeNavStack.removeAll()
-        self.authNavStack.removeAll()
-        
-        self.myProfileActiveTab = .stats
-        self.showEditProfile = false
+        DispatchQueue.main.async {
+            self.activeTab = .home
+            
+            self.navStack.removeAll()
+            self.authNavStack.removeAll()
+            
+            self.myProfileActiveTab = .stats
+            self.showEditProfile = false
+        }
     }
     
     func goTo(_ route: AppRoute) {
-        self.homeNavStack.append(route)
+        DispatchQueue.main.async {
+            self.navStack.append(route)
+        }
     }
     
     func goBack() {
-        self.homeNavStack.removeLast()
+        guard !navStack.isEmpty else { return }
+        
+        DispatchQueue.main.async {
+            self.navStack.removeLast()
+        }
     }
     
     func goToUser(_ id: String) {
         if let currentUserId = Authentication.shared.currentUser?.id, currentUserId == id {
-            self.activeTab = .myProfile
             return
         }
-        self.goTo(.userProfile(userId: id))
+        
+        DispatchQueue.main.async {
+            self.goTo(.userProfile(userId: id))
+        }
     }
 }
 

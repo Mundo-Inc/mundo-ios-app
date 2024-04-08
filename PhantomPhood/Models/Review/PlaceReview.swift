@@ -11,8 +11,8 @@ struct PlaceReview: Identifiable, Decodable {
     let id: String
     let scores: ReviewScores?
     let content: String
-    let images: [Media]
-    let videos: [Media]
+    let images: [MediaItem]
+    let videos: [MediaItem]
     let tags: [String]?
     let recommend: Bool?
     let language: String?

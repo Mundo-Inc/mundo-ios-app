@@ -16,7 +16,7 @@ class PickerVM: ObservableObject {
             onSelectionChange()
         }
     }
-    @Published private(set) var mediaItems: [MediaItem] = []
+    @Published private(set) var mediaItems: [PickerMediaItem] = []
     
     private let limitToOne: Bool
     
@@ -41,16 +41,16 @@ class PickerVM: ObservableObject {
                     if !self.selection.isEmpty {
                         self.selection.removeAll()
                     }
-                    self.mediaItems = [MediaItem(id: UUID().uuidString, source: .camera, state: .loaded(.image(uiImage)))]
+                    self.mediaItems = [PickerMediaItem(id: UUID().uuidString, source: .camera, state: .loaded(.image(uiImage)))]
                 } else {
-                    self.mediaItems.append(MediaItem(id: UUID().uuidString, source: .camera, state: .loaded(.image(uiImage))))
+                    self.mediaItems.append(PickerMediaItem(id: UUID().uuidString, source: .camera, state: .loaded(.image(uiImage))))
                 }
                 
             }
         }
     }
     
-    func removeItem(_ item: MediaItem) {
+    func removeItem(_ item: PickerMediaItem) {
         if limitToOne {
             selection.removeAll()
         } else {
@@ -144,13 +144,13 @@ class PickerVM: ObservableObject {
     }
 }
 
-struct MediaItem: Identifiable {
+struct PickerMediaItem: Identifiable {
     let id: String
     let source: MediaItemSource
     var state: MediaItemState
     
-    func newState(state newState: MediaItemState) -> MediaItem {
-        return MediaItem(id: self.id, source: self.source, state: newState)
+    func newState(state newState: MediaItemState) -> PickerMediaItem {
+        return PickerMediaItem(id: self.id, source: self.source, state: newState)
     }
     
     enum MediaItemSource {

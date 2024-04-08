@@ -84,7 +84,7 @@ struct FirstLoadingView: View {
         }
         
         if network.isConnected {
-            VStack(spacing: 30) {
+            VStack(spacing: 25) {
                 Image(.fullPhantom)
                     .shadow(color: Color.phantom, radius: 130, y: 30)
                 Image(.textLogo)
@@ -94,7 +94,7 @@ struct FirstLoadingView: View {
                     .foregroundStyle(.white)
                 
                 if retries == 2 {
-                    Text("Weird, It should not take this long")
+                    Text("Trying to get your information from server...")
                         .foregroundStyle(.white.opacity(0.7))
                         .padding(.horizontal)
                     
@@ -102,7 +102,7 @@ struct FirstLoadingView: View {
                         .frame(height: 30)
                 } else if retries >= 3 {
                     Button {
-                        if let url = URL(string: "mailto:admin@phantomphood.com") {
+                        if let url = URL(string: "mailto:dev@phantomphood.com") {
                             openURL(url)
                         }
                     } label: {
@@ -114,20 +114,28 @@ struct FirstLoadingView: View {
                     }
                     .buttonStyle(.bordered)
                     
-                    Text("Hello, Team Extraordinary! It looks like our app's main screen is playing a game of hide and seek and is currently winning. I can't seem to find it anywhere. Could you lend your superpowers to help us spot it? Thanks a bunch!")
-                        .padding(.horizontal)
+                    Text("Oops, Something is Wrong!")
+                        .foregroundStyle(.white.opacity(0.8))
+                        .fontWeight(.semibold)
+                    
+                    Text("We’re encountering some difficulty fetching your information at the moment. This might be due to an unexpected hiccup on our end, a network glitch, or a restriction based on your current location.")
                         .foregroundStyle(.white.opacity(0.7))
                     
-                    Button {
-                        auth.signOut()
-                    } label: {
-                        Text("Sign Out")
+                    HStack {
+                        Button {
+                            auth.signOut()
+                        } label: {
+                            Text("Sign Out")
+                        }
+                        
+                        Spacer()
                     }
                 } else {
                     Color.clear
-                        .frame(height: 50)
+                        .frame(height: 60)
                 }
             }
+            .padding(.horizontal)
             .font(.custom(style: .subheadline))
             .transition(AnyTransition.opacity.combined(with: .scale(scale: 2)).animation(.easeInOut(duration: 0.75)))
             .zIndex(101)

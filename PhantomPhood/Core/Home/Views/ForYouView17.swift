@@ -83,7 +83,7 @@ struct ForYouView17: View {
                 
                 guard itemIndex >= vm.items.count - 5 else { return }
                 
-                if !vm.isLoading {
+                if !vm.loadingSections.contains(.fetchingData) {
                     Task {
                         await vm.getForYou(.new)
                     }
@@ -99,7 +99,7 @@ struct ForYouView17: View {
                 }
                 appData.tappedTwice = nil
                 Task {
-                    if !vm.isLoading {
+                    if !vm.loadingSections.contains(.fetchingData) {
                         HapticManager.shared.impact(style: .light)
                         await vm.getForYou(.refresh)
                         HapticManager.shared.notification(type: .success)
