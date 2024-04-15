@@ -74,12 +74,20 @@ extension MainTabBarView {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 30, height: 30)
+                .rotation3DEffect(
+                    .degrees(self.selection == Tab.rewardsHub ? 180 : 0),
+                    axis: (x: 0, y: 1.0, z: 0.0)
+                )
+                .animation(.bouncy(duration: 0.5), value: self.selection)
+                .grayscale(self.selection == Tab.rewardsHub ? 0 : 1)
+            
             Text("\((pcVM.balance ?? 0).formattedWithSuffix()) Coins")
+                .lineLimit(1)
                 .font(.custom(style: .caption2))
                 .fontWeight(.medium)
                 .redacted(reason: pcVM.balance == nil ? .placeholder : [])
         }
-        .foregroundStyle(self.selection == Tab.rewardsHub ? Color.accentColor : Color.secondary)
+        .foregroundStyle(self.selection == Tab.rewardsHub ? Color.gold : Color.secondary)
         .frame(maxWidth: .infinity)
         .onTapGesture {
             self.selection = Tab.rewardsHub

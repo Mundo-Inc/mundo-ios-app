@@ -13,12 +13,10 @@ final class ReportVM: ObservableObject {
     private let reportDM = ReportDM()
     private let toastVM = ToastVM.shared
     
-    let id: String
-    let type: ReportDM.ReportType
+    let item: ReportDM.ReportType
     
-    init(id: String, type: ReportDM.ReportType) {
-        self.id = id
-        self.type = type
+    init(item: ReportDM.ReportType) {
+        self.item = item
     }
     
     @Published var flagType: ReportDM.FlagType? = nil
@@ -29,7 +27,7 @@ final class ReportVM: ObservableObject {
         do {
             guard let flagType else { return }
             
-            try await reportDM.report(id: id, type: type, flagType: flagType, note: note)
+            try await reportDM.report(item: item, flagType: flagType, note: note)
             
             toastVM.toast(.init(type: .success, title: "Success", message: "We got your report. It can take up to 24 hours to respond."))
             

@@ -16,7 +16,7 @@ class UserProfileVM: ObservableObject {
     private let toastManager = ToastVM.shared
     
     @Published private(set) var loadingSections = Set<LoadingSection>()
-    @Published private(set) var isFollowing: Bool? = nil
+    @Published private(set) var isFollowedByUser: Bool? = nil
     @Published private(set) var user: UserDetail?
     @Published private(set) var error: String?
     
@@ -43,7 +43,7 @@ class UserProfileVM: ObservableObject {
             do {
                 let theUser = try await userProfileDM.fetch(id: id)
                 self.user = theUser
-                self.isFollowing = theUser.isFollowing
+                self.isFollowedByUser = theUser.connectionStatus.followedByUser
                 self.error = nil
             } catch {
                 self.error = error.localizedDescription
@@ -57,7 +57,7 @@ class UserProfileVM: ObservableObject {
                             self.blockStatus = .hasBlocked
                         }
                         self.user = nil
-                        self.isFollowing = nil
+                        self.isFollowedByUser = nil
                     }
                     self.error = serverError.message
                 case .decodingError(let decodingError):
@@ -71,7 +71,7 @@ class UserProfileVM: ObservableObject {
                 let theUser = try await userProfileDM.fetch(username: username)
                 self.id = theUser.id
                 self.user = theUser
-                self.isFollowing = theUser.isFollowing
+                self.isFollowedByUser = theUser.connectionStatus.followedByUser
                 self.error = nil
             } catch {
                 self.error = error.localizedDescription
@@ -85,7 +85,7 @@ class UserProfileVM: ObservableObject {
                             self.blockStatus = .hasBlocked
                         }
                         self.user = nil
-                        self.isFollowing = nil
+                        self.isFollowedByUser = nil
                     }
                     self.error = serverError.message
                 case .decodingError(let decodingError):
@@ -104,7 +104,7 @@ class UserProfileVM: ObservableObject {
         self.loadingSections.insert(.followOperation)
         do {
             try await userProfileDM.follow(id: id)
-            self.isFollowing = true
+            self.isFollowedByUser = true
             HapticManager.shared.notification(type: .success)
         } catch {
             toastManager.toast(Toast(type: .error, title: "Failed", message: "Failed to follow \(user?.name ?? "this user")"))
@@ -118,7 +118,7 @@ class UserProfileVM: ObservableObject {
         self.loadingSections.insert(.followOperation)
         do {
             try await userProfileDM.unfollow(id: id)
-            self.isFollowing = false
+            self.isFollowedByUser = false
             HapticManager.shared.notification(type: .success)
         } catch {
             toastManager.toast(Toast(type: .error, title: "Failed", message: "Failed to unfollow \(user?.name ?? "this user")"))
@@ -133,7 +133,7 @@ class UserProfileVM: ObservableObject {
         do {
             try await userProfileDM.block(id: id)
             self.user = nil
-            self.isFollowing = nil
+            self.isFollowedByUser = nil
             self.blockStatus = .isBlocked
             
             HapticManager.shared.notification(type: .success)

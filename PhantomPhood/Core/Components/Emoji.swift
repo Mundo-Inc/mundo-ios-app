@@ -42,21 +42,32 @@ struct Emoji: View {
     }
     
     var body: some View {
-        Group {
-            if emoji.isAnimated, let gifName = emoji.gifName, isAnimating {
-                AnimatedImage(name: gifName, isAnimating: $isAnimating)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } else if !emoji.unicode.isEmpty && UIImage(named: "Emojis/\(emoji.unicode)") != nil {
-                Image("Emojis/\(emoji.unicode)")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } else {
-                Text(emoji.symbol)
-                    .font(.system(size: size * 0.75))
-            }
+        if emoji.isAnimated, let gifName = emoji.gifName, isAnimating {
+            Rectangle()
+                .opacity(0)
+                .overlay {
+                    AnimatedImage(name: gifName, isAnimating: $isAnimating)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .allowsHitTesting(false)
+                }
+                .clipped()
+                .frame(width: size, height: size)
+        } else if !emoji.unicode.isEmpty && UIImage(named: "Emojis/\(emoji.unicode)") != nil {
+            Rectangle()
+                .opacity(0)
+                .overlay {
+                    Image("Emojis/\(emoji.unicode)")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                }
+                .clipped()
+                .frame(width: size, height: size)
+        } else {
+            Text(emoji.symbol)
+                .font(.system(size: size * 0.75))
+                .frame(width: size, height: size)
         }
-        .frame(width: size, height: size)
     }
 }
 

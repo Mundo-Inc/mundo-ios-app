@@ -34,6 +34,16 @@ final class HomeMadeDM {
         try await apiManager.requestNoContent("/homemades", method: .post, body: requestBody, token: token)
     }
     
+    func deleteOne(byId id: String) async throws {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        try await apiManager.requestNoContent("/homemades/\(id)", method: .delete, token: token)
+    }
+    
+    // MARK: Structs
+    
     struct CreateHomeMadeRequestBody: Encodable {
         let content: String
         let media: [UploadManager.MediaIds]

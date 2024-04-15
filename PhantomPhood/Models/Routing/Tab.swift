@@ -17,7 +17,7 @@ enum Tab: String, CaseIterable {
         switch self {
         case .home: return "Home"
         case .explore: return "Explore"
-        case .rewardsHub: return "PhantomCoinTemplate"
+        case .rewardsHub: return "PhantomCoin"
         case .myProfile: return "Profile"
         }
     }

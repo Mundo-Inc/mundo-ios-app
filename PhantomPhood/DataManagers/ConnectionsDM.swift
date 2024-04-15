@@ -55,7 +55,7 @@ final class ConnectionsDM {
     // MARK: - Structs
     
     struct FollowStatus: Decodable {
-        let isFollowing: Bool
-        let isFollower: Bool
+        let followedByUser: Bool
+        let followsUser: Bool
     }
 }

@@ -30,6 +30,11 @@ struct NotificationsView: View {
             }
         }
         .listStyle(.inset)
+        .onAppear {
+            Task {
+                await self.notificationsVM.seenNotifications()
+            }
+        }
     }
     
     @ViewBuilder

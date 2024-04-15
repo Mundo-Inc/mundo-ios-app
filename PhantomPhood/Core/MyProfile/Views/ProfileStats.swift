@@ -68,7 +68,6 @@ struct ProfileStats: View {
                 
                 HStack(spacing: 10) {
                     LevelView(level: auth.currentUser?.progress.level ?? -1)
-                        .aspectRatio(contentMode: .fit)
                         .frame(width: 60, height: 60)
                         .padding(.all, 5)
                     

@@ -13,25 +13,62 @@ final class ReportDM {
     
     // MARK: - Public methods
     
-    func report(id: String, type: ReportType, flagType: FlagType, note: String) async throws {
+    func report(item: ReportType, flagType: FlagType, note: String) async throws {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let body = try apiManager.createRequestBody(ReportRequestBody(flagType: flagType.rawValue, note: note))
-        try await apiManager.requestNoContent("/\(type == .review ? "reviews" : "comments")/\(id)/flag", method: .post, body: body, token: token)
+        let body: Data
+        
+        switch item {
+        case .activity(let id):
+            body = try apiManager.createRequestBody(ReportRequestBody(activity: id, review: nil, comment: nil, homemade: nil, checkIn: nil, flagType: flagType.rawValue, note: note))
+        case .review(let id):
+            body = try apiManager.createRequestBody(ReportRequestBody(activity: nil, review: id, comment: nil, homemade: nil, checkIn: nil, flagType: flagType.rawValue, note: note))
+        case .comment(let id):
+            body = try apiManager.createRequestBody(ReportRequestBody(activity: nil, review: nil, comment: id, homemade: nil, checkIn: nil, flagType: flagType.rawValue, note: note))
+        case .homemade(let id):
+            body = try apiManager.createRequestBody(ReportRequestBody(activity: nil, review: nil, comment: nil, homemade: id, checkIn: nil, flagType: flagType.rawValue, note: note))
+        case .checkIn(let id):
+            body = try apiManager.createRequestBody(ReportRequestBody(activity: nil, review: nil, comment: nil, homemade: nil, checkIn: id, flagType: flagType.rawValue, note: note))
+        }
+        
+        try await apiManager.requestNoContent("/activities/flag", method: .post, body: body, token: token)
     }
         
     // MARK: - Structs
     
     struct ReportRequestBody: Encodable {
+        let activity: String?
+        let review: String?
+        let comment: String?
+        let homemade: String?
+        let checkIn: String?
         let flagType: String
         let note: String
     }
     
-    enum ReportType: String {
-        case review = "Review"
-        case comment = "Comment"
+    enum ReportType: Hashable {
+        case activity(String)
+        case review(String)
+        case comment(String)
+        case homemade(String)
+        case checkIn(String)
+        
+        var title: String {
+            switch self {
+            case .activity(_):
+                return "Activity"
+            case .review(_):
+                return "Review"
+            case .comment(_):
+                return "Comment"
+            case .homemade(_):
+                return "Activity"
+            case .checkIn(_):
+                return "Check In"
+            }
+        }
     }
 
     enum FlagType: String, CaseIterable {

@@ -29,8 +29,9 @@ struct InboxView: View {
                                 .font(.custom(style: .title3))
                                 .fontWeight(.semibold)
                             
-                            if conversationsManager.conversations.filter({ $0.unreadMessagesCount > 0 }).count > 0 {
-                                Text("\(conversationsManager.conversations.filter({ $0.unreadMessagesCount > 0 }).count)")
+                            let unreadCount = conversationsManager.conversations.filter({ $0.unreadMessagesCount > 0 }).count
+                            if unreadCount > 0 {
+                                Text("\(unreadCount)")
                                     .font(.custom(style: .caption))
                                     .fontWeight(.bold)
                                     .foregroundStyle(Color.black)
@@ -39,7 +40,7 @@ struct InboxView: View {
                                         RoundedRectangle(cornerRadius: 20)
                                             .frame(height: 20)
                                             .frame(minWidth: 20)
-                                            .shadow(color: Color.accentColor, radius: 2)
+                                            .shadow(color: Color.accentColor.opacity(0.3), radius: 3)
                                             .foregroundStyle(Color.accentColor)
                                     }
                                     .transition(AnyTransition.scale.animation(.bouncy))
@@ -70,7 +71,7 @@ struct InboxView: View {
                                         RoundedRectangle(cornerRadius: 20)
                                             .frame(height: 20)
                                             .frame(minWidth: 20)
-                                            .shadow(color: Color.accentColor, radius: 2)
+                                            .shadow(color: Color.accentColor.opacity(0.3), radius: 3)
                                             .foregroundStyle(Color.accentColor)
                                     }
                             }
@@ -105,15 +106,6 @@ struct InboxView: View {
         .onAppear {
             Task {
                 await notificationsVM.getNotifications(.refresh)
-            }
-        }
-        .onChange(of: notificationsVM.notifications.isEmpty) { value in
-            if !value {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
-                    Task {
-                        await self.notificationsVM.seenNotifications()
-                    }
-                }
             }
         }
     }

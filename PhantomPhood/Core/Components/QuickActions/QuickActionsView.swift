@@ -127,7 +127,7 @@ struct QuickActionsView: View {
             .foregroundStyle(.primary)
             
             Button {
-                AppData.shared.goTo(AppRoute.homeMadeContent)
+                AppData.shared.goTo(AppRoute.homemadeContent)
                 dismiss()
             } label: {
                 HStack {

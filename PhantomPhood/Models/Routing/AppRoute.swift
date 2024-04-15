@@ -18,8 +18,8 @@ enum AppRoute: Hashable {
     case checkinMapPlace(MapPlace)
     case review(IdOrData<PlaceEssentials>)
     case reviewMapPlace(MapPlace)
-    case report(id: String, type: ReportDM.ReportType)
-    case homeMadeContent
+    case report(item: ReportDM.ReportType)
+    case homemadeContent
     
     // My Profile
     case settings

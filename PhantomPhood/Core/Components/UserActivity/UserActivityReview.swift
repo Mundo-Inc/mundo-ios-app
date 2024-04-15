@@ -169,7 +169,7 @@ struct UserActivityReview: View {
                 .confirmationDialog("Actions", isPresented: $showActions) {
                     switch data.resource {
                     case .review(let review):
-                        NavigationLink(value: AppRoute.report(id: review.id, type: .review)) {
+                        NavigationLink(value: AppRoute.report(item: .review(review.id))) {
                             Text("Report")
                         }
                     default:

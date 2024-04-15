@@ -46,14 +46,14 @@ struct SelectReactionsView: View {
                 ForEach(EmojisManager.EmojiCategory.allCases, id: \.self) { category in
                     ScrollView {
                         LazyVGrid(columns: [
-                            GridItem(.adaptive(minimum: 36, maximum: 42)),
+                            GridItem(.adaptive(minimum: 40, maximum: 48)),
                         ], spacing: 16, content: {
                             ForEach(emojisVM.getEmojis(category: category)) { emoji in
                                 Button {
                                     vm.onSelect?(emoji)
                                     vm.isPresented = false
                                 } label: {
-                                    Emoji(emoji, isAnimating: $isAnimating, size: 36)
+                                    Emoji(emoji, isAnimating: $isAnimating, size: 40)
                                 }
                             }
                         })

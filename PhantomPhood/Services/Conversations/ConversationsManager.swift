@@ -253,13 +253,11 @@ extension ConversationsManager: TwilioConversationsClientDelegate {
     // MARK: Typing changes
     
     func conversationsClient(_ client: TwilioConversationsClient, typingStartedOn conversation: TCHConversation, participant: TCHParticipant) {
-//        let conversation = TCHAdapter.transform(from: conversation)
         let participant =  TCHAdapter.transform(from: participant)
         typingPublisher.send(.startedTyping(conversationSid: conversation.sid!, participant: participant))
     }
     
     func conversationsClient(_ client: TwilioConversationsClient, typingEndedOn conversation: TCHConversation, participant: TCHParticipant) {
-//        let conversation = TCHAdapter.transform(from: conversation)
         let participant =  TCHAdapter.transform(from: participant)
         typingPublisher.send(.stoppedTyping(conversationSid: conversation.sid!, participant: participant))
     }
@@ -303,6 +301,19 @@ extension ConversationsManager: TCHConversationDelegate {
         // Update conversation last message stats
         if let _ = PersistentConversationDataItem.from(conversation: conversation, inContext: coreDataManager.viewContext) {
             try? coreDataManager.saveContext()
+        }
+        
+        // Notify the user that a new message has been received
+        if let author = message.author, let sid = conversation.sid, author != self.myUser?.identity {
+            if let lastRoute = AppData.shared.navStack.last {
+                if case .conversation(sid: sid, focusOnTextField: _) = lastRoute {
+                    return
+                }
+            }
+            Task {
+                await ToastVM.shared.toast(type: .info, from: author, message: message.body ?? "-", redirect: AppRoute.conversation(sid: sid, focusOnTextField: false))
+                HapticManager.shared.impact(style: .light)
+            }
         }
     }
     

@@ -48,14 +48,13 @@ struct AppRouter: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .padding()
-                    .background(.thinMaterial)
-                    .background {
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundStyle(toast.type == .success ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
-                    }
-                    .clipShape(.rect(cornerRadius: 10))
+                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
+                    .background(toast.type.color, in: RoundedRectangle(cornerRadius: 10))
                     .onTapGesture {
                         toastVM.remove(id: toast.id)
+                        if let redirect = toast.redirect {
+                            AppData.shared.goTo(redirect)
+                        }
                     }
                     .padding(.horizontal)
                     .transition(.asymmetric(insertion: .push(from: .top), removal: .push(from: .bottom)))

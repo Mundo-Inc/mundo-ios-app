@@ -8,30 +8,33 @@
 import Foundation
 
 struct UserDetail: Identifiable, Decodable {
-    let id,
-        name,
-        username,
-        bio: String
-    let remainingXp,
-        prevLevelXp,
-        followersCount,
-        followingCount,
-        reviewsCount,
-        totalCheckins,
-        rank: Int
-    let verified,
-        isFollower,
-        isFollowing: Bool
+    let id: String
+    let name: String
+    let username: String
+    let bio: String
+    let remainingXp: Int
+    let prevLevelXp: Int
+    let followersCount: Int
+    let followingCount: Int
+    let reviewsCount: Int
+    let totalCheckins: Int
+    let rank: Int
+    let verified: Bool
     let profileImage: URL?
     let progress: UserProgress
+    var connectionStatus: ConnectionStatus
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, username, bio, remainingXp, prevLevelXp, verified, profileImage, isFollower, isFollowing, followersCount, followingCount, reviewsCount, totalCheckins, rank, progress
+        case name, username, bio, remainingXp, prevLevelXp, verified, profileImage, followersCount, followingCount, reviewsCount, totalCheckins, rank, progress, connectionStatus
     }
     
     var levelProgress: Double {
         Double(self.progress.xp - self.prevLevelXp) / Double(self.progress.xp + self.remainingXp - self.prevLevelXp)
+    }
+    
+    mutating func setFollowedByUserStatus(_ status: Bool) {
+        self.connectionStatus = ConnectionStatus(followedByUser: status, followsUser: connectionStatus.followsUser)
     }
 }
 
@@ -50,8 +53,7 @@ extension UserDetail {
         totalCheckins = try container.decode(Int.self, forKey: .totalCheckins)
         rank = try container.decode(Int.self, forKey: .rank)
         verified = try container.decode(Bool.self, forKey: .verified)
-        isFollower = try container.decode(Bool.self, forKey: .isFollower)
-        isFollowing = try container.decode(Bool.self, forKey: .isFollowing)
+        connectionStatus = try container.decode(ConnectionStatus.self, forKey: .connectionStatus)
         progress = try container.decode(UserProgress.self, forKey: .progress)
         
         if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
@@ -60,6 +62,11 @@ extension UserDetail {
             profileImage = nil
         }
     }
+}
+
+struct ConnectionStatus: Decodable {
+    let followedByUser: Bool
+    let followsUser: Bool
 }
 
 struct UserProgress: Codable {

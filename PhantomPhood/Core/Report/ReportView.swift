@@ -12,8 +12,8 @@ struct ReportView: View {
     
     @Environment(\.dismiss) private var dismiss
     
-    init(id: String, type: ReportDM.ReportType) {
-        self._vm = StateObject(wrappedValue: ReportVM(id: id, type: type))
+    init(item: ReportDM.ReportType) {
+        self._vm = StateObject(wrappedValue: ReportVM(item: item))
     }
     
     var body: some View {
@@ -64,7 +64,7 @@ struct ReportView: View {
                 .padding()
             }
         }
-        .navigationTitle("Report \(vm.type.rawValue)")
+        .navigationTitle("Report \(vm.item.title)")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -91,5 +91,5 @@ struct ReportView: View {
 }
 
 #Preview {
-    ReportView(id: "Test", type: .review)
+    ReportView(item: .activity("TestId"))
 }

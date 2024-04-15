@@ -35,9 +35,15 @@ struct RewardsHubView: View {
                         .padding(.bottom, 30)
                 }
                 .refreshable {
-                    await pcVM.refresh()
-                    await vm.getMissions()
-                    await vm.getPrizes()
+                    Task {
+                        await pcVM.refresh()
+                    }
+                    Task {
+                        await vm.getMissions()
+                    }
+                    Task {
+                        await vm.getPrizes()
+                    }
                 }
                 .font(.custom(style: .body))
                 .scrollIndicators(.never)
@@ -212,11 +218,13 @@ struct RewardsHubView: View {
                 }
                 
                 Spacer()
+                
                 VStack(alignment: .trailing, spacing: 0) {
                     HStack(spacing: 3) {
                         Text(UserSettings.shared.inviteCredits.description)
                         Image(systemName: "person.2.fill")
                     }
+                    
                     if UserSettings.shared.inviteCredits != 0 && UserSettings.shared.inviteCredits != UserSettings.maxInviteCredits {
                         TimelineView(.animation(minimumInterval: 1, paused: false)) { _ in
                             Text("+1 in " + (UserSettings.shared.inviteCreditsLastGiven.addingTimeInterval(3600 * 24 * 7).remainingTime() ?? "7 days"))
@@ -230,8 +238,7 @@ struct RewardsHubView: View {
             
             Text("Invite your friends to the app and get rewarded as soon as they get into the app")
                 .font(.custom(style: .body))
-                .padding(.top, 2)
-                .padding(.bottom, 8)
+                .padding(.bottom, 6)
             
             if let userInviteLinks = vm.userInviteLinks {
                 HStack {
@@ -336,73 +343,36 @@ struct RewardsHubView: View {
                     if let dailyRewards = pcVM.dailyRewards, let streaks = pcVM.streaks {
                         ForEach(dailyRewards.indices, id: \.self) { index in
                             VStack {
-                                Group {
-                                    if streaks == 0 && pcVM.hasClaimedToday {
-                                        Circle()
-                                            .frame(width: 28, height: 28)
-                                            .foregroundStyle(Color.coin)
-                                            .shadow(color: Color.themeBG.opacity(0.3), radius: 3)
-                                            .overlay {
-                                                Image(systemName: "checkmark")
-                                                    .foregroundStyle(Color.black)
-                                            }
-                                        
-                                        Text(dailyRewards[index].description)
-                                            .foregroundStyle(Color.secondary)
-                                            .font(.custom(style: .caption))
-                                    } else if streaks == index {
-                                        if pcVM.hasClaimedToday {
-                                            Image(.phantomCoin)
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .grayscale(1)
+                                Image(.phantomCoin)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .grayscale(pcVM.hasClaimedToday || index > streaks ? 1 : 0)
+                                    .frame(width: 28, height: 28)
+                                    .shadow(color: Color.themeBG.opacity(0.3), radius: 3)
+                                    .scaleEffect(streaks == index && !pcVM.hasClaimedToday ? 1.4 : 1)
+                                    .animation(.easeOut(duration: 0.5), value: streaks)
+                                    .overlay {
+                                        if streaks > index || streaks == 0 && pcVM.hasClaimedToday {
+                                            Circle()
                                                 .frame(width: 28, height: 28)
+                                                .foregroundStyle(Color.coin)
                                                 .shadow(color: Color.themeBG.opacity(0.3), radius: 3)
-                                            
-                                            Text(dailyRewards[index].description)
-                                                .foregroundStyle(Color.secondary)
-                                                .font(.custom(style: .caption))
-                                        } else {
-                                            Image(.phantomCoin)
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: 28, height: 28)
-                                                .shadow(color: Color.themeBG.opacity(0.3), radius: 3)
-                                                .scaleEffect(1.4)
-                                            
-                                            Text(dailyRewards[index].description)
-                                                .foregroundStyle(Color.primary)
-                                                .font(.custom(style: .caption))
-                                                .fontWeight(.bold)
+                                                .transition(AnyTransition.opacity.animation(.easeIn(duration: 0.1).delay(0.2)))
                                         }
-                                    } else if streaks > index {
-                                        Circle()
-                                            .frame(width: 28, height: 28)
-                                            .foregroundStyle(Color.coin)
-                                            .shadow(color: Color.themeBG.opacity(0.3), radius: 3)
-                                            .overlay {
-                                                Image(systemName: "checkmark")
-                                                    .foregroundStyle(Color.black)
-                                            }
-                                        
-                                        Text(dailyRewards[index].description)
-                                            .foregroundStyle(Color.secondary)
-                                            .font(.custom(style: .caption))
-                                    } else {
-                                        Image(.phantomCoin)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .grayscale(1)
-                                            .frame(width: 28, height: 28)
-                                            .shadow(color: Color.themeBG.opacity(0.3), radius: 3)
-                                        
-                                        Text(dailyRewards[index].description)
-                                            .foregroundStyle(Color.secondary)
-                                            .font(.custom(style: .caption))
                                     }
-                                }
-                                .animation(.easeIn(duration: 0.5), value: streaks)
-                                .transition(AnyTransition.scale.animation(.easeInOut(duration: 0.5)))
+                                    .overlay {
+                                        if streaks > index || streaks == 0 && pcVM.hasClaimedToday {
+                                            Image(systemName: "checkmark")
+                                                .fontWeight(.bold)
+                                                .foregroundStyle(Color.black.opacity(0.8))
+                                                .transition(AnyTransition.scale(scale: 1.5).combined(with: .opacity).animation(.easeOut(duration: 0.25).delay(0.3)))
+                                        }
+                                    }
+                                
+                                Text(dailyRewards[index].description)
+                                    .foregroundStyle(streaks == index && !pcVM.hasClaimedToday ? Color.primary : Color.secondary)
+                                    .font(.custom(style: .caption))
+                                    .fontWeight(streaks == index && !pcVM.hasClaimedToday ? .bold : .regular)
                             }
                             .frame(maxWidth: .infinity)
                         }

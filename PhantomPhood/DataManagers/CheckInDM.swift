@@ -69,6 +69,14 @@ final class CheckInDM {
         try await apiManager.requestNoContent("/checkins", method: .post, body: body, token: token)
     }
     
+    func deleteOne(byId id: String) async throws {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        try await apiManager.requestNoContent("/checkins/\(id)", method: .delete, token: token)
+    }
+    
     // MARK: - Structs
     
     struct CheckinRequestBody: Encodable {

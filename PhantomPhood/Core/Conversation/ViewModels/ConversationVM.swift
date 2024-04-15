@@ -55,7 +55,9 @@ class ConversationVM: ObservableObject {
     }
     
     func subscribeMessages() {
+        #if DEBUG
         print("Setting up Core Data update subscription for Messages in conversation \(conversationSid)")
+        #endif
         
         let request = PersistentMessageDataItem.fetchRequest()
         request.predicate = NSPredicate(format: "conversationSid = %@", conversationSid)
@@ -269,20 +271,22 @@ class ConversationVM: ObservableObject {
         }
     }
     
-    func setAllMessagesRead() async {
+    func markAllMessagesAsRead() async {
         do {
             let conversation = try await getConversation()
             
             // (result, updatedUnreadMessageCount)
             let (result, _) = await conversation.setAllMessagesRead()
             
+            #if DEBUG
             if result.isSuccessful {
                 print("All messages set as read for conversation \(conversationSid)")
             } else {
                 print("Error - not able to set all messages as read for conversation \(conversationSid)")
             }
+            #endif
         } catch {
-            print("Error setAllMessagesRead", error)
+            print("Error markAllMessagesAsRead", error)
         }
     }
 }

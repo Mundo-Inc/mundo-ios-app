@@ -116,7 +116,7 @@ struct ConversationView: View {
                         
                         DispatchQueue.global(qos: .default).asyncAfter(deadline: .now() + 1) {
                             Task {
-                                await vm.setAllMessagesRead()
+                                await vm.markAllMessagesAsRead()
                             }
                         }
                     }
@@ -173,6 +173,12 @@ struct ConversationView: View {
             
             if self.shouldFocusOnTextField {
                 isFocused = true
+            }
+            
+            DispatchQueue.global(qos: .default).asyncAfter(deadline: .now() + 1) {
+                Task {
+                    await vm.markAllMessagesAsRead()
+                }
             }
         }
     }

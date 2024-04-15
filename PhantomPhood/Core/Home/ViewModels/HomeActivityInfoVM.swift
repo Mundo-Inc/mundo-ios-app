@@ -1,5 +1,5 @@
 //
-//  ForYouInfoVM.swift
+//  HomeActivityInfoVM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 11/30/23.
@@ -9,8 +9,8 @@ import Foundation
 import Combine
 
 @MainActor
-final class ForYouInfoVM: ObservableObject {
-    static let shared = ForYouInfoVM()
+final class HomeActivityInfoVM: ObservableObject {
+    static let shared = HomeActivityInfoVM()
     
     private let auth = Authentication.shared
     private let toastVM = ToastVM.shared
@@ -50,9 +50,9 @@ final class ForYouInfoVM: ObservableObject {
                         self?.isLoadingFollowState = true
                         if let followStatus = try? await self?.connectionsDM.followStatus(userId: value.user.id) {
                             DispatchQueue.main.async {
-                                if followStatus.isFollowing {
+                                if followStatus.followedByUser {
                                     self?.followAction = .unfollow
-                                } else if followStatus.isFollower {
+                                } else if followStatus.followsUser {
                                     self?.followAction = .followBack
                                 } else {
                                     self?.followAction = .follow

@@ -50,8 +50,10 @@ final class UserProfileDM {
             throw URLError(.badServerResponse)
         }
 
-        // update CoreData
-        dataManager.createOrUpdateUser(userEssentials: data.data)
+        DispatchQueue.main.async {
+            // update CoreData
+            self.dataManager.createOrUpdateUser(userEssentials: data.data)
+        }
         
         return data.data
     }

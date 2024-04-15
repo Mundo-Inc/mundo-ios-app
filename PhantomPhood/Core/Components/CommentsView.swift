@@ -82,7 +82,6 @@ struct CommentsView: View {
                                 ProfileImage(comment.author.profileImage, size: 44, cornerRadius: 10)
                                 
                                 LevelView(level: comment.author.progress.level)
-                                    .aspectRatio(contentMode: .fit)
                                     .frame(width: 24, height: 30)
                             }
                             .onTapGesture {
@@ -144,7 +143,7 @@ struct CommentsView: View {
                         .swipeActions {
                             Button {
                                 dismiss()
-                                AppData.shared.goTo(AppRoute.report(id: comment.id, type: .comment))
+                                AppData.shared.goTo(AppRoute.report(item: .comment(comment.id)))
                             } label: {
                                 Text("Report")
                             }

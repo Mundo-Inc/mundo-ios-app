@@ -8,9 +8,6 @@
 import SwiftUI
 
 struct FeedReviewView: View {
-    @ObservedObject private var auth = Authentication.shared
-    @ObservedObject private var appData = AppData.shared
-    @ObservedObject private var toastVM = ToastVM.shared
     @EnvironmentObject private var actionManager: ActionManager
     
     private let data: FeedItem
@@ -42,10 +39,10 @@ struct FeedReviewView: View {
         let reviewDM = ReviewDM()
         do {
             try await reviewDM.remove(reviewId: id)
-            toastVM.toast(.init(type: .success, title: "Success", message: "Your review has been deleted"))
+            ToastVM.shared.toast(.init(type: .success, title: "Success", message: "Your review has been deleted"))
         } catch {
             print(error)
-            toastVM.toast(.init(type: .error, title: "Error", message: "Couldn't delete your review"))
+            ToastVM.shared.toast(.init(type: .error, title: "Error", message: "Couldn't delete your review"))
         }
     }
     
@@ -86,7 +83,7 @@ struct FeedReviewView: View {
                     
                     Button {
                         if case .review(let review) = data.resource {
-                            if let currentUser = auth.currentUser, currentUser.id == review.writer.id {
+                            if let currentUser = Authentication.shared.currentUser, currentUser.id == review.writer.id {
                                 actionManager.value = [
                                     .init(title: "Delete Review", alertMessage: "Are you sure you want to delete this review?", callback: {
                                         Task {
@@ -94,13 +91,13 @@ struct FeedReviewView: View {
                                         }
                                     }),
                                     .init(title: "Report", callback: {
-                                        appData.goTo(AppRoute.report(id: review.id, type: .review))
+                                        AppData.shared.goTo(AppRoute.report(item: .review(review.id)))
                                     })
                                 ]
                             } else {
                                 actionManager.value = [
                                     .init(title: "Report", callback: {
-                                        appData.goTo(AppRoute.report(id: review.id, type: .review))
+                                        AppData.shared.goTo(AppRoute.report(item: .review(review.id)))
                                     })
                                 ]
                             }

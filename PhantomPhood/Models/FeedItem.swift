@@ -48,8 +48,21 @@ enum FeedItemResourceType: String, Decodable {
     case checkin = "Checkin"
     case user = "User"
     case homemade = "Homemade"
-    //    case reaction = "Reaction"
-    //    case achievement = "Achievement"
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let decodedString = try container.decode(String.self)
+        
+        // Attempt to initialize using a case-insensitive match
+        if let value = FeedItemResourceType(rawValue: decodedString.lowercased().capitalized) {
+            self = value
+        } else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Cannot initialize \(FeedItemResourceType.self) from invalid String value \(decodedString)"
+            )
+        }
+    }
 }
 
 enum FeedItemResource: Decodable {
@@ -58,6 +71,7 @@ enum FeedItemResource: Decodable {
     case checkin(FeedCheckin)
     case user(UserEssentials)
     case homemade(HomeMade)
+    case users([UserEssentials])
     //    case reaction
     //    case achievement
 }
@@ -78,11 +92,11 @@ struct FeedItem: Identifiable, Decodable, Equatable {
     }
     
     let id: String
-    let user: UserEssentials
+    var user: UserEssentials
     let place: PlaceOverview?
     let activityType: FeedItemActivityType
     let resourceType: FeedItemResourceType
-    let resource: FeedItemResource
+    var resource: FeedItemResource
     let privacyType: PrivacyType
     let createdAt: Date
     let updatedAt: Date
@@ -91,7 +105,8 @@ struct FeedItem: Identifiable, Decodable, Equatable {
     let commentsCount: Int
     
     enum CodingKeys: String, CodingKey {
-        case id, user, place, activityType, resourceType, resource, privacyType, createdAt, updatedAt, reactions, comments, commentsCount
+        case id = "_id"
+        case user, place, activityType, resourceType, resource, privacyType, createdAt, updatedAt, reactions, comments, commentsCount
     }
     
     // By Values
@@ -181,5 +196,24 @@ struct FeedItem: Identifiable, Decodable, Equatable {
         }
         
         self.reactions = newReactions
+    }
+}
+
+extension FeedItem {
+    // Follow users (NewFollowing user actrivity)
+    mutating func followFromResourceUsers(userId: String) {
+        if case .users(let users) = self.resource {
+            let newUsers = users.map { user in
+                if user.id == userId {
+                    var newUser = user
+                    newUser.setFollowedByUserStatus(true)
+                    return newUser
+                } else {
+                    return user
+                }
+            }
+            
+            self.resource = .users(newUsers)
+        }
     }
 }

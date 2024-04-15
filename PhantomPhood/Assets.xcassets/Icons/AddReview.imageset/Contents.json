@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "PhantomCoinTemplate.png",
+      "filename" : "AddReview.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "PhantomCoinTemplate@2x.png",
+      "filename" : "AddReview@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "PhantomCoinTemplate@3x.png",
+      "filename" : "AddReview@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

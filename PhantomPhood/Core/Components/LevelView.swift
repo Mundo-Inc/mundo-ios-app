@@ -11,15 +11,15 @@ import SwiftUI
 struct LevelView: View {
     let level: Int
     
-    var body: Image {
+    var body: some View {
         Image(level < 0 ? "NoLevel" : "Lvl\(level)", bundle: Bundle(path: "Levels"))
             .resizable()
+            .aspectRatio(contentMode: .fit)
     }
 }
 
 #Preview {
     LevelView(level: 5)
-        .aspectRatio(contentMode: .fit)
         .frame(width: 50, height: 50)
         
 }

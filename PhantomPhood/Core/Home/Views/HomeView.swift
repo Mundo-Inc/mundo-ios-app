@@ -8,32 +8,29 @@
 import SwiftUI
 
 struct HomeView: View {
-    @ObservedObject private var auth = Authentication.shared
+    static let headerHeight: CGFloat = 40
+    @StateObject private var vm = HomeVM()
+    
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var notificationsVM = NotificationsVM.shared
-    
-    /// Used for pull to referesh - Percentage
-    @State private var draggedAmount: Double = .zero
-    private let dragAmountToRefresh: Double = 200.0
-    
-    // -
-    @StateObject private var mediasViewModel = MediasVM()
+    @ObservedObject private var homeActivityInfoVM = HomeActivityInfoVM.shared
+    @ObservedObject private var conversationsManager = ConversationsManager.shared
     
     var body: some View {
         TabView(selection: $appData.homeActiveTab) {
-            Group {
-                if #available(iOS 17.0, *) {
-                    ForYouView17()
-                } else {
-                    ForYouView(draggedAmount: $draggedAmount, dragAmountToRefresh: dragAmountToRefresh)
-                }
+            if #available(iOS 17.0, *) {
+                HomeFollowingView17(vm: vm)
+                    .tag(HomeTab.following)
+                
+                HomeForYouView17(vm: vm)
+                    .tag(HomeTab.forYou)
+            } else {
+                HomeFollowingView(vm: vm)
+                    .tag(HomeTab.following)
+                
+                HomeForYouView(vm: vm)
+                    .tag(HomeTab.forYou)
             }
-            .background(Color.themePrimary.ignoresSafeArea())
-            .environment(\.colorScheme, .dark)
-            .tag(HomeTab.forYou)
-            
-            FeedView(mediasViewModel: mediasViewModel)
-                .tag(HomeTab.following)
         }
         .overlay(alignment: .top) {
             if #available(iOS 17.0, *) {
@@ -71,6 +68,7 @@ struct HomeView: View {
                 }
                 .background(Capsule().foregroundStyle(.black).opacity(0.3))
                 .fontWeight(.semibold)
+                .frame(maxHeight: Self.headerHeight)
             } else {
                 HStack(spacing: 0) {
                     Button {
@@ -107,39 +105,51 @@ struct HomeView: View {
                 .background(Capsule().foregroundStyle(.black).opacity(0.3))
                 .font(.custom(style: .headline))
                 .fontWeight(.semibold)
+                .frame(maxHeight: Self.headerHeight)
                 .foregroundStyle(.primary)
-                .opacity(1.0 - min(draggedAmount * 2, 1))
-                .offset(y: draggedAmount * 20)
+                .opacity(1.0 - min(vm.draggedAmount * 2, 1))
+                .offset(y: vm.draggedAmount * 20)
                 .background {
                     HStack {
                         Text("Drag down to referesh")
                         Image(systemName: "menubar.arrow.down.rectangle")
                     }
                     .font(.custom(style: .caption))
-                    .opacity(draggedAmount <= 1/3 ? 0 : abs((draggedAmount - 1/3) * 3/2))
+                    .opacity(vm.draggedAmount <= 1/3 ? 0 : abs((vm.draggedAmount - 1/3) * 3/2))
                 }
-                .offset(y: draggedAmount * 20)
+                .offset(y: vm.draggedAmount * 20)
             }
             
             HStack {
                 Spacer()
                 
                 NavigationLink(value: AppRoute.inbox) {
-                    Image(systemName: "envelope.fill")
+                    let unreadDms = conversationsManager.conversations.filter({ $0.unreadMessagesCount > 0 }).count
+                    let unreadNotifications = notificationsVM.unreadCount ?? 0
+                    Image(systemName: unreadDms > 0 ? "message.fill" : unreadNotifications > 0 ? "bell.fill" : "tray.fill")
+                        .animation(.spring, value: unreadDms)
                         .font(.system(size: 20))
                         .frame(width: 40, height: 40)
-                        .background(Circle().foregroundStyle(.black.opacity(0.5)))
+                        .background(.ultraThinMaterial, in: Circle())
                         .overlay(alignment: .topTrailing) {
-                            if let unreadCount = notificationsVM.unreadCount, unreadCount > 0 {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .foregroundStyle(Color.accentColor)
-                                    .frame(minWidth: 16)
-                                    .frame(maxWidth: 26, maxHeight: 16)
-                                    .overlay {
-                                        Text(unreadCount > 99 ? "99+" : "\(unreadCount)")
-                                            .font(.custom(style: .caption2))
-                                            .foregroundStyle(Color.white)
-                                    }
+                            if unreadDms > 0 {
+                                Text(unreadDms > 99 ? "99+" : "\(unreadDms)")
+                                    .font(.custom(style: .caption2))
+                                    .foregroundStyle(Color.white)
+                                    .frame(height: 16)
+                                    .frame(minWidth: 12)
+                                    .padding(.horizontal, 2)
+                                    .background(Capsule().foregroundStyle(Color.accentColor))
+                                    .transition(AnyTransition.scale.combined(with: .opacity).animation(.spring))
+                            } else if unreadNotifications > 0 {
+                                Text(unreadNotifications > 99 ? "99+" : "\(unreadNotifications)")
+                                    .font(.custom(style: .caption2))
+                                    .foregroundStyle(Color.black)
+                                    .frame(height: 16)
+                                    .frame(minWidth: 12)
+                                    .padding(.horizontal, 2)
+                                    .background(Capsule().foregroundStyle(Color.gray))
+                                    .transition(AnyTransition.scale.combined(with: .opacity).animation(.spring))
                             }
                         }
                 }
@@ -152,6 +162,18 @@ struct HomeView: View {
                     
             }
             .padding(.horizontal)
+            .frame(maxHeight: Self.headerHeight)
+        }
+        .environment(\.colorScheme, .dark)
+        .sheet(isPresented: Binding(optionalValue: $homeActivityInfoVM.data), onDismiss: {
+            homeActivityInfoVM.reset()
+        }) {
+            if #available(iOS 16.4, *) {
+                HomeActivityInfoView()
+                    .presentationBackground(.thinMaterial)
+            } else {
+                HomeActivityInfoView()
+            }
         }
     }
 }

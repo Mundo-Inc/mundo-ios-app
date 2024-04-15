@@ -79,10 +79,10 @@ struct UserProfileView: View {
                     
                     HStack {
                         Group {
-                            if let isFollowing = vm.isFollowing {
+                            if let isFollowedByUser = vm.isFollowedByUser, let user = vm.user {
                                 Button {
                                     Task {
-                                        if isFollowing {
+                                        if isFollowedByUser {
                                             await vm.unfollow()
                                         } else {
                                             await vm.follow()
@@ -93,17 +93,17 @@ struct UserProfileView: View {
                                         if vm.loadingSections.contains(.followOperation) {
                                             ProgressView()
                                                 .controlSize(.mini)
-                                        } else if isFollowing {
+                                        } else if isFollowedByUser {
                                             Text("Unfollow")
                                         } else {
-                                            Text("Follow")
+                                            Text(user.connectionStatus.followsUser ? "Follow Back" : "Follow")
                                         }
                                     }
                                     .frame(height: 32)
                                     .frame(maxWidth: .infinity)
-                                    .background(isFollowing ? Color.themeBorder : Color.accentColor)
+                                    .background(isFollowedByUser ? Color.themeBorder : Color.accentColor)
                                     .clipShape(.rect(cornerRadius: 5))
-                                    .foregroundStyle(isFollowing ? Color.primary : Color.black)
+                                    .foregroundStyle(isFollowedByUser ? Color.primary : Color.black)
                                 }
                             } else {
                                 Button {} label: {

@@ -18,6 +18,7 @@ struct UserEssentials: Identifiable, Decodable {
     let verified: Bool
     let profileImage: URL?
     let progress: CompactUserProgress
+    var connectionStatus: ConnectionStatus?
     
     struct CompactUserProgress: Decodable {
         let level: Int
@@ -26,7 +27,7 @@ struct UserEssentials: Identifiable, Decodable {
 
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, username, verified, profileImage, progress
+        case name, username, verified, profileImage, progress, connectionStatus
     }
     
     var color: Color {
@@ -38,6 +39,12 @@ struct UserEssentials: Identifiable, Decodable {
         
         return Self.colors[Int(hexValue % 10)]
     }
+    
+    mutating func setFollowedByUserStatus(_ status: Bool) {
+        if let connectionStatus {
+            self.connectionStatus = ConnectionStatus(followedByUser: status, followsUser: connectionStatus.followsUser)
+        }
+    }
 }
 
 extension UserEssentials {
@@ -48,6 +55,7 @@ extension UserEssentials {
         username = try container.decode(String.self, forKey: .username)
         verified = try container.decode(Bool.self, forKey: .verified)
         progress = try container.decode(CompactUserProgress.self, forKey: .progress)
+        connectionStatus = try container.decodeIfPresent(ConnectionStatus.self, forKey: .connectionStatus)
 
         if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
             profileImage = URL(string: profileImageString)
@@ -65,17 +73,19 @@ extension UserEssentials {
         self.verified = userDetail.verified
         self.profileImage = userDetail.profileImage
         self.progress = CompactUserProgress(level: userDetail.progress.level, xp: userDetail.progress.xp)
+        self.connectionStatus = userDetail.connectionStatus
     }
 }
 
 extension UserEssentials {
     init(_ entity: UserEntity) {
-        id = entity.id ?? ""
-        name = entity.name ?? ""
-        username = entity.username ?? ""
-        verified = entity.verified
-        profileImage = entity.profileImage != nil ? URL(string: entity.profileImage!) : nil
-        progress = .init(level: Int(entity.level), xp: Int(entity.xp))
+        self.id = entity.id ?? ""
+        self.name = entity.name ?? ""
+        self.username = entity.username ?? ""
+        self.verified = entity.verified
+        self.profileImage = entity.profileImage != nil ? URL(string: entity.profileImage!) : nil
+        self.progress = .init(level: Int(entity.level), xp: Int(entity.xp))
+        self.connectionStatus = nil
     }
     
     init(entity: UserEntity) throws {
@@ -89,6 +99,7 @@ extension UserEssentials {
         self.verified = entity.verified
         self.profileImage = entity.profileImage != nil ? URL(string: entity.profileImage!) : nil
         self.progress = .init(level: Int(entity.level), xp: Int(entity.xp))
+        self.connectionStatus = nil
     }
     
     func createUserEntity(context: NSManagedObjectContext) -> UserEntity {

@@ -22,7 +22,7 @@ final class AppData: ObservableObject {
     @Published var activeTab: Tab = .home
     
     // Home Active Tab
-    @Published var homeActiveTab: HomeTab = .forYou
+    @Published var homeActiveTab: HomeTab = .following
     
     @Published var myProfileActiveTab: MyProfileActiveTab = .stats
     @Published var showEditProfile: Bool = false

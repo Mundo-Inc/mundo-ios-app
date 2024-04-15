@@ -141,7 +141,6 @@ fileprivate struct UserCard: View {
             VStack(spacing: 0) {
                 HStack {
                     LevelView(level: connection.user.progress.level)
-                        .aspectRatio(contentMode: .fit)
                         .frame(width: 20, height: 26)
                     
                     Text(connection.user.name)

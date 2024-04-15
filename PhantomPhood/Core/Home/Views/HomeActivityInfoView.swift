@@ -1,5 +1,5 @@
 //
-//  ForYouInfoView.swift
+//  HomeActivityInfoView.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 11/30/23.
@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct ForYouInfoView: View {
+struct HomeActivityInfoView: View {
     @ObservedObject private var appData = AppData.shared
     
     @ObservedObject var commentsViewModel = CommentsVM.shared
     @ObservedObject var selectReactionsViewModel = SelectReactionsVM.shared
     
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var vm = ForYouInfoVM.shared
+    @ObservedObject var vm = HomeActivityInfoVM.shared
     
     var body: some View {
         VStack(spacing: 0) {
@@ -255,5 +255,5 @@ private struct ScoreItem: View {
 }
 
 #Preview {
-    ForYouInfoView()
+    HomeActivityInfoView()
 }

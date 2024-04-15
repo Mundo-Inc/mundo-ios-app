@@ -46,37 +46,57 @@ struct ReactionLabel: View {
 struct ForYouReactionLabel: View {
     let reaction: Reaction
     let isSelected: Bool
+    let orientation: Orientation
+    let size: CGFloat
     let onPress: (_ isSelected: Bool) -> Void
     
-    init(reaction: Reaction, isSelected: Bool, onPress: @escaping (Bool) -> Void) {
+    init(reaction: Reaction, isSelected: Bool, size: CGFloat = 36, orientation: Orientation = .horizontal, onPress: @escaping (Bool) -> Void) {
         self.reaction = reaction
         self.isSelected = isSelected
+        self.size = size
+        self.orientation = orientation
         self.onPress = onPress
     }
     
+    enum Orientation {
+        case vertical
+        case horizontal
+    }
+    
     var body: some View {
-        HStack {
-            Emoji(reaction: reaction, isAnimating: Binding(get: {
-                isSelected
-            }, set: { _ in }), size: 24)
-            
-            Text(String(reaction.count))
-                .font(.custom(style: .body))
-                .frame(maxWidth: .infinity)
-        }
-        .foregroundStyle(.white)
-        .padding(.vertical, 6)
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, 10)
-        .background(isSelected ? Color.accentColor.opacity(0.5) : Color.black.opacity(0.3))
-        .background(.ultraThinMaterial)
-        .overlay {
-            Capsule()
-                .stroke(isSelected ? Color.accentColor : Color.black.opacity(0.1), lineWidth: 4)
-        }
-        .clipShape(Capsule())
-        .onTapGesture {
+        Button {
             onPress(isSelected)
+        } label: {
+            switch orientation {
+            case .vertical:
+                VStack(spacing: 3) {
+                    Emoji(reaction: reaction, isAnimating: Binding(get: {
+                        isSelected
+                    }, set: { _ in }), size: size)
+                    
+                    Text(String(reaction.count))
+                        .foregroundStyle(Color.white)
+                        .font(.custom(style: .caption2))
+                        .frame(height: 20)
+                        .frame(minWidth: 20)
+                        .background(.ultraThinMaterial.opacity(0.65), in: RoundedRectangle(cornerRadius: 5))
+                        .background(isSelected ? Color.accentColor : Color.clear, in: RoundedRectangle(cornerRadius: 5))
+                }
+            case .horizontal:
+                HStack(spacing: 3) {
+                    Emoji(reaction: reaction, isAnimating: Binding(get: {
+                        isSelected
+                    }, set: { _ in }), size: size)
+                    
+                    Text(String(reaction.count))
+                        .foregroundStyle(Color.white)
+                        .font(.custom(style: .caption2))
+                        .frame(height: 20)
+                        .frame(minWidth: 20)
+                        .background(.ultraThinMaterial.opacity(0.65), in: RoundedRectangle(cornerRadius: 5))
+                        .background(isSelected ? Color.accentColor : Color.clear, in: RoundedRectangle(cornerRadius: 5))
+                }
+            }
         }
     }
 }

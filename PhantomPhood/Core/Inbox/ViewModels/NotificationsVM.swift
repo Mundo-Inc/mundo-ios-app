@@ -74,11 +74,15 @@ final class NotificationsVM: ObservableObject {
         do {
             try await notificationsDM.markNotificationsAsRead()
             
-            self.notifications = self.notifications.map({ notification in
-                var new = notification
-                new.readAt = .now
-                return new
-            })
+            let now = Date.now
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                self.notifications = self.notifications.map({ notification in
+                    var new = notification
+                    new.readAt = now
+                    return new
+                })
+            }
+            
             await updateUnreadNotificationsCount()
         } catch {
             print(error)
