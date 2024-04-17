@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FeedReviewView: View {
+struct ProfileActivityReviewView: View {
     @EnvironmentObject private var actionManager: ActionManager
     
     private let data: FeedItem
@@ -44,7 +44,7 @@ struct FeedReviewView: View {
     }
     
     var body: some View {
-        UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: false) {
+        UserActivityItemTemplate(user: data.user, comments: data.comments) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(data.user.name)

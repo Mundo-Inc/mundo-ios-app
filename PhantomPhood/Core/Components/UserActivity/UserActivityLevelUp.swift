@@ -15,7 +15,7 @@ struct UserActivityLevelUp: View {
     
     var body: some View {
         if let data = vm.data {
-            UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: false) {
+            UserActivityItemTemplate(user: data.user, comments: data.comments) {
                 HStack {
                     switch data.resource {
                     case .user(let resourceUser):

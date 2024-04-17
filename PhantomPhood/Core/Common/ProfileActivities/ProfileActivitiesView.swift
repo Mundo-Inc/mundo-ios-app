@@ -29,13 +29,13 @@ struct ProfileActivitiesView: View {
                             Group {
                                 switch vm.items[index].activityType {
                                 case .levelUp:
-                                    FeedLevelUpView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
+                                    ProfileActivityLevelUpView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
                                 case .following:
-                                    FeedFollowingView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
+                                    ProfileActivityFollowingView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
                                 case .newReview:
-                                    FeedReviewView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction, mediasViewModel: mediasVM)
+                                    ProfileActivityReviewView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction, mediasViewModel: mediasVM)
                                 case .newCheckin:
-                                    FeedCheckinView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
+                                    ProfileActivityCheckinView(data: vm.items[index], addReaction: vm.addReaction, removeReaction: vm.removeReaction)
                                 default:
                                     Text(vm.items[index].activityType.rawValue)
                                 }

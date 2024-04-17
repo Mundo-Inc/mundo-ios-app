@@ -1,13 +1,13 @@
 //
-//  FeedCheckinView.swift
+//  FeedFollowingView.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 9/28/23.
+//  Created by Kia Abdi on 21.09.2023.
 //
 
 import SwiftUI
 
-struct FeedCheckinView: View {
+struct ProfileActivityFollowingView: View {
     private let data: FeedItem
     private let addReaction: (NewReaction, FeedItem) async -> Void
     private let removeReaction: (UserReaction, FeedItem) async -> Void
@@ -19,7 +19,7 @@ struct FeedCheckinView: View {
     }
     
     var body: some View {
-        UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: false) {
+        UserActivityItemTemplate(user: data.user, comments: data.comments) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(data.user.name)
@@ -31,17 +31,57 @@ struct FeedCheckinView: View {
                         .foregroundStyle(.secondary)
                 }.frame(maxWidth: .infinity)
                 
-                Text("Checked-in")
-                    .font(.custom(style: .caption))
-                    .fontWeight(.medium)
-                    .foregroundStyle(.black)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                    .background(Color("CheckedIn"))
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
-            }.padding(.bottom)
+                HStack {
+                    Text("Followed")
+                        .font(.custom(style: .caption))
+                        .fontWeight(.medium)
+                        .foregroundStyle(.black)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(Color("Followed"))
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                    
+                    switch data.resource {
+                    case .user(let resourceUser):
+                        Text(resourceUser.name)
+                            .font(.custom(style: .body))
+                            .fontWeight(.bold)
+                    default:
+                        EmptyView()
+                    }
+                }
+            }
+            .padding(.bottom)
         } content: {
-            CheckInCard(data: data)
+            switch data.resource {
+            case .user(let user):
+                NavigationLink(value: AppRoute.userProfile(userId: user.id)) {
+                    HStack {
+                        ProfileImage(user.profileImage, size: 54)
+                        
+                        Spacer()
+                        
+                        Text(user.name)
+                            .font(.custom(style: .subheadline))
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color.white)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background {
+                        ZStack {
+                            Color(red: 0.14, green: 0.14, blue: 0.14)
+                            Image(.profileCardBG)
+                                .resizable()
+                                .scaledToFill()
+                        }
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+                .foregroundStyle(.primary)
+            default:
+                EmptyView()
+            }
         } footer: {
             WrappingHStack(horizontalSpacing: 4, verticalSpacing: 6) {
                 Button {

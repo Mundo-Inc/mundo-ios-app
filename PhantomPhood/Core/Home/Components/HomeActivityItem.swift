@@ -551,6 +551,13 @@ struct HomeActivityItem: View {
                             .multilineTextAlignment(.leading)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .foregroundStyle(.white)
+                            .onTapGesture {
+                                HomeActivityInfoVM.shared.show(item) { reaction in
+                                    Task {
+                                        await vm.addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), to: $item)
+                                    }
+                                }
+                            }
                     }
                 }
             case .newReview:
@@ -558,6 +565,13 @@ struct HomeActivityItem: View {
                     Spacer()
                     
                     ContentTypeChip(text: "Review", color: .reviewed)
+                        .onTapGesture {
+                            HomeActivityInfoVM.shared.show(item) { reaction in
+                                Task {
+                                    await vm.addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), to: $item)
+                                }
+                            }
+                        }
                     
                     if let overallScore = feedReview.scores.overall {
                         HStack {
@@ -569,6 +583,13 @@ struct HomeActivityItem: View {
                             
                             Spacer()
                         }
+                        .onTapGesture {
+                            HomeActivityInfoVM.shared.show(item) { reaction in
+                                Task {
+                                    await vm.addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), to: $item)
+                                }
+                            }
+                        }
                     }
                     
                     if !feedReview.content.isEmpty {
@@ -577,6 +598,13 @@ struct HomeActivityItem: View {
                             .multilineTextAlignment(.leading)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .foregroundStyle(.white)
+                            .onTapGesture {
+                                HomeActivityInfoVM.shared.show(item) { reaction in
+                                    Task {
+                                        await vm.addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), to: $item)
+                                    }
+                                }
+                            }
                     }
                 }
             case .levelUp:
@@ -689,6 +717,13 @@ struct HomeActivityItem: View {
                                 Text("+\(users.count - Self.followsItemLimit) more")
                                     .foregroundStyle(.secondary)
                                     .padding(.vertical)
+                                    .onTapGesture {
+                                        HomeActivityInfoVM.shared.show(item) { reaction in
+                                            Task {
+                                                await vm.addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), to: $item)
+                                            }
+                                        }
+                                    }
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -713,6 +748,13 @@ struct HomeActivityItem: View {
                             .multilineTextAlignment(.leading)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .foregroundStyle(.white)
+                            .onTapGesture {
+                                HomeActivityInfoVM.shared.show(item) { reaction in
+                                    Task {
+                                        await vm.addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), to: $item)
+                                    }
+                                }
+                            }
                     }
                 }
             default:

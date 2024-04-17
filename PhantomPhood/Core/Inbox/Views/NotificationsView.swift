@@ -45,7 +45,7 @@ struct NotificationsView: View {
                     }
                 } label: {
                     HStack(alignment: .top) {
-                        VStack {
+                        VStack(spacing: 8) {
                             if let title = data.title {
                                 Text(title)
                                     .font(.custom(style: .caption))
@@ -54,6 +54,7 @@ struct NotificationsView: View {
                             if let content = data.content {
                                 Text(content)
                                     .font(.custom(style: .caption))
+                                    .padding(.leading, data.title != nil ? 15 : 0)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .foregroundStyle(.secondary)
                             }

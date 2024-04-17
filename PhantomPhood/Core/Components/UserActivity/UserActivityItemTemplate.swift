@@ -27,19 +27,15 @@ fileprivate struct LineArchShape: Shape {
 }
 
 fileprivate struct LineArchView: View {
-    let isActive: Bool
-    
     var body: some View {
         LineArchShape()
-            .stroke(isActive ? Color.accentColor : Color.themeBorder, lineWidth: 2)
-            .animation(.easeInOut, value: isActive)
+            .stroke(Color.themeBorder, lineWidth: 2)
     }
 }
 
 // MARK: - Comment View
 fileprivate struct CommentView: View {
     let comment: Comment
-    let isActive: Bool
     
     var body: some View {
         HStack {
@@ -47,7 +43,7 @@ fileprivate struct CommentView: View {
                 Spacer()
                     .frame(width: 2)
                     .overlay(alignment: .topLeading) {
-                        LineArchView(isActive: isActive)
+                        LineArchView()
                             .frame(width: 22, height: 75)
                     }
                     .offset(x: 1, y: -50)
@@ -79,12 +75,10 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
     let content: () -> Content
     let footer: () -> Footer
     let user: UserEssentials
-    let isActive: Bool
     
     init(
         user: UserEssentials,
         comments: [Comment] = [],
-        isActive: Bool = false,
         @ViewBuilder header: @escaping () -> Header,
         @ViewBuilder content: @escaping () -> Content,
         @ViewBuilder footer: @escaping () -> Footer = { EmptyView() }
@@ -94,7 +88,6 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
         self.footer = footer
         self.comments = comments
         self.user = user
-        self.isActive = isActive
     }
     
     var body: some View {
@@ -128,8 +121,7 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
                 VStack {
                     Spacer()
                         .frame(width: 2)
-                        .background(isActive ? Color.accentColor : Color.themeBorder)
-                        .animation(.easeInOut, value: isActive)
+                        .background(Color.themeBorder)
                 }
                 .frame(width: 44)
                 .frame(maxHeight: .infinity)
@@ -142,7 +134,7 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
             }
             
             ForEach(comments) { comment in
-                CommentView(comment: comment, isActive: isActive)
+                CommentView(comment: comment)
             }
             
             HStack {

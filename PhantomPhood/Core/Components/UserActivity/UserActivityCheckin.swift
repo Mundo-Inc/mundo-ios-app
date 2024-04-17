@@ -12,7 +12,7 @@ struct UserActivityCheckin: View {
     
     var body: some View {
         if let data = vm.data {
-            UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: false) {
+            UserActivityItemTemplate(user: data.user, comments: data.comments) {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text(data.user.name)

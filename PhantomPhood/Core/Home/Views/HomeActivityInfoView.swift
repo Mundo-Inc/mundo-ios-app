@@ -14,9 +14,6 @@ struct HomeActivityInfoView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            Color.clear
-                .frame(width: 100, height: 30)
-            
             if let data = vm.data {
                 ScrollView {
                     VStack {
@@ -43,6 +40,7 @@ struct HomeActivityInfoView: View {
                             .clipShape(.rect(cornerRadius: 16))
                             .padding(.horizontal)
                             .onTapGesture {
+                                dismiss()
                                 AppData.shared.goTo(AppRoute.place(id: place.id))
                             }
                         }
@@ -66,51 +64,18 @@ struct HomeActivityInfoView: View {
                                     .foregroundStyle(.secondary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            
-                            if let followAction = vm.followAction, !vm.isUserSelf {
-                                switch followAction {
-                                case .follow, .followBack:
-                                    Button {
-                                        Task {
-                                            await vm.follow(id: data.user.id)
-                                        }
-                                    } label: {
-                                        ZStack {
-                                            HStack {
-                                                Image(systemName: "person.badge.plus")
-                                                Text(followAction.rawValue)
-                                            }
-                                            .opacity(vm.isLoadingFollowState ? 0 : 1)
-                                            
-                                            if vm.isLoadingFollowState {
-                                                ProgressView()
-                                            }
-                                        }
-                                        .font(.custom(style: .body))
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 4)
-                                        .background {
-                                            RoundedRectangle(cornerRadius: 6)
-                                                .stroke()
-                                        }
-                                        .animation(.easeInOut, value: vm.isLoadingFollowState)
-                                    }
-                                    .disabled(vm.isLoadingFollowState)
-                                    .opacity(vm.isLoadingFollowState ? 0.5 : 1)
-                                    .foregroundStyle(Color.accentColor)
-                                default:
-                                    EmptyView()
-                                }
-                            }
                         }
                         .padding()
                         .onTapGesture {
+                            dismiss()
                             AppData.shared.goToUser(data.user.id)
                         }
                         
-                        review
+                        Content()
                     }
                 }
+                .scrollIndicators(.never)
+                .padding(.top)
                 
                 Divider()
                 
@@ -153,19 +118,28 @@ struct HomeActivityInfoView: View {
                     
                     Spacer()
                 }
-                .padding(.horizontal)
-                .padding(.vertical)
-                .padding(.vertical)
+                .padding()
             }
         }
         .presentationDetents([.fraction(0.7), .fraction(0.99)])
     }
     
-    private var review: some View {
-        VStack {
-            if let data = vm.data {
-                switch data.resource {
-                case .review(let feedReview):
+    @ViewBuilder
+    private func Content() -> some View {
+        if let data = vm.data {
+            switch data.activityType {
+            case .newCheckin:
+                if case .checkin(let feedCheckIn) = data.resource {
+                    if let caption = feedCheckIn.caption, !caption.isEmpty {
+                        Text(caption)
+                            .foregroundStyle(.secondary)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .font(.custom(style: .body))
+                    }
+                }
+            case .newReview:
+                if case .review(let feedReview) = data.resource {
                     VStack {
                         if feedReview.scores.overall != nil || feedReview.scores.atmosphere != nil || feedReview.scores.drinkQuality != nil || feedReview.scores.foodQuality != nil || feedReview.scores.service != nil || feedReview.scores.value != nil {
                             VStack(spacing: 8) {
@@ -210,18 +184,81 @@ struct HomeActivityInfoView: View {
                     .frame(maxWidth: 280)
                     
                     if !feedReview.content.isEmpty {
-                        Group {
-                            Text(feedReview.writer.name + ": ").bold() + Text(feedReview.content)
-                        }
-                        .foregroundStyle(.secondary)
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .font(.custom(style: .body))
+                        Text("**\(feedReview.writer.name):** feedReview.content")
+                            .foregroundStyle(.secondary)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .font(.custom(style: .body))
                     }
-                    
-                default:
-                    EmptyView()
                 }
+            case .following:
+                if case .users(let users) = data.resource {
+                    VStack(spacing: 0) {
+                        ForEach(users.indices, id: \.self) { index in
+                            let user = users[index]
+                            
+                            HStack {
+                                ProfileImage(user.profileImage, size: 40)
+                                
+                                VStack(alignment: .leading) {
+                                    Text(user.name)
+                                        .font(.custom(style: .headline))
+                                        .fontWeight(.medium)
+                                        .foregroundStyle(.primary)
+                                        .lineLimit(1)
+                                    
+                                    Text("@\(user.username)")
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(1)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                if let connectionStatus = user.connectionStatus {
+                                    if !connectionStatus.followedByUser {
+                                        Text("Show Profile")
+                                            .frame(height: 20)
+                                            .font(.custom(style: .caption))
+                                            .foregroundStyle(.secondary)
+                                            .padding(.horizontal, 8)
+                                            .padding(.vertical, 4)
+                                            .background(RoundedRectangle(cornerRadius: 5).stroke(Color.secondary, lineWidth: 1))
+                                            .foregroundStyle(.primary)
+                                    } else {
+                                        Text("Following")
+                                            .font(.custom(style: .caption))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                            }
+                            .padding()
+                            .onTapGesture {
+                                dismiss()
+                                AppData.shared.goToUser(user.id)
+                            }
+                            
+                            if index != users.count - 1 {
+                                Divider()
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .background(Color.themePrimary, in: RoundedRectangle(cornerRadius: 12))
+                    .padding(.horizontal)
+                    .padding(.bottom)
+                }
+            case .newHomemade:
+                if case .homemade(let homemade) = data.resource {
+                    if !homemade.content.isEmpty {
+                        Text(homemade.content)
+                            .foregroundStyle(.secondary)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .font(.custom(style: .body))
+                    }
+                }
+            default:
+                EmptyView()
             }
         }
     }

@@ -1,13 +1,13 @@
 //
-//  FeedFollowingView.swift
+//  FeedLevelUpView.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 21.09.2023.
+//  Created by Kia Abdi on 20.09.2023.
 //
 
 import SwiftUI
 
-struct FeedFollowingView: View {
+struct ProfileActivityLevelUpView: View {
     private let data: FeedItem
     private let addReaction: (NewReaction, FeedItem) async -> Void
     private let removeReaction: (UserReaction, FeedItem) async -> Void
@@ -18,38 +18,35 @@ struct FeedFollowingView: View {
         self.removeReaction = removeReaction
     }
     
+    // For shader
+    private let startDate = Date()
+    
     var body: some View {
-        UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: false) {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(data.user.name)
+        UserActivityItemTemplate(user: data.user, comments: data.comments) {
+            HStack {
+                switch data.resource {
+                case .user(let resourceUser):
+                    Text(resourceUser.name)
                         .font(.custom(style: .body))
                         .fontWeight(.bold)
-                    Spacer()
-                    Text(data.createdAt.timeElapsed(suffix: " ago"))
-                        .font(.custom(style: .caption))
-                        .foregroundStyle(.secondary)
-                }.frame(maxWidth: .infinity)
-                
-                HStack {
-                    Text("Followed")
-                        .font(.custom(style: .caption))
-                        .fontWeight(.medium)
-                        .foregroundStyle(.black)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 4)
-                        .background(Color("Followed"))
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                    
-                    switch data.resource {
-                    case .user(let resourceUser):
-                        Text(resourceUser.name)
-                            .font(.custom(style: .body))
-                            .fontWeight(.bold)
-                    default:
-                        EmptyView()
-                    }
+                default:
+                    EmptyView()
                 }
+                
+                Text("Leveled Up!")
+                    .font(.custom(style: .caption))
+                    .fontWeight(.medium)
+                    .foregroundStyle(.black)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 4)
+                    .background(Color("LevelUp"))
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                
+                Spacer()
+                
+                Text(data.createdAt.timeElapsed(suffix: " ago"))
+                    .font(.custom(style: .caption))
+                    .foregroundStyle(.secondary)
             }
             .padding(.bottom)
         } content: {
@@ -65,15 +62,37 @@ struct FeedFollowingView: View {
                             .font(.custom(style: .subheadline))
                             .fontWeight(.bold)
                             .foregroundStyle(Color.white)
+                        
+                        Spacer()
+                        
+                        ZStack {
+                            LevelView(level: user.progress.level - 1)
+                                .frame(width: 36, height: 36)
+                                .offset(y: -15)
+                                .opacity(0.4)
+                            
+                            
+                            LevelView(level: user.progress.level)
+                                .frame(width: 50, height: 50)
+                                .offset(y: 10)
+                                .shadow(radius: 10)
+                        }
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background {
-                        ZStack {
-                            Color(red: 0.14, green: 0.14, blue: 0.14)
-                            Image(.profileCardBG)
-                                .resizable()
-                                .scaledToFill()
+                        if #available(iOS 17.0, *) {
+                            TimelineView(.animation) { context in
+                                Color(red: 0.14, green: 0.14, blue: 0.14)
+                                    .colorEffect(ShaderLibrary.circleLoader(.boundingRect, .float(startDate.timeIntervalSinceNow)))
+                            }
+                        } else {
+                            ZStack {
+                                Color(red: 0.14, green: 0.14, blue: 0.14)
+                                Image(.profileCardBG)
+                                    .resizable()
+                                    .scaledToFill()
+                            }
                         }
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 10))
