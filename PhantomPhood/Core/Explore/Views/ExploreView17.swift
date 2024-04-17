@@ -10,8 +10,6 @@ import MapKit
 
 @available(iOS 17.0, *)
 struct ExploreView17: View {
-    private var appData = AppData.shared
-    
     @EnvironmentObject private var exploreSearchVM: ExploreSearchVM
     @Environment(\.dismissSearch) private var dismissSearch
     /// for iOS 17
@@ -51,7 +49,7 @@ struct ExploreView17: View {
                                 .scaleEffect(vm.scale)
                                 .onTapGesture {
                                     if let name = item.name {
-                                        appData.goTo(.placeMapPlace(mapPlace: .init(coordinate: item.placemark.coordinate, title: name), action: nil))
+                                        AppData.shared.goTo(.placeMapPlace(mapPlace: .init(coordinate: item.placemark.coordinate, title: name), action: nil))
                                     }
                                 }
                         }
@@ -80,7 +78,7 @@ struct ExploreView17: View {
                     }).first {
                         Button {
                             if let event = first.event {
-                                appData.goTo(.event(.data(event)))
+                                AppData.shared.goTo(.event(.data(event)))
                             }
                         } label: {
                             if let event = first.event {

@@ -9,7 +9,6 @@ import SwiftUI
 import MapKit
 
 struct ProfileCheckins: View {
-    @ObservedObject private var appDate = AppData.shared
     @StateObject private var vm: ProfileCheckinsVM
     
     init(userId: UserIdEnum? = nil) {
@@ -106,8 +105,6 @@ struct ProfileCheckins: View {
 fileprivate struct CheckinsMap17: View {
     let checkins: [Checkin]
     
-    @ObservedObject private var appDate = AppData.shared
-    
     @State var position: MapCameraPosition = .automatic
     
     @State var scale: CGFloat = 1
@@ -143,8 +140,6 @@ fileprivate struct CheckinsMap17: View {
 
 fileprivate struct CheckinsMap16: View {
     let checkins: [Checkin]
-    
-    @ObservedObject private var appDate = AppData.shared
     
     @State private var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 0, longitude: 0), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
     

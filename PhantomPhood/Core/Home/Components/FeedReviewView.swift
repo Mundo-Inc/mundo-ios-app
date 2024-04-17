@@ -23,9 +23,6 @@ struct FeedReviewView: View {
         self._mediasViewModel = ObservedObject(wrappedValue: mediasViewModel)
     }
     
-    @ObservedObject private var commentsViewModel = CommentsVM.shared
-    @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
-    
     private func showMedia() {
         switch data.resource {
         case .review(let feedReview):
@@ -47,7 +44,7 @@ struct FeedReviewView: View {
     }
     
     var body: some View {
-        UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: commentsViewModel.currentActivityId == data.id) {
+        UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: false) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(data.user.name)
@@ -202,7 +199,7 @@ struct FeedReviewView: View {
         } footer: {
             WrappingHStack(horizontalSpacing: 4, verticalSpacing: 6) {
                 Button {
-                    selectReactionsViewModel.select { reaction in
+                    SelectReactionsVM.shared.select { reaction in
                         Task {
                             await addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), data)
                         }
@@ -215,7 +212,7 @@ struct FeedReviewView: View {
                 }
                 
                 Button {
-                    commentsViewModel.showComments(activityId: data.id)
+                    CommentsVM.shared.showComments(activityId: data.id)
                 } label: {
                     Image(systemName: "bubble.left")
                         .font(.system(size: 22))

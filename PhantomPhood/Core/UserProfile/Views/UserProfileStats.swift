@@ -11,8 +11,6 @@ struct UserProfileStats: View {
     let user: UserDetail?
     @Binding var activeTab: UserProfileTab
     
-    @ObservedObject var appData = AppData.shared
-    
     var body: some View {
         VStack(spacing: 30) {
             VStack {

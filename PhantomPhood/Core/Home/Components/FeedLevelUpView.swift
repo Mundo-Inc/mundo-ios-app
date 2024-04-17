@@ -18,14 +18,11 @@ struct FeedLevelUpView: View {
         self.removeReaction = removeReaction
     }
     
-    @ObservedObject private var commentsViewModel = CommentsVM.shared
-    @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
-    
     // For shader
     private let startDate = Date()
     
     var body: some View {
-        UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: commentsViewModel.currentActivityId == data.id) {
+        UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: false) {
             HStack {
                 switch data.resource {
                 case .user(let resourceUser):
@@ -107,7 +104,7 @@ struct FeedLevelUpView: View {
         } footer: {
             WrappingHStack(horizontalSpacing: 4, verticalSpacing: 6) {
                 Button {
-                    selectReactionsViewModel.select { reaction in
+                    SelectReactionsVM.shared.select { reaction in
                         Task {
                             await addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), data)
                         }
@@ -120,7 +117,7 @@ struct FeedLevelUpView: View {
                 }
                 
                 Button {
-                    commentsViewModel.showComments(activityId: data.id)
+                    CommentsVM.shared.showComments(activityId: data.id)
                 } label: {
                     Image(systemName: "bubble.left")
                         .font(.system(size: 22))

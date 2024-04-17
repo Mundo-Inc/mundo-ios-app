@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct SignInWithEmailView: View {
-    @ObservedObject private var auth = Authentication.shared
     @Environment(\.dismiss) private var dismiss
     
     @StateObject private var vm = SignInVM()
@@ -129,7 +128,7 @@ struct SignInWithEmailView: View {
                                 vm.isLoading = true
                             }
                             do {
-                                try await auth.requestResetPassword(email: vm.email)
+                                try await Authentication.shared.requestResetPassword(email: vm.email)
                                 vm.showResetPassword = false
                                 ToastVM.shared.toast(.init(type: .success, title: "Email Sent", message: "Email sent"))
                             } catch {
@@ -170,7 +169,7 @@ struct SignInWithEmailView: View {
                     withAnimation {
                         vm.isLoading = true
                     }
-                    let result = await auth.signIn(email: vm.email, password: vm.password)
+                    let result = await Authentication.shared.signIn(email: vm.email, password: vm.password)
                     if let error = result.error, !result.success {
                         withAnimation {
                             vm.error = error

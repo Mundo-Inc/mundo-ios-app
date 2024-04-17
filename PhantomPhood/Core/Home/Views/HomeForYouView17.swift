@@ -10,7 +10,7 @@ import SwiftUI
 @available(iOS 17.0, *)
 struct HomeForYouView17: View {
     @ObservedObject private var appData = AppData.shared
-
+    
     @ObservedObject private var vm: HomeVM
     
     init(vm: HomeVM) {
@@ -84,11 +84,9 @@ struct HomeForYouView17: View {
         .onDisappear {
             vm.forYouItemOnViewPort = nil
         }
-        .onAppear {
+        .task {
             if vm.forYouItems.isEmpty {
-                Task {
-                    await vm.updateForYouData(.refresh)
-                }
+                await vm.updateForYouData(.refresh)
             }
             
             if let scrollPosition, let itemIndex = vm.forYouItems.firstIndex(where: { $0.id == scrollPosition }) {

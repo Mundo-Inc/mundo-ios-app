@@ -191,10 +191,8 @@ struct HomeFollowingView17: View {
                             endPoint: .bottomLeading
                         )
                     )
-                    .onAppear {
-                        Task {
-                            await vm.getLeaderboardData()
-                        }
+                    .task {
+                        await vm.getLeaderboardData()
                     }
                 }
             }
@@ -249,13 +247,10 @@ struct HomeFollowingView17: View {
         .onDisappear {
             vm.followingItemOnViewPort = nil
         }
-        .onAppear {
+        .task {
             if vm.followingItems.isEmpty {
-                Task {
-                    await vm.updateFollowingData(.refresh)
-                }
+                await vm.updateFollowingData(.refresh)
             }
-            
             if let scrollPosition, let itemIndex = vm.followingItems.firstIndex(where: { $0.id == scrollPosition }) {
                 vm.followingItemOnViewPort = vm.followingItems[itemIndex].id
             }

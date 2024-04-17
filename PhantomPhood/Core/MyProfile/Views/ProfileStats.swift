@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ProfileStats: View {
-    @ObservedObject private var appData = AppData.shared
     @ObservedObject private var auth = Authentication.shared
     
     var body: some View {

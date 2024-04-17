@@ -11,7 +11,6 @@ import SwiftUI
 @MainActor
 final class AddToListVM: ObservableObject {
     private let listsDM = ListsDM()
-    private let auth = Authentication.shared
     private let toastManager = ToastVM.shared
     private let placeVM: PlaceVM
     
@@ -30,7 +29,7 @@ final class AddToListVM: ObservableObject {
     }
     
     func fetchLists() async {
-        guard let uid = auth.currentUser?.id else { return }
+        guard let uid = Authentication.shared.currentUser?.id else { return }
         
         self.isLoading = true
         do {

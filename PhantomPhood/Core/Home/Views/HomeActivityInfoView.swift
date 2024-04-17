@@ -8,12 +8,8 @@
 import SwiftUI
 
 struct HomeActivityInfoView: View {
-    @ObservedObject private var appData = AppData.shared
-    
-    @ObservedObject var commentsViewModel = CommentsVM.shared
-    @ObservedObject var selectReactionsViewModel = SelectReactionsVM.shared
-    
     @Environment(\.dismiss) private var dismiss
+    
     @ObservedObject var vm = HomeActivityInfoVM.shared
     
     var body: some View {
@@ -47,7 +43,7 @@ struct HomeActivityInfoView: View {
                             .clipShape(.rect(cornerRadius: 16))
                             .padding(.horizontal)
                             .onTapGesture {
-                                appData.goTo(AppRoute.place(id: place.id))
+                                AppData.shared.goTo(AppRoute.place(id: place.id))
                             }
                         }
                         
@@ -109,7 +105,7 @@ struct HomeActivityInfoView: View {
                         }
                         .padding()
                         .onTapGesture {
-                            appData.goToUser(data.user.id)
+                            AppData.shared.goToUser(data.user.id)
                         }
                         
                         review
@@ -122,7 +118,7 @@ struct HomeActivityInfoView: View {
                     Button {
                         dismiss()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            selectReactionsViewModel.select(onSelect: vm.handleAddReaction)
+                            SelectReactionsVM.shared.select(onSelect: vm.handleAddReaction)
                         }
                     } label: {
                         HStack {
@@ -140,7 +136,7 @@ struct HomeActivityInfoView: View {
                     Button {
                         dismiss()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            commentsViewModel.showComments(activityId: data.id)
+                            CommentsVM.shared.showComments(activityId: data.id)
                         }
                     } label: {
                         HStack {

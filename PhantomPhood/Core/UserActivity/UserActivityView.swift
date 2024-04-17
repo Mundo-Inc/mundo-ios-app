@@ -10,8 +10,6 @@ import SwiftUI
 struct UserActivityView: View {
     private let id: String
     
-    @ObservedObject private var commentsViewModel = CommentsVM.shared
-    
     @StateObject private var vm = UserActivityVM()
     @StateObject private var mediasViewModel = MediasVM()
     
@@ -69,10 +67,8 @@ struct UserActivityView: View {
                 Text("Something went wrong :(")
             }
         }
-        .onAppear {
-            Task {
-                await vm.getActivity(id)
-            }
+        .task {
+            await vm.getActivity(id)
         }
     }
 }

@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct EditListView: View {
-    @ObservedObject private var auth = Authentication.shared
-    
     @StateObject private var vm: EditListVM
     
     @Environment(\.dismiss) private var dismiss

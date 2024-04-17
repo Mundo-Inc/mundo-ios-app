@@ -346,7 +346,7 @@ struct PlaceView: View {
                         
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                    .frame(height: 160)
+                    .frame(height: 170)
                     .frame(maxWidth: .infinity)
                     
                     // MARK: - Action Buttons

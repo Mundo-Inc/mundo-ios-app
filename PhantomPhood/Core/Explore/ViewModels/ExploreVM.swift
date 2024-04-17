@@ -19,7 +19,6 @@ final class ExploreVM17: ObservableObject {
     
     // MARK: - Shared
     
-    private let auth = Authentication.shared
     private let dataStack = DataStack.shared
     private let eventsDM = EventsDM()
     private let mapDM = MapDM()
@@ -123,7 +122,7 @@ final class ExploreVM17: ObservableObject {
     func getInviteLink() {
         guard !loadingSections.contains(.inviteLink) else { return }
         
-        if let currentUser = auth.currentUser {
+        if let currentUser = Authentication.shared.currentUser {
             self.loadingSections.insert(.inviteLink)
             HapticManager.shared.impact(style: .light)
             
@@ -244,10 +243,12 @@ final class ExploreVM17: ObservableObject {
         
         UserSettings.shared.inviteCredits -= 1
         
-        do {
-            try UserDataStack.shared.saveContext()
-        } catch {
-            print(error)
+        DispatchQueue.main.async {
+            do {
+                try UserDataStack.shared.saveContext()
+            } catch {
+                print(error)
+            }
         }
     }
     
@@ -273,10 +274,12 @@ final class ExploreVM17: ObservableObject {
             }
         }
         
-        do {
-            try dataStack.saveContext()
-        } catch {
-            print("Error saving new RequestedRegionEntity", error)
+        DispatchQueue.main.async {
+            do {
+                try self.dataStack.saveContext()
+            } catch {
+                print("Error saving new RequestedRegionEntity", error)
+            }
         }
         
         updateFetchedRegions()
@@ -297,10 +300,12 @@ final class ExploreVM17: ObservableObject {
         if !itemsToDelete.isEmpty {
             itemsToDelete.forEach { dataStack.viewContext.delete($0.entity) }
             
-            do {
-                try dataStack.saveContext()
-            } catch {
-                print("Error deleting expired areas")
+            DispatchQueue.main.async {
+                do {
+                    try self.dataStack.saveContext()
+                } catch {
+                    print("Error deleting expired areas")
+                }
             }
         }
         
@@ -401,10 +406,12 @@ final class ExploreVM17: ObservableObject {
                 originalItems.append(activity)
             }
             
-            do {
-                try dataStack.saveContext()
-            } catch {
-                print("Error saving new MapActivityEntity", error)
+            DispatchQueue.main.async {
+                do {
+                    try self.dataStack.saveContext()
+                } catch {
+                    print("Error saving new MapActivityEntity", error)
+                }
             }
         } catch {
             print("Error getting existing MapActivityEntity", error)

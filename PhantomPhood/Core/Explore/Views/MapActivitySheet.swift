@@ -428,12 +428,12 @@ struct MapActivitySheet: View {
                 await vm.showActivity(activity: clusteredMapActivity.items[value])
             }
         }
-        .onAppear {
+        .task {
             if let first = clusteredMapActivity.first {
-                Task {
-                    await vm.showActivity(activity: first)
-                }
+                await vm.showActivity(activity: first)
             }
+        }
+        .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 withAnimation {
                     vm.show = true

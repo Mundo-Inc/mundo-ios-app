@@ -91,7 +91,7 @@ struct HomeFollowingView: View {
                 }
                 .ignoresSafeArea(edges: .top)
                 .onChange(of: appData.tappedTwice) { tapped in
-                    if tapped == .home {
+                    if tapped == .home && appData.homeActiveTab == .following {
                         withAnimation {
                             page.update(.moveToFirst)
                         }
@@ -266,10 +266,8 @@ struct HomeFollowingView: View {
                         endPoint: .bottomLeading
                     )
                 )
-                .onAppear {
-                    Task {
-                        await vm.getLeaderboardData()
-                    }
+                .task {
+                    await vm.getLeaderboardData()
                 }
             }
         }
@@ -277,13 +275,10 @@ struct HomeFollowingView: View {
         .onDisappear {
             vm.followingItemOnViewPort = nil
         }
-        .onAppear {
+        .task {
             if vm.followingItems.isEmpty {
-                Task {
-                    await vm.updateFollowingData(.refresh)
-                }
+                await vm.updateFollowingData(.refresh)
             }
-            
             if !vm.followingItems.isEmpty, vm.followingItems.count >= page.index + 1 {
                 vm.followingItemOnViewPort = vm.followingItems[page.index].id
             }

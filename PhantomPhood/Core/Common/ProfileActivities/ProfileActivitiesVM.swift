@@ -10,7 +10,6 @@ import SwiftUI
 
 @MainActor
 class ProfileActivitiesVM: ObservableObject {
-    private let auth = Authentication.shared
     private let reactionsDM = ReactionsDM()
     private let userActivityDM = UserActivityDM()
 
@@ -38,7 +37,7 @@ class ProfileActivitiesVM: ObservableObject {
         
         switch userId {
         case .currentUser:
-            uid = auth.currentUser?.id
+            uid = Authentication.shared.currentUser?.id
         case .withId(let theId):
             uid = theId
         case nil:

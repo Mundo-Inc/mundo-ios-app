@@ -9,7 +9,6 @@ import SwiftUI
 import PhotosUI
 
 struct AddReviewView: View {
-    @ObservedObject private var appData = AppData.shared
     @StateObject private var vm: AddReviewVM
     
     init(_ idOrData: IdOrData<PlaceEssentials>) {

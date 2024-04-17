@@ -46,19 +46,15 @@ struct EventCheckInsView: View {
                     
                     Color.clear
                         .frame(width: 0, height: 0)
-                        .onAppear {
-                            Task {
-                                await vm.fetch(type: .new)
-                            }
+                        .task {
+                            await vm.fetch(type: .new)
                         }
                 }
             } else {
                 ProgressView()
                     .padding(.top)
-                    .onAppear {
-                        Task {
-                            await vm.fetch(type: .new)
-                        }
+                    .task {
+                        await vm.fetch(type: .new)
                     }
             }
             

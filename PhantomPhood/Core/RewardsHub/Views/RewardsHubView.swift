@@ -150,14 +150,14 @@ struct RewardsHubView: View {
                 .fill(.themeBG.gradient)
                 .ignoresSafeArea()
         }
-        .onAppear {
-            isEmojiAnimating = true
-            Task {
-                await pcVM.refresh()
-            }
-        }
         .onDisappear {
             isEmojiAnimating = false
+        }
+        .onAppear {
+            isEmojiAnimating = true
+        }
+        .task {
+            await pcVM.refresh()
         }
     }
     
@@ -472,10 +472,8 @@ struct RewardsHubView: View {
                     }
                 }
             }
-            .onAppear {
-                Task {
-                    await vm.getMissions()
-                }
+            .task {
+                await vm.getMissions()
             }
         } header: {
             HStack {

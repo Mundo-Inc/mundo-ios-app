@@ -10,12 +10,9 @@ import SwiftUI
 struct UserActivityFollowing: View {
     @ObservedObject var vm: UserActivityVM
     
-    @ObservedObject private var commentsViewModel = CommentsVM.shared
-    @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
-    
     var body: some View {
         if let data = vm.data {
-            UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: commentsViewModel.currentActivityId == data.id) {
+            UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: false) {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text(data.user.name)
@@ -81,7 +78,7 @@ struct UserActivityFollowing: View {
             } footer: {
                 WrappingHStack(horizontalSpacing: 4, verticalSpacing: 6) {
                     Button {
-                        selectReactionsViewModel.select { reaction in
+                        SelectReactionsVM.shared.select { reaction in
                             Task {
                                 await vm.addReaction(NewReaction(reaction: reaction.symbol, type: .emoji))
                             }
@@ -94,7 +91,7 @@ struct UserActivityFollowing: View {
                     }
                     
                     Button {
-                        commentsViewModel.showComments(activityId: data.id)
+                        CommentsVM.shared.showComments(activityId: data.id)
                     } label: {
                         Image(systemName: "bubble.left")
                             .font(.system(size: 22))

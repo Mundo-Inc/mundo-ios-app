@@ -10,8 +10,6 @@ import Foundation
 @MainActor
 final class PlaceVM: ObservableObject {
     private let placeDM = PlaceDM()
-    private let toastVM = ToastVM.shared
-    private let appData = AppData.shared
     
     @Published private(set) var place: PlaceDetail?
     @Published private(set) var isLoading = false
@@ -77,7 +75,7 @@ final class PlaceVM: ObservableObject {
             self.includedLists = listIds
         } catch {
             print(error)
-            toastVM.toast(Toast(type: .error, title: "Failed to update lists", message: error.localizedDescription))
+            ToastVM.shared.toast(Toast(type: .error, title: "Failed to update lists", message: error.localizedDescription))
         }
     }
     
@@ -86,10 +84,10 @@ final class PlaceVM: ObservableObject {
     private func handleNavigationAction(place: PlaceDetail, action: PlaceAction?) {
         switch action {
         case .checkin:
-            self.appData.goTo(AppRoute.checkin(.data(PlaceEssentials(placeDetail: place))))
+            AppData.shared.goTo(AppRoute.checkin(.data(PlaceEssentials(placeDetail: place))))
         case .addReview:
             self.activeTab = .reviews
-            self.appData.goTo(AppRoute.review(.data(PlaceEssentials(placeDetail: place))))
+            AppData.shared.goTo(AppRoute.review(.data(PlaceEssentials(placeDetail: place))))
         case nil:
             break
         }

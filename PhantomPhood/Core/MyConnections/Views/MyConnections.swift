@@ -79,10 +79,8 @@ struct MyConnections: View {
                             .redacted(reason: .placeholder)
                         UserCard(connection: UserConnection.dummy)
                             .redacted(reason: .placeholder)
-                            .onAppear {
-                                Task {
-                                    await vm.getConnections(type: .followers, requestType: .refresh)
-                                }
+                            .task {
+                                await vm.getConnections(type: .followers, requestType: .refresh)
                             }
                     }
                 case .followings:
@@ -102,10 +100,8 @@ struct MyConnections: View {
                             .redacted(reason: .placeholder)
                         UserCard(connection: UserConnection.dummy)
                             .redacted(reason: .placeholder)
-                            .onAppear {
-                                Task {
-                                    await vm.getConnections(type: .followings, requestType: .refresh)
-                                }
+                            .task {
+                                await vm.getConnections(type: .followings, requestType: .refresh)
                             }
                     }
                 }

@@ -18,11 +18,8 @@ struct FeedCheckinView: View {
         self.removeReaction = removeReaction
     }
     
-    @ObservedObject private var commentsViewModel = CommentsVM.shared
-    @ObservedObject private var selectReactionsViewModel = SelectReactionsVM.shared
-    
     var body: some View {
-        UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: commentsViewModel.currentActivityId == data.id) {
+        UserActivityItemTemplate(user: data.user, comments: data.comments, isActive: false) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(data.user.name)
@@ -48,7 +45,7 @@ struct FeedCheckinView: View {
         } footer: {
             WrappingHStack(horizontalSpacing: 4, verticalSpacing: 6) {
                 Button {
-                    selectReactionsViewModel.select { reaction in
+                    SelectReactionsVM.shared.select { reaction in
                         Task {
                             await addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), data)
                         }
@@ -61,7 +58,7 @@ struct FeedCheckinView: View {
                 }
                 
                 Button {
-                    commentsViewModel.showComments(activityId: data.id)
+                    CommentsVM.shared.showComments(activityId: data.id)
                 } label: {
                     Image(systemName: "bubble.left")
                         .font(.system(size: 22))

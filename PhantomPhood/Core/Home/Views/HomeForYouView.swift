@@ -88,7 +88,7 @@ struct HomeForYouView: View {
                 }
                 .ignoresSafeArea(edges: .top)
                 .onChange(of: appData.tappedTwice) { tapped in
-                    if tapped == .home {
+                    if tapped == .home && appData.homeActiveTab == .forYou {
                         withAnimation {
                             page.update(.moveToFirst)
                         }
@@ -111,11 +111,9 @@ struct HomeForYouView: View {
         .onDisappear {
             vm.forYouItemOnViewPort = nil
         }
-        .onAppear {
+        .task {
             if vm.forYouItems.isEmpty {
-                Task {
-                    await vm.updateForYouData(.refresh)
-                }
+                await vm.updateForYouData(.refresh)
             }
             
             if !vm.forYouItems.isEmpty, vm.forYouItems.count >= page.index + 1 {

@@ -113,10 +113,8 @@ struct EventMediaView: View {
                     
                     Color.clear
                         .frame(width: 0, height: 0)
-                        .onAppear {
-                            Task {
-                                await vm.fetch(type: .new)
-                            }
+                        .task {
+                            await vm.fetch(type: .new)
                         }
                 }
             } else {
@@ -125,10 +123,8 @@ struct EventMediaView: View {
                         ZStack {
                             Rectangle()
                                 .foregroundStyle(Color.themePrimary)
-                                .onAppear {
-                                    Task {
-                                        await vm.fetch(type: .refresh)
-                                    }
+                                .task {
+                                    await vm.fetch(type: .refresh)
                                 }
                         }
                     } else {

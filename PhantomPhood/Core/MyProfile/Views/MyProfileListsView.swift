@@ -115,9 +115,9 @@ struct MyProfileListsView: View {
         }
         .onAppear {
             self.isAnimating = true
-            Task {
-                await vm.fetchLists()
-            }
+        }
+        .task {
+            await vm.fetchLists()
         }
     }
 }

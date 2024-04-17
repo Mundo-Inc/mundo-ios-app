@@ -11,7 +11,6 @@ import MapKit
 @MainActor
 final class QuickActionsVM: ObservableObject {
     private var placeSelectorVM = PlaceSelectorVM.shared
-    private var appData = AppData.shared
     private var searchDM = SearchDM()
     private var locationManager = LocationManager.shared
     
@@ -26,12 +25,12 @@ final class QuickActionsVM: ObservableObject {
     
     func handleCheckin() {
         if let nearestPlace, let name = nearestPlace.name, isNearestPlace {
-            appData.goTo(AppRoute.checkinMapPlace(MapPlace(coordinate: nearestPlace.placemark.coordinate, title: name)))
+            AppData.shared.goTo(AppRoute.checkinMapPlace(MapPlace(coordinate: nearestPlace.placemark.coordinate, title: name)))
         } else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.placeSelectorVM.present { mapItem in
                     if let name = mapItem.name {
-                        self.appData.goTo(AppRoute.checkinMapPlace(MapPlace(coordinate: mapItem.placemark.coordinate, title: name)))
+                        AppData.shared.goTo(AppRoute.checkinMapPlace(MapPlace(coordinate: mapItem.placemark.coordinate, title: name)))
                     }
                 }
             }
@@ -40,12 +39,12 @@ final class QuickActionsVM: ObservableObject {
     
     func handleReview() {
         if let nearestPlace, let name = nearestPlace.name, isNearestPlace {
-            appData.goTo(AppRoute.reviewMapPlace(MapPlace(coordinate: nearestPlace.placemark.coordinate, title: name)))
+            AppData.shared.goTo(AppRoute.reviewMapPlace(MapPlace(coordinate: nearestPlace.placemark.coordinate, title: name)))
         } else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.placeSelectorVM.present { mapItem in
                     if let name = mapItem.name {
-                        self.appData.goTo(AppRoute.reviewMapPlace(MapPlace(coordinate: mapItem.placemark.coordinate, title: name)))
+                        AppData.shared.goTo(AppRoute.reviewMapPlace(MapPlace(coordinate: mapItem.placemark.coordinate, title: name)))
                     }
                 }
             }

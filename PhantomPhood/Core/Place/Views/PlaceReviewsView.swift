@@ -53,10 +53,8 @@ struct PlaceReviewsView: View {
                     } else {
                         PlaceReviewItem.placeholder
                             .padding(.horizontal)
-                            .onAppear {
-                                Task {
-                                    await vm.fetchGooglePlacesReviews()
-                                }
+                            .task {
+                                await vm.fetchGooglePlacesReviews()
                             }
                     }
                     
@@ -67,10 +65,8 @@ struct PlaceReviewsView: View {
                     } else {
                         PlaceReviewItem.placeholder
                             .padding(.horizontal)
-                            .onAppear {
-                                Task {
-                                    await vm.fetchYelpReviews()
-                                }
+                            .task {
+                                await vm.fetchYelpReviews()
                             }
                     }
                     
@@ -78,10 +74,8 @@ struct PlaceReviewsView: View {
                 }
                 .frame(minHeight: 200)
                 .padding(.bottom, 30)
-                .onAppear {
-                    Task {
-                        await vm.fetch(.refresh)
-                    }
+                .task {
+                    await vm.fetch(.refresh)
                 }
             } else {
                 Text("10 Phantom Reviews")

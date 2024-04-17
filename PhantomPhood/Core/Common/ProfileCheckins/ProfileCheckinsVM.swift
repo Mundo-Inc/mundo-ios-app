@@ -9,7 +9,6 @@ import Foundation
 
 @MainActor
 class ProfileCheckinsVM: ObservableObject {
-    private let auth = Authentication.shared
     private let checkInDM = CheckInDM()
     
     @Published var isLoading = false
@@ -48,7 +47,7 @@ class ProfileCheckinsVM: ObservableObject {
         
         switch userId {
         case .currentUser:
-            uid = auth.currentUser?.id
+            uid = Authentication.shared.currentUser?.id
         case .withId(let theId):
             uid = theId
         case nil:

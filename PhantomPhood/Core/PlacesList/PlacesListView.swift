@@ -10,9 +10,8 @@ import MapKit
 
 struct PlacesListView: View {
     @StateObject private var vm: PlacesListVM
-    @Environment(\.dismiss) var dismiss
     
-    @ObservedObject var auth = Authentication.shared
+    @Environment(\.dismiss) var dismiss
     
     @State private var isAnimating = true
     
@@ -145,7 +144,7 @@ struct PlacesListView: View {
             .redacted(reason: vm.list == nil ? .placeholder : [])
         }
         .toolbar {
-            if let list = vm.list, let currentUser = auth.currentUser, list.owner.id == currentUser.id {
+            if let list = vm.list, let currentUser = Authentication.shared.currentUser, list.owner.id == currentUser.id {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         vm.showActions = true
@@ -207,7 +206,6 @@ struct PlacesListView: View {
 fileprivate struct PlaceItem: View {
     let place: UserPlacesList.ListPlace
     @ObservedObject var vm: PlacesListVM
-    @ObservedObject var auth = Authentication.shared
     
     var body: some View {
         NavigationLink(value: AppRoute.place(id: place.place.id)) {
@@ -218,7 +216,7 @@ fileprivate struct PlaceItem: View {
                         .lineLimit(1)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    if let list = vm.list, let currentUser = auth.currentUser, list.collaborators.contains(where: { $0.user.id == currentUser.id && $0.access == .edit }) {
+                    if let list = vm.list, let currentUser = Authentication.shared.currentUser, list.collaborators.contains(where: { $0.user.id == currentUser.id && $0.access == .edit }) {
                         Button {
                             vm.confirmationRequest = .deletePlace(place.place.id)
                         } label: {
@@ -274,8 +272,6 @@ fileprivate struct PlaceItem: View {
 fileprivate struct CheckinsMap17: View {
     let list: UserPlacesList
     
-    @ObservedObject private var appDate = AppData.shared
-    
     @State var position: MapCameraPosition = .automatic
     
     @State var scale: CGFloat = 1
@@ -311,8 +307,6 @@ fileprivate struct CheckinsMap17: View {
 
 fileprivate struct CheckinsMap16: View {
     let list: UserPlacesList
-    
-    @ObservedObject private var appDate = AppData.shared
     
     @State private var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 0, longitude: 0), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
     

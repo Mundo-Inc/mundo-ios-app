@@ -9,7 +9,6 @@ import SwiftUI
 
 struct CommentsView: View {
     @ObservedObject private var vm = CommentsVM.shared
-    @ObservedObject private var auth = Authentication.shared
     
     @Environment(\.dismiss) private var dismiss
     

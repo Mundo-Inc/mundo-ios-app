@@ -15,8 +15,6 @@ class SignUpWithPasswordVM: ObservableObject {
     private let searchDM = SearchDM()
     private let userProfileDM = UserProfileDM()
     
-    private var auth = Authentication.shared
-    
     enum LoadingSection: Hashable {
         case username
         case userSearch
@@ -120,7 +118,7 @@ class SignUpWithPasswordVM: ObservableObject {
     func submit() async {
         loadingSections.insert(.submit)
         do {
-            try await auth.signUp(name: name, email: email, password: password, username: username.count >= 5 ? username : nil, referrer: referredBy?.id)
+            try await Authentication.shared.signUp(name: name, email: email, password: password, username: username.count >= 5 ? username : nil, referrer: referredBy?.id)
         } catch APIManager.APIError.serverError(let serverError) {
             withAnimation {
                 self.error = serverError.message
@@ -139,7 +137,6 @@ class SignUpWithPasswordVM: ObservableObject {
 struct SignUpWithPasswordView: View {
     @Environment(\.dismiss) var dismiss
     
-    @ObservedObject private var auth = Authentication.shared
     @StateObject private var vm = SignUpWithPasswordVM()
     
     enum Field: Hashable {

@@ -13,7 +13,6 @@ class UserProfileVM: ObservableObject {
     
     private let userProfileDM = UserProfileDM()
     private let conversationsDM = ConversationsDM()
-    private let toastManager = ToastVM.shared
     
     @Published private(set) var loadingSections = Set<LoadingSection>()
     @Published private(set) var isFollowedByUser: Bool? = nil
@@ -107,7 +106,7 @@ class UserProfileVM: ObservableObject {
             self.isFollowedByUser = true
             HapticManager.shared.notification(type: .success)
         } catch {
-            toastManager.toast(Toast(type: .error, title: "Failed", message: "Failed to follow \(user?.name ?? "this user")"))
+            ToastVM.shared.toast(Toast(type: .error, title: "Failed", message: "Failed to follow \(user?.name ?? "this user")"))
         }
         self.loadingSections.remove(.followOperation)
     }
@@ -121,7 +120,7 @@ class UserProfileVM: ObservableObject {
             self.isFollowedByUser = false
             HapticManager.shared.notification(type: .success)
         } catch {
-            toastManager.toast(Toast(type: .error, title: "Failed", message: "Failed to unfollow \(user?.name ?? "this user")"))
+            ToastVM.shared.toast(Toast(type: .error, title: "Failed", message: "Failed to unfollow \(user?.name ?? "this user")"))
         }
         self.loadingSections.remove(.followOperation)
     }

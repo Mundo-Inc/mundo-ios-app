@@ -154,10 +154,8 @@ struct HomeView: View {
                         }
                 }
                 .foregroundStyle(.white)
-                .onAppear {
-                    Task {
-                        await notificationsVM.updateUnreadNotificationsCount()
-                    }
+                .task {
+                    await notificationsVM.updateUnreadNotificationsCount()
                 }
                     
             }
