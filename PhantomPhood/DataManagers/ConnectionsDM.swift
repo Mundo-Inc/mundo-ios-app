@@ -21,11 +21,7 @@ final class ConnectionsDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/users/\(userId)/connections/\(type.rawValue)?page=\(page)&limit=\(limit)", method: .get, token: token) as APIResponseWithPagination<[UserConnection]>?
-        
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponseWithPagination<[UserConnection]> = try await apiManager.requestData("/users/\(userId)/connections/\(type.rawValue)?page=\(page)&limit=\(limit)", method: .get, token: token)
         
         return data
     }
@@ -43,11 +39,7 @@ final class ConnectionsDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/users/\(userId)/connections/followStatus", method: .get, token: token) as APIResponse<FollowStatus>?
-        
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<FollowStatus> = try await apiManager.requestData("/users/\(userId)/connections/followStatus", method: .get, token: token)
         
         return data.data
     }

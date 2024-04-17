@@ -15,11 +15,7 @@ final class UserProfileDM {
     
     /// No authentication needed
     func getUserEssentials(id: String) async throws -> UserEssentials {
-        let data = try await apiManager.requestData("/users/\(id)?view=basic", method: .get) as APIResponse<UserEssentials>?
-        
-        guard let data = data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<UserEssentials> = try await apiManager.requestData("/users/\(id)?view=basic", method: .get)
         
         return data.data
     }
@@ -44,11 +40,7 @@ final class UserProfileDM {
             print("DEBUG: Error getting user infor from CoreData")
         }
         
-        let data = try await apiManager.requestData("/users/\(id)?view=basic", method: .get) as APIResponse<UserEssentials>?
-        
-        guard let data = data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<UserEssentials> = try await apiManager.requestData("/users/\(id)?view=basic", method: .get)
 
         DispatchQueue.main.async {
             // update CoreData
@@ -63,11 +55,7 @@ final class UserProfileDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/users/\(id)", method: .get, token: token) as APIResponse<UserDetail>?
-        
-        guard let data = data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<UserDetail> = try await apiManager.requestData("/users/\(id)", method: .get, token: token)
         
         return data.data
     }
@@ -77,11 +65,7 @@ final class UserProfileDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/users/@\(username)", method: .get, token: token) as APIResponse<UserDetail>?
-        
-        guard let data = data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<UserDetail> = try await apiManager.requestData("/users/@\(username)", method: .get, token: token)
         
         return data.data
     }
@@ -123,11 +107,7 @@ final class UserProfileDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/users/latestReferrals", method: .get, token: token) as APIResponseWithPagination<[UserEssentialsWithCreationDate]>?
-        
-        guard let data = data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponseWithPagination<[UserEssentialsWithCreationDate]> = try await apiManager.requestData("/users/latestReferrals", method: .get, token: token)
         
         return data
     }

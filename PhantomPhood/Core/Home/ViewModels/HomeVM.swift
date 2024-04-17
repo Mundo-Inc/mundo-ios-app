@@ -202,8 +202,6 @@ class HomeVM: ObservableObject {
         }
     }
     
-    // MARK: Nabeel
-    
     func getLeaderboardData() async {
         do {
             self.leaderboard = try await leaderboardDM.fetchLeaderboard(page: 1)

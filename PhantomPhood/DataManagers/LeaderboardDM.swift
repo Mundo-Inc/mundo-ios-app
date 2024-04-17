@@ -16,11 +16,7 @@ final class LeaderboardDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/users/leaderboard?page=\(page)&limit=30", method: .get, token: token) as APIResponse<[UserEssentials]>?
-        
-        guard let data = data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<[UserEssentials]> = try await apiManager.requestData("/users/leaderboard?page=\(page)&limit=30", method: .get, token: token)
         
         return data.data
     }

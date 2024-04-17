@@ -75,15 +75,13 @@ struct ContentView: View {
         })) {
             OnboardingView(vm: onboardingVM)
         }
-        .onAppear {
+        .task {
             if ConversationsManager.shared.client.conversationsClient == nil {
-                Task {
-                    do {
-                        try await ConversationsManager.shared.client.create()
-                        ConversationsManager.shared.registerForTyping()
-                    } catch {
-                        print("Error creating twilio client")
-                    }
+                do {
+                    try await ConversationsManager.shared.client.create()
+                    ConversationsManager.shared.registerForTyping()
+                } catch {
+                    print("Error creating twilio client")
                 }
             }
             

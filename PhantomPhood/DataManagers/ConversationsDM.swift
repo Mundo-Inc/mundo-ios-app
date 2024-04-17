@@ -16,11 +16,7 @@ final class ConversationsDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/conversations/token", method: .get, token: token) as APIResponse<TokenResponse>?
-        
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<TokenResponse> = try await apiManager.requestData("/conversations/token", method: .get, token: token)
         
         return data.data.token
     }
@@ -37,11 +33,7 @@ final class ConversationsDM {
         }
         
         let body = try apiManager.createRequestBody(Body(user: userId))
-        let data = try await apiManager.requestData("/conversations", method: .post, body: body, token: token) as APIResponse<CreateConversationResponse>?
-        
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<CreateConversationResponse> = try await apiManager.requestData("/conversations", method: .post, body: body, token: token)
         
         return data.data
     }

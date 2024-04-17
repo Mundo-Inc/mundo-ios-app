@@ -17,18 +17,14 @@ final class MapDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let responseData = try await apiManager.requestData("/map/mapActivities", queryParams: [
+        let responseData: APIResponse<[MapActivity]> = try await apiManager.requestData("/map/mapActivities", queryParams: [
             "northEastLat": String(ne.latitude),
             "northEastLng": String(ne.longitude),
             "southWestLat": String(sw.latitude),
             "southWestLng": String(sw.longitude),
             "startDate": String(Int(startDate.timeIntervalSince1970 * 1000)),
             "scope": scope.rawValue
-        ], token: token) as APIResponse<[MapActivity]>?
-        
-        guard let responseData else {
-            throw URLError(.badServerResponse)
-        }
+        ], token: token)
         
         return responseData.data
     }

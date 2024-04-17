@@ -9,148 +9,94 @@ import SwiftUI
 
 struct NotificationsView: View {
     @ObservedObject private var notificationsVM = NotificationsVM.shared
-    @ObservedObject private var conversationsManager = ConversationsManager.shared
     
     var body: some View {
-        List {
-            ForEach(notificationsVM.notifications) { notification in
-                NotificationItem(notification)
-                    .onAppear {
-                        if !notificationsVM.isLoading && !notificationsVM.notifications.isEmpty && notificationsVM.hasMore {
-                            Task {
-                                await notificationsVM.loadMore(currentItem: notification)
-                            }
+        List(notificationsVM.notificationsCluster.indices, id: \.self) { index in
+            let cluster = notificationsVM.notificationsCluster[index]
+            
+            NotificationCluster(cluster)
+                .onAppear {
+                    if !notificationsVM.isLoading && notificationsVM.hasMore {
+                        Task {
+                            await notificationsVM.loadMore(index: index)
                         }
                     }
-            }
+                }
         }
+        .listStyle(.grouped)
         .refreshable {
             if !notificationsVM.isLoading {
                 await notificationsVM.getNotifications(.refresh)
             }
         }
-        .listStyle(.inset)
-        .onAppear {
-            Task {
-                await self.notificationsVM.seenNotifications()
-            }
+        .scrollIndicators(.hidden)
+        .task {
+            await self.notificationsVM.seenNotifications()
         }
     }
-    
+        
     @ViewBuilder
-    private func NotificationItem(_ data: Notification) -> some View {
-        HStack(alignment: .top) {
-            if let user = data.user {
-                ProfileImage(user.profileImage, size: 44, cornerRadius: 10)
-                    .frame(width: 44, height: 44)
-                    .onTapGesture {
-                        AppData.shared.goToUser(user.id)
+    private func NotificationCluster(_ cluster: NotificationsVM.NotificationsUserCluster) -> some View {
+        Section {
+            ForEach(cluster.items) { data in
+                Button {
+                    if let activity = data.activity {
+                        AppData.shared.goTo(AppRoute.userActivity(id: activity))
                     }
-            } else {
-                RoundedRectangle(cornerRadius: 10)
-                    .frame(width: 44, height: 44)
-                    .foregroundStyle(Color.themePrimary)
-            }
-            
-            Button {
-                if let activity = data.activity {
-                    AppData.shared.goTo(AppRoute.userActivity(id: activity))
-                }
-            } label: {
-                HStack(alignment: .top) {
-                    VStack(spacing: 5) {
-                        Group {
-                            switch data.type {
-                            case NotificationType.comment.rawValue:
-                                if let user = data.user {
-                                    Group {
-                                        Text(user.name)
-                                            .bold()
-                                        +
-                                        Text(" Commented on your activity.")
-                                    }
-                                    .frame(minHeight: 20)
-                                }
-                                
-                                Text(data.content)
-                                    .frame(minHeight: 18)
-                            case NotificationType.comment_mention.rawValue:
-                                if let user = data.user {
-                                    Group {
-                                        Text(user.name)
-                                            .bold()
-                                        +
-                                        Text(" Mentioned you in a comment.")
-                                    }
-                                    .frame(minHeight: 20)
-                                }
-                                
-                                Text(data.content)
-                                    .frame(minHeight: 18)
-                            case NotificationType.review_mention.rawValue:
-                                if let user = data.user {
-                                    Group {
-                                        Text(user.name)
-                                            .bold()
-                                        +
-                                        Text(" Mentioned you in a review.")
-                                    }
-                                    .frame(minHeight: 20)
-                                }
-                                
-                                Text(data.content)
-                                    .frame(minHeight: 18)
-                            case NotificationType.xp.rawValue:
-                                if let user = data.user {
-                                    Text(user.name)
-                                        .bold()
-                                        .frame(minHeight: 20)
-                                }
-                                
-                                Text("Got \(data.content) XP")
-                                    .frame(minHeight: 18)
-                            case NotificationType.level_up.rawValue:
-                                if let user = data.user {
-                                    Text(user.name)
-                                        .bold()
-                                        .frame(minHeight: 20)
-                                }
-                                
-                                Text("Leveled Up")
-                                    .frame(minHeight: 18)
-                            default:
-                                if !data.content.isEmpty {
-                                    if let user = data.user {
-                                        Text(user.name)
-                                            .bold()
-                                            .frame(minHeight: 20)
-                                    }
-                                    
-                                    Text(data.content)
-                                        .frame(minHeight: 18)
-                                }
+                } label: {
+                    HStack(alignment: .top) {
+                        VStack {
+                            if let title = data.title {
+                                Text(title)
+                                    .font(.custom(style: .caption))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .font(.custom(style: .caption))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    HStack {
-                        if data.readAt == nil {
-                            Circle()
-                                .frame(width: 6, height: 6)
-                                .shadow(color: Color.accentColor, radius: 2)
-                                .foregroundStyle(Color.accentColor)
-                                .transition(AnyTransition.scale.animation(.easeInOut(duration: 0.2)))
+                            if let content = data.content {
+                                Text(content)
+                                    .font(.custom(style: .caption))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                         
                         Text(data.createdAt.timeElapsed())
-                            .font(.custom(style: .caption))
+                            .font(.custom(style: .caption2))
                             .foregroundStyle(.secondary)
                     }
                 }
+                .foregroundStyle(.primary)
+                .listRowBackground(data.readAt == nil ? Color.accentColor.opacity(0.15) : Color.themePrimary)
             }
+        } header: {
+            Group {
+                if let user = cluster.user {
+                    HStack {
+                        ProfileImage(user.profileImage, size: 44, cornerRadius: 10)
+                            .frame(width: 44, height: 44)
+                            .onTapGesture {
+                                AppData.shared.goToUser(user.id)
+                            }
+                        
+                        VStack(alignment: .leading) {
+                            Text(user.name)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.primary)
+                            
+                            Text("@\(user.username)")
+                                .font(.custom(style: .caption))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .onTapGesture {
+                        AppData.shared.goToUser(user.id)
+                    }
+                } else {
+                    RoundedRectangle(cornerRadius: 10)
+                        .frame(width: 44, height: 44)
+                        .foregroundStyle(Color.themePrimary)
+                }
+            }
+            .padding(.bottom, 5)
         }
     }
 }

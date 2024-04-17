@@ -98,8 +98,25 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         
         Messaging.messaging().appDidReceiveMessage(userInfo)
         
+        if let contextId = userInfo["contextId"] as? String {
+            let splitted = contextId.split(separator: "/")
+            
+            if let context = splitted.first, let lastRoute = AppData.shared.navStack.last {
+                switch context {
+                case "chat":
+                    if splitted.count >= 2 {
+                        if case .conversation(sid: splitted[1], focusOnTextField: _) = lastRoute {
+                            return completionHandler([])
+                        }
+                    }
+                default:
+                    break
+                }
+            }
+        }
+        
         // Change this to your preferred presentation option
-        completionHandler([[.banner, .badge, .sound]])
+        completionHandler([.banner, .badge, .sound])
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {

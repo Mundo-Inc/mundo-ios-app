@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 struct PlaceScores: Decodable {
     let overall: Double?
@@ -24,6 +25,10 @@ struct PlaceLocation: Decodable {
     let state: String?
     let country: String?
     let zip: String?
+    
+    var coordinates: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: geoLocation.lat, longitude: geoLocation.lng)
+    }
     
     struct GeoLocation: Decodable {
         let lng: Double

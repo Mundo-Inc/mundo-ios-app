@@ -16,13 +16,9 @@ final class UserActivityDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/feeds/\(id)", method: .get, token: token) as APIResponse<FeedItem>?
+        let data: APIResponse<FeedItem> = try await apiManager.requestData("/feeds/\(id)", method: .get, token: token)
         
-        if let data = data {
-            return data.data
-        } else {
-            throw URLError(.badServerResponse)
-        }
+        return data.data
     }
     
     func getUserActivities(_ userId: String, page: Int, activityType: FeedItemActivityType) async throws -> APIResponseWithPagination<[FeedItem]> {
@@ -30,12 +26,8 @@ final class UserActivityDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/users/\(userId)/userActivities?page=\(page)\(activityType == .all ? "" : "&type=\(activityType.rawValue)")", method: .get, token: token) as APIResponseWithPagination<[FeedItem]>?
+        let data: APIResponseWithPagination<[FeedItem]> = try await apiManager.requestData("/users/\(userId)/userActivities?page=\(page)\(activityType == .all ? "" : "&type=\(activityType.rawValue)")", method: .get, token: token)
         
-        if let data = data {
-            return data
-        } else {
-            throw URLError(.badServerResponse)
-        }
+        return data
     }
 }

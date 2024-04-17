@@ -18,11 +18,7 @@ final class RewardsDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let resData: APIResponse<DailyRewardsInfoResponse>? = try await apiManager.requestData("/rewards/daily", method: .get, token: token)
-        
-        guard let resData else {
-            throw URLError(.badServerResponse)
-        }
+        let resData: APIResponse<DailyRewardsInfoResponse> = try await apiManager.requestData("/rewards/daily", method: .get, token: token)
         
         return resData.data
     }
@@ -40,11 +36,7 @@ final class RewardsDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let resData: APIResponse<[Mission]>? = try await apiManager.requestData("/rewards/missions", method: .get, token: token)
-        
-        guard let resData else {
-            throw URLError(.badServerResponse)
-        }
+        let resData: APIResponse<[Mission]> = try await apiManager.requestData("/rewards/missions", method: .get, token: token)
         
         return resData.data
     }
@@ -62,11 +54,7 @@ final class RewardsDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let resData: APIResponse<[Prize]>? = try await apiManager.requestData("/rewards/prizes", method: .get, token: token)
-        
-        guard let resData else {
-            throw URLError(.badServerResponse)
-        }
+        let resData: APIResponse<[Prize]> = try await apiManager.requestData("/rewards/prizes", method: .get, token: token)
         
         return resData.data
     }

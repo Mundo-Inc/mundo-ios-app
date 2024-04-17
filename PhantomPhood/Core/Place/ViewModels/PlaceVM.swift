@@ -20,6 +20,7 @@ final class PlaceVM: ObservableObject {
     enum ScoresTab {
         case googlePhantomYelp
         case scores
+        case map
     }
     
     @Published var scoresTabView: ScoresTab = .googlePhantomYelp

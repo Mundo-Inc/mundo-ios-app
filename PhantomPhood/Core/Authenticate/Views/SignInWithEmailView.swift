@@ -124,18 +124,19 @@ struct SignInWithEmailView: View {
                     }
                     
                     Button {
-                        withAnimation {
-                            vm.isLoading = true
-                        }
-                        auth.requestResetPassword(email: vm.email) { result in
+                        Task {
                             withAnimation {
-                                vm.isLoading = false
+                                vm.isLoading = true
                             }
-                            if result {
+                            do {
+                                try await auth.requestResetPassword(email: vm.email)
                                 vm.showResetPassword = false
                                 ToastVM.shared.toast(.init(type: .success, title: "Email Sent", message: "Email sent"))
-                            } else {
+                            } catch {
                                 ToastVM.shared.toast(.init(type: .error, title: "Failed", message: "Something went wrong, please try again in couple minutes."))
+                            }
+                            withAnimation {
+                                vm.isLoading = false
                             }
                         }
                     } label: {

@@ -21,12 +21,12 @@ struct InboxView: View {
                 HStack {
                     Button {
                         withAnimation {
-                            notificationsVM.activeTab = .messages
+                            vm.activeTab = .messages
                         }
                     } label: {
                         HStack(spacing: 10) {
-                            Text(NotificationsVM.Tab.messages.rawValue)
-                                .font(.custom(style: .title3))
+                            Text(InboxVM.Tab.messages.rawValue)
+                                .font(.custom(style: .headline))
                                 .fontWeight(.semibold)
                             
                             let unreadCount = conversationsManager.conversations.filter({ $0.unreadMessagesCount > 0 }).count
@@ -49,16 +49,19 @@ struct InboxView: View {
                         }
                         .frame(maxWidth: .infinity)
                     }
-                    .foregroundStyle(notificationsVM.activeTab == .messages ? Color.accentColor : Color.secondary)
+                    .foregroundStyle(vm.activeTab == .messages ? Color.accentColor : Color.secondary)
+                    
+                    Divider()
+                        .frame(maxHeight: 20)
                     
                     Button {
                         withAnimation {
-                            notificationsVM.activeTab = .notifications
+                            vm.activeTab = .notifications
                         }
                     } label: {
                         HStack {
-                            Text(NotificationsVM.Tab.notifications.rawValue)
-                                .font(.custom(style: .title3))
+                            Text(InboxVM.Tab.notifications.rawValue)
+                                .font(.custom(style: .headline))
                                 .fontWeight(.semibold)
                             
                             if let unreadCount = notificationsVM.unreadCount, unreadCount > 0 {
@@ -78,7 +81,7 @@ struct InboxView: View {
                         }
                         .frame(maxWidth: .infinity)
                     }
-                    .foregroundStyle(notificationsVM.activeTab == .notifications ? Color.accentColor : Color.secondary)
+                    .foregroundStyle(vm.activeTab == .notifications ? Color.accentColor : Color.secondary)
                 }
                 
                 Divider()
@@ -87,26 +90,26 @@ struct InboxView: View {
                 Rectangle()
                     .frame(width: mainWindowSize.width / 2, height: 2)
                     .foregroundStyle(Color.accentColor)
-                    .offset(x: notificationsVM.activeTab == .messages ? 0 : mainWindowSize.width / 2)
-                    .animation(.bouncy, value: notificationsVM.activeTab)
+                    .offset(x: vm.activeTab == .messages ? 0 : mainWindowSize.width / 2)
+                    .animation(.bouncy, value: vm.activeTab)
             }
             
-            TabView(selection: $notificationsVM.activeTab) {
+            TabView(selection: $vm.activeTab) {
                 MessagesView()
-                    .tag(NotificationsVM.Tab.messages)
+                    .tag(InboxVM.Tab.messages)
                 
                 NotificationsView()
-                    .tag(NotificationsVM.Tab.notifications)
+                    .tag(InboxVM.Tab.notifications)
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            .ignoresSafeArea(edges: .bottom)
         }
         .environmentObject(vm)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Inbox")
         .background(Color.themeBG.ignoresSafeArea())
-        .onAppear {
-            Task {
-                await notificationsVM.getNotifications(.refresh)
-            }
+        .task {
+            await notificationsVM.getNotifications(.refresh)
         }
     }
 }

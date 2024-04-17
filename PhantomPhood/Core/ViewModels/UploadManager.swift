@@ -25,22 +25,16 @@ final class UploadManager {
         switch media {
         case .image(let data):
             let (formData, boundary) = UploadManager.uploadFormDataBody(file: UploadFile(name: UUID().uuidString + ".jpg", data: data, type: .image), usecase: usecase)
-            let resData = try await apiManager.requestData("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary)) as APIResponse<ResponseData>?
-            guard let data = resData?.data else {
-                throw URLError(.badServerResponse)
-            }
-            return data
+            let resData: APIResponse<ResponseData> = try await apiManager.requestData("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary))
+            return resData.data
         case .movie(let url):
             guard let data = try? Data(contentsOf: url) else {
                 throw UploadManagerError.cantCreateDataFromVideoURL
             }
             
             let (formData, boundary) = UploadManager.uploadFormDataBody(file: UploadFile(name: UUID().uuidString + ".mp4", data: data, type: .video), usecase: usecase)
-            let resData = try await apiManager.requestData("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary)) as APIResponse<ResponseData>?
-            guard let data = resData?.data else {
-                throw URLError(.badServerResponse)
-            }
-            return data
+            let resData: APIResponse<ResponseData> = try await apiManager.requestData("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary))
+            return resData.data
         }
     }
     

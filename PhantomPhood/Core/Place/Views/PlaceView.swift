@@ -8,6 +8,7 @@
 import SwiftUI
 import VideoPlayer
 import CoreMedia
+import MapKit
 
 struct PlaceView: View {
     @StateObject private var vm: PlaceVM
@@ -25,6 +26,8 @@ struct PlaceView: View {
     @State private var videoTime: CMTime = .zero
     @State private var videoState: VideoPlayer.State? = nil
     @State private var videoTotalDuration: Double = .zero
+    
+    @State private var interactingWithMap = false
     
     var body: some View {
         ZStack {
@@ -259,10 +262,92 @@ struct PlaceView: View {
                         
                         ScoresView()
                             .tag(PlaceVM.ScoresTab.scores)
+                        
+                        ZStack {
+                            if let place = vm.place {
+                                if #available(iOS 17.0, *) {
+                                    Map(initialPosition: .region(MKCoordinateRegion(center: place.location.coordinates, latitudinalMeters: 8000, longitudinalMeters: 8000))) {
+                                        Annotation(place.name, coordinate: place.location.coordinates) {
+                                            Circle()
+                                                .foregroundStyle(Color.accentColor)
+                                                .frame(width: 30, height: 30)
+                                                .overlay {
+                                                    ZStack {
+                                                        Circle()
+                                                            .stroke(Color.themePrimary)
+                                                        
+                                                        Image(systemName: "mappin")
+                                                            .foregroundStyle(.white)
+                                                    }
+                                                }
+                                        }
+                                    }
+                                } else {
+                                    Map(coordinateRegion: .constant(MKCoordinateRegion(center: place.location.coordinates, latitudinalMeters: 8000, longitudinalMeters: 8000)), annotationItems: [place]) { place in
+                                        MapAnnotation(coordinate: place.location.coordinates) {
+                                            Circle()
+                                                .foregroundStyle(Color.accentColor)
+                                                .frame(width: 30, height: 30)
+                                                .overlay {
+                                                    ZStack {
+                                                        Circle()
+                                                            .stroke(Color.themePrimary)
+                                                        
+                                                        Image(systemName: "mappin")
+                                                            .foregroundStyle(.white)
+                                                    }
+                                                }
+                                        }
+                                    }
+                                }
+                            } else {
+                                Rectangle()
+                                    .foregroundStyle(Color.themePrimary)
+                            }
+                            
+                            if interactingWithMap {
+                                VStack(alignment: .trailing) {
+                                    Spacer()
+                                    
+                                    Button {
+                                        interactingWithMap = false
+                                    } label: {
+                                        Text("Exit")
+                                            .padding(.vertical, 8)
+                                            .padding(.horizontal, 12)
+                                            .background(Color.black.opacity(0.8), in: RoundedRectangle(cornerRadius: 8))
+                                            .font(.custom(style: .caption))
+                                    }
+                                    .foregroundStyle(Color.white)
+                                    .padding(.bottom, 8)
+                                    .padding(.trailing, 8)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                            } else {
+                                Rectangle()
+                                    .foregroundStyle(Color.black.opacity(0.6))
+                                    .overlay(alignment: .bottom) {
+                                        Label {
+                                            Text("Tap to start interacting")
+                                        } icon: {
+                                            Image(systemName: "hand.tap.fill")
+                                        }
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(Color.white)
+                                        .padding(.bottom)
+                                    }
+                                    .onTapGesture {
+                                        interactingWithMap = true
+                                    }
+                            }
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .tag(PlaceVM.ScoresTab.map)
+                        
                     }
-                    .frame(height: 150)
-                    .frame(maxWidth: .infinity)
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                    .frame(height: 160)
+                    .frame(maxWidth: .infinity)
                     
                     // MARK: - Action Buttons
                     HStack {
@@ -341,6 +426,7 @@ struct PlaceView: View {
                 ExpandedMedia()
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if vm.expandedMedia == nil {
                 if let place = vm.place, let url = URL(string: "https://phantomphood.ai/place/\(place.id)") {

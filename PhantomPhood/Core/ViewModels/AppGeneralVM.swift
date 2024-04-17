@@ -34,17 +34,15 @@ class AppGeneralVM: ObservableObject {
             if let appVersion {
                 self.appVersion = appVersion
                 
-                let data = try await apiManager.requestData("/general/app-version/\(appVersion)") as AppInfoResponse?
+                let data: AppInfoResponse = try await apiManager.requestData("/general/app-version/\(appVersion)")
                 
-                if let data {
-                    self.appInfo = data
-                    
-                    if !data.isOperational {
-                        self.showForceUpdate = true
-                    } else {
-                        if self.showForceUpdate {
-                            self.showForceUpdate = false
-                        }
+                self.appInfo = data
+                
+                if !data.isOperational {
+                    self.showForceUpdate = true
+                } else {
+                    if self.showForceUpdate {
+                        self.showForceUpdate = false
                     }
                 }
             }

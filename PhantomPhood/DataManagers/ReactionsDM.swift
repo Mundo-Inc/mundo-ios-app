@@ -19,11 +19,7 @@ final class ReactionsDM {
         }
         
         let body = try apiManager.createRequestBody(AddReactionRequestBody(target: activityId, type: type.rawValue, reaction: reaction))
-        let resData = try await apiManager.requestData("/reactions", method: .post, body: body, token: token) as APIResponse<UserReaction>?
-        
-        guard let resData else {
-            throw URLError(.badServerResponse)
-        }
+        let resData: APIResponse<UserReaction> = try await apiManager.requestData("/reactions", method: .post, body: body, token: token)
         
         return resData.data
     }

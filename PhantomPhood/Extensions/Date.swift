@@ -50,8 +50,17 @@ extension Date {
         } else if let minutes = components.minute, minutes > 0 {
             return "\(minutes)\(format == .full ? " minute\(minutes > 1 ? "s" : "")" : "m")\(suffix)"
         } else {
-            return "just now"
+            return "now"
         }
+    }
+    
+    // Returns the time component of the Date in "HH:mm" format (24-hour format).
+    /// - Returns: A string representing the formatted time.
+    func formattedTime() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone.current // Ensure the time zone is set correctly
+        dateFormatter.dateFormat = "HH:mm" // Use "hh:mm a" for 12-hour format with AM/PM
+        return dateFormatter.string(from: self)
     }
 }
 

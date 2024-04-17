@@ -16,11 +16,7 @@ final class HomeMadeDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/homemades", method: .get, token: token) as APIResponse<[HomeMade]>?
-        
-        guard let data = data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<[HomeMade]> = try await apiManager.requestData("/homemades", method: .get, token: token)
         
         return data.data
     }

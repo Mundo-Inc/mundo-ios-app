@@ -22,11 +22,7 @@ final class ListsDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let resData = try await apiManager.requestData("/users/\(userId)/lists", method: .get, token: token) as APIResponse<[CompactUserPlacesList]>?
-        
-        guard let resData else {
-            throw URLError(.badServerResponse)
-        }
+        let resData: APIResponse<[CompactUserPlacesList]> = try await apiManager.requestData("/users/\(userId)/lists", method: .get, token: token)
         
         return resData.data
     }
@@ -39,11 +35,7 @@ final class ListsDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let resData = try await apiManager.requestData("/lists/\(id)", method: .get, token: token) as APIResponse<UserPlacesList>?
-        
-        guard let resData else {
-            throw URLError(.badServerResponse)
-        }
+        let resData: APIResponse<UserPlacesList> = try await apiManager.requestData("/lists/\(id)", method: .get, token: token)
         
         return resData.data
     }
@@ -57,11 +49,7 @@ final class ListsDM {
         }
         
         let requestBody = try apiManager.createRequestBody(body)
-        let resData = try await apiManager.requestData("/lists", method: .post, body: requestBody, token: token) as APIResponse<UserPlacesList>?
-        
-        guard let resData else {
-            throw URLError(.badServerResponse)
-        }
+        let resData: APIResponse<UserPlacesList> = try await apiManager.requestData("/lists", method: .post, body: requestBody, token: token)
         
         return resData.data
     }
@@ -79,11 +67,7 @@ final class ListsDM {
         }
         
         let requestBody = try apiManager.createRequestBody(body)
-        let resData = try await apiManager.requestData("/lists/\(id)", method: .put, body: requestBody, token: token) as APIResponse<CompactUserPlacesList>?
-        
-        guard let resData else {
-            throw URLError(.badServerResponse)
-        }
+        let resData: APIResponse<CompactUserPlacesList> = try await apiManager.requestData("/lists/\(id)", method: .put, body: requestBody, token: token)
         
         return resData.data
     }

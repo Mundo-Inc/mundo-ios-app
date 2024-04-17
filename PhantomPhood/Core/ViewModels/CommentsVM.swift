@@ -38,15 +38,13 @@ final class CommentsVM: ObservableObject {
         
         isLoading = true
         do {
-            let data = try await apiManager.requestData("/feeds/\(activityId)/comments?page=\(commentsPage)", token: token) as APIResponse<[Comment]>?
-            if let data = data {
-                if commentsPage == 1 {
-                    comments = data.data
-                } else {
-                    comments.append(contentsOf: data.data)
-                }
-                commentsPage += 1
+            let data: APIResponse<[Comment]> = try await apiManager.requestData("/feeds/\(activityId)/comments?page=\(commentsPage)", token: token)
+            if commentsPage == 1 {
+                comments = data.data
+            } else {
+                comments.append(contentsOf: data.data)
             }
+            commentsPage += 1
         } catch {
             print(error)
         }
@@ -75,16 +73,12 @@ final class CommentsVM: ObservableObject {
         self.isSubmitting = true
         do {
             let body = try apiManager.createRequestBody(RequestBody(content: commentContent, activity: activityID))
-            let data = try await apiManager.requestData("/comments", method: .post, body: body, token: token) as APIResponse<Comment>?
+            let data: APIResponse<Comment> = try await apiManager.requestData("/comments", method: .post, body: body, token: token)
             commentContent = ""
-            if let data {
-                self.comments.insert(data.data, at: 0)
-                toastVM.toast(.init(type: .success, title: "Success", message: "Comment Added"))
-            } else {
-                toastVM.toast(.init(type: .error, title: "Error", message: "We couldn't add your comment"))
-            }
+            self.comments.insert(data.data, at: 0)
+            toastVM.toast(.init(type: .success, title: "Success", message: "Comment Added"))
         } catch {
-            toastVM.toast(.init(type: .error, title: "Error", message: "Something went wrong"))
+            toastVM.toast(.init(type: .error, title: "Error", message: "We couldn't add your comment"))
         }
         self.isSubmitting = false
     }
@@ -98,14 +92,10 @@ final class CommentsVM: ObservableObject {
         
         self.isSubmitting = true
         do {
-            let data = try await apiManager.requestData("/comments/\(id)/likes", method: action == .add ? .post : .delete, token: token) as APIResponse<Comment>?
-            if let data {
-                self.comments = self.comments.map({ comment in
-                    return comment.id == data.data.id ? data.data : comment
-                })
-            } else {
-                toastVM.toast(.init(type: .error, title: "Error", message: "Something went wrong"))
-            }
+            let data: APIResponse<Comment> = try await apiManager.requestData("/comments/\(id)/likes", method: action == .add ? .post : .delete, token: token)
+            self.comments = self.comments.map({ comment in
+                return comment.id == data.data.id ? data.data : comment
+            })
         } catch {
             toastVM.toast(.init(type: .error, title: "Error", message: "Something went wrong"))
         }

@@ -16,11 +16,7 @@ final class ReviewDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/reviews/\(reviewId)", token: token) as APIResponseWithPagination<PlaceReview>?
-        
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponseWithPagination<PlaceReview> = try await apiManager.requestData("/reviews/\(reviewId)", token: token)
         
         return data
     }
@@ -30,11 +26,7 @@ final class ReviewDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/reviews?writer=\(writer)&page=\(page)&limit=\(limit)&sort=\(sort.rawValue)", token: token) as APIResponseWithPagination<[PlaceReview]>?
-        
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponseWithPagination<[PlaceReview]> = try await apiManager.requestData("/reviews?writer=\(writer)&page=\(page)&limit=\(limit)&sort=\(sort.rawValue)", token: token)
         
         return data
     }

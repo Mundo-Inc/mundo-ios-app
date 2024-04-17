@@ -160,7 +160,7 @@ class EditProfileVM: ObservableObject {
         if let token = await auth.getToken(), let uid = auth.currentUser?.id {
             do {
                 let reqBody = try apiManager.createRequestBody(EditUserBody(name: self.name, username: self.username, bio: self.bio, removeProfileImage: self.isDeleting ? self.isDeleting : nil))
-                let _ = try await apiManager.requestData("/users/\(uid)", method: .put, body: reqBody, token: token) as APIResponse<CurrentUserCoreData>?
+                let _: APIResponse<CurrentUserCoreData> = try await apiManager.requestData("/users/\(uid)", method: .put, body: reqBody, token: token)
             } catch {
                 print(error)
             }

@@ -13,7 +13,7 @@ class ConversationVM: ObservableObject {
     @Published var messages = [PersistentMessageDataItem]()
     
     @Published var messageText = ""
-    @Published var users: [String:UserEssentials] = [:]
+    @Published var user: UserEssentials? = nil
     @Published var loadingSections = Set<LoadingSection>()
     
     enum LoadingSection: Hashable {
@@ -29,7 +29,8 @@ class ConversationVM: ObservableObject {
     private var conversation: TCHConversation? = nil
     
     init(sid: String) {
-        conversationSid = sid
+        self.conversationSid = sid
+        
         subscribeMessages()
         
         $messageText
@@ -42,6 +43,37 @@ class ConversationVM: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+        
+        Task {
+            await getTargetUserInfo()
+        }
+    }
+    
+    private func getTargetUserInfo() async {
+        guard let conversation = try? await getConversation() else { return }
+        
+        if let currentUser = Authentication.shared.currentUser {
+            let participants = conversation.participants().filter({ p in
+                if let identity = p.identity {
+                    return identity != currentUser.id
+                }
+                return false
+            })
+            
+            if let first = participants.first, let userId = first.identity {
+                do {
+                    if let user = try await userProfileDM.getUserEssentialsAndUpdate(id: userId, returnIfFound: true, coreDataCompletion: { user in
+                        DispatchQueue.main.async {
+                            self.user = user
+                        }
+                    }) {
+                        self.user = user
+                    }
+                } catch {
+                    print("DEBUG: Error fetching user info", error)
+                }
+            }
+        }
     }
     
     private func getConversation() async throws -> TCHConversation {
@@ -198,10 +230,12 @@ class ConversationVM: ObservableObject {
         }
     }
     
-    func sendMessage(andMedia url: NSURL? = nil, withFileName filename: String? = nil, completion: @escaping (TCHError?) -> ()) async {
+    func sendMessage(andMedia url: NSURL? = nil, withFileName filename: String? = nil, text: String? = nil, completion: @escaping (TCHError?) -> ()) async {
         DispatchQueue.main.async {
             self.loadingSections.insert(.sendingMessage)
         }
+        
+        let textToSend = text ?? self.messageText
         
         do {
             let conversation = try await getConversation()
@@ -218,9 +252,13 @@ class ConversationVM: ObservableObject {
                                                    uploadedSize: Int(bytesSent))
                     }, onCompleted: { mediaSid in
                         print("[MediaMessage] Upload completed for sid \(mediaSid)")
-                        DispatchQueue.main.async {
-                            self.messageText = ""
+                        
+                        if text == nil {
+                            DispatchQueue.main.async {
+                                self.messageText = ""
+                            }
                         }
+                        
                         completion(nil)
                     }, onFailed: { error in
                         print("Media upload failed with error \(error)")
@@ -235,18 +273,21 @@ class ConversationVM: ObservableObject {
                             return completion(result.error)
                         }
                         
-                        DispatchQueue.main.async {
-                            self.messageText = ""
+                        if text == nil {
+                            DispatchQueue.main.async {
+                                self.messageText = ""
+                            }
                         }
+                        
                         completion(nil)
                     }
             } else {
-                guard self.messageText.trimmingCharacters(in: .whitespacesAndNewlines).count > 0 else {
+                guard textToSend.trimmingCharacters(in: .whitespacesAndNewlines).count > 0 else {
                     return
                 }
                 
                 conversation.prepareMessage()
-                    .setBody(self.messageText)
+                    .setBody(textToSend)
                     .buildAndSend { result, message in
                         DispatchQueue.main.async {
                             self.loadingSections.remove(.sendingMessage)
@@ -257,9 +298,12 @@ class ConversationVM: ObservableObject {
                             return completion(result.error)
                         }
                         
-                        DispatchQueue.main.async {
-                            self.messageText = ""
+                        if text == nil {
+                            DispatchQueue.main.async {
+                                self.messageText = ""
+                            }
                         }
+                        
                         completion(nil)
                     }
             }

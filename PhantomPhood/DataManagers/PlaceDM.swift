@@ -18,11 +18,7 @@ final class PlaceDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/places/context?title=\(mapPlace.title)&lat=\(mapPlace.coordinate.latitude)&lng=\(mapPlace.coordinate.longitude)", method: .get, token: token) as APIResponse<PlaceDetail>?
-
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<PlaceDetail> = try await apiManager.requestData("/places/context?title=\(mapPlace.title)&lat=\(mapPlace.coordinate.latitude)&lng=\(mapPlace.coordinate.longitude)", method: .get, token: token)
         
         return data.data
     }
@@ -36,11 +32,7 @@ final class PlaceDM {
             throw URLError(.requestBodyStreamExhausted)
         }
         
-        let data = try await apiManager.requestData("/places/context?title=\(title)&lat=\(mapItem.placemark.coordinate.latitude)&lng=\(mapItem.placemark.coordinate.longitude)", method: .get, token: token) as APIResponse<PlaceDetail>?
-
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<PlaceDetail> = try await apiManager.requestData("/places/context?title=\(title)&lat=\(mapItem.placemark.coordinate.latitude)&lng=\(mapItem.placemark.coordinate.longitude)", method: .get, token: token)
         
         return data.data
     }
@@ -55,11 +47,7 @@ final class PlaceDM {
             throw URLError(.requestBodyStreamExhausted)
         }
 
-        let data = try await apiManager.requestData("/places/context?title=\(title)&lat=\(mapFeature.coordinate.latitude)&lng=\(mapFeature.coordinate.longitude)", method: .get, token: token) as APIResponse<PlaceDetail>?
-
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<PlaceDetail> = try await apiManager.requestData("/places/context?title=\(title)&lat=\(mapFeature.coordinate.latitude)&lng=\(mapFeature.coordinate.longitude)", method: .get, token: token)
         
         return data.data
     }
@@ -69,11 +57,7 @@ final class PlaceDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/places/\(id)", method: .get, token: token) as APIResponse<PlaceDetail>?
-
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<PlaceDetail> = try await apiManager.requestData("/places/\(id)", method: .get, token: token)
         
         return data.data
     }
@@ -83,11 +67,7 @@ final class PlaceDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/places/\(id)", method: .get, token: token) as APIResponse<PlaceOverview>?
-
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<PlaceOverview> = try await apiManager.requestData("/places/\(id)", method: .get, token: token)
         
         return data.data
     }
@@ -97,11 +77,7 @@ final class PlaceDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/places/\(id)/lists", token: token) as APIResponse<[String]>?
-        
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<[String]> = try await apiManager.requestData("/places/\(id)/lists", token: token)
         
         return data.data
     }
@@ -111,11 +87,7 @@ final class PlaceDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/places/\(id)/reviews?page=\(page)", token: token) as APIResponseWithPagination<[PlaceReview]>?
-        
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponseWithPagination<[PlaceReview]> = try await apiManager.requestData("/places/\(id)/reviews?page=\(page)", token: token)
         
         return data
     }
@@ -125,11 +97,7 @@ final class PlaceDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/places/\(id)/reviews?type=googlePlaces", token: token) as APIResponse<[GoogleReview]>?
-        
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<[GoogleReview]> = try await apiManager.requestData("/places/\(id)/reviews?type=googlePlaces", token: token)
         
         return data.data
     }
@@ -139,11 +107,7 @@ final class PlaceDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/places/\(id)/reviews?type=yelp", token: token) as APIResponse<[YelpReview]>?
-        
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<[YelpReview]> = try await apiManager.requestData("/places/\(id)/reviews?type=yelp", token: token)
         
         return data.data
     }
@@ -153,11 +117,7 @@ final class PlaceDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/places/\(id)/media?page=\(page)", token: token) as APIResponseWithPagination<[MediaWithUser]>?
-        
-        guard let data else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponseWithPagination<[MediaWithUser]> = try await apiManager.requestData("/places/\(id)/media?page=\(page)", token: token)
         
         return data
     }

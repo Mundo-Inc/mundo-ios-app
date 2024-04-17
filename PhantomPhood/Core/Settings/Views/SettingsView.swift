@@ -75,21 +75,17 @@ struct SettingsView: View {
             }
             Section(header: Text("Security")) {
                 Button {
-                    withAnimation {
-                        isLoading = true
-                    }
-                    if let user = auth.currentUser {
-                        auth.requestResetPassword(email: user.email.address) { result in
-                            withAnimation {
-                                isLoading = false
-                            }
-                            if result {
-                                ToastVM.shared.toast(.init(type: .success, title: "Email Sent", message: "Email sent"))
-                            } else {
-                                ToastVM.shared.toast(.init(type: .error, title: "Failed", message: "Something went wrong, please try again in couple minutes."))
-                            }
+                    guard let user = auth.currentUser else { return }
+                    Task {
+                        withAnimation {
+                            isLoading = true
                         }
-                    } else {
+                        do {
+                            try await auth.requestResetPassword(email: user.email.address)
+                            ToastVM.shared.toast(.init(type: .success, title: "Email Sent", message: "Email sent"))
+                        } catch {
+                            ToastVM.shared.toast(.init(type: .error, title: "Failed", message: "Something went wrong, please try again in couple minutes."))
+                        }
                         withAnimation {
                             isLoading = false
                         }

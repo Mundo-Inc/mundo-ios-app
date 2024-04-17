@@ -16,9 +16,7 @@ final class MediaDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        guard let data = try await apiManager.requestData("/media?event=\(event)&page=\(page)&limit=\(limit)", token: token) as APIResponse<[MediaWithUser]>? else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<[MediaWithUser]> = try await apiManager.requestData("/media?event=\(event)&page=\(page)&limit=\(limit)", token: token)
         
         return data.data
     }
@@ -28,9 +26,7 @@ final class MediaDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        guard let data = try await apiManager.requestData("/media?place=\(place)&page=\(page)&limit=\(limit)", token: token) as APIResponse<[MediaWithUser]>? else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<[MediaWithUser]> = try await apiManager.requestData("/media?place=\(place)&page=\(page)&limit=\(limit)", token: token)
         
         return data.data
     }

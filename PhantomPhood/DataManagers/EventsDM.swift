@@ -16,9 +16,7 @@ final class EventsDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        guard let data = try await apiManager.requestData("/events\((q != nil && !q!.isEmpty) ? "?q=\(q!)" : "")", token: token) as APIResponse<[Event]>? else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<[Event]> = try await apiManager.requestData("/events\((q != nil && !q!.isEmpty) ? "?q=\(q!)" : "")", token: token)
         
         return data.data
     }
@@ -28,9 +26,7 @@ final class EventsDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        guard let data = try await apiManager.requestData("/events/\(eventId)", token: token) as APIResponse<Event>? else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponse<Event> = try await apiManager.requestData("/events/\(eventId)", token: token)
         
         return data.data
     }

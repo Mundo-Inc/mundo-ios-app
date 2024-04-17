@@ -19,11 +19,7 @@ final class SearchDM {
     func searchUsers(q: String) async throws -> [UserEssentials] {
         let token = await auth.getToken()
         
-        let resData = try await apiManager.requestData("/users\(q.isEmpty ? "" : "?q=\(q)")", token: token) as APIResponse<[UserEssentials]>?
-        
-        guard let resData else {
-            throw URLError(.badServerResponse)
-        }
+        let resData: APIResponse<[UserEssentials]> = try await apiManager.requestData("/users\(q.isEmpty ? "" : "?q=\(q)")", token: token)
         
         return resData.data
     }

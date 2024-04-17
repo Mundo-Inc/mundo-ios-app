@@ -16,9 +16,7 @@ final class CheckInDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        guard let data = try await apiManager.requestData("/checkins?event=\(event)&page=\(page)&limit=\(limit)", token: token) as APIResponseWithPagination<[Checkin]>? else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponseWithPagination<[Checkin]> = try await apiManager.requestData("/checkins?event=\(event)&page=\(page)&limit=\(limit)", token: token)
         
         return data
     }
@@ -28,9 +26,7 @@ final class CheckInDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        guard let data = try await apiManager.requestData("/checkins?user=\(user)&page=\(page)&limit=\(limit)", token: token) as APIResponseWithPagination<[Checkin]>? else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponseWithPagination<[Checkin]> = try await apiManager.requestData("/checkins?user=\(user)&page=\(page)&limit=\(limit)", token: token)
         
         return data
     }
@@ -40,9 +36,7 @@ final class CheckInDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        guard let data = try await apiManager.requestData("/checkins?place=\(place)&page=\(page)&limit=\(limit)", token: token) as APIResponseWithPagination<[Checkin]>? else {
-            throw URLError(.badServerResponse)
-        }
+        let data: APIResponseWithPagination<[Checkin]> = try await apiManager.requestData("/checkins?place=\(place)&page=\(page)&limit=\(limit)", token: token)
         
         return data
     }

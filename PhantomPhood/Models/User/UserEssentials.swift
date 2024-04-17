@@ -9,7 +9,11 @@ import Foundation
 import SwiftUI
 import CoreData
 
-struct UserEssentials: Identifiable, Decodable {
+struct UserEssentials: Identifiable, Equatable, Decodable {
+    static func == (lhs: UserEssentials, rhs: UserEssentials) -> Bool {
+        lhs.id == rhs.id
+    }
+    
     static let colors: [Color] = [.yellow, .cyan, .orange, .purple, .pink, .red, .green, .mint, .teal, .indigo]
     
     let id: String

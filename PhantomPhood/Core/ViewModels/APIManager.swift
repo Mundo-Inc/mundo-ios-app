@@ -29,35 +29,8 @@ final class APIManager {
 }
 
 extension APIManager {
-    // MARK: - Public Methods
     
-    func request<T: Decodable>(
-        _ endpoint: String,
-        method: HTTPMethod = .get,
-        body: Data? = nil,
-        queryParams: [String: String]? = nil,
-        token: String? = nil,
-        contentType: ContentType = .applicationJson
-    ) async throws -> (data: T?, response: HTTPURLResponse) {
-        let request = try buildRequest(endpoint: endpoint, method: method, body: body, queryParams: queryParams, token: token, contentType: contentType)
-        let (data, response) = try await session.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw URLError(.badServerResponse)
-        }
-        
-        guard (200...299).contains(httpResponse.statusCode) else {
-            let serverError = try decode(ServerResponseError.self, from: data)
-            throw APIError.serverError(.init(success: serverError.success, error: serverError.error, statusCode: httpResponse.statusCode))
-        }
-        
-        // Handle 204 No Content
-        if httpResponse.statusCode == 204 {
-            return (nil, httpResponse)
-        }
-        
-        return ((try decode(T.self, from: data)), httpResponse)
-    }
+    // MARK: - Public Methods
     
     func requestData<T: Decodable>(
         _ endpoint: String,
@@ -66,7 +39,7 @@ extension APIManager {
         queryParams: [String: String]? = nil,
         token: String? = nil,
         contentType: ContentType = .applicationJson
-    ) async throws -> T? {
+    ) async throws -> T {
         let request = try buildRequest(endpoint: endpoint, method: method, body: body, queryParams: queryParams, token: token, contentType: contentType)
         let (data, response) = try await session.data(for: request)
         
@@ -77,11 +50,6 @@ extension APIManager {
         guard (200...299).contains(httpResponse.statusCode) else {
             let serverError = try decode(ServerResponseError.self, from: data)
             throw APIError.serverError(.init(success: serverError.success, error: serverError.error, statusCode: httpResponse.statusCode))
-        }
-        
-        // Handle 204 No Content
-        if httpResponse.statusCode == 204 {
-            return nil
         }
         
         return try decode(T.self, from: data)
@@ -120,6 +88,7 @@ extension APIManager {
 }
 
 extension APIManager {
+    
     // MARK: - Private Methods
     
     private func buildRequest(

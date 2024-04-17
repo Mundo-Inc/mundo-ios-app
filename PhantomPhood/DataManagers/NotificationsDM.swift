@@ -22,18 +22,14 @@ final class NotificationsDM {
         }
     }
     
-    func getNotifications(page: Int = 1, unread: Bool = false) async throws -> FeedResponse {
+    func getNotifications(page: Int = 1, unread: Bool = false) async throws -> APIResponseWithPagination<[Notification]> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data = try await apiManager.requestData("/notifications?page=\(page)&limit=30\(unread ? "&unread=true" : "")", method: .get, token: token) as FeedResponse?
+        let data: APIResponseWithPagination<[Notification]> = try await apiManager.requestData("/notifications?page=\(page)&limit=30\(unread ? "&unread=true" : "")&v=2", method: .get, token: token)
         
-        if let data = data {
-            return data
-        } else {
-            throw URLError(.badServerResponse)
-        }
+        return data
     }
     
     func markNotificationsAsRead() async throws {

@@ -11,6 +11,7 @@ import Foundation
 final class InboxVM: ObservableObject {
     private let userProfileDM = UserProfileDM()
     
+    @Published var activeTab: Tab = .messages
     @Published var usersDict: [String:UserEssentials] = [:]
     
     func getUser(id: String) async {
@@ -25,5 +26,12 @@ final class InboxVM: ObservableObject {
         } catch {
             print("DEBUG: Error fetching user info", error)
         }
+    }
+    
+    // MARK: Enums
+    
+    enum Tab: String {
+        case messages = "Messages"
+        case notifications = "Notifications"
     }
 }

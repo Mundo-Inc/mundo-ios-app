@@ -321,41 +321,28 @@ final class Authentication: ObservableObject {
         do {
             guard let uid = Auth.auth().currentUser?.uid, let token = await getToken() else { return }
             
-            let data = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token) as APIResponse<CurrentUserFullData>?
+            let data: APIResponse<CurrentUserFullData> = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token)
             
-            if let data {
-                DispatchQueue.main.async {
-                    self.currentUser = data.data
-                }
-                
-                UserSettings.shared.setUserInfo(data.data)
-                
-                await setDeviceToken()
+            DispatchQueue.main.async {
+                self.currentUser = data.data
             }
+            
+            UserSettings.shared.setUserInfo(data.data)
+            
+            await setDeviceToken()
         } catch {
             print("DEBUG: Couldn't get user info | Error: \(error)")
         }
     }
     func getUserInfo(uid: String, token: String) async throws -> CurrentUserFullData {
-        let data = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token) as APIResponse<CurrentUserFullData>?
+        let data: APIResponse<CurrentUserFullData> = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token)
         
-        if let data {
-            UserSettings.shared.setUserInfo(data.data)
-            return data.data
-        } else {
-            throw URLError(.badServerResponse)
-        }
+        UserSettings.shared.setUserInfo(data.data)
+        return data.data
     }
     
-    func requestResetPassword(email: String, _ callback: @escaping (Bool) -> Void) {
-        Auth.auth().sendPasswordReset(withEmail: email) { error in
-            if let error {
-                print("DEBUG: Unable to send reset password email | Error :\(error.localizedDescription)")
-                callback(false)
-            } else {
-                callback(true)
-            }
-        }
+    func requestResetPassword(email: String) async throws {
+        try await Auth.auth().sendPasswordReset(withEmail: email)
     }
     
     func setDeviceToken() async {
