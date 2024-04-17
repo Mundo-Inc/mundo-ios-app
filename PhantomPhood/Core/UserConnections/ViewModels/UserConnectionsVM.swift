@@ -81,7 +81,7 @@ class UserConnectionsVM: ObservableObject {
                 }
             }
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         
         isLoading = false

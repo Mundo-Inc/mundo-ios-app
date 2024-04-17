@@ -70,7 +70,7 @@ class ConversationVM: ObservableObject {
                         self.user = user
                     }
                 } catch {
-                    print("DEBUG: Error fetching user info", error)
+                    presentErrorToast(error, debug: "Error fetching user info")
                 }
             }
         }
@@ -137,7 +137,7 @@ class ConversationVM: ObservableObject {
                 try coreDataDelegate.saveContext()
             }
         } catch {
-            print("Error retriving last messages", error)
+            presentErrorToast(error, debug: "Error retriving last messages")
         }
     }
     
@@ -162,7 +162,7 @@ class ConversationVM: ObservableObject {
                 try coreDataDelegate.saveContext()
             }
         } catch {
-            print("Error retriving messages", error)
+            presentErrorToast(error, debug: "Error retriving messages")
         }
     }
     
@@ -183,12 +183,12 @@ class ConversationVM: ObservableObject {
             let result = await messageToUpdate.setAttributes(jsonAttributes)
             
             if result.error != nil {
-                print("Updating message attributes returned an error: \(String(describing: result.error)) - error code: \(result.resultCode)")
+                presentErrorToast(result.error!, debug: "Error updating message")
             } else {
-                print("Message attributes updated successfully!")
+                ToastVM.shared.toast(.init(type: .success, title: "Success", message: "Message attributes updated successfully"))
             }
         } catch {
-            print("Error retriving last messages", error)
+            presentErrorToast(error, debug: "Error updating message")
         }
     }
     
@@ -226,7 +226,7 @@ class ConversationVM: ObservableObject {
                 self.conversationManager.conversationEventPublisher.send(.messageDeleted)
             }
         } catch {
-            print("Error retriving last messages", error)
+            presentErrorToast(error, debug: "Error deleting message")
         }
     }
     
@@ -311,7 +311,7 @@ class ConversationVM: ObservableObject {
             DispatchQueue.main.async {
                 self.loadingSections.remove(.sendingMessage)
             }
-            print("Error sending message", error)
+            presentErrorToast(error, debug: "Error sending message")
         }
     }
     
@@ -322,15 +322,11 @@ class ConversationVM: ObservableObject {
             // (result, updatedUnreadMessageCount)
             let (result, _) = await conversation.setAllMessagesRead()
             
-            #if DEBUG
-            if result.isSuccessful {
-                print("All messages set as read for conversation \(conversationSid)")
-            } else {
-                print("Error - not able to set all messages as read for conversation \(conversationSid)")
+            if !result.isSuccessful, let error = result.error {
+                presentErrorToast(error, debug: "Error setting messages as read for conversation \(conversationSid)")
             }
-            #endif
         } catch {
-            print("Error markAllMessagesAsRead", error)
+            presentErrorToast(error, silent: true)
         }
     }
 }

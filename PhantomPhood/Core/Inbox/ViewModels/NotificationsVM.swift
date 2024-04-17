@@ -24,11 +24,11 @@ final class NotificationsVM: ObservableObject {
     private var page: Int = 1
     
     func getNotifications(_ action: RefreshNewAction) async {
+        guard !isLoading else { return }
+
         if action == .refresh {
             page = 1
         }
-        
-        guard !isLoading else { return }
 
         self.isLoading = true
         do {
@@ -44,7 +44,7 @@ final class NotificationsVM: ObservableObject {
             
             page += 1
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.isLoading = false
     }
@@ -63,7 +63,7 @@ final class NotificationsVM: ObservableObject {
             self.unreadCount = data.pagination.totalCount
             try? await UNUserNotificationCenter.current().setBadgeCount(data.pagination.totalCount)
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
     }
     
@@ -90,7 +90,7 @@ final class NotificationsVM: ObservableObject {
             
             await updateUnreadNotificationsCount()
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
     }
     

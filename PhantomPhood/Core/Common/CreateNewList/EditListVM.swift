@@ -85,7 +85,7 @@ final class EditListVM: ObservableObject {
                 do {
                     try await listsDM.addCollaborator(listId: self.originalList.id, userId: c.user.id, access: c.access)
                 } catch {
-                    print(error)
+                    presentErrorToast(error)
                 }
             }
         }
@@ -94,7 +94,7 @@ final class EditListVM: ObservableObject {
                 do {
                     try await listsDM.removeCollaborator(listId: self.originalList.id, userId: c.user.id)
                 } catch {
-                    print(error)
+                    presentErrorToast(error)
                 }
             }
         }
@@ -103,7 +103,7 @@ final class EditListVM: ObservableObject {
                 do {
                     try await listsDM.editCollaborator(listId: self.originalList.id, userId: c.user.id, changeAccessTo: c.access)
                 } catch {
-                    print(error)
+                    presentErrorToast(error)
                 }
             }
         }
@@ -112,7 +112,7 @@ final class EditListVM: ObservableObject {
             do {
                 try await listsDM.editListInfo(withId: self.originalList.id, body: .init(name: self.name, icon: self.icon.symbol, isPrivate: self.isPrivate))
             } catch {
-                print(error)
+                presentErrorToast(error)
             }
         }
         
@@ -120,7 +120,7 @@ final class EditListVM: ObservableObject {
             let list = try await listsDM.getList(withId: self.originalList.id)
             self.onSuccess(list)
         } catch {
-            print(error)
+            presentErrorToast(error)
             self.onCancel()
         }
         

@@ -30,7 +30,6 @@ final class ExploreVM17: ObservableObject {
     @Published var activities: [ClusteredMapActivity] = []
     
     @Published private(set) var loadingSections = Set<LoadingSection>()
-    @Published var error: String? = nil
     @Published var searchResults: [MKMapItem]? = nil
     @Published var isSearching: Bool = false
     @Published var startDate: DateOption = .year
@@ -111,7 +110,7 @@ final class ExploreVM17: ObservableObject {
             saveActivites(data)
             addFetchedRect(fetchRect, areaLevel: areaLevel, intersectingRects: intersectingRects)
         } catch {
-            print("Error", error)
+            presentErrorToast(error, silent: true)
         }
         
         DispatchQueue.main.async {
@@ -247,7 +246,7 @@ final class ExploreVM17: ObservableObject {
             do {
                 try UserDataStack.shared.saveContext()
             } catch {
-                print(error)
+                presentErrorToast(error, silent: true)
             }
         }
     }
@@ -270,7 +269,7 @@ final class ExploreVM17: ObservableObject {
             do {
                 try dataStack.viewContext.obtainPermanentIDs(for: [entity])
             } catch {
-                print("Error saving new RequestedRegionEntity", error)
+                presentErrorToast(error, debug: "Error on obtainPermanentIDs", silent: true)
             }
         }
         
@@ -278,7 +277,7 @@ final class ExploreVM17: ObservableObject {
             do {
                 try self.dataStack.saveContext()
             } catch {
-                print("Error saving new RequestedRegionEntity", error)
+                presentErrorToast(error, debug: "Error saving new RequestedRegionEntity", silent: true)
             }
         }
         
@@ -304,7 +303,7 @@ final class ExploreVM17: ObservableObject {
                 do {
                     try self.dataStack.saveContext()
                 } catch {
-                    print("Error deleting expired areas")
+                    presentErrorToast(error, debug: "Error deleting expired areas", silent: true)
                 }
             }
         }
@@ -410,11 +409,11 @@ final class ExploreVM17: ObservableObject {
                 do {
                     try self.dataStack.saveContext()
                 } catch {
-                    print("Error saving new MapActivityEntity", error)
+                    presentErrorToast(error, debug: "Error saving new MapActivityEntity", silent: true)
                 }
             }
         } catch {
-            print("Error getting existing MapActivityEntity", error)
+            presentErrorToast(error, debug: "Error getting existing MapActivityEntity", silent: true)
         }
     }
     
@@ -462,7 +461,7 @@ final class ExploreVM17: ObservableObject {
                 self.onMapCameraChangeHandler(latestMapContext)
             }
         } catch {
-            print(error)
+            presentErrorToast(error, silent: true)
         }
     }
     
@@ -472,7 +471,7 @@ final class ExploreVM17: ObservableObject {
             
             updateFetchedRegions()
         } catch {
-            print(error)
+            presentErrorToast(error, silent: true)
         }
     }
     
@@ -529,10 +528,9 @@ extension ExploreVM17 {
         
         self.loadingSections.insert(.fetchEvents)
         do {
-            let data = try await eventsDM.getEvents()
-            self.originalEvents = data
+            self.originalEvents = try await eventsDM.getEvents()
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.fetchEvents)
     }
@@ -560,7 +558,6 @@ final class ExploreVM16: ObservableObject {
     private var originalEvents: [Event]? = nil
     
     @Published private(set) var loadingSections = Set<LoadingSection>()
-    @Published var error: String? = nil
     @Published var searchResults: [MKMapItem]? = nil
     @Published var isSearching: Bool = false
     
@@ -587,10 +584,9 @@ final class ExploreVM16: ObservableObject {
         self.selectedPlaceData = nil
         self.loadingSections.insert(.fetchPlace)
         do {
-            let data = try await placeDM.fetch(mapItem: mapItem)
-            self.selectedPlaceData = data
-        } catch(let err) {
-            self.error = err.localizedDescription
+            self.selectedPlaceData = try await placeDM.fetch(mapItem: mapItem)
+        } catch {
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.fetchPlace)
     }
@@ -599,11 +595,7 @@ final class ExploreVM16: ObservableObject {
         do {
             let mapItems = try await searchDM.searchAppleMapsPlaces(region: MKCoordinateRegion(center: coordinate, latitudinalMeters: 50, longitudinalMeters: 50))
             
-            if let first = mapItems.first {
-                return first
-            } else {
-                return nil
-            }
+            return mapItems.first
         } catch {
             return nil
         }
@@ -622,10 +614,9 @@ extension ExploreVM16 {
         
         self.loadingSections.insert(.fetchEvents)
         do {
-            let data = try await eventsDM.getEvents()
-            self.originalEvents = data
+            self.originalEvents = try await eventsDM.getEvents()
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.fetchEvents)
     }

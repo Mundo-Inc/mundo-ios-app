@@ -37,7 +37,7 @@ final class ConversationsClientWrapper: NSObject, ObservableObject {
                 throw result.error!
             }
         } catch {
-            print("DEBUG: Error getting conversations token | \(error)")
+            presentErrorToast(error, debug: "Error getting conversations token", silent: true)
             throw error
         }
     }
@@ -52,7 +52,7 @@ final class ConversationsClientWrapper: NSObject, ObservableObject {
             let token = try await conversationsDM.getToken()
             await conversationsClient.updateToken(token)
         } catch {
-            print("DEBUG: Error getting conversations token | \(error)")
+            presentErrorToast(error, debug: "Error getting conversations token", silent: true)
         }
     }
         

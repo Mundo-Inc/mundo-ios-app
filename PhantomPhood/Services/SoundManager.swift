@@ -34,7 +34,7 @@ final class SoundManager {
                 
                 self.audioPlayer?.prepareToPlay()
             } catch {
-                print(error)
+                presentErrorToast(error, silent: true)
             }
         }
     }
@@ -54,7 +54,7 @@ final class SoundManager {
                     self.audioPlayer?.play()
                 }
             } catch {
-                print(error)
+                presentErrorToast(error, silent: true)
             }
         }
     }
@@ -64,7 +64,7 @@ final class SoundManager {
             try AVAudioSession.sharedInstance().setCategory(.ambient)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
-            print("Failed to configure audio session. Error: \(error)")
+            presentErrorToast(error, debug: "Failed to configure audio session", silent: true)
         }
     }
 }

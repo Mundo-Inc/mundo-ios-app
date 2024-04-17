@@ -65,24 +65,20 @@ final class PlaceSelectorVM: ObservableObject {
     }
     
     private func search(_ value: String) async {
+        guard isPresented else { return }
+        
         self.isLoading = true
         
-        var theRegion: MKCoordinateRegion
-        if let mapRegion {
-            theRegion = mapRegion
-        } else if let location = locationManager.location {
-            theRegion = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 800, longitudinalMeters: 800)
-        } else {
-            theRegion = MKCoordinateRegion()
+        defer {
+            self.isLoading = false
         }
+        
+        let theRegion = mapRegion ?? (locationManager.location != nil ? MKCoordinateRegion(center: locationManager.location!.coordinate, latitudinalMeters: 800, longitudinalMeters: 800) : MKCoordinateRegion())
         
         do {
-            let mapItems = try await searchDM.searchAppleMapsPlaces(region: theRegion, q: value.isEmpty ? nil : value)
-            self.results = mapItems
+            self.results = try await searchDM.searchAppleMapsPlaces(region: theRegion, q: value.isEmpty ? nil : value)
         } catch {
-            print(error)
+            presentErrorToast(error, silent: true)
         }
-        
-        self.isLoading = false
     }
 }

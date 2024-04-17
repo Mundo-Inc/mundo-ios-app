@@ -63,14 +63,9 @@ class SignUpWithPasswordVM: ObservableObject {
                     do {
                         try await self?.checksDM.checkUsername(value)
                         self?.isUsernameValid = true
-                    } catch let error as APIManager.APIError {
+                    } catch {
                         self?.isUsernameValid = false
-                        switch error {
-                        case .serverError(let serverError):
-                            self?.usernameError = serverError.message
-                        default:
-                            self?.usernameError = "Unknown Error"
-                        }
+                        self?.usernameError = getErrorMessage(error)
                     }
                     self?.loadingSections.remove(.username)
                 }
@@ -97,7 +92,7 @@ class SignUpWithPasswordVM: ObservableObject {
                 self.suggestedUsersList = users
             }
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.userSearch)
     }
@@ -110,7 +105,7 @@ class SignUpWithPasswordVM: ObservableObject {
                 self.referredBy = user
             }
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.getReferredBy)
     }
@@ -119,13 +114,9 @@ class SignUpWithPasswordVM: ObservableObject {
         loadingSections.insert(.submit)
         do {
             try await Authentication.shared.signUp(name: name, email: email, password: password, username: username.count >= 5 ? username : nil, referrer: referredBy?.id)
-        } catch APIManager.APIError.serverError(let serverError) {
-            withAnimation {
-                self.error = serverError.message
-            }
         } catch {
             withAnimation {
-                self.error = error.localizedDescription
+                self.error = getErrorMessage(error)
             }
         }
         self.loadingSections.remove(.submit)

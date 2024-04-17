@@ -64,14 +64,9 @@ class CompleteTheUserInfoVM: ObservableObject {
                     do {
                         try await self?.checksDM.checkUsername(value)
                         self?.isUsernameValid = true
-                    } catch let error as APIManager.APIError {
+                    } catch {
+                        self?.usernameError = getErrorMessage(error)
                         self?.isUsernameValid = false
-                        switch error {
-                        case .serverError(let serverError):
-                            self?.usernameError = serverError.message
-                        default:
-                            self?.usernameError = "Unknown Error"
-                        }
                     }
                     self?.loadingSections.remove(.username)
                 }
@@ -98,7 +93,7 @@ class CompleteTheUserInfoVM: ObservableObject {
                 self.suggestedUsersList = users
             }
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.userSearch)
     }
@@ -111,7 +106,7 @@ class CompleteTheUserInfoVM: ObservableObject {
                 self.referredBy = user
             }
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.getReferredBy)
     }
@@ -130,13 +125,9 @@ class CompleteTheUserInfoVM: ObservableObject {
                 try await apiManager.requestNoContent("/users/\(uid)", method: .put, body: reqBody, token: token)
                 await auth.updateUserInfo()
             }
-        } catch APIManager.APIError.serverError(let serverError) {
-            withAnimation {
-                self.error = serverError.message
-            }
         } catch {
             withAnimation {
-                self.error = error.localizedDescription
+                self.error = getErrorMessage(error)
             }
         }
         loadingSections.remove(.submit)

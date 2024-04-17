@@ -37,8 +37,8 @@ final class UserDataStack {
         if viewContext.hasChanges {
             do {
                 try viewContext.save()
-            } catch let error as NSError {
-                print("Unresolved error \(error), \(error.userInfo)")
+            } catch {
+                presentErrorToast(error, silent: true)
             }
             
         }

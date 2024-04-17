@@ -132,7 +132,7 @@ struct SignInWithEmailView: View {
                                 vm.showResetPassword = false
                                 ToastVM.shared.toast(.init(type: .success, title: "Email Sent", message: "Email sent"))
                             } catch {
-                                ToastVM.shared.toast(.init(type: .error, title: "Failed", message: "Something went wrong, please try again in couple minutes."))
+                                presentErrorToast(error)
                             }
                             withAnimation {
                                 vm.isLoading = false

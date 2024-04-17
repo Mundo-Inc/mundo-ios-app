@@ -76,7 +76,7 @@ final class PhantomCoinsVM: ObservableObject {
             
             self.streaks = data.phantomCoins.daily.streak
         } catch {
-            print(error)
+            presentErrorToast(error, silent: true)
         }
         self.isLoading = false
     }

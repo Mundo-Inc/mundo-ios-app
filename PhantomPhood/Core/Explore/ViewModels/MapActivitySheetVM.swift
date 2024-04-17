@@ -31,7 +31,7 @@ final class MapActivitySheetVM: ObservableObject {
                 self.feedItems[activity.id] = data
             }
         } catch {
-            print("Failed to fetch")
+            presentErrorToast(error)
         }
     }
     
@@ -46,6 +46,7 @@ final class MapActivitySheetVM: ObservableObject {
             
             AppData.shared.goTo(.conversation(sid: conversation.sid, focusOnTextField: true))
         } catch {
+            presentErrorToast(error)
             HapticManager.shared.notification(type: .error)
         }
         

@@ -45,7 +45,7 @@ final class CreateNewListVM: ObservableObject {
             
             self.onSuccess(list)
         } catch {
-            print(error)
+            presentErrorToast(error)
             self.onCancel()
         }
         self.isLoading = false

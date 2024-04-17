@@ -81,7 +81,7 @@ struct ContentView: View {
                     try await ConversationsManager.shared.client.create()
                     ConversationsManager.shared.registerForTyping()
                 } catch {
-                    print("Error creating twilio client")
+                    presentErrorToast(error, debug: "Error creating twilio client")
                 }
             }
             

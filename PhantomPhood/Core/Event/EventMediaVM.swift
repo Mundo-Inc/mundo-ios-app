@@ -40,7 +40,7 @@ final class EventMediaVM: ObservableObject {
             }
             page += 1
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         isLoading = false
     }

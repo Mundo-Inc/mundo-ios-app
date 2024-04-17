@@ -47,7 +47,7 @@ class AppGeneralVM: ObservableObject {
                 }
             }
         } catch {
-            print("DEBUG: Failed to get version information | Error: \(error.localizedDescription)")
+            presentErrorToast(error, debug: "Failed to get version information", silent: true)
         }
     }
 }

@@ -43,7 +43,7 @@ final class ConversationsCoreDataManager {
             try viewContext.execute(deleteRequest3)
             try viewContext.execute(deleteRequest4)
         } catch {
-            print("DEBUG: Error deleting all conversations")
+            presentErrorToast(error, debug: "Error deleting all conversations", silent: true)
         }
     }
     
@@ -56,8 +56,8 @@ final class ConversationsCoreDataManager {
             if self.viewContext.hasChanges {
                 do {
                     try self.viewContext.save()
-                } catch let error as NSError {
-                    print("Unresolved error \(error), \(error.userInfo)")
+                } catch {
+                    presentErrorToast(error, silent: true)
                 }
             }
         }

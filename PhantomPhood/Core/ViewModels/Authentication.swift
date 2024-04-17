@@ -368,7 +368,7 @@ final class Authentication: ObservableObject {
             UserDefaults.standard.removeObject(forKey: "apnToken")
             UserDefaults.standard.removeObject(forKey: "fcmToken")
         } catch {
-            print("DEBUG: Couldn't send device token | Error: \(error.localizedDescription)")
+            presentErrorToast(error, debug: "Couldn't send device token", silent: true)
         }
     }
 }

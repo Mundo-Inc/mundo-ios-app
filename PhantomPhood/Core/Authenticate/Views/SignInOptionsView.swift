@@ -41,11 +41,7 @@ struct SignInOptionsView: View {
                         HStack(spacing: 20) {
                             Button {
                                 Task {
-                                    do {
-                                        try await vm.signInApple()
-                                    } catch {
-                                        print(error)
-                                    }
+                                    try? await vm.signInApple()
                                 }
                             } label: {
                                 Image(.signInIconOnlyApple)
@@ -56,11 +52,7 @@ struct SignInOptionsView: View {
                             
                             Button {
                                 Task {
-                                    do {
-                                        try await vm.signInGoogle()
-                                    } catch {
-                                        print(error)
-                                    }
+                                    try? await vm.signInGoogle()
                                 }
                             } label: {
                                 Image(.signInIconOnlyGoogle)

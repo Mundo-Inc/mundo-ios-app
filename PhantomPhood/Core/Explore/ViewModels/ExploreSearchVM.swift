@@ -16,7 +16,7 @@ enum MapDefaultSearch: String, CaseIterable {
     case bars
     case takeout
     case delivery
-
+    
     var title: String {
         switch self {
         case .restaurants:
@@ -31,7 +31,7 @@ enum MapDefaultSearch: String, CaseIterable {
             return "Delivery"
         }
     }
-
+    
     var categories: [MKPointOfInterestCategory] {
         switch self {
         case .restaurants:
@@ -46,7 +46,7 @@ enum MapDefaultSearch: String, CaseIterable {
             return [.restaurant, .cafe]
         }
     }
-
+    
     var search: String {
         switch self {
         case .restaurants:
@@ -61,7 +61,7 @@ enum MapDefaultSearch: String, CaseIterable {
             return "Delivery"
         }
     }
-
+    
     var image: Image {
         switch self {
         case .restaurants:
@@ -116,11 +116,13 @@ final class ExploreSearchVM: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var error: String? = nil
     
+    private var queueSearch: (() async -> Void)?
+    
     private var cancellable = [AnyCancellable]()
     
     init() {
         $text
-            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            .debounce(for: .seconds(0.8), scheduler: RunLoop.main)
             .sink { value in
                 Task {
                     await self.search(self.text)
@@ -138,60 +140,43 @@ final class ExploreSearchVM: ObservableObject {
     }
     
     func search(_ value: String, region: MKCoordinateRegion? = nil, categories: [MKPointOfInterestCategory]? = nil) async {
-        self.isLoading = true
-
-        if self.scope == .places {
-            var theRegion: MKCoordinateRegion
-            if let region {
-                theRegion = region
-            } else if let mapRegion {
-                theRegion = mapRegion
-            } else if let location = locationManager.location {
-                theRegion = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 800, longitudinalMeters: 800)
-            } else {
-                theRegion = MKCoordinateRegion()
+        guard !isLoading else {
+            self.queueSearch = {
+                await self.search(value, region: region, categories: categories)
             }
+            return
+        }
+        
+        self.isLoading = true
+        
+        switch self.scope {
+        case .places:
+            let theRegion = region ?? mapRegion ?? (locationManager.location != nil ? MKCoordinateRegion(center: locationManager.location!.coordinate, latitudinalMeters: 800, longitudinalMeters: 800) : MKCoordinateRegion())
             
             do {
-                let mapItems = try await searchDM.searchAppleMapsPlaces(region: theRegion, q: value, categories: categories)
-                self.placeSearchResults = mapItems
+                self.placeSearchResults = try await searchDM.searchAppleMapsPlaces(region: theRegion, q: value, categories: categories)
             } catch {
-                print(error)
+                presentErrorToast(error, silent: true)
             }
-        } else if self.scope == .users {
+        case .users:
             do {
-                let data = try await searchDM.searchUsers(q: value)
-                self.userSearchResults = data
-            } catch let error as APIManager.APIError {
-                switch error {
-                case .serverError(let serverError):
-                    self.error = serverError.message
-                    break
-                default:
-                    self.error = "Unknown Error"
-                    break
-                }
+                self.userSearchResults = try await searchDM.searchUsers(q: value)
             } catch {
-                self.error = error.localizedDescription
+                presentErrorToast(error)
             }
-        } else if self.scope == .events {
+        case .events:
             do {
-                let data = try await eventsDM.getEvents(q: value)
-                self.eventsSearchResult = data
-            } catch let error as APIManager.APIError {
-                switch error {
-                case .serverError(let serverError):
-                    self.error = serverError.message
-                    break
-                default:
-                    self.error = "Unknown Error"
-                    break
-                }
+                self.eventsSearchResult = try await eventsDM.getEvents(q: value)
             } catch {
-                self.error = error.localizedDescription
+                presentErrorToast(error)
             }
         }
         
         self.isLoading = false
+        
+        if let queueSearch = self.queueSearch {
+            self.queueSearch = nil
+            await queueSearch()
+        }
     }
 }

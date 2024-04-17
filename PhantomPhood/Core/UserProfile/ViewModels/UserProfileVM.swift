@@ -45,10 +45,11 @@ class UserProfileVM: ObservableObject {
                 self.isFollowedByUser = theUser.connectionStatus.followedByUser
                 self.error = nil
             } catch {
-                self.error = error.localizedDescription
+                self.error = getErrorMessage(error)
+                
                 guard let theError = error as? APIManager.APIError else { return }
-                switch theError {
-                case .serverError(let serverError):
+                
+                if case .serverError(let serverError) = theError {
                     if serverError.statusCode == 403 {
                         if serverError.message == "You have blocked this user" {
                             self.blockStatus = .isBlocked
@@ -58,11 +59,6 @@ class UserProfileVM: ObservableObject {
                         self.user = nil
                         self.isFollowedByUser = nil
                     }
-                    self.error = serverError.message
-                case .decodingError(let decodingError):
-                    self.error = decodingError.localizedDescription
-                case .unknown:
-                    print("Unknown error")
                 }
             }
         } else if let username {
@@ -73,10 +69,11 @@ class UserProfileVM: ObservableObject {
                 self.isFollowedByUser = theUser.connectionStatus.followedByUser
                 self.error = nil
             } catch {
-                self.error = error.localizedDescription
+                self.error = getErrorMessage(error)
+                
                 guard let theError = error as? APIManager.APIError else { return }
-                switch theError {
-                case .serverError(let serverError):
+                
+                if case .serverError(let serverError) = theError {
                     if serverError.statusCode == 403 {
                         if serverError.message == "You have blocked this user" {
                             self.blockStatus = .isBlocked
@@ -86,11 +83,6 @@ class UserProfileVM: ObservableObject {
                         self.user = nil
                         self.isFollowedByUser = nil
                     }
-                    self.error = serverError.message
-                case .decodingError(let decodingError):
-                    self.error = decodingError.localizedDescription
-                case .unknown:
-                    print("Unknown error")
                 }
             }
         }
@@ -106,7 +98,7 @@ class UserProfileVM: ObservableObject {
             self.isFollowedByUser = true
             HapticManager.shared.notification(type: .success)
         } catch {
-            ToastVM.shared.toast(Toast(type: .error, title: "Failed", message: "Failed to follow \(user?.name ?? "this user")"))
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.followOperation)
     }
@@ -120,7 +112,7 @@ class UserProfileVM: ObservableObject {
             self.isFollowedByUser = false
             HapticManager.shared.notification(type: .success)
         } catch {
-            ToastVM.shared.toast(Toast(type: .error, title: "Failed", message: "Failed to unfollow \(user?.name ?? "this user")"))
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.followOperation)
     }
@@ -137,7 +129,7 @@ class UserProfileVM: ObservableObject {
             
             HapticManager.shared.notification(type: .success)
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.blockOperation)
     }
@@ -153,7 +145,7 @@ class UserProfileVM: ObservableObject {
             
             HapticManager.shared.notification(type: .success)
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.blockOperation)
     }
@@ -169,7 +161,7 @@ class UserProfileVM: ObservableObject {
             
             AppData.shared.goTo(.conversation(sid: conversation.sid, focusOnTextField: true))
         } catch {
-            ToastVM.shared.toast(.init(type: .error, title: "Error", message: "Couldn't start a conversation with \(self.user?.name ?? "this user")"))
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.startingConversation)
     }

@@ -33,11 +33,9 @@ final class AddToListVM: ObservableObject {
         
         self.isLoading = true
         do {
-            let data = try await listsDM.getUserLists(forUserId: uid)
-            
-            self.lists = data
+            self.lists = try await listsDM.getUserLists(forUserId: uid)
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.isLoading = false
     }
@@ -55,7 +53,7 @@ final class AddToListVM: ObservableObject {
                     try await listsDM.removePlaceFromList(listId: item.id, placeId: placeId)
                 }
             } catch {
-                print(error)
+                presentErrorToast(error)
             }
         }
         HapticManager.shared.notification(type: .success)

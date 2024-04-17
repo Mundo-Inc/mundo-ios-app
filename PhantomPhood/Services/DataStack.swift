@@ -110,7 +110,7 @@ final class DataStack {
                 try self.viewContext.save()
             }
         } catch {
-            print("DEBUG: Error saving user infor to CoreData", error)
+            presentErrorToast(error, debug: "Error saving user infor to CoreData", silent: true)
         }
     }
     
@@ -121,8 +121,8 @@ final class DataStack {
             if self.viewContext.hasChanges {
                 do {
                     try self.viewContext.save()
-                } catch let error as NSError {
-                    print("Unresolved error \(error), \(error.userInfo)")
+                } catch {
+                    presentErrorToast(error, silent: true)
                 }
             }
         }

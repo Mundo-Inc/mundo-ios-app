@@ -35,7 +35,7 @@ struct EditProfileView: View {
                                 try await vm.save()
                                 dismiss()
                             } catch {
-                                print(error)
+                                presentErrorToast(error)
                             }
                         }
                     } label: {

@@ -32,7 +32,7 @@ final class MyProfileListsVM: ObservableObject {
             
             self.lists = data
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.isLoading = false
     }

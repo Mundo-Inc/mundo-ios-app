@@ -157,9 +157,9 @@ final class TaskManager: ObservableObject {
                         
                         do {
                             let outputURL = try await VideoHelper.compress(inputURL: inputURL, aspectRatio: aspectRatio, maxWidth: maxWidth, outputFileName: outputFileName)
-                            if let data1 = try? Data(contentsOf: inputURL), let data2 = try? Data(contentsOf: outputURL) {
-                                print("Original  : \(String(format: "%.2f", Double(data1.count) / 1024 / 1024)) MB\nCompressed: \(String(format: "%.2f", Double(data2.count) / 1024 / 1024)) MB\n\t-------------------\n\t|   Rate: %\(String(format: "%.1f", 100 * (1.0 - Double(data2.count) / Double(data1.count))))   |\n\t-------------------")
-                            }
+//                            if let data1 = try? Data(contentsOf: inputURL), let data2 = try? Data(contentsOf: outputURL) {
+//                                print("Original  : \(String(format: "%.2f", Double(data1.count) / 1024 / 1024)) MB\nCompressed: \(String(format: "%.2f", Double(data2.count) / 1024 / 1024)) MB\n\t-------------------\n\t|   Rate: %\(String(format: "%.1f", 100 * (1.0 - Double(data2.count) / Double(data1.count))))   |\n\t-------------------")
+//                            }
                             updateTaskMediaStatus(task: nextTask, media: .compressed(compressedMediaData: .movie(outputURL), mediaItemData: mediaItemData))
                             
                             Task {
@@ -176,7 +176,7 @@ final class TaskManager: ObservableObject {
                                 try await submitIfReady(taskId: nextTask.id)
                             }
                         } catch {
-                            print("Error Compressing video")
+                            presentErrorToast(error, debug: "Error Compressing video", silent: true)
                             removeTaskMedia(task: nextTask, mediaId: mediaItemData.id)
                             
                             // Submit if ready
@@ -186,6 +186,7 @@ final class TaskManager: ObservableObject {
                 }
             }
         } catch {
+            presentErrorToast(error, silent: true)
             if let onError = nextTask.onError {
                 onError(error)
             }

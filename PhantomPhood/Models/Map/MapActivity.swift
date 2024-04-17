@@ -38,7 +38,7 @@ struct MapActivity: Identifiable, Decodable {
         do {
             try context.obtainPermanentIDs(for: [mapActivityEntity])
         } catch {
-            print("Error obtaining a permanent ID for userEntity: \(error)")
+            presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
         }
         
         user.addToMapActivities(mapActivityEntity)

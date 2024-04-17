@@ -62,7 +62,7 @@ final class QuickActionsVM: ObservableObject {
                 self.isNearestPlace = true
             }
         } catch {
-            print(error)
+            presentErrorToast(error, silent: true)
         }
         loadingSections.remove(.nearestPlace)
     }

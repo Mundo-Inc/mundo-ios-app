@@ -52,7 +52,7 @@ class PlaceReviewsVM: ObservableObject {
             }
             page += 1
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         
         if type == .refresh {
@@ -70,7 +70,7 @@ class PlaceReviewsVM: ObservableObject {
             let data = try await placeDM.getGooglePlacesReviews(id: placeId)
             self.googleReviews = data
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         loadingSections.remove(.fetchingGoogleReviews)
     }
@@ -83,7 +83,7 @@ class PlaceReviewsVM: ObservableObject {
             let data = try await placeDM.getYelpReviews(id: placeId)
             self.yelpReviews = data
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         loadingSections.remove(.fetchingYelpReviews)
     }

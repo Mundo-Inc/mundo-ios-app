@@ -45,19 +45,8 @@ final class UserSelectorVM: ObservableObject {
             self.searchResults = data
             self.isLoading = false
         } catch {
-            if let error = error as? APIManager.APIError {
-                self.isLoading = false
-                switch error {
-                case .serverError(let serverError):
-                    self.error = serverError.message
-                    break
-                default:
-                    self.error = "Unknown Error"
-                    break
-                }
-            } else {
-                self.error = "Unknown Error"
-            }
+            self.isLoading = false
+            self.error = getErrorMessage(error)
         }
         self.isLoading = false
     }

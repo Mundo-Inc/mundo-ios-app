@@ -34,8 +34,7 @@ final class ReportVM: ObservableObject {
             self.flagType = nil
             self.note = ""
         } catch {
-            print(error)
-            toastVM.toast(.init(type: .error, title: "Something went wrong!", message: "Unable to submit your report"))
+            presentErrorToast(error, title: "Unable to submit your report")
         }
     }
 }

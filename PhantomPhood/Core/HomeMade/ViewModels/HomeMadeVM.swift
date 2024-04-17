@@ -45,12 +45,12 @@ final class HomeMadeVM: ObservableObject {
                 self.finished = true
                 self.toastVM.toast(.init(type: .success, title: "Success", message: "We got it 🙌🏻"))
             } catch {
-                self.toastVM.toast(.init(type: .error, title: "Success", message: "Couldn't submit your content :("))
+                presentErrorToast(error)
             }
             
             self.loadingSections.remove(.submitting)
         }, onError: { error in
-            self.toastVM.toast(.init(type: .error, title: "Review", message: "Couldn't submit your conetnt :("))
+            presentErrorToast(error)
         }))
     }
     

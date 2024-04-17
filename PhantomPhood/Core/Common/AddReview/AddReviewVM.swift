@@ -47,11 +47,9 @@ final class AddReviewVM: ObservableObject {
                     let placeOverview = try await self?.placeDM.getOverview(id: placeId)
                     if let placeOverview {
                         self?.place = PlaceEssentials(placeOverview: placeOverview)
-                    } else {
-                        self?.error = "Not Found"
                     }
                 } catch {
-                    self?.error = "Couldn't fetch place data"
+                    self?.error = getErrorMessage(error)
                 }
             }
             break
@@ -67,11 +65,9 @@ final class AddReviewVM: ObservableObject {
                 let placeData = try await self?.placeDM.fetch(mapPlace: mapPlace)
                 if let placeData {
                     self?.place = PlaceEssentials(placeDetail: placeData)
-                } else {
-                    self?.error = "Not Found"
                 }
             } catch {
-                self?.error = "Couldn't fetch place data"
+                self?.error = getErrorMessage(error)
             }
         }
     }
@@ -113,7 +109,7 @@ final class AddReviewVM: ObservableObject {
                 self.toastVM.toast(.init(type: .success, title: "Review", message: "We got your review 🙌🏻 Thanks!"))
                 self.place = nil
             } catch {
-                self.toastVM.toast(.init(type: .error, title: "Review", message: "Couldn't submit your review :("))
+                presentErrorToast(error)
             }
             self.isSubmitting = false
         }, onError: { error in

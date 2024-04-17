@@ -95,7 +95,7 @@ final class ConversationsManager: NSObject, ObservableObject {
         do {
             try coreDataManager.saveContext()
         } catch {
-            print(error)
+            presentErrorToast(error, silent: true)
         }
     }
     

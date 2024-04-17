@@ -37,7 +37,7 @@ final class UserProfileDM {
                 }
             }
         } catch {
-            print("DEBUG: Error getting user infor from CoreData")
+            presentErrorToast(error, debug: "Error getting user infor from CoreData", silent: true)
         }
         
         let data: APIResponse<UserEssentials> = try await apiManager.requestData("/users/\(id)?view=basic", method: .get)

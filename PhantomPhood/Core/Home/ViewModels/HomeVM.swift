@@ -46,7 +46,7 @@ class HomeVM: ObservableObject {
             
             AppData.shared.goTo(.conversation(sid: conversation.sid, focusOnTextField: true))
         } catch {
-            ToastVM.shared.toast(.init(type: .error, title: "Error", message: "Couldn't start a conversation"))
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.startingConversation)
     }
@@ -70,15 +70,11 @@ class HomeVM: ObservableObject {
                 self.followingItems.append(contentsOf: getClusteredFeedItems(data))
             }
             
-            if self.followingItems.isEmpty {
-                isFeedEmpty = true
-            } else {
-                isFeedEmpty = false
-            }
+            isFeedEmpty = self.followingItems.isEmpty
             
             followingPage += 1
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.fetchingFollowingData)
     }
@@ -104,7 +100,7 @@ class HomeVM: ObservableObject {
             
             forYouPage += 1
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.fetchingForYouData)
     }
@@ -145,7 +141,7 @@ class HomeVM: ObservableObject {
             
             item.wrappedValue.followFromResourceUsers(userId: userId)
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.followRequest(userId))
     }
@@ -156,7 +152,7 @@ class HomeVM: ObservableObject {
             try await userProfileDM.follow(id: item.wrappedValue.user.id)
             item.wrappedValue.user.setFollowedByUserStatus(true)
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.followRequest(item.wrappedValue.user.id))
     }
@@ -206,7 +202,7 @@ class HomeVM: ObservableObject {
         do {
             self.leaderboard = try await leaderboardDM.fetchLeaderboard(page: 1)
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
     }
     
@@ -225,7 +221,7 @@ class HomeVM: ObservableObject {
                 }
             }
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.followRequest(userId))
     }

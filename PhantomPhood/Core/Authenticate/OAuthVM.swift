@@ -14,33 +14,31 @@ final class OAuthVM: ObservableObject {
     
     func signInGoogle() async throws {
         self.isLoading = true
-        do {
-            let helper = SignInGoogleHelper()
-            let tokens = try await helper.signIn()
-            let result = await Authentication.shared.signinWithGoogle(tokens: tokens)
-            if !result.success {
-                self.error = result.error
-            }
+
+        defer {
             self.isLoading = false
-        } catch {
-            self.isLoading = false
-            throw error
+        }
+        
+        let helper = SignInGoogleHelper()
+        let tokens = try await helper.signIn()
+        let result = await Authentication.shared.signinWithGoogle(tokens: tokens)
+        if !result.success {
+            self.error = result.error
         }
     }
     
     func signInApple() async throws {
         self.isLoading = true
-        do {
-            let helper = SignInWithAppleHelper.shared
-            let tokens = try await helper.startSignInWithAppleFlow()
-            let result = await Authentication.shared.signinWithApple(tokens: tokens)
-            if !result.success {
-                self.error = result.error
-            }
+        
+        defer {
             self.isLoading = false
-        } catch {
-            self.isLoading = false
-            throw error
+        }
+        
+        let helper = SignInWithAppleHelper.shared
+        let tokens = try await helper.startSignInWithAppleFlow()
+        let result = await Authentication.shared.signinWithApple(tokens: tokens)
+        if !result.success {
+            self.error = result.error
         }
     }
 }

@@ -14,11 +14,7 @@ final class PlacesListVM: ObservableObject {
     let listId: String
     
     @Published var tabViewSelection: Tabs = .list
-    
-    @Published var showActions: Bool = false
-    @Published var confirmationRequest: ConfirmationRequest? = nil
     @Published var editingList: UserPlacesList? = nil
-        
     @Published var list: UserPlacesList? = nil
     
     init(listId: String) {
@@ -29,35 +25,37 @@ final class PlacesListVM: ObservableObject {
         }
     }
     
-    private func getList() async {
-        do {
-            let data = try await listsDM.getList(withId: self.listId)
-            self.list = data
-        } catch {
-            print(error)
-        }
-    }
-    
     func deleteList() async {
-        if let list = self.list {
-            do {
-                try await listsDM.deleteList(withId: list.id)
-            } catch {
-                print(error)
-            }
+        guard let list else { return }
+        
+        do {
+            try await listsDM.deleteList(withId: list.id)
+        } catch {
+            presentErrorToast(error)
         }
     }
     
     func removePlaceFromList(placeId: String) async {
-        if let list = self.list {
-            do {
-                try await listsDM.removePlaceFromList(listId: list.id, placeId: placeId)
-                await self.getList()
-            } catch {
-                print(error)
-            }
+        guard let list else { return }
+        do {
+            try await listsDM.removePlaceFromList(listId: list.id, placeId: placeId)
+            await self.getList()
+        } catch {
+            presentErrorToast(error)
         }
     }
+    
+    // MARK: Private methods
+    
+    private func getList() async {
+        do {
+            self.list = try await listsDM.getList(withId: self.listId)
+        } catch {
+            presentErrorToast(error)
+        }
+    }
+    
+    // MARK: Enums
     
     enum Tabs: String {
         case list = "list"
@@ -87,22 +85,6 @@ final class PlacesListVM: ObservableObject {
                 return "list.bullet.circle.fill"
             case .map:
                 return "map.fill"
-            }
-        }
-    }
-    
-    enum ConfirmationRequest: Equatable {
-        case deleteList
-        case deletePlace(String)
-        
-        static func == (lhs: ConfirmationRequest, rhs: ConfirmationRequest) -> Bool {
-            switch (lhs, rhs) {
-            case (.deleteList, .deleteList):
-                return true
-            case (.deletePlace(_), .deletePlace(_)):
-                return true
-            default:
-                return false
             }
         }
     }

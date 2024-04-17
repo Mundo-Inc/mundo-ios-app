@@ -51,7 +51,7 @@ final class EventVM: ObservableObject {
             let data = try await eventsDM.getEvent(self.eventId)
             self.event = data
         } catch {
-            toastVM.toast(.init(type: .error, title: "Something went wrong", message: "Couldn't fetch event info"))
+            presentErrorToast(error)
         }
         loadingSections.remove(.getEvent)
     }

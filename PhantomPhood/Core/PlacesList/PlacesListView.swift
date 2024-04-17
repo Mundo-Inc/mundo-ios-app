@@ -9,9 +9,11 @@ import SwiftUI
 import MapKit
 
 struct PlacesListView: View {
+    @EnvironmentObject private var actionManager: ActionManager
+    
     @StateObject private var vm: PlacesListVM
     
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
     
     @State private var isAnimating = true
     
@@ -147,7 +149,19 @@ struct PlacesListView: View {
             if let list = vm.list, let currentUser = Authentication.shared.currentUser, list.owner.id == currentUser.id {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        vm.showActions = true
+                        actionManager.value = [
+                            .init(title: "Edit", callback: {
+                                if let list = vm.list {
+                                    vm.editingList = list
+                                }
+                            }),
+                            .init(title: "Delete this list", alertMessage: "Are you sure you want to delete this list?", callback: {
+                                Task {
+                                    await vm.deleteList()
+                                    dismiss()
+                                }
+                            })
+                        ]
                     } label: {
                         Image(systemName: "gear")
                     }
@@ -155,40 +169,7 @@ struct PlacesListView: View {
             }
         }
         .toolbarBackground(.hidden)
-        .onDisappear {
-            self.isAnimating = false
-        }
-        .onAppear {
-            self.isAnimating = true
-        }
-        .confirmationDialog("Actions", isPresented: $vm.showActions) {
-            Button("Edit") {
-                if let list = vm.list {
-                    vm.editingList = list
-                }
-            }
-            
-            Button("Delete this list", role: .destructive) {
-                vm.confirmationRequest = .deleteList
-            }
-        }
-        .alert("Are you sure you want to delete this list?", isPresented: Binding(optionalValue: $vm.confirmationRequest, ofCase: .deleteList)) {
-            Button("Delete List", role: .destructive) {
-                Task {
-                    await vm.deleteList()
-                    dismiss()
-                }
-            }
-        }
-        .alert("Are you sure you want to remove this place from the list?", isPresented: Binding(optionalValue: $vm.confirmationRequest, ofCase: .deletePlace(""))) {
-            Button("Remove This Place", role: .destructive) {
-                if let request = vm.confirmationRequest, case .deletePlace(let placeId) = request {
-                    Task {
-                        await vm.removePlaceFromList(placeId: placeId)
-                    }
-                }
-            }
-        }
+        .navigationBarTitleDisplayMode(.inline)
         .fullScreenCover(isPresented: Binding(optionalValue: $vm.editingList)) {
             if let list = vm.list {
                 EditListView(originalList: list) { edited in
@@ -200,10 +181,18 @@ struct PlacesListView: View {
                 
             }
         }
+        .onDisappear {
+            self.isAnimating = false
+        }
+        .onAppear {
+            self.isAnimating = true
+        }
     }
 }
 
 fileprivate struct PlaceItem: View {
+    @EnvironmentObject private var alertManager: AlertManager
+    
     let place: UserPlacesList.ListPlace
     @ObservedObject var vm: PlacesListVM
     
@@ -218,7 +207,11 @@ fileprivate struct PlaceItem: View {
                     
                     if let list = vm.list, let currentUser = Authentication.shared.currentUser, list.collaborators.contains(where: { $0.user.id == currentUser.id && $0.access == .edit }) {
                         Button {
-                            vm.confirmationRequest = .deletePlace(place.place.id)
+                            alertManager.value = .init(message: "Are you sure you want to remove this place from the list?", callback: {
+                                Task {
+                                    await vm.removePlaceFromList(placeId: place.place.id)
+                                }
+                            })
                         } label: {
                             Image(systemName: "minus.circle.fill")
                                 .foregroundStyle(.red)

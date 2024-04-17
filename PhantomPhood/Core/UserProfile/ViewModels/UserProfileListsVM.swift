@@ -26,13 +26,15 @@ final class UserProfileListsVM: ObservableObject {
     }
     
     func fetchLists() async {
+        guard !isLoading else { return }
+        
         self.isLoading = true
         do {
             let data = try await listsDM.getUserLists(forUserId: self.userId)
             
             self.lists = data
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.isLoading = false
     }

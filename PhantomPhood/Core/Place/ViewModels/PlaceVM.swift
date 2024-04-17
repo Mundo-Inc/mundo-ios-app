@@ -13,7 +13,6 @@ final class PlaceVM: ObservableObject {
     
     @Published private(set) var place: PlaceDetail?
     @Published private(set) var isLoading = false
-    @Published private(set) var error: String?
     
     enum ScoresTab {
         case googlePhantomYelp
@@ -43,8 +42,7 @@ final class PlaceVM: ObservableObject {
                 
                 self.handleNavigationAction(place: data, action: action)
             } catch {
-                print(error)
-                self.error = error.localizedDescription
+                presentErrorToast(error)
             }
         }
     }
@@ -59,8 +57,7 @@ final class PlaceVM: ObservableObject {
                 
                 await updateIncludedLists()
             } catch {
-                print(error)
-                self.error = error.localizedDescription
+                presentErrorToast(error)
             }
         }
     }
@@ -74,8 +71,7 @@ final class PlaceVM: ObservableObject {
             let listIds = try await placeDM.getIncludedLists(id: id)
             self.includedLists = listIds
         } catch {
-            print(error)
-            ToastVM.shared.toast(Toast(type: .error, title: "Failed to update lists", message: error.localizedDescription))
+            presentErrorToast(error, title: "Failed to update lists")
         }
     }
     

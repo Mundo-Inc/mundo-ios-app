@@ -53,7 +53,7 @@ final class RewardsHubVM: ObservableObject {
             await pcVM.refresh()
             HapticManager.shared.notification(type: .success)
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.dailyReward)
     }
@@ -66,7 +66,7 @@ final class RewardsHubVM: ObservableObject {
             let data = try await rewardsDM.getMissions()
             self.missions = data
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.missions)
     }
@@ -79,7 +79,7 @@ final class RewardsHubVM: ObservableObject {
             let data = try await rewardsDM.getPrizes()
             self.prizes = data
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.prizes)
     }
@@ -96,7 +96,7 @@ final class RewardsHubVM: ObservableObject {
                 self.selectedPrize = nil
             }
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.redeeming)
     }
@@ -119,7 +119,7 @@ final class RewardsHubVM: ObservableObject {
             }
             await pcVM.refresh()
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         self.loadingSections.remove(.mission(id))
     }
@@ -199,7 +199,7 @@ final class RewardsHubVM: ObservableObject {
                 }
             }
         } catch {
-            print(error)
+            presentErrorToast(error, silent: true)
         }
     }
     
@@ -244,7 +244,7 @@ final class RewardsHubVM: ObservableObject {
                 await assignReferredUsers()
             }
         } catch {
-            print(error)
+            presentErrorToast(error, silent: true)
         }
     }
     
@@ -274,7 +274,7 @@ final class RewardsHubVM: ObservableObject {
         do {
             try UserDataStack.shared.saveContext()
         } catch {
-            print(error)
+            presentErrorToast(error, silent: true)
         }
     }
 }

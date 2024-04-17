@@ -33,8 +33,7 @@ final class CommentsVM: ObservableObject {
     var commentsPage = 1
     
     func getComments(activityId: String) async {
-        if isLoading { return }
-        guard let token = await auth.getToken() else { return }
+        guard !isLoading, let token = await auth.getToken() else { return }
         
         isLoading = true
         do {
@@ -46,7 +45,7 @@ final class CommentsVM: ObservableObject {
             }
             commentsPage += 1
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         isLoading = false
     }
@@ -78,15 +77,11 @@ final class CommentsVM: ObservableObject {
             self.comments.insert(data.data, at: 0)
             toastVM.toast(.init(type: .success, title: "Success", message: "Comment Added"))
         } catch {
-            toastVM.toast(.init(type: .error, title: "Error", message: "We couldn't add your comment"))
+            presentErrorToast(error, title: "Couldn't add your comment")
         }
         self.isSubmitting = false
     }
     
-    enum LikeAction {
-        case add
-        case remove
-    }
     func updateCommentLike(id: String, action: LikeAction) async {
         guard let token = await auth.getToken() else { return }
         
@@ -97,8 +92,15 @@ final class CommentsVM: ObservableObject {
                 return comment.id == data.data.id ? data.data : comment
             })
         } catch {
-            toastVM.toast(.init(type: .error, title: "Error", message: "Something went wrong"))
+            presentErrorToast(error)
         }
         self.isSubmitting = false
+    }
+    
+    // MARK: Enums
+    
+    enum LikeAction {
+        case add
+        case remove
     }
 }

@@ -17,11 +17,11 @@ final class EventCheckInsVM: ObservableObject {
         self.eventVM = eventVM
     }
     
-    @Published var isLoading: Bool = false
+    @Published private(set) var isLoading: Bool = false
+    @Published private(set) var total: Int? = nil
     @Published var checkIns: [Checkin]? = nil
-    @Published var total: Int? = nil
     
-    var page = 1
+    private var page = 1
     func fetch(type: RefreshNewAction) async {
         guard let eventId = eventVM.event?.id, !isLoading else { return }
 
@@ -44,7 +44,7 @@ final class EventCheckInsVM: ObservableObject {
             
             page += 1
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         isLoading = false
     }

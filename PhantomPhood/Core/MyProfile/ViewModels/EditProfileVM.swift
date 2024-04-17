@@ -44,14 +44,9 @@ class EditProfileVM: ObservableObject {
                         let token = await self?.auth.getToken()
                         try await self?.apiManager.requestNoContent("/users/username-availability/\(value)", token: token)
                         self?.isUsernameValid = true
-                    } catch let error as APIManager.APIError {
+                    } catch {
                         self?.isUsernameValid = false
-                        switch error {
-                        case .serverError(let serverError):
-                            self?.usernameError = serverError.message
-                        default:
-                            self?.usernameError = "Unknown Error"
-                        }
+                        self?.usernameError = getErrorMessage(error)
                     }
                     self?.isLoading = false
                 }
@@ -142,7 +137,10 @@ class EditProfileVM: ObservableObject {
     }
     
     func save() async throws {
+        guard let token = await auth.getToken(), let uid = auth.currentUser?.id else { return }
+        
         isSubmitting = true
+        
         switch imageState {
         case .success:
             try? await self.uploadImage()
@@ -157,16 +155,11 @@ class EditProfileVM: ObservableObject {
             let removeProfileImage: Bool?
         }
         
-        if let token = await auth.getToken(), let uid = auth.currentUser?.id {
-            do {
-                let reqBody = try apiManager.createRequestBody(EditUserBody(name: self.name, username: self.username, bio: self.bio, removeProfileImage: self.isDeleting ? self.isDeleting : nil))
-                let _: APIResponse<CurrentUserCoreData> = try await apiManager.requestData("/users/\(uid)", method: .put, body: reqBody, token: token)
-            } catch {
-                print(error)
-            }
-            isSubmitting = false
-            await auth.updateUserInfo()
-        }
+        let reqBody = try apiManager.createRequestBody(EditUserBody(name: self.name, username: self.username, bio: self.bio, removeProfileImage: self.isDeleting ? self.isDeleting : nil))
+        let _: APIResponse<CurrentUserCoreData> = try await apiManager.requestData("/users/\(uid)", method: .put, body: reqBody, token: token)
+        
+        isSubmitting = false
+        await auth.updateUserInfo()
     }
     
     // MARK: - Private Methods

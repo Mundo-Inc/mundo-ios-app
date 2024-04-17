@@ -38,8 +38,7 @@ struct ProfileActivityReviewView: View {
             try await reviewDM.remove(reviewId: id)
             ToastVM.shared.toast(.init(type: .success, title: "Success", message: "Your review has been deleted"))
         } catch {
-            print(error)
-            ToastVM.shared.toast(.init(type: .error, title: "Error", message: "Couldn't delete your review"))
+            presentErrorToast(error)
         }
     }
     

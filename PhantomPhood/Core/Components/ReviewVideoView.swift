@@ -46,18 +46,9 @@ struct PlayerViewController: UIViewControllerRepresentable {
     private var player: AVPlayer {
        AVPlayer(url: url)
     }
-    
-    func configureAudioSession() {
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.playback)
-        } catch {
-            print("Failed to set audio session category: \(error)")
-        }
-    }
-    
-    
+        
     func makeUIViewController(context: Context) -> AVPlayerViewController {
-        configureAudioSession()
+        try? AVAudioSession.sharedInstance().setCategory(.playback)
         
         let controller = AVPlayerViewController()
         controller.player = player

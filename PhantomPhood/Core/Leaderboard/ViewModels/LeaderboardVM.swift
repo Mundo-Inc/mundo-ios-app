@@ -13,9 +13,8 @@ class LeaderboardVM: ObservableObject {
     
     @Published private(set) var isLoading = false
     @Published private(set) var list: [UserEssentials] = []
-    @Published private(set) var error: String?
     
-    var page: Int = 1
+    private var page: Int = 1
     
     init() {
         Task {
@@ -41,9 +40,8 @@ class LeaderboardVM: ObservableObject {
             }
             
             page += 1
-            self.error = nil
         } catch {
-            self.error = error.localizedDescription
+            presentErrorToast(error)
         }
         self.isLoading = false
     }

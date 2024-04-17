@@ -120,7 +120,7 @@ extension UserEssentials {
         do {
             try context.obtainPermanentIDs(for: [userEntity])
         } catch {
-            print("Error obtaining a permanent ID for userEntity: \(error)")
+            presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
         }
         
         return userEntity

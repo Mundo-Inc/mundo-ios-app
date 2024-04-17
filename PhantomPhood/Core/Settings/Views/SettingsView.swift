@@ -29,8 +29,7 @@ struct SettingsView: View {
             
             auth.signOut()
         } catch {
-            toastViewModel.toast(.init(type: .error, title: "Something went wrong!", message: "Unable to delete your account"))
-            print(error)
+            presentErrorToast(error, title: "Unable to delete your account")
         }
     }
     
@@ -84,7 +83,7 @@ struct SettingsView: View {
                             try await auth.requestResetPassword(email: user.email.address)
                             ToastVM.shared.toast(.init(type: .success, title: "Email Sent", message: "Email sent"))
                         } catch {
-                            ToastVM.shared.toast(.init(type: .error, title: "Failed", message: "Something went wrong, please try again in couple minutes."))
+                            presentErrorToast(error)
                         }
                         withAnimation {
                             isLoading = false

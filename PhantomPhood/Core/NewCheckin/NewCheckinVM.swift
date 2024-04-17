@@ -44,11 +44,9 @@ final class NewCheckinVM: ObservableObject {
                         let placeOverview = try await self?.placeDM.getOverview(id: placeId)
                         if let placeOverview {
                             self?.place = PlaceEssentials(placeOverview: placeOverview)
-                        } else {
-                            self?.error = "Not Found"
                         }
                     } catch {
-                        self?.error = "Couldn't fetch place data"
+                        self?.error = getErrorMessage(error)
                     }
                     self?.loadingSections.remove(.placeInfo)
                 }
@@ -67,11 +65,9 @@ final class NewCheckinVM: ObservableObject {
                 let placeData = try await self?.placeDM.fetch(mapPlace: mapPlace)
                 if let placeData {
                     self?.place = PlaceEssentials(placeDetail: placeData)
-                } else {
-                    self?.error = "Not Found"
                 }
             } catch {
-                self?.error = "Couldn't fetch place data"
+                self?.error = getErrorMessage(error)
             }
             self?.loadingSections.remove(.placeInfo)
         }
@@ -113,8 +109,7 @@ final class NewCheckinVM: ObservableObject {
                 self.place = nil
                 HapticManager.shared.notification(type: .success)
             } catch {
-                print(error)
-                self.toastVM.toast(.init(type: .error, title: "Error", message: "Couldn't check in"))
+                presentErrorToast(error)
             }
             
             self.loadingSections.remove(.submitting)

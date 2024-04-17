@@ -1044,8 +1044,7 @@ extension HomeActivityItem {
                 await vm.updateForYouData(.refresh)
             }
         } catch {
-            print(error)
-            ToastVM.shared.toast(.init(type: .error, title: "Error", message: "Couldn't delete your review"))
+            presentErrorToast(error)
         }
     }
     
@@ -1061,8 +1060,7 @@ extension HomeActivityItem {
                 await vm.updateForYouData(.refresh)
             }
         } catch {
-            print(error)
-            ToastVM.shared.toast(.init(type: .error, title: "Error", message: "Couldn't delete your activity"))
+            presentErrorToast(error)
         }
     }
     
@@ -1078,8 +1076,7 @@ extension HomeActivityItem {
                 await vm.updateForYouData(.refresh)
             }
         } catch {
-            print(error)
-            ToastVM.shared.toast(.init(type: .error, title: "Error", message: "Couldn't delete your activity"))
+            presentErrorToast(error)
         }
     }
 }

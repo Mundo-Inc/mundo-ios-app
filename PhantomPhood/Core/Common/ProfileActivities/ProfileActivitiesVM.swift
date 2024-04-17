@@ -70,7 +70,7 @@ class ProfileActivitiesVM: ObservableObject {
             self.total = data.pagination.totalCount
             self.page += 1
         } catch {
-            print(error)
+            presentErrorToast(error)
         }
         
         self.isLoading = false
