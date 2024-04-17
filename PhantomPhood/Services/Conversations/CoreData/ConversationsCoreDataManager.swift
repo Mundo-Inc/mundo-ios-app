@@ -54,10 +54,14 @@ final class ConversationsCoreDataManager {
     func saveContext() throws {
         viewContext.perform {
             if self.viewContext.hasChanges {
-                do {
-                    try self.viewContext.save()
-                } catch {
-                    presentErrorToast(error, silent: true)
+                Task {
+                    await MainActor.run {
+                        do {
+                            try self.viewContext.save()
+                        } catch {
+                            presentErrorToast(error, silent: true)
+                        }
+                    }
                 }
             }
         }

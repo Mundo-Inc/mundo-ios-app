@@ -271,10 +271,14 @@ final class RewardsHubVM: ObservableObject {
     }
     
     private func saveCoreData() {
-        do {
-            try UserDataStack.shared.saveContext()
-        } catch {
-            presentErrorToast(error, silent: true)
+        Task {
+            await MainActor.run {
+                do {
+                    try UserDataStack.shared.saveContext()
+                } catch {
+                    presentErrorToast(error, silent: true)
+                }
+            }
         }
     }
 }

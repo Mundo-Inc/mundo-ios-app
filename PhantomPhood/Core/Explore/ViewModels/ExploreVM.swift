@@ -107,8 +107,8 @@ final class ExploreVM17: ObservableObject {
             
             let data = try await mapDM.getMapActivities(ne: ne.coordinate, sw: sw.coordinate, startDate: startDate.getDate, scope: self.activitiesScope)
             
-            saveActivites(data)
-            addFetchedRect(fetchRect, areaLevel: areaLevel, intersectingRects: intersectingRects)
+            await saveActivites(data)
+            await addFetchedRect(fetchRect, areaLevel: areaLevel, intersectingRects: intersectingRects)
         } catch {
             presentErrorToast(error, silent: true)
         }
@@ -242,16 +242,18 @@ final class ExploreVM17: ObservableObject {
         
         UserSettings.shared.inviteCredits -= 1
         
-        DispatchQueue.main.async {
-            do {
-                try UserDataStack.shared.saveContext()
-            } catch {
-                presentErrorToast(error, silent: true)
+        Task {
+            await MainActor.run {
+                do {
+                    try UserDataStack.shared.saveContext()
+                } catch {
+                    presentErrorToast(error, silent: true)
+                }
             }
         }
     }
     
-    private func addFetchedRect(_ rect: MKMapRect, areaLevel: AreaLevel, intersectingRects: [FetchedMapRect]) {
+    private func addFetchedRect(_ rect: MKMapRect, areaLevel: AreaLevel, intersectingRects: [FetchedMapRect]) async {
         let unitRects = devideRect(rect: rect, areaLevel: areaLevel).filter { r in
             !intersectingRects.contains { fetchedMapRegion in
                 fetchedMapRegion.rect.midX == r.midX && fetchedMapRegion.rect.midY == r.midY
@@ -273,7 +275,7 @@ final class ExploreVM17: ObservableObject {
             }
         }
         
-        DispatchQueue.main.async {
+        await MainActor.run {
             do {
                 try self.dataStack.saveContext()
             } catch {
@@ -297,13 +299,14 @@ final class ExploreVM17: ObservableObject {
         }
         
         if !itemsToDelete.isEmpty {
-            itemsToDelete.forEach { dataStack.viewContext.delete($0.entity) }
-            
-            DispatchQueue.main.async {
-                do {
-                    try self.dataStack.saveContext()
-                } catch {
-                    presentErrorToast(error, debug: "Error deleting expired areas", silent: true)
+            itemsToDelete.forEach { self.dataStack.viewContext.delete($0.entity) }
+            Task {
+                await MainActor.run {
+                    do {
+                        try self.dataStack.saveContext()
+                    } catch {
+                        presentErrorToast(error, debug: "Error deleting expired areas", silent: true)
+                    }
                 }
             }
         }
@@ -361,7 +364,7 @@ final class ExploreVM17: ObservableObject {
         return rects
     }
     
-    private func saveActivites(_ activities: [MapActivity]) {
+    private func saveActivites(_ activities: [MapActivity]) async {
         guard !activities.isEmpty else { return }
         
         let context = dataStack.viewContext
@@ -405,7 +408,7 @@ final class ExploreVM17: ObservableObject {
                 originalItems.append(activity)
             }
             
-            DispatchQueue.main.async {
+            await MainActor.run {
                 do {
                     try self.dataStack.saveContext()
                 } catch {
