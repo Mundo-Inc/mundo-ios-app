@@ -28,7 +28,7 @@ struct UserEssentials: Identifiable, Equatable, Decodable {
         let level: Int
         let xp: Int
     }
-
+    
     enum CodingKeys: String, CodingKey {
         case id = "_id"
         case name, username, verified, profileImage, progress, connectionStatus
@@ -60,7 +60,7 @@ extension UserEssentials {
         verified = try container.decode(Bool.self, forKey: .verified)
         progress = try container.decode(CompactUserProgress.self, forKey: .progress)
         connectionStatus = try container.decodeIfPresent(ConnectionStatus.self, forKey: .connectionStatus)
-
+        
         if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
             profileImage = URL(string: profileImageString)
         } else {
@@ -106,7 +106,7 @@ extension UserEssentials {
         self.connectionStatus = nil
     }
     
-    func createUserEntity(context: NSManagedObjectContext) -> UserEntity {
+    func createUserEntity(context: NSManagedObjectContext) async -> UserEntity {
         let userEntity = UserEntity(context: context)
         userEntity.id = self.id
         userEntity.name = self.name
@@ -117,10 +117,12 @@ extension UserEssentials {
         userEntity.xp = Int16(self.progress.xp)
         userEntity.savedAt = .now
         
-        do {
-            try context.obtainPermanentIDs(for: [userEntity])
-        } catch {
-            presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
+        await MainActor.run {
+            do {
+                try context.obtainPermanentIDs(for: [userEntity])
+            } catch {
+                presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
+            }
         }
         
         return userEntity

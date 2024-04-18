@@ -393,17 +393,17 @@ final class ExploreVM17: ObservableObject {
                 if let existingUser = users[activity.user.id] {
                     user = existingUser
                 } else {
-                    user = activity.user.createUserEntity(context: dataStack.viewContext)
+                    user = await activity.user.createUserEntity(context: dataStack.viewContext)
                     users[activity.user.id] = user
                 }
                 if let existingPlace = places[activity.place.id] {
                     place = existingPlace
                 } else {
-                    place = activity.place.createPlaceEntity(context: dataStack.viewContext)
+                    place = await activity.place.createPlaceEntity(context: dataStack.viewContext)
                     places[activity.place.id] = place
                 }
                 
-                activity.createMapActivityEntity(context: dataStack.viewContext, user: user, place: place)
+                await activity.createMapActivityEntity(context: dataStack.viewContext, user: user, place: place)
                 
                 originalItems.append(activity)
             }

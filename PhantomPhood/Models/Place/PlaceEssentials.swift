@@ -71,7 +71,7 @@ extension PlaceEssentials {
         categories = []
     }
     
-    func createPlaceEntity(context: NSManagedObjectContext) -> PlaceEntity {
+    func createPlaceEntity(context: NSManagedObjectContext) async -> PlaceEntity {
         let placeEntity = PlaceEntity(context: context)
         placeEntity.id = self.id
         placeEntity.name = self.name
@@ -80,10 +80,12 @@ extension PlaceEssentials {
         placeEntity.longitude = self.location.geoLocation.lng
         placeEntity.savedAt = .now
         
-        do {
-            try context.obtainPermanentIDs(for: [placeEntity])
-        } catch {
-            presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
+        await MainActor.run {
+            do {
+                try context.obtainPermanentIDs(for: [placeEntity])
+            } catch {
+                presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
+            }
         }
         
         return placeEntity
