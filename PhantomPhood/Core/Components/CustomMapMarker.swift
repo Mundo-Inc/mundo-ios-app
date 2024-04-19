@@ -14,18 +14,25 @@ struct CustomMapMarker: View {
         Circle()
             .foregroundStyle(Color.accentColor)
             .frame(width: 30, height: 30)
+            .shadow(radius: 3)
             .overlay {
                 ZStack {
                     Circle()
                         .stroke(Color.themePrimary)
                     
-                    if let image {
-                        image
-                            .foregroundStyle(.white)
-                    } else {
-                        Image(systemName: "mappin")
-                            .foregroundStyle(.white)
+                    Group {
+                        if let image {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        } else {
+                            Image(systemName: "mappin")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        }
                     }
+                    .frame(width: 20, height: 20)
+                    .foregroundStyle(.white)
                 }
             }
     }
