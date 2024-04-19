@@ -470,8 +470,10 @@ struct CompleteTheUserInfoView: View {
                             vm.step -= 1
                         }
                     } else {
-                        auth.signOut()
-                        vm.direction = 1
+                        Task {
+                            await auth.signOut()
+                            vm.direction = 1
+                        }
                     }
                 } label: {
                     Text(vm.step == 0 ? "Cancel" : "Back")

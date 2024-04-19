@@ -28,12 +28,12 @@ struct PlaceIcon: View {
                 .scaledToFit()
                 .foregroundStyle(.white)
             
-            Group {
-                Image(systemName: amenity.image)
-            }
-            .font(.system(size: size / 2.3))
-            .foregroundStyle(.white)
-            .padding(.bottom, 4)
+            amenity.image
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: size * 0.65, height: size * 0.65)
+                .foregroundStyle(.white)
+                .padding(.bottom, 4)
         }
         .frame(width: size)
     }

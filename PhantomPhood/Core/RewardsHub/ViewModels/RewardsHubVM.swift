@@ -158,8 +158,10 @@ final class RewardsHubVM: ObservableObject {
                         self.loadingSections.remove(.inviteLink)
                         if completed {
                             if let url = URL(string: buo.getShortUrl(with: lp) ?? "") {
-                                self.addInviteLink(url)
-                                self.getUserInvites()
+                                Task {
+                                    await self.addInviteLink(url)
+                                    self.getUserInvites()
+                                }
                             }
                         }
                     }
@@ -192,9 +194,9 @@ final class RewardsHubVM: ObservableObject {
                         first.referredUser = user.id
                         first.confirmedAt = .now
                         
-                        saveCoreData()
+                        await saveCoreData()
                     } else {
-                        addInviteLink(referredUser: user.id)
+                        await addInviteLink(referredUser: user.id)
                     }
                 }
             }
@@ -249,7 +251,7 @@ final class RewardsHubVM: ObservableObject {
     }
     
     /// Also changes UserSettings.shared.inviteCredits
-    private func addInviteLink(_ link: URL) {
+    private func addInviteLink(_ link: URL) async {
         let context = UserDataStack.shared.viewContext
         let inviteLink = InviteLinkEntity(context: context)
         inviteLink.link = link
@@ -257,28 +259,24 @@ final class RewardsHubVM: ObservableObject {
         
         UserSettings.shared.inviteCredits -= 1
         
-        saveCoreData()
+        await saveCoreData()
     }
     
-    func addInviteLink(referredUser: String) {
+    func addInviteLink(referredUser: String) async {
         let context = UserDataStack.shared.viewContext
         let inviteLink = InviteLinkEntity(context: context)
         inviteLink.referredUser = referredUser
         inviteLink.createdAt = .now
         inviteLink.confirmedAt = .now
         
-        saveCoreData()
+        await saveCoreData()
     }
     
-    private func saveCoreData() {
-        Task {
-            await MainActor.run {
-                do {
-                    try UserDataStack.shared.saveContext()
-                } catch {
-                    presentErrorToast(error, silent: true)
-                }
-            }
+    private func saveCoreData() async {
+        do {
+            try await UserDataStack.shared.saveContext()
+        } catch {
+            presentErrorToast(error, silent: true)
         }
     }
 }

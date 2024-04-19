@@ -108,12 +108,25 @@ struct HomeForYouView: View {
             }
         }
         .environment(\.colorScheme, .dark)
+        .onAppear {
+            if vm.scrollForYouToItem == nil {
+                vm.scrollForYouToItem = { id in
+                    if let index = vm.forYouItems.firstIndex(where: { $0.id == id }) {
+                        withAnimation {
+                            self.page.index = index
+                        }
+                    }
+                }
+            }
+        }
         .onDisappear {
             vm.forYouItemOnViewPort = nil
         }
         .task {
             if vm.forYouItems.isEmpty {
                 await vm.updateForYouData(.refresh)
+            } else {
+                await vm.updateForYouIfNeeded()
             }
             
             if !vm.forYouItems.isEmpty, vm.forYouItems.count >= page.index + 1 {

@@ -81,12 +81,23 @@ struct HomeForYouView17: View {
         }
         .ignoresSafeArea(edges: .top)
         .background(Color.themePrimary.ignoresSafeArea())
+        .onAppear {
+            if vm.scrollForYouToItem == nil {
+                vm.scrollForYouToItem = { id in
+                    withAnimation {
+                        self.scrollPosition = id
+                    }
+                }
+            }
+        }
         .onDisappear {
             vm.forYouItemOnViewPort = nil
         }
         .task {
             if vm.forYouItems.isEmpty {
                 await vm.updateForYouData(.refresh)
+            } else {
+                await vm.updateForYouIfNeeded()
             }
             
             if let scrollPosition, let itemIndex = vm.forYouItems.firstIndex(where: { $0.id == scrollPosition }) {

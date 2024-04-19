@@ -31,51 +31,79 @@ final class DataStack {
         return persistentContainer.viewContext
     }
     
-    func removeRequestedRegions() throws {
+    func removeRequestedRegions() async throws {
         let fetchedRegionsRequest: NSFetchRequest<RequestedRegionEntity> = RequestedRegionEntity.fetchRequest()
         
         let fetchedRegions = try persistentContainer.viewContext.fetch(fetchedRegionsRequest)
         
         fetchedRegions.forEach { persistentContainer.viewContext.delete($0) }
         
-        try saveContext()
+        try await saveContext()
     }
     
-    func removeMapActivities() throws {
+    func removeMapActivities() async throws {
         let mapActivitiesRequest: NSFetchRequest<MapActivityEntity> = MapActivityEntity.fetchRequest()
         
         let mapActivities = try persistentContainer.viewContext.fetch(mapActivitiesRequest)
         
         mapActivities.forEach { persistentContainer.viewContext.delete($0) }
         
-        try saveContext()
+        try await saveContext()
     }
     
-    func removeUsers() throws {
+    func removeUsers() async throws {
         let usersRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
         
         let users = try persistentContainer.viewContext.fetch(usersRequest)
         
         users.forEach { persistentContainer.viewContext.delete($0) }
         
-        try saveContext()
+        try await saveContext()
     }
     
-    func removePlaces() throws {
+    func removePlaces() async throws {
         let placesRequest: NSFetchRequest<PlaceEntity> = PlaceEntity.fetchRequest()
         
         let places = try persistentContainer.viewContext.fetch(placesRequest)
         
         places.forEach { persistentContainer.viewContext.delete($0) }
         
-        try saveContext()
+        try await saveContext()
     }
     
-    func deleteAll() throws {
-        try? removeRequestedRegions()
-        try? removeMapActivities()
-        try? removeUsers()
-        try? removePlaces()
+    
+    func deleteAll(completion: @escaping (Bool) -> Void) {
+        let context = viewContext
+        
+        context.perform {
+            let entityNames = ["RequestedRegionEntity", "MapActivityEntity", "UserEntity", "PlaceEntity"]
+            
+            for entityName in entityNames {
+                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
+                let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+                batchDeleteRequest.resultType = .resultTypeCount
+                
+                do {
+                    let batchDeleteResult = try context.execute(batchDeleteRequest) as? NSBatchDeleteResult
+                    print("Deleted \(batchDeleteResult?.result ?? 0) records from \(entityName)")
+                } catch {
+                    presentErrorToast(error, debug: "Error deleting entity \(entityName): \(error)", silent: true)
+                    context.rollback()  // Important to maintain integrity in case of failure
+                    completion(false)
+                    return
+                }
+            }
+            
+            // Save context to persist changes
+            do {
+                try context.save()
+                completion(true)
+            } catch {
+                presentErrorToast(error, debug: "Failed to save context", silent: true)
+                context.rollback()
+                completion(false)
+            }
+        }
     }
     
     func createOrUpdateUser(userEssentials: UserEssentials) {
@@ -116,14 +144,10 @@ final class DataStack {
     
     // MARK: - Core Data Saving support
     
-    func saveContext() throws {
-        viewContext.perform {
+    func saveContext() async throws {
+        try await viewContext.perform {
             if self.viewContext.hasChanges {
-                do {
-                    try self.viewContext.save()
-                } catch {
-                    presentErrorToast(error, silent: true)
-                }
+                try self.viewContext.save()
             }
         }
     }

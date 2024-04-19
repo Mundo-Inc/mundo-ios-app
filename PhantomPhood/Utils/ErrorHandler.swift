@@ -18,13 +18,15 @@ func presentErrorToast(_ error: Error, title: String? = nil, debug: String? = ni
             case .unknown:
                 ToastVM.shared.toast(.init(type: .error, title: title ?? "Unknown Error", message: error.localizedDescription))
             }
+        } else if error.localizedDescription != "cancelled" {
+            ToastVM.shared.toast(.init(type: .error, title: title ?? "Unknown Error", message: error.localizedDescription))
         }
     }
-    
+ 
 #if DEBUG
     if let debug {
         print(debug)
-    } else {
+    } else if error.localizedDescription != "cancelled" {
         print(error)
     }
 #endif

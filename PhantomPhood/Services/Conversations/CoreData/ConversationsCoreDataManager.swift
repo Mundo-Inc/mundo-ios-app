@@ -24,26 +24,37 @@ final class ConversationsCoreDataManager {
     }
     
     /// Deletes: PersistentConversationDataItem, PersistentMediaDataItem, PersistentMessageDataItem, PersistentParticipantDataItem
-    func deleteAll() {
-        let fetchRequest1: NSFetchRequest<NSFetchRequestResult> = PersistentConversationDataItem.fetchRequest()
-        let deleteRequest1 = NSBatchDeleteRequest(fetchRequest: fetchRequest1)
+    func deleteAll(completion: @escaping (Bool) -> Void) {
+        let context = viewContext
         
-        let fetchRequest2: NSFetchRequest<NSFetchRequestResult> = PersistentMediaDataItem.fetchRequest()
-        let deleteRequest2 = NSBatchDeleteRequest(fetchRequest: fetchRequest2)
-        
-        let fetchRequest3: NSFetchRequest<NSFetchRequestResult> = PersistentMessageDataItem.fetchRequest()
-        let deleteRequest3 = NSBatchDeleteRequest(fetchRequest: fetchRequest3)
-        
-        let fetchRequest4: NSFetchRequest<NSFetchRequestResult> = PersistentParticipantDataItem.fetchRequest()
-        let deleteRequest4 = NSBatchDeleteRequest(fetchRequest: fetchRequest4)
-        
-        do {
-            try viewContext.execute(deleteRequest1)
-            try viewContext.execute(deleteRequest2)
-            try viewContext.execute(deleteRequest3)
-            try viewContext.execute(deleteRequest4)
-        } catch {
-            presentErrorToast(error, debug: "Error deleting all conversations", silent: true)
+        context.perform {
+            let entityNames = ["PersistentConversationDataItem", "PersistentMediaDataItem", "PersistentMessageDataItem", "PersistentParticipantDataItem"]
+            
+            for entityName in entityNames {
+                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
+                let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+                batchDeleteRequest.resultType = .resultTypeCount
+                
+                do {
+                    let batchDeleteResult = try context.execute(batchDeleteRequest) as? NSBatchDeleteResult
+                    print("Deleted \(batchDeleteResult?.result ?? 0) records from \(entityName)")
+                } catch {
+                    presentErrorToast(error, debug: "Error deleting entity \(entityName): \(error)", silent: true)
+                    context.rollback()  // Important to maintain integrity in case of failure
+                    completion(false)
+                    return
+                }
+            }
+            
+            // Save context to persist changes
+            do {
+                try context.save()
+                completion(true)
+            } catch {
+                presentErrorToast(error, debug: "Failed to save context", silent: true)
+                context.rollback()
+                completion(false)
+            }
         }
     }
     
@@ -51,18 +62,10 @@ final class ConversationsCoreDataManager {
         return persistentContainer.viewContext
     }
         
-    func saveContext() throws {
-        viewContext.perform {
+    func saveContext() async throws {
+        try await viewContext.perform {
             if self.viewContext.hasChanges {
-                Task {
-                    await MainActor.run {
-                        do {
-                            try self.viewContext.save()
-                        } catch {
-                            presentErrorToast(error, silent: true)
-                        }
-                    }
-                }
+                try self.viewContext.save()
             }
         }
     }

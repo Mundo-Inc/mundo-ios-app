@@ -35,6 +35,12 @@ class HomeVM: ObservableObject {
     private var followingPage: Int = 1
     private var forYouPage: Int = 1
     
+    private var lastForYouRefereshTime: Date? = nil
+    private var lastFollowingRefereshTime: Date? = nil
+    
+    var scrollFollowingToItem: ((String) -> Void)? = nil
+    var scrollForYouToItem: ((String) -> Void)? = nil
+    
     // MARK: - General
     
     func startConversation(with userId: String) async {
@@ -63,7 +69,7 @@ class HomeVM: ObservableObject {
         self.loadingSections.insert(.fetchingFollowingData)
         do {
             let data = try await feedDM.getFeed(page: self.followingPage, type: .followings)
-            
+                        
             if action == .refresh || self.followingItems.isEmpty {
                 self.followingItems = getClusteredFeedItems(data)
             } else {
@@ -73,6 +79,13 @@ class HomeVM: ObservableObject {
             isFeedEmpty = self.followingItems.isEmpty
             
             followingPage += 1
+            
+            if action == .refresh {
+                self.lastFollowingRefereshTime = .now
+                if let first = self.followingItems.first {
+                    scrollFollowingToItem?(first.id)
+                }
+            }
         } catch {
             presentErrorToast(error)
         }
@@ -99,6 +112,13 @@ class HomeVM: ObservableObject {
             }
             
             forYouPage += 1
+            
+            if action == .refresh {
+                self.lastForYouRefereshTime = .now
+                if let first = self.forYouItems.first {
+                    scrollForYouToItem?(first.id)
+                }
+            }
         } catch {
             presentErrorToast(error)
         }
@@ -155,6 +175,20 @@ class HomeVM: ObservableObject {
             presentErrorToast(error)
         }
         self.loadingSections.remove(.followRequest(item.wrappedValue.user.id))
+    }
+    
+    /// update if more than 15 minutes has passed
+    func updateFollowingIfNeeded() async {
+        if let lastRefereshTime = lastFollowingRefereshTime, lastRefereshTime.addingTimeInterval(15 * 60) < .now {
+            await self.updateFollowingData(.refresh)
+        }
+    }
+
+    /// update if more than 15 minutes has passed
+    func updateForYouIfNeeded() async {
+        if let lastRefereshTime = lastForYouRefereshTime, lastRefereshTime.addingTimeInterval(15 * 60) < .now {
+            await self.updateForYouData(.refresh)
+        }
     }
     
     /// Add reaction to item

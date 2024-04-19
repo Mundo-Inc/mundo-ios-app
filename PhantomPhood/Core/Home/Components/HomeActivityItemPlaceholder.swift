@@ -78,8 +78,10 @@ struct HomeActivityItemPlaceholder: View {
                 
                 HStack() {
                     HStack(spacing: 5) {
-                        Image(systemName: "fork.knife")
-                            .font(.system(size: 14))
+                        Image(.Icons.restaurant)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
                         
                         Text("place.name")
                             .lineLimit(1)
@@ -151,7 +153,7 @@ struct HomeActivityItemPlaceholder: View {
             .frame(width: 52, height: 36)
             .redacted(reason: .placeholder)
             
-            Image(.addReaction)
+            Image(.Icons.addReaction)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(height: 28)
@@ -160,7 +162,7 @@ struct HomeActivityItemPlaceholder: View {
                 .background(Color.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 10))
                 .background(.bar.opacity(0.7), in: RoundedRectangle(cornerRadius: 10))
             
-            Image(.addReview)
+            Image(.Icons.addReview)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(height: 28)

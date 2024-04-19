@@ -244,13 +244,25 @@ struct HomeFollowingView17: View {
         }
         .ignoresSafeArea(edges: .top)
         .background(Color.themePrimary.ignoresSafeArea())
+        .onAppear {
+            if vm.scrollFollowingToItem == nil {
+                vm.scrollFollowingToItem = { id in
+                    withAnimation {
+                        self.scrollPosition = id
+                    }
+                }
+            }
+        }
         .onDisappear {
             vm.followingItemOnViewPort = nil
         }
         .task {
             if vm.followingItems.isEmpty {
                 await vm.updateFollowingData(.refresh)
+            } else {
+                await vm.updateFollowingIfNeeded()
             }
+            
             if let scrollPosition, let itemIndex = vm.followingItems.firstIndex(where: { $0.id == scrollPosition }) {
                 vm.followingItemOnViewPort = vm.followingItems[itemIndex].id
             }

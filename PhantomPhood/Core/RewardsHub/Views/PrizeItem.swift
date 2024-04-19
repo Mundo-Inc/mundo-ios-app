@@ -52,7 +52,7 @@ struct PrizeItem: View {
                 .multilineTextAlignment(.leading)
             
             HStack(spacing: 5) {
-                Image(.phantomCoin)
+                Image(.Icons.phantomCoin)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)
@@ -88,7 +88,7 @@ struct PrizeItem: View {
                 Text("1000")
                     .font(.custom(style: .headline))
                     .foregroundStyle(Color.secondary)
-                Image(.phantomCoin)
+                Image(.Icons.phantomCoin)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)

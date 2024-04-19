@@ -9,7 +9,7 @@ import Foundation
 import MapKit
 
 final class SearchDM {
-    static let AcceptablePointOfInterestCategories: [MKPointOfInterestCategory] = [.cafe, .restaurant, .nightlife, .bakery, .brewery, .winery]
+    static let AcceptablePointOfInterestCategories: [MKPointOfInterestCategory] = [.cafe, .restaurant, .nightlife, .bakery, .brewery, .winery, .beach, .fitnessCenter]
     
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared

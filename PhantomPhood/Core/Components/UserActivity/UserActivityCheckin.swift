@@ -44,7 +44,7 @@ struct UserActivityCheckin: View {
                             }
                         }
                     } label: {
-                        Image(.addReaction)
+                        Image(.Icons.addReaction)
                             .resizable()
                             .scaledToFit()
                             .frame(height: 26)

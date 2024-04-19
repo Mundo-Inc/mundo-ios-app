@@ -272,13 +272,27 @@ struct HomeFollowingView: View {
             }
         }
         .environment(\.colorScheme, .dark)
+        .onAppear {
+            if vm.scrollFollowingToItem == nil {
+                vm.scrollFollowingToItem = { id in
+                    if let index = vm.followingItems.firstIndex(where: { $0.id == id }) {
+                        withAnimation {
+                            self.page.index = index
+                        }
+                    }
+                }
+            }
+        }
         .onDisappear {
             vm.followingItemOnViewPort = nil
         }
         .task {
             if vm.followingItems.isEmpty {
                 await vm.updateFollowingData(.refresh)
+            } else {
+                await vm.updateForYouIfNeeded()
             }
+            
             if !vm.followingItems.isEmpty, vm.followingItems.count >= page.index + 1 {
                 vm.followingItemOnViewPort = vm.followingItems[page.index].id
             }

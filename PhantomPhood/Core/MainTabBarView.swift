@@ -45,7 +45,7 @@ struct MainTabBarView: View {
             
             myProfileView()
         }
-        .padding(.top, 8)
+        .padding(.top, 6)
         .background(.ultraThinMaterial)
     }
 }
@@ -53,10 +53,11 @@ struct MainTabBarView: View {
 extension MainTabBarView {
     private func tabView(tab: Tab) -> some View {
         VStack(spacing: 3) {
-            Image(tab.imageName)
+            tab.image
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 30, height: 30)
+            
             Text(tab.title)
                 .font(.custom(style: .caption2))
                 .fontWeight(.medium)
@@ -70,7 +71,7 @@ extension MainTabBarView {
     
     private func rewardsHubView() -> some View {
         VStack(spacing: 3) {
-            Image(Tab.rewardsHub.imageName)
+            Tab.rewardsHub.image
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 30, height: 30)
@@ -99,8 +100,9 @@ extension MainTabBarView {
             if let currentUser = auth.currentUser {
                 ProfileImage(currentUser.profileImage, size: 30, cornerRadius: 15)
             } else {
-                Image(Tab.myProfile.imageName)
-                    .font(.system(size: 22))
+                Tab.myProfile.image
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
                     .frame(width: 30, height: 30)
             }
             Text(Tab.myProfile.title)

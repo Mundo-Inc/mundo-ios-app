@@ -294,7 +294,7 @@ final class Authentication: ObservableObject {
         await self.signIn(email: email, password: password)
     }
     
-    func signOut() {
+    func signOut() async {
         do {
             try Auth.auth().signOut()
             
@@ -303,10 +303,14 @@ final class Authentication: ObservableObject {
                 self.userSession = nil
             }
             
-            try? DataStack.shared.deleteAll()
+            DataStack.shared.deleteAll { status in
+                print("Deleting CoreData info status for DataStack: \(status)")
+            }
             
             let conversationsCoreDataManager = ConversationsCoreDataManager()
-            conversationsCoreDataManager.deleteAll()
+            conversationsCoreDataManager.deleteAll { status in
+                print("Deleting ConversationsCoreDataManager status: \(status)")
+            }
             
             ConversationsManager.shared.logOutHandler()
             

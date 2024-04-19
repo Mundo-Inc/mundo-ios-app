@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum Tab: String, CaseIterable {
     case home = "Home"
@@ -13,12 +14,16 @@ enum Tab: String, CaseIterable {
     case rewardsHub = "RewardsHub"
     case myProfile = "MyProfile"
     
-    var imageName: String {
+    var image: Image {
         switch self {
-        case .home: return "Home"
-        case .explore: return "Explore"
-        case .rewardsHub: return "PhantomCoin"
-        case .myProfile: return "Profile"
+        case .home:
+            return Image(.Icons.home)
+        case .explore:
+            return Image(.Icons.explore)
+        case .rewardsHub:
+            return Image(.Icons.phantomCoin)
+        case .myProfile:
+            return Image(.Icons.profile)
         }
     }
     

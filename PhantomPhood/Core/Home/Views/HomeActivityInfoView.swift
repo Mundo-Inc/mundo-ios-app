@@ -87,7 +87,7 @@ struct HomeActivityInfoView: View {
                         }
                     } label: {
                         HStack {
-                            Image(.addReaction)
+                            Image(.Icons.addReaction)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(height: 26)

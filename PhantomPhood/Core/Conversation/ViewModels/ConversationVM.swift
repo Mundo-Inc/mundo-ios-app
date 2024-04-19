@@ -134,7 +134,7 @@ class ConversationVM: ObservableObject {
                     )
                 })
                 
-                try coreDataDelegate.saveContext()
+                try await coreDataDelegate.saveContext()
             }
         } catch {
             presentErrorToast(error, debug: "Error retriving last messages")
@@ -159,7 +159,7 @@ class ConversationVM: ObservableObject {
                     )
                 })
                 
-                try coreDataDelegate.saveContext()
+                try await coreDataDelegate.saveContext()
             }
         } catch {
             presentErrorToast(error, debug: "Error retriving messages")

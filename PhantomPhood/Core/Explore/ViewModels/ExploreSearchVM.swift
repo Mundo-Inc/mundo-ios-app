@@ -65,11 +65,11 @@ enum MapDefaultSearch: String, CaseIterable {
     var image: Image {
         switch self {
         case .restaurants:
-            return Image(systemName: "fork.knife")
+            return MKPointOfInterestCategory.restaurant.image
         case .coffee:
-            return Image(systemName: "cup.and.saucer")
+            return MKPointOfInterestCategory.cafe.image
         case .bars:
-            return Image(systemName: "wineglass")
+            return MKPointOfInterestCategory.nightlife.image
         case .takeout:
             return Image(systemName: "takeoutbag.and.cup.and.straw")
         case .delivery:

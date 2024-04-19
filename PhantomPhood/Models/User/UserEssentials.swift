@@ -106,7 +106,7 @@ extension UserEssentials {
         self.connectionStatus = nil
     }
     
-    func createUserEntity(context: NSManagedObjectContext) async -> UserEntity {
+    func createUserEntity(context: NSManagedObjectContext) -> UserEntity {
         let userEntity = UserEntity(context: context)
         userEntity.id = self.id
         userEntity.name = self.name
@@ -117,12 +117,10 @@ extension UserEssentials {
         userEntity.xp = Int16(self.progress.xp)
         userEntity.savedAt = .now
         
-        await MainActor.run {
-            do {
-                try context.obtainPermanentIDs(for: [userEntity])
-            } catch {
-                presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
-            }
+        do {
+            try context.obtainPermanentIDs(for: [userEntity])
+        } catch {
+            presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
         }
         
         return userEntity

@@ -27,7 +27,7 @@ struct SettingsView: View {
             
             toastViewModel.toast(.init(type: .success, title: "Success", message: "Your account has been deleted"))
             
-            auth.signOut()
+            await auth.signOut()
         } catch {
             presentErrorToast(error, title: "Unable to delete your account")
         }
@@ -118,7 +118,9 @@ struct SettingsView: View {
             }
             
             Button {
-                auth.signOut()
+                Task {
+                    await auth.signOut()
+                }
             } label: {
                 Label("Log out", systemImage: "rectangle.portrait.and.arrow.right")
             }

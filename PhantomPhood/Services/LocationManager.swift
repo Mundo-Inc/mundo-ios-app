@@ -15,7 +15,6 @@ class LocationManager: NSObject, ObservableObject {
     
     private(set) var isAuthorized: Bool = false
     private let locationManager = CLLocationManager()
-    //    private let searchDM = SearchDM()
     
     override init() {
         super.init()
@@ -37,7 +36,7 @@ class LocationManager: NSObject, ObservableObject {
     
     @objc private func appDidEnterBackground() {
         guard isAuthorized else { return }
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.main.async {
             self.locationManager.stopUpdatingLocation()
             self.locationManager.startMonitoringSignificantLocationChanges()
         }
@@ -45,7 +44,7 @@ class LocationManager: NSObject, ObservableObject {
     
     @objc private func appDidBecomeActive() {
         guard isAuthorized else { return }
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.main.async {
             self.locationManager.stopMonitoringSignificantLocationChanges()
             self.locationManager.startUpdatingLocation()
         }
@@ -60,14 +59,16 @@ extension LocationManager: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .notDetermined, .restricted, .denied:
+//            Location access denied or restricted
             self.isAuthorized = false
-            print("Location access denied or restricted")
+            locationManager.requestAlwaysAuthorization()
         case .authorizedWhenInUse, .authorizedAlways:
             self.isAuthorized = true
             locationManager.startUpdatingLocation()
         @unknown default:
-            self.isAuthorized = false
+//            Unknown authorization status
             print("Unknown authorization status")
+            self.isAuthorized = false
         }
     }
     
@@ -77,30 +78,5 @@ extension LocationManager: CLLocationManagerDelegate {
         DispatchQueue.main.async {
             self.location = location
         }
-        
-        // MARK: - if is admin
-        //        guard UserSettings.shared.userRole == .admin && UserSettings.shared.isBetaTester else { return }
-        //
-        //        Task {
-        //            guard
-        //                let mapItems = try? await searchDM.searchAppleMapsPlaces(region: MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 20, longitudinalMeters: 20)),
-        //                let place = mapItems.first
-        //            else { return }
-        //
-        //            let content = UNMutableNotificationContent()
-        //            content.title = "Are you here?"
-        //            content.subtitle = place.name ?? "-"
-        //            content.body = place.placemark.title ?? "-"
-        //            content.sound = UNNotificationSound.default
-        //
-        //            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        //            let request = UNNotificationRequest(identifier: "PhantomPhood", content: content, trigger: trigger)
-        //
-        //            try? await UNUserNotificationCenter.current().add(request)
-        //        }
     }
-//    
-//    func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
-//        print(error)
-//    }
 }

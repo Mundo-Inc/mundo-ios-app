@@ -485,11 +485,15 @@ struct HomeActivityItem: View {
                         if let place = item.place {
                             HStack(spacing: 5) {
                                 if let amenity = place.amenity {
-                                    Image(systemName: amenity.image)
-                                        .font(.system(size: 14))
+                                    amenity.image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 20, height: 20)
                                 } else {
-                                    Image(systemName: "fork.knife")
-                                        .font(.system(size: 14))
+                                    Image(.Icons.restaurant)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 20, height: 20)
                                 }
                                 
                                 Text(place.name)
@@ -795,7 +799,7 @@ struct HomeActivityItem: View {
                     .font(.custom(style: .caption))
             }
             
-            Image(.addReaction)
+            Image(.Icons.addReaction)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(height: 28)
@@ -813,7 +817,7 @@ struct HomeActivityItem: View {
             
             
             VStack(spacing: 0) {
-                Image(.addReview)
+                Image(.Icons.addReview)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(height: item.commentsCount > 0 ? 26 : 28)

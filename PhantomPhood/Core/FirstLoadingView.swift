@@ -123,7 +123,9 @@ struct FirstLoadingView: View {
                     
                     HStack {
                         Button {
-                            auth.signOut()
+                            Task {
+                                await auth.signOut()
+                            }
                         } label: {
                             Text("Sign Out")
                         }

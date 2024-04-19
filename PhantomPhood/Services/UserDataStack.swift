@@ -33,14 +33,11 @@ final class UserDataStack {
     
     // MARK: - Core Data Saving support
     
-    func saveContext() throws {
-        if viewContext.hasChanges {
-            do {
-                try viewContext.save()
-            } catch {
-                presentErrorToast(error, silent: true)
+    func saveContext() async throws {
+        try await viewContext.perform {
+            if self.viewContext.hasChanges {
+                try self.viewContext.save()
             }
-            
         }
     }
 }

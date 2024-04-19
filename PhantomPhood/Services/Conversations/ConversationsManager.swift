@@ -80,20 +80,19 @@ final class ConversationsManager: NSObject, ObservableObject {
         return thisDate! > thatDate!
     }
     
-    func loadAllConversations() {
+    func loadAllConversations() async {
         guard let client = client.conversationsClient else {
             return
         }
         
         guard let conversations = client.myConversations() else {
-            print("No conversations")
             return
         }
         
         conversations.forEach { PersistentConversationDataItem.from(conversation: $0, inContext: coreDataManager.viewContext) }
         
         do {
-            try coreDataManager.saveContext()
+            try await coreDataManager.saveContext()
         } catch {
             presentErrorToast(error, silent: true)
         }
@@ -226,7 +225,9 @@ extension ConversationsManager: TwilioConversationsClientDelegate {
     func conversationsClient(_ client: TwilioConversationsClient, synchronizationStatusUpdated status: TCHClientSynchronizationStatus) {
         if status == .failed {}
         if status == .completed {
-            self.loadAllConversations()
+            Task {
+                await self.loadAllConversations()
+            }
         }
     }
     
@@ -236,8 +237,10 @@ extension ConversationsManager: TwilioConversationsClientDelegate {
         print("Conversation added: \(String(describing: conversation.sid)) w/ name \(String(describing: conversation.friendlyName))")
         conversation.delegate = self
         if let _ = PersistentConversationDataItem.from(conversation: conversation, inContext: coreDataManager.viewContext) {
-            try? coreDataManager.saveContext()
-            print("Conversation upserted")
+            Task {
+                try await coreDataManager.saveContext()
+                print("Conversation upserted")
+            }
         }
     }
     
@@ -277,7 +280,9 @@ extension ConversationsManager: TCHConversationDelegate {
     
     func conversationsClient(_ client: TwilioConversationsClient, conversation: TCHConversation, updated update: TCHConversationUpdate) {
         if let _ = PersistentConversationDataItem.from(conversation: conversation, inContext: coreDataManager.viewContext) {
-            try? coreDataManager.saveContext()
+            Task {
+                try? await coreDataManager.saveContext()
+            }
         }
     }
     
@@ -285,7 +290,9 @@ extension ConversationsManager: TCHConversationDelegate {
     
     func conversationsClient(_ client: TwilioConversationsClient, conversation: TCHConversation, message: TCHMessage, updated: TCHMessageUpdate) {
         if let _ = PersistentMessageDataItem.from(message: message, inConversation: conversation, withDirection: message.author == self.myUser?.identity ? .outgoing : .incoming, inContext: coreDataManager.viewContext) {
-            try? coreDataManager.saveContext()
+            Task {
+                try? await coreDataManager.saveContext()
+            }
         }
     }
     
@@ -295,12 +302,16 @@ extension ConversationsManager: TCHConversationDelegate {
         }
         
         if let _ = PersistentMessageDataItem.from(message: message, inConversation: conversation, withDirection: message.author == self.myUser?.identity ? .outgoing : .incoming, inContext: coreDataManager.viewContext) {
-            try? coreDataManager.saveContext()
+            Task {
+                try? await coreDataManager.saveContext()
+            }
         }
         
         // Update conversation last message stats
         if let _ = PersistentConversationDataItem.from(conversation: conversation, inContext: coreDataManager.viewContext) {
-            try? coreDataManager.saveContext()
+            Task {
+                try? await coreDataManager.saveContext()
+            }
         }
     }
     
@@ -313,7 +324,9 @@ extension ConversationsManager: TCHConversationDelegate {
         
         // Update conversation last message stats
         if let _ = PersistentConversationDataItem.from(conversation: conversation, inContext: coreDataManager.viewContext) {
-            try? coreDataManager.saveContext()
+            Task {
+                try? await coreDataManager.saveContext()
+            }
         }
     }
     
@@ -328,7 +341,9 @@ extension ConversationsManager: TCHConversationDelegate {
         
         // Update conversation last message stats
         if let _ = PersistentConversationDataItem.from(conversation: conversation, inContext: coreDataManager.viewContext) {
-            try? coreDataManager.saveContext()
+            Task {
+                try? await coreDataManager.saveContext()
+            }
         }
     }
     
@@ -336,23 +351,31 @@ extension ConversationsManager: TCHConversationDelegate {
     
     func conversationsClient(_ client: TwilioConversationsClient, conversation: TCHConversation, participantJoined participant: TCHParticipant) {
         if let _ = PersistentParticipantDataItem.from(participant: participant, inConversation: conversation, inContext: coreDataManager.viewContext) {
-            try? coreDataManager.saveContext()
+            Task {
+                try? await coreDataManager.saveContext()
+            }
         }
         
         // Update conversation participant stats
         if let _ = PersistentConversationDataItem.from(conversation: conversation, inContext: coreDataManager.viewContext) {
-            try? coreDataManager.saveContext()
+            Task {
+                try? await coreDataManager.saveContext()
+            }
         }
     }
     
     func conversationsClient(_ client: TwilioConversationsClient, conversation: TCHConversation, participant: TCHParticipant, updated: TCHParticipantUpdate) {
         if let _ = PersistentParticipantDataItem.from(participant: participant, inConversation: conversation, inContext: coreDataManager.viewContext) {
-            try? coreDataManager.saveContext()
+            Task {
+                try? await coreDataManager.saveContext()
+            }
         }
         
         // Update conversation participant stats
         if let _ = PersistentConversationDataItem.from(conversation: conversation, inContext: coreDataManager.viewContext) {
-            try? coreDataManager.saveContext()
+            Task {
+                try? await coreDataManager.saveContext()
+            }
         }
     }
     
@@ -369,7 +392,9 @@ extension ConversationsManager: TCHConversationDelegate {
         } else {
             // Update conversation participant stats
             if let _ = PersistentConversationDataItem.from(conversation: conversation, inContext: coreDataManager.viewContext) {
-                try? coreDataManager.saveContext()
+                Task {
+                    try? await coreDataManager.saveContext()
+                }
             }
         }
     }

@@ -55,7 +55,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         } else {
             // The app did not terminate gracefully last time
             // Perform necessary cleanup or reset operations here
-            try? DataStack.shared.deleteAll()
+            DataStack.shared.deleteAll { status in
+                print("Deleting CoreData info status for DataStack: \(status)")
+            }
         }
         
         return true

@@ -60,16 +60,23 @@ final class ExploreVM17: ObservableObject {
         $startDate
             .sink { value in
                 self.getSavedData(startDate: value.getDate)
-                self.removeRequestedRegions()
+                Task {
+                    await self.removeRequestedRegions()
+                }
             }
             .store(in: &cancellables)
         
         $activitiesScope
             .sink { value in
                 if value == .followings {
-                    try? self.dataStack.removeMapActivities()
+                    Task {
+                        try? await self.dataStack.removeMapActivities()
+                    }
                 }
-                self.removeRequestedRegions()
+                
+                Task {
+                    await self.removeRequestedRegions()
+                }
                 
                 self.getSavedData(startDate: self.startDate.getDate)
                 if let context = self.latestMapContext {
@@ -243,12 +250,10 @@ final class ExploreVM17: ObservableObject {
         UserSettings.shared.inviteCredits -= 1
         
         Task {
-            await MainActor.run {
-                do {
-                    try UserDataStack.shared.saveContext()
-                } catch {
-                    presentErrorToast(error, silent: true)
-                }
+            do {
+                try await UserDataStack.shared.saveContext()
+            } catch {
+                presentErrorToast(error, silent: true)
             }
         }
     }
@@ -275,12 +280,10 @@ final class ExploreVM17: ObservableObject {
             }
         }
         
-        await MainActor.run {
-            do {
-                try self.dataStack.saveContext()
-            } catch {
-                presentErrorToast(error, debug: "Error saving new RequestedRegionEntity", silent: true)
-            }
+        do {
+            try await self.dataStack.saveContext()
+        } catch {
+            presentErrorToast(error, debug: "Error saving new RequestedRegionEntity", silent: true)
         }
         
         updateFetchedRegions()
@@ -301,12 +304,10 @@ final class ExploreVM17: ObservableObject {
         if !itemsToDelete.isEmpty {
             itemsToDelete.forEach { self.dataStack.viewContext.delete($0.entity) }
             Task {
-                await MainActor.run {
-                    do {
-                        try self.dataStack.saveContext()
-                    } catch {
-                        presentErrorToast(error, debug: "Error deleting expired areas", silent: true)
-                    }
+                do {
+                    try await self.dataStack.saveContext()
+                } catch {
+                    presentErrorToast(error, debug: "Error deleting expired areas", silent: true)
                 }
             }
         }
@@ -393,27 +394,25 @@ final class ExploreVM17: ObservableObject {
                 if let existingUser = users[activity.user.id] {
                     user = existingUser
                 } else {
-                    user = await activity.user.createUserEntity(context: dataStack.viewContext)
+                    user = activity.user.createUserEntity(context: dataStack.viewContext)
                     users[activity.user.id] = user
                 }
                 if let existingPlace = places[activity.place.id] {
                     place = existingPlace
                 } else {
-                    place = await activity.place.createPlaceEntity(context: dataStack.viewContext)
+                    place = activity.place.createPlaceEntity(context: dataStack.viewContext)
                     places[activity.place.id] = place
                 }
                 
-                await activity.createMapActivityEntity(context: dataStack.viewContext, user: user, place: place)
+                activity.createMapActivityEntity(context: dataStack.viewContext, user: user, place: place)
                 
                 originalItems.append(activity)
             }
             
-            await MainActor.run {
-                do {
-                    try self.dataStack.saveContext()
-                } catch {
-                    presentErrorToast(error, debug: "Error saving new MapActivityEntity", silent: true)
-                }
+            do {
+                try await self.dataStack.saveContext()
+            } catch {
+                presentErrorToast(error, debug: "Error saving new MapActivityEntity", silent: true)
             }
         } catch {
             presentErrorToast(error, debug: "Error getting existing MapActivityEntity", silent: true)
@@ -468,9 +467,9 @@ final class ExploreVM17: ObservableObject {
         }
     }
     
-    private func removeRequestedRegions() {
+    private func removeRequestedRegions() async {
         do {
-            try dataStack.removeRequestedRegions()
+            try await dataStack.removeRequestedRegions()
             
             updateFetchedRegions()
         } catch {

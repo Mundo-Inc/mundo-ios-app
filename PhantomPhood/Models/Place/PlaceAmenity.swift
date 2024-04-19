@@ -47,30 +47,20 @@ enum PlaceAmenity: String, Decodable {
         }
     }
     
-    var image: String {
+    var image: Image {
         switch self {
-        case .bar:
-            "wineglass.fill"
-        case .pub:
-            "mug.fill"
-        case .nightclub:
-            "figure.socialdance"
-        case .cafe:
-            "cup.and.saucer.fill"
-        case .biergarten:
-            "mug.fill"
-        case .restaurant:
-            "fork.knife"
-        case .fast_food:
-            "fork.knife.circle.fill"
-        case .canteen:
-            "chair.fill"
+        case .bar, .nightclub:
+            Image(.Icons.nightLife)
+        case .cafe, .cafeteria:
+            Image(.Icons.restaurant)
+        case .biergarten, .pub:
+            Image(.Icons.brewery)
+        case .restaurant, .fast_food, .canteen:
+            Image(.Icons.restaurant)
         case .ice_cream: // TODO: change Icon
-            "cone.fill"
-        case .cafeteria:
-            "cup.and.saucer.fill"
+            Image(.Icons.restaurant)
         case .unknown:
-            "pin"
+            Image(systemName: "pin")
         }
     }
     

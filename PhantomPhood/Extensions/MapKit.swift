@@ -13,15 +13,19 @@ extension MKPointOfInterestCategory {
     var image: Image {
         switch self {
         case .restaurant:
-            Image(systemName: "fork.knife.circle.fill")
+            Image(.Icons.restaurant)
         case .cafe:
-            Image(systemName: "cup.and.saucer.fill")
+            Image(.Icons.cafe)
         case .bakery:
-            Image(systemName: "birthday.cake.fill")
+            Image(.Icons.bakery)
         case .nightlife:
-            Image(systemName: "mug.fill")
+            Image(.Icons.nightLife)
         case .winery:
-            Image(systemName: "wineglass.fill")
+            Image(.Icons.winery)
+        case .fitnessCenter:
+            Image(.Icons.gym)
+        case .beach:
+            Image(.Icons.beach)
         default:
             Image(systemName: "mappin.circle")
         }

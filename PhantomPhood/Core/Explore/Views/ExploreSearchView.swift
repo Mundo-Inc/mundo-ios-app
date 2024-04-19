@@ -180,34 +180,18 @@ fileprivate struct PlaceCard: View {
         if let title = place.name {
             NavigationLink(value: AppRoute.placeMapPlace(mapPlace: MapPlace(coordinate: place.placemark.coordinate, title: title))) {
                 HStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundStyle(Color.themePrimary)
-                        .frame(width: 42, height: 42)
-                        .overlay {
-                            Group {
-                                if let pointOfInterestCategory = place.pointOfInterestCategory {
-                                    switch pointOfInterestCategory {
-                                    case .restaurant:
-                                        Image(systemName: "fork.knife.circle.fill")
-                                    case .cafe:
-                                        Image(systemName: "cup.and.saucer.fill")
-                                    case .bakery:
-                                        Image(systemName: "birthday.cake.fill")
-                                    case .nightlife:
-                                        Image(systemName: "mug.fill")
-                                    case .winery:
-                                        Image(systemName: "wineglass.fill")
-                                    default:
-                                        Image(systemName: "mappin.circle")
-                                    }
-                                }
-                                else {
-                                    Image(systemName: "mappin.circle")
-                                }
-                            }
-                            .font(.system(size: 24))
-                            .foregroundStyle(.secondary)
+                    Group {
+                        if let pointOfInterestCategory = place.pointOfInterestCategory {
+                            pointOfInterestCategory.image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        } else {
+                            Image(systemName: "mappin.circle")
+                                .font(.system(size: 24))
                         }
+                    }
+                    .frame(width: 42, height: 42)
+                    .foregroundStyle(.secondary)
                     
                     VStack {
                         Text(place.name ?? place.placemark.name ?? "Unknown")
@@ -220,12 +204,11 @@ fileprivate struct PlaceCard: View {
                                 .font(.custom(style: .caption))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         } else {
-                            Text("-")
+                            Text("\(place.placemark.postalAddress?.city ?? "-"), \(place.placemark.postalAddress?.street ?? "-")")
                                 .font(.custom(style: .caption))
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        
                     }
                 }
             }

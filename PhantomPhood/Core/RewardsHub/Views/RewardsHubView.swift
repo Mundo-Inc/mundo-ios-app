@@ -113,7 +113,7 @@ struct RewardsHubView: View {
                                                     .fontWeight(.semibold)
                                                 
                                                 HStack(spacing: 3) {
-                                                    Image(.phantomCoin)
+                                                    Image(.Icons.phantomCoin)
                                                         .resizable()
                                                         .aspectRatio(contentMode: .fit)
                                                         .frame(width: 18, height: 18)
@@ -171,7 +171,7 @@ struct RewardsHubView: View {
                 
                 NavigationLink(value: AppRoute.leaderboard) {
                     VStack(spacing: 0) {
-                        Image(.leaderboard)
+                        Image(.Icons.leaderboard)
                             .foregroundStyle(Color.accentColor)
                         Text("#\(auth.currentUser?.rank ?? 1)")
                             .font(.custom(style: .caption))
@@ -182,7 +182,7 @@ struct RewardsHubView: View {
             }
             
             HStack {
-                Image(.phantomCoin)
+                Image(.Icons.phantomCoin)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 36, height: 36)
@@ -210,7 +210,7 @@ struct RewardsHubView: View {
                     .padding(.trailing, 5)
                 
                 HStack(spacing: 3) {
-                    Image(.phantomCoin)
+                    Image(.Icons.phantomCoin)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 20, height: 20)
@@ -343,7 +343,7 @@ struct RewardsHubView: View {
                     if let dailyRewards = pcVM.dailyRewards, let streaks = pcVM.streaks {
                         ForEach(dailyRewards.indices, id: \.self) { index in
                             VStack {
-                                Image(.phantomCoin)
+                                Image(.Icons.phantomCoin)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .grayscale(pcVM.hasClaimedToday || index > streaks ? 1 : 0)
