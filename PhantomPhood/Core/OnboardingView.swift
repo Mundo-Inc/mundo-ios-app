@@ -67,10 +67,10 @@ struct OnboardingView: View {
                 .ignoresSafeArea()
             
             VStack {
-                Image(.fullPhantom)
+                Image(.newPhantom)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 30)
+                    .frame(width: 200)
                     .padding(.top, mainWindowSize.height * 0.07)
                 
                 Spacer()
@@ -80,12 +80,14 @@ struct OnboardingView: View {
                         switch vm.section {
                         case .journey:
                             Text("Capture your\n*experiences* with\nyour friends.")
+                                .multilineTextAlignment(.center)
                                 .shadow(radius: 20)
                                 .font(.custom(style: .title))
                                 .fontWeight(.bold)
                         case .share:
                             VStack(spacing: 40) {
                                 Text("Share your taste")
+                                    .multilineTextAlignment(.center)
                                     .shadow(radius: 20)
                                     .font(.custom(style: .title))
                                     .fontWeight(.bold)
@@ -98,7 +100,8 @@ struct OnboardingView: View {
                             .padding(.horizontal)
                         case .connect:
                             VStack(spacing: 40) {
-                                Text("Connect with friends")
+                                Text("Connect with *friends*")
+                                    .multilineTextAlignment(.center)
                                     .shadow(radius: 20)
                                     .font(.custom(style: .title))
                                     .fontWeight(.bold)
@@ -112,6 +115,7 @@ struct OnboardingView: View {
                         case .rewards:
                             VStack(spacing: 30) {
                                 Text("Earn tasty rewards")
+                                    .multilineTextAlignment(.center)
                                     .shadow(radius: 20)
                                     .font(.custom(style: .title))
                                     .fontWeight(.bold)
@@ -138,7 +142,7 @@ struct OnboardingView: View {
                     Button {
                         handleNext()
                     } label: {
-                        Text("Let's Go")
+                        Text(vm.section.nextButtonTitle)
                             .foregroundStyle(Color.primary)
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)
@@ -157,6 +161,7 @@ struct OnboardingView: View {
                         .font(.custom(style: .caption))
                         .foregroundStyle(.secondary)
                         .frame(height: 52)
+                        .transition(AnyTransition.fade.animation(.bouncy(duration: 0.3)))
                 } else if vm.section != .rewards {
                     Button {
                         vm.done()

@@ -38,5 +38,18 @@ final class OnboardingVM: ObservableObject {
         case share
         case connect
         case rewards
+        
+        var nextButtonTitle: String {
+            switch self {
+            case .journey:
+                "Let's Go"
+            case .share:
+                "Next"
+            case .connect:
+                "Next"
+            case .rewards:
+                "Let the Fun Begin"
+            }
+        }
     }
 }
