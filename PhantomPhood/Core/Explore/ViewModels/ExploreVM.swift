@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 import MapKit
 import CoreData
-import BranchSDK
 import Combine
 
 @available(iOS 17.0, *)
@@ -28,6 +27,8 @@ final class ExploreVM17: ObservableObject {
     
     @Published var showSet = Set<String>()
     @Published var activities: [ClusteredMapActivity] = []
+    
+    @Published var isInviteBannerPresented: Bool = true
     
     @Published private(set) var loadingSections = Set<LoadingSection>()
     @Published var searchResults: [MKMapItem]? = nil
@@ -125,46 +126,13 @@ final class ExploreVM17: ObservableObject {
         }
     }
     
-    func getInviteLink() {
-        guard !loadingSections.contains(.inviteLink) else { return }
-        
-        if let currentUser = Authentication.shared.currentUser {
-            self.loadingSections.insert(.inviteLink)
-            HapticManager.shared.impact(style: .light)
-            
-            let buo: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "signup/\(currentUser.id)")
-            buo.title = "Join \(currentUser.name) on Phantom Phood"
-            buo.contentDescription = "You've been invited by \(currentUser.name) to Phantom Phood. Join friends in your dining experiences."
-            
-            if let profileImage = currentUser.profileImage {
-                buo.imageUrl = profileImage.absoluteString
-            } else {
-                buo.imageUrl = "https://phantomphood.ai/img/NoProfileImage.jpg"
-            }
-            
-            let lp: BranchLinkProperties = BranchLinkProperties()
-            lp.feature = "referral"
-            
-            if let topViewController = UIApplication.shared.topViewController() {
-                buo.showShareSheet(with: lp, andShareText: "Join \(currentUser.name) on Phantom Phood", from: topViewController) { (activityType, completed, error) in
-                    if let error {
-                        print(error)
-                    } else {
-                        self.loadingSections.remove(.inviteLink)
-                        if completed {
-                            if let url = URL(string: buo.getShortUrl(with: lp) ?? "") {
-                                self.addInviteLink(url)
-                            }
-                        }
-                    }
-                }
-            } else {
-                self.loadingSections.remove(.inviteLink)
+    func onMapCameraChangeHandler(_ context: MapCameraUpdateContext) {
+        if isInviteBannerPresented && position.positionedByUser {
+            withAnimation {
+                isInviteBannerPresented = false
             }
         }
-    }
-    
-    func onMapCameraChangeHandler(_ context: MapCameraUpdateContext) {
+        
         self.latestMapContext = context
         DispatchQueue.main.async {
             self.scale = context.scaleValue
@@ -241,25 +209,8 @@ final class ExploreVM17: ObservableObject {
     
     // MARK: - Private Methods
     
-    private func addInviteLink(_ link: URL) {
-        let context = UserDataStack.shared.viewContext
-        let inviteLink = InviteLinkEntity(context: context)
-        inviteLink.link = link
-        inviteLink.createdAt = .now
-        
-        UserSettings.shared.inviteCredits -= 1
-        
-        Task {
-            do {
-                try await UserDataStack.shared.saveContext()
-            } catch {
-                presentErrorToast(error, silent: true)
-            }
-        }
-    }
-    
     private func addFetchedRect(_ rect: MKMapRect, areaLevel: AreaLevel, intersectingRects: [FetchedMapRect]) async {
-        let unitRects = devideRect(rect: rect, areaLevel: areaLevel).filter { r in
+        let unitRects = divideRect(rect: rect, areaLevel: areaLevel).filter { r in
             !intersectingRects.contains { fetchedMapRegion in
                 fetchedMapRegion.rect.midX == r.midX && fetchedMapRegion.rect.midY == r.midY
             }
@@ -344,7 +295,7 @@ final class ExploreVM17: ObservableObject {
         )
     }
     
-    private func devideRect(rect: MKMapRect, areaLevel: AreaLevel) -> [MKMapRect] {
+    private func divideRect(rect: MKMapRect, areaLevel: AreaLevel) -> [MKMapRect] {
         let xCount = Int(rect.width / areaLevel.areaUnit)
         let yCount = Int(rect.height / areaLevel.areaUnit)
         
@@ -371,6 +322,7 @@ final class ExploreVM17: ObservableObject {
         let context = dataStack.viewContext
         
         do {
+            // Fetch existing entities
             let existingActivities = try fetchExistingEntities(MapActivityEntity.self, ids: Set(activities.compactMap { $0.id }), context: context)
             let existingActivityIDs = Set(existingActivities.compactMap { $0.id })
             let activitiesToAdd = activities.filter { !existingActivityIDs.contains($0.id) }
@@ -378,42 +330,31 @@ final class ExploreVM17: ObservableObject {
             // Exit if there is nothing to add
             guard !activitiesToAdd.isEmpty else { return }
             
-            let existingUsers = try fetchExistingEntities(UserEntity.self, ids: Set(activities.compactMap { $0.user.id }), context: dataStack.viewContext)
-            let existingPlaces = try fetchExistingEntities(PlaceEntity.self, ids: Set(activities.compactMap { $0.place.id }), context: dataStack.viewContext)
+            let existingUsers = try fetchExistingEntities(UserEntity.self, ids: Set(activities.compactMap { $0.user.id }), context: context)
+            let existingPlaces = try fetchExistingEntities(PlaceEntity.self, ids: Set(activities.compactMap { $0.place.id }), context: context)
             
-            var users: [String: UserEntity] = [:]
-            existingUsers.forEach { users[$0.id ?? ""] = $0 }
-            
-            var places: [String: PlaceEntity] = [:]
-            existingPlaces.forEach { places[$0.id ?? ""] = $0 }
+            var usersDict = Dictionary(uniqueKeysWithValues: existingUsers.compactMap { ($0.id, $0) })
+            var placesDict = Dictionary(uniqueKeysWithValues: existingPlaces.compactMap { ($0.id, $0) })
             
             for activity in activitiesToAdd {
-                let user: UserEntity
-                let place: PlaceEntity
+                let user = usersDict[activity.user.id] ?? {
+                    let newUser = activity.user.createUserEntity(context: context)
+                    usersDict[activity.user.id] = newUser
+                    return newUser
+                }()
                 
-                if let existingUser = users[activity.user.id] {
-                    user = existingUser
-                } else {
-                    user = activity.user.createUserEntity(context: dataStack.viewContext)
-                    users[activity.user.id] = user
-                }
-                if let existingPlace = places[activity.place.id] {
-                    place = existingPlace
-                } else {
-                    place = activity.place.createPlaceEntity(context: dataStack.viewContext)
-                    places[activity.place.id] = place
-                }
+                let place = placesDict[activity.place.id] ?? {
+                    let newPlace = activity.place.createPlaceEntity(context: context)
+                    placesDict[activity.place.id] = newPlace
+                    return newPlace
+                }()
                 
-                activity.createMapActivityEntity(context: dataStack.viewContext, user: user, place: place)
+                activity.createMapActivityEntity(context: context, user: user, place: place)
                 
                 originalItems.append(activity)
             }
             
-            do {
-                try await self.dataStack.saveContext()
-            } catch {
-                presentErrorToast(error, debug: "Error saving new MapActivityEntity", silent: true)
-            }
+            try await self.dataStack.saveContext()
         } catch {
             presentErrorToast(error, debug: "Error getting existing MapActivityEntity", silent: true)
         }
@@ -482,7 +423,6 @@ final class ExploreVM17: ObservableObject {
     enum LoadingSection: Hashable {
         case fetchEvents
         case fetchActivities
-        case inviteLink
     }
     
     enum Throttles: Hashable {

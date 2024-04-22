@@ -32,7 +32,7 @@ struct AppRouter: View {
                     FirstLoadingView()
                 }
             } else {
-                WelcomeView()
+                AuthWelcomeView()
             }
             
             VStack(spacing: 5) {

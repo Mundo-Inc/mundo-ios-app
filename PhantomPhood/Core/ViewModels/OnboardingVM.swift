@@ -21,10 +21,22 @@ final class OnboardingVM: ObservableObject {
     }
 
     @Published var isPresented: Bool
-    @Published var selection: Int = 0
+    
+    @Published var isShowing = false
+    @Published var backgroundShift: CGFloat = 0
+    @Published var section: Sections = .journey
     
     func done() {
         userSettings.onboardingVersion = OnboardingVM.currentOnboardingVersion
         isPresented = false
+    }
+    
+    // MARK: Enums
+    
+    enum Sections {
+        case journey
+        case share
+        case connect
+        case rewards
     }
 }

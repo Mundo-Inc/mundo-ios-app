@@ -48,10 +48,9 @@ final class ConversationsManager: NSObject, ObservableObject {
             NSSortDescriptor(key: "friendlyName", ascending: true)]
         
         ObservableResultPublisher(with: request, context: coreDataManager.viewContext)
+            .receive(on: DispatchQueue.main)
             .sink(
-                receiveCompletion: {
-                    NSLog("Completion from fetch conversations - \($0)")
-                },
+                receiveCompletion: { _ in },
                 receiveValue: { [weak self] items in
                     let sortedItems = items.sorted(by: self!.sorterForConversations)
                     self?.conversations = sortedItems
@@ -61,7 +60,8 @@ final class ConversationsManager: NSObject, ObservableObject {
                     } else {
                         self?.isConversationsLoading = false
                     }
-                })
+                }
+            )
             .store(in: &cancellables)
     }
     

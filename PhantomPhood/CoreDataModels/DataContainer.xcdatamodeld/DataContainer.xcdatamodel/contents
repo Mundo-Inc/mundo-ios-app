@@ -5,8 +5,13 @@
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="savedAt" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="place" maxCount="1" deletionRule="Nullify" destinationEntity="PlaceEntity" inverseName="mapActivities" inverseEntity="PlaceEntity"/>
-        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="mapActivities" inverseEntity="UserEntity"/>
+        <relationship name="place" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlaceEntity" inverseName="mapActivities" inverseEntity="PlaceEntity"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="mapActivities" inverseEntity="UserEntity"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="PlaceEntity" representedClassName="PlaceEntity" syncable="YES" codeGenerationType="class">
         <attribute name="id" attributeType="String"/>
@@ -16,6 +21,11 @@
         <attribute name="savedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="thumbnail" optional="YES" attributeType="String"/>
         <relationship name="mapActivities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MapActivityEntity" inverseName="place" inverseEntity="MapActivityEntity"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="RequestedRegionEntity" representedClassName="RequestedRegionEntity" syncable="YES" codeGenerationType="class">
         <attribute name="height" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -34,5 +44,10 @@
         <attribute name="verified" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="xp" optional="YES" attributeType="Integer 16" defaultValueString="0.0" usesScalarValueType="YES"/>
         <relationship name="mapActivities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MapActivityEntity" inverseName="user" inverseEntity="MapActivityEntity"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
 </model>

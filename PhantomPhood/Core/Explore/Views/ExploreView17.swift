@@ -90,7 +90,9 @@ struct ExploreView17: View {
                     }
                     
                     Button {
-                        vm.getInviteLink()
+                        withAnimation {
+                            vm.isInviteBannerPresented = true
+                        }
                     } label: {
                         RoundedRectangle(cornerRadius: 10)
                             .foregroundStyle(Color.accentColor.gradient)
@@ -138,6 +140,16 @@ struct ExploreView17: View {
             }
             .padding(.bottom)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            
+            if vm.isInviteBannerPresented {
+                InviteFriendsBanner {
+                    withAnimation {
+                        vm.isInviteBannerPresented = false
+                    }
+                }
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .padding(.bottom, 8)
+            }
             
             VStack(alignment: .leading) {
                 Menu {

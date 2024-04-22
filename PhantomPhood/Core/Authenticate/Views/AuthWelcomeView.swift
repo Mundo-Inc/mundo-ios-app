@@ -1,14 +1,13 @@
 //
-//  WelcomeView.swift
+//  AuthWelcomeView.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 11.09.2023.
 //
 
 import SwiftUI
-import Lottie
 
-struct WelcomeView: View {
+struct AuthWelcomeView: View {
     @ObservedObject var appData = AppData.shared
     
     var body: some View {
@@ -19,7 +18,7 @@ struct WelcomeView: View {
                 VStack {
                     Spacer()
                     
-                    Image("TextLogo")
+                    Image(.textLogo)
                         .resizable()
                         .foregroundColor(.primary)
                         .scaledToFit()
@@ -73,7 +72,7 @@ struct WelcomeView: View {
 }
 
 #Preview {
-    WelcomeView()
+    AuthWelcomeView()
 }
 
 

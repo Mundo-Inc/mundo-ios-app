@@ -11,6 +11,8 @@ struct RewardsHubView: View {
     @ObservedObject private var auth = Authentication.shared
     @ObservedObject private var pcVM = PhantomCoinsVM.shared
     
+    @EnvironmentObject private var inviteFriendsVM: InviteFriendsVM
+    
     @StateObject private var vm = RewardsHubVM()
     
     @State var isEmojiAnimating: Bool = true
@@ -44,6 +46,8 @@ struct RewardsHubView: View {
                     Task {
                         await vm.getPrizes()
                     }
+                    
+                    inviteFriendsVM.addRemoveInviteLinks(inviteFriendsVM.inviteLinks)
                 }
                 .font(.custom(style: .body))
                 .scrollIndicators(.never)
@@ -155,6 +159,7 @@ struct RewardsHubView: View {
         }
         .onAppear {
             isEmojiAnimating = true
+            inviteFriendsVM.addRemoveInviteLinks(inviteFriendsVM.inviteLinks)
         }
         .task {
             await pcVM.refresh()
@@ -205,7 +210,7 @@ struct RewardsHubView: View {
     @ViewBuilder
     private func ReferralSection() -> some View {
         VStack {
-            HStack(alignment: .top, spacing: 3) {
+            HStack(spacing: 3) {
                 Text("Referral Rewards")
                     .padding(.trailing, 5)
                 
@@ -219,79 +224,71 @@ struct RewardsHubView: View {
                 
                 Spacer()
                 
-                VStack(alignment: .trailing, spacing: 0) {
-                    HStack(spacing: 3) {
-                        Text(UserSettings.shared.inviteCredits.description)
-                        Image(systemName: "person.2.fill")
-                    }
-                    
-                    if UserSettings.shared.inviteCredits != 0 && UserSettings.shared.inviteCredits != UserSettings.maxInviteCredits {
-                        TimelineView(.animation(minimumInterval: 1, paused: false)) { _ in
-                            Text("+1 in " + (UserSettings.shared.inviteCreditsLastGiven.addingTimeInterval(3600 * 24 * 7).remainingTime() ?? "7 days"))
-                                .font(.custom(style: .caption))
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                }
+                Text(UserSettings.shared.inviteCredits.description)
+                
+                Image(systemName: "person.2.fill")
             }
+            .padding(.horizontal)
             .font(.custom(style: .headline))
             
             Text("Invite your friends to the app and get rewarded as soon as they get into the app")
                 .font(.custom(style: .body))
+                .padding(.horizontal)
                 .padding(.bottom, 6)
             
-            if let userInviteLinks = vm.userInviteLinks {
+            ScrollView(.horizontal) {
                 HStack {
-                    ForEach(userInviteLinks.count > 5 ? Array(userInviteLinks.prefix(upTo: 5)) : userInviteLinks) { link in
-                        Group {
-                            if let referredUser = link.referredUser {
-                                VStack {
-                                    if let invitedUsersList = vm.invitedUsersList, let found = invitedUsersList.first(where: { $0.id == referredUser }) {
-                                        ProfileImage(found.profileImage, size: 50, cornerRadius: 25)
-                                        Text(found.name)
-                                    } else {
-                                        ProfileImage("", size: 50, cornerRadius: 25)
-                                        Text("Name")
-                                            .foregroundStyle(.black.opacity(0.5))
-                                            .redacted(reason: .placeholder)
-                                    }
-                                }
-                                .onTapGesture {
-                                    AppData.shared.goToUser(referredUser)
-                                }
-                            } else if let expiresIn = link.expiresAt.remainingTime(), let url = link.link {
-                                VStack {
-                                    ShareLink(item: url) {
-                                        ZStack {
-                                            ProfileImage("", size: 50, cornerRadius: 25)
-                                            
+                    ForEach(inviteFriendsVM.referredUsers.count > 3 ? inviteFriendsVM.referredUsers.prefix(3).reversed() : inviteFriendsVM.referredUsers.reversed(), id: \.self) { user in
+                        NavigationLink(value: AppRoute.userProfile(userId: user.id ?? "-")) {
+                            VStack(spacing: 4) {
+                                ProfileImage(user.profileImage, size: 50, cornerRadius: 25)
+                                Text(user.name ?? "-")
+                                    .lineLimit(1)
+                                    .font(.custom(style: .caption2))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: 50)
+                        }
+                    }
+                    
+                    if !inviteFriendsVM.referredUsers.isEmpty && !inviteFriendsVM.inviteLinks.isEmpty {
+                        Divider()
+                            .frame(maxHeight: 40)
+                    }
+                    
+                    ForEach(inviteFriendsVM.inviteLinks) { link in
+                        if let expiresIn = link.expiresAt.remainingTime(), let url = link.link {
+                            ShareLink(item: url) {
+                                VStack(spacing: 4) {
+                                    ProfileImage("", size: 50, cornerRadius: 25)
+                                        .overlay {
                                             Circle()
-                                                .frame(width: 50, height: 50)
                                                 .foregroundStyle(Color.black.opacity(0.6))
                                             
                                             Image(systemName: "rectangle.portrait.on.rectangle.portrait")
                                                 .font(.system(size: 18))
                                                 .foregroundStyle(Color.white.opacity(0.7))
                                         }
-                                    }
-                                    
                                     Text(expiresIn)
-                                        .foregroundStyle(.black.opacity(0.5))
+                                        .lineLimit(1)
+                                        .font(.custom(style: .caption2))
+                                        .foregroundStyle(.secondary)
                                 }
+                                .frame(maxWidth: 50)
                             }
                         }
-                        .font(.custom(style: .caption2))
-                        .fontWeight(.semibold)
                     }
                 }
+                .padding(.horizontal)
             }
+            .scrollIndicators(.never)
             
             Button {
-                vm.getInviteLink()
+                inviteFriendsVM.generateInviteLink()
             } label: {
                 if UserSettings.shared.inviteCredits > 0 {
                     HStack {
-                        if vm.loadingSections.contains(.inviteLink) {
+                        if inviteFriendsVM.loadingSections.contains(.inviteLink) {
                             ProgressView()
                                 .controlSize(.regular)
                                 .tint(Color.black.opacity(0.8))
@@ -304,25 +301,10 @@ struct RewardsHubView: View {
                     .frame(maxWidth: .infinity)
                     .font(.custom(style: .headline))
                 } else {
-                    if let userInviteLinks = vm.userInviteLinks, userInviteLinks.filter({ $0.referredUser == nil }).count == UserSettings.maxInviteCredits {
-                        Text("Out of Invites")
-                            .font(.custom(style: .subheadline))
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: .infinity)
-                    } else {
-                        VStack(spacing: 0) {
-                            Text("Out of Invites")
-                                .font(.custom(style: .subheadline))
-                                .fontWeight(.semibold)
-                            
-                            TimelineView(.animation(minimumInterval: 1, paused: false)) { _ in
-                                Text(UserSettings.shared.inviteCreditsLastGiven.addingTimeInterval(3600 * 24 * 2).remainingTime() ?? "2 days")
-                                    .font(.custom(style: .caption))
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
+                    Text("Out of Invites")
+                        .font(.custom(style: .subheadline))
+                        .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
-                    }
                 }
             }
             .tint(Color.gold.gradient)
@@ -330,9 +312,10 @@ struct RewardsHubView: View {
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
             .disabled(UserSettings.shared.inviteCredits <= 0)
+            .padding(.horizontal)
         }
         .foregroundStyle(Color.black.opacity(0.9))
-        .padding()
+        .padding(.vertical)
         .background(Color.accentColor.gradient)
     }
     

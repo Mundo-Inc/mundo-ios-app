@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct RootView: View {
+    @StateObject private var inviteFriendsVM = InviteFriendsVM()
+    
     @ObservedObject private var appData = AppData.shared
     @State private var showActions: Bool = false
     
@@ -26,6 +28,7 @@ struct RootView: View {
                 MyProfileView()
                     .tag(Tab.myProfile)
             }
+            .environmentObject(inviteFriendsVM)
             
             MainTabBarView(selection: appData.tabViewSelectionHandler, showActions: $showActions)
                 .ignoresSafeArea(edges: .bottom)

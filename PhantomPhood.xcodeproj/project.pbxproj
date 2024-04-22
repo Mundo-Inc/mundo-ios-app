@@ -172,12 +172,6 @@
 		0B3022472B32178300827889 /* emojis.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B3022462B32178300827889 /* emojis.json */; };
 		0B3022492B32183100827889 /* 1f924.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0B3022482B32183100827889 /* 1f924.gif */; };
 		0B3126E32B6A9FE30063FC0E /* OnboardingVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3126E22B6A9FE30063FC0E /* OnboardingVM.swift */; };
-		0B3126E52B6AB0700063FC0E /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3126E42B6AB0700063FC0E /* OnboardingView.swift */; };
-		0B3126ED2B6ABB560063FC0E /* DrinkingCoffee.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B3126EC2B6ABB560063FC0E /* DrinkingCoffee.json */; };
-		0B3126EF2B6ABDE80063FC0E /* Reviews.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B3126EE2B6ABDE80063FC0E /* Reviews.json */; };
-		0B3126F12B6ABEA80063FC0E /* Friends.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B3126F02B6ABEA70063FC0E /* Friends.json */; };
-		0B3126F32B6AC2870063FC0E /* Rewards.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B3126F22B6AC2870063FC0E /* Rewards.json */; };
-		0B3126F52B6AC3440063FC0E /* RewardLightEffect.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B3126F42B6AC3440063FC0E /* RewardLightEffect.json */; };
 		0B35B7A52B0D095A00822BA6 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 0B35B7A42B0D095A00822BA6 /* GoogleSignIn */; };
 		0B35B7A72B0D095A00822BA6 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B35B7A62B0D095A00822BA6 /* GoogleSignInSwift */; };
 		0B35B7A92B0D09EB00822BA6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0B35B7A82B0D09EB00822BA6 /* GoogleService-Info.plist */; };
@@ -244,7 +238,7 @@
 		0B77EA3F2AAF855600C8DF87 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B77EA3E2AAF855600C8DF87 /* Assets.xcassets */; };
 		0B77EA422AAF855600C8DF87 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B77EA412AAF855600C8DF87 /* Preview Assets.xcassets */; };
 		0B77EA4E2AAF889100C8DF87 /* SignUpWithPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77EA4D2AAF889100C8DF87 /* SignUpWithPasswordView.swift */; };
-		0B77EA502AAF8C3B00C8DF87 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77EA4F2AAF8C3B00C8DF87 /* WelcomeView.swift */; };
+		0B77EA502AAF8C3B00C8DF87 /* AuthWelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77EA4F2AAF8C3B00C8DF87 /* AuthWelcomeView.swift */; };
 		0B77EA532AAF8CB800C8DF87 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 0B77EA522AAF8CB800C8DF87 /* Lottie */; };
 		0B77EA562AAFCAA800C8DF87 /* Welcome.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B77EA552AAFCAA800C8DF87 /* Welcome.json */; };
 		0B77EA582AAFCDBD00C8DF87 /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77EA572AAFCDBD00C8DF87 /* LottieView.swift */; };
@@ -261,6 +255,7 @@
 		0B83B79B2B09CD8200D81CE8 /* FirebaseInstallations in Frameworks */ = {isa = PBXBuildFile; productRef = 0B83B79A2B09CD8200D81CE8 /* FirebaseInstallations */; };
 		0B83B79D2B09CD8200D81CE8 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 0B83B79C2B09CD8200D81CE8 /* FirebaseMessaging */; };
 		0B83B79F2B09CD8200D81CE8 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 0B83B79E2B09CD8200D81CE8 /* FirebasePerformance */; };
+		0B85AF002BD3E8C8001E95A7 /* InviteFriendsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B85AEFF2BD3E8C8001E95A7 /* InviteFriendsVM.swift */; };
 		0B86F9352B44339400DD4C85 /* EmojisManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B86F9342B44339400DD4C85 /* EmojisManager.swift */; };
 		0B86F9372B4433CB00DD4C85 /* EmojisVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B86F9362B4433CB00DD4C85 /* EmojisVM.swift */; };
 		0B8AA3CB2AFE8817008284F5 /* MapKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8AA3CA2AFE8817008284F5 /* MapKit.swift */; };
@@ -307,6 +302,7 @@
 		0B9EF2812B302E1D0025F464 /* ContactsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9EF2802B302E1D0025F464 /* ContactsService.swift */; };
 		0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA0383E2AF24C96000A2B33 /* UserConnectionsView.swift */; };
 		0BA038412AF24CE6000A2B33 /* UserConnectionsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA038402AF24CE6000A2B33 /* UserConnectionsVM.swift */; };
+		0BA37D6D2BD2A43B001E9D6C /* InviteFriendsBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA37D6C2BD2A43B001E9D6C /* InviteFriendsBanner.swift */; };
 		0BA43C232B516DCA00F0DDBF /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */; };
 		0BA43C252B517F3100F0DDBF /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA43C242B517F3100F0DDBF /* UserSettings.swift */; };
 		0BAAC8032B98CEFE00FFFC32 /* GoogleReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAAC8022B98CEFE00FFFC32 /* GoogleReview.swift */; };
@@ -429,6 +425,7 @@
 		0BF81DEA2ABE398E00B8892E /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0BF81DD82ABE398E00B8892E /* Poppins-Italic.ttf */; };
 		0BF81DEB2ABE398E00B8892E /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0BF81DD92ABE398E00B8892E /* Poppins-ExtraLightItalic.ttf */; };
 		0BFAC3B72B7425A700F1A036 /* UniversalLinkingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFAC3B62B7425A700F1A036 /* UniversalLinkingManager.swift */; };
+		0BFDA1522BD6660000DE83B5 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFDA1512BD6660000DE83B5 /* OnboardingView.swift */; };
 		0BFEB5F42B7FC4AA006F6A17 /* InviteLinkEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFEB5F32B7FC4AA006F6A17 /* InviteLinkEntity.swift */; };
 /* End PBXBuildFile section */
 
@@ -597,12 +594,6 @@
 		0B3022462B32178300827889 /* emojis.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = emojis.json; sourceTree = "<group>"; };
 		0B3022482B32183100827889 /* 1f924.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = 1f924.gif; sourceTree = "<group>"; };
 		0B3126E22B6A9FE30063FC0E /* OnboardingVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingVM.swift; sourceTree = "<group>"; };
-		0B3126E42B6AB0700063FC0E /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
-		0B3126EC2B6ABB560063FC0E /* DrinkingCoffee.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DrinkingCoffee.json; sourceTree = "<group>"; };
-		0B3126EE2B6ABDE80063FC0E /* Reviews.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Reviews.json; sourceTree = "<group>"; };
-		0B3126F02B6ABEA70063FC0E /* Friends.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Friends.json; sourceTree = "<group>"; };
-		0B3126F22B6AC2870063FC0E /* Rewards.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Rewards.json; sourceTree = "<group>"; };
-		0B3126F42B6AC3440063FC0E /* RewardLightEffect.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = RewardLightEffect.json; sourceTree = "<group>"; };
 		0B35B7A82B0D09EB00822BA6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0B35B7AA2B0D14CA00822BA6 /* SignInOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInOptionsView.swift; sourceTree = "<group>"; };
 		0B35B7AC2B0D14D500822BA6 /* SignInWithEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithEmailView.swift; sourceTree = "<group>"; };
@@ -664,7 +655,7 @@
 		0B77EA3E2AAF855600C8DF87 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0B77EA412AAF855600C8DF87 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		0B77EA4D2AAF889100C8DF87 /* SignUpWithPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpWithPasswordView.swift; sourceTree = "<group>"; };
-		0B77EA4F2AAF8C3B00C8DF87 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		0B77EA4F2AAF8C3B00C8DF87 /* AuthWelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthWelcomeView.swift; sourceTree = "<group>"; };
 		0B77EA552AAFCAA800C8DF87 /* Welcome.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Welcome.json; sourceTree = "<group>"; };
 		0B77EA572AAFCDBD00C8DF87 /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
 		0B77EA592AAFDA1A00C8DF87 /* PhantomPhood.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PhantomPhood.entitlements; sourceTree = "<group>"; };
@@ -676,6 +667,7 @@
 		0B7E788C2BC578B300767995 /* HomeFollowingView17.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFollowingView17.swift; sourceTree = "<group>"; };
 		0B7E78902BC58E5C00767995 /* HomeActivityItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeActivityItem.swift; sourceTree = "<group>"; };
 		0B83A0CA2AF403510096780B /* ProfileActivitiesVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileActivitiesVM.swift; sourceTree = "<group>"; };
+		0B85AEFF2BD3E8C8001E95A7 /* InviteFriendsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteFriendsVM.swift; sourceTree = "<group>"; };
 		0B86F9342B44339400DD4C85 /* EmojisManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojisManager.swift; sourceTree = "<group>"; };
 		0B86F9362B4433CB00DD4C85 /* EmojisVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojisVM.swift; sourceTree = "<group>"; };
 		0B8AA3CA2AFE8817008284F5 /* MapKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKit.swift; sourceTree = "<group>"; };
@@ -722,6 +714,7 @@
 		0B9EF2802B302E1D0025F464 /* ContactsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsService.swift; sourceTree = "<group>"; };
 		0BA0383E2AF24C96000A2B33 /* UserConnectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionsView.swift; sourceTree = "<group>"; };
 		0BA038402AF24CE6000A2B33 /* UserConnectionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionsVM.swift; sourceTree = "<group>"; };
+		0BA37D6C2BD2A43B001E9D6C /* InviteFriendsBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteFriendsBanner.swift; sourceTree = "<group>"; };
 		0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		0BA43C242B517F3100F0DDBF /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		0BAAC8022B98CEFE00FFFC32 /* GoogleReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleReview.swift; sourceTree = "<group>"; };
@@ -844,6 +837,7 @@
 		0BF81DD82ABE398E00B8892E /* Poppins-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Italic.ttf"; sourceTree = "<group>"; };
 		0BF81DD92ABE398E00B8892E /* Poppins-ExtraLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		0BFAC3B62B7425A700F1A036 /* UniversalLinkingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalLinkingManager.swift; sourceTree = "<group>"; };
+		0BFDA1512BD6660000DE83B5 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		0BFEB5F32B7FC4AA006F6A17 /* InviteLinkEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteLinkEntity.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1324,7 +1318,7 @@
 			children = (
 				0B46814C2AC5EAFB009C5EF9 /* FirstLoadingView.swift */,
 				0B1F758A2B47185300097A70 /* MainTabBarView.swift */,
-				0B3126E42B6AB0700063FC0E /* OnboardingView.swift */,
+				0BFDA1512BD6660000DE83B5 /* OnboardingView.swift */,
 				0B6495592AB1FD16000E57AF /* Authenticate */,
 				0BF10B902B35D0AB00522E60 /* Common */,
 				0B77EA4C2AAF875D00C8DF87 /* Components */,
@@ -1342,6 +1336,7 @@
 				0B9C02672B45A1D7000C4774 /* PlacesList */,
 				0B27AE1D2B75784300C97559 /* Report */,
 				0BABE9D02B5981F6003EF70B /* RewardsHub */,
+				0B85AEFE2BD3E89B001E95A7 /* Root */,
 				0B64C4C62AB4BDB4009F0D43 /* Settings */,
 				0B7E788B2BC5777700767995 /* UserActivity */,
 				0BA038392AF24C47000A2B33 /* UserConnections */,
@@ -1366,7 +1361,7 @@
 		0B64955B2AB1FD49000E57AF /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				0B77EA4F2AAF8C3B00C8DF87 /* WelcomeView.swift */,
+				0B77EA4F2AAF8C3B00C8DF87 /* AuthWelcomeView.swift */,
 				0B35B7AA2B0D14CA00822BA6 /* SignInOptionsView.swift */,
 				0BEF7A372B0EB278001532E7 /* SignUpOptionsView.swift */,
 				0B77EA4D2AAF889100C8DF87 /* SignUpWithPasswordView.swift */,
@@ -1463,7 +1458,6 @@
 				0B47FDA02B11060600F39527 /* AppRouter.swift */,
 				0B77EA3C2AAF855500C8DF87 /* ContentView.swift */,
 				0B77EA3A2AAF855500C8DF87 /* PhantomPhoodApp.swift */,
-				0B9844882BB8227D00390579 /* RootView.swift */,
 				0B77EA3E2AAF855600C8DF87 /* Assets.xcassets */,
 				0B6495582AB1FD04000E57AF /* Core */,
 				0B9950BD2BBED5640060B6AF /* CoreDataModels */,
@@ -1552,12 +1546,7 @@
 		0B77EA542AAFCA9700C8DF87 /* LottieFiles */ = {
 			isa = PBXGroup;
 			children = (
-				0B3126EC2B6ABB560063FC0E /* DrinkingCoffee.json */,
-				0B3126F02B6ABEA70063FC0E /* Friends.json */,
 				0BC2E3192B221F850002649D /* Processing.json */,
-				0B3126EE2B6ABDE80063FC0E /* Reviews.json */,
-				0B3126F42B6AC3440063FC0E /* RewardLightEffect.json */,
-				0B3126F22B6AC2870063FC0E /* Rewards.json */,
 				0B43C14B2BC44FC3001CEDCA /* WanderingGhost.json */,
 				0B77EA552AAFCAA800C8DF87 /* Welcome.json */,
 			);
@@ -1571,6 +1560,15 @@
 				0B384FA82B2B5DE500C98245 /* UserActivityVM.swift */,
 			);
 			path = UserActivity;
+			sourceTree = "<group>";
+		};
+		0B85AEFE2BD3E89B001E95A7 /* Root */ = {
+			isa = PBXGroup;
+			children = (
+				0B9844882BB8227D00390579 /* RootView.swift */,
+				0B85AEFF2BD3E8C8001E95A7 /* InviteFriendsVM.swift */,
+			);
+			path = Root;
 			sourceTree = "<group>";
 		};
 		0B985ADF2AC9AFAB00019A06 /* ViewModels */ = {
@@ -1973,6 +1971,7 @@
 				0B91A7242B57F049007F7969 /* ExploreView.swift */,
 				0B91A7262B57F157007F7969 /* ExploreView16.swift */,
 				0B91A7282B57F166007F7969 /* ExploreView17.swift */,
+				0BA37D6C2BD2A43B001E9D6C /* InviteFriendsBanner.swift */,
 				0B8B15D12BB5CF2900A955EA /* MapActivitySheet.swift */,
 			);
 			path = Views;
@@ -2097,11 +2096,9 @@
 				0B30221B2B32094500827889 /* 1f602.gif in Resources */,
 				0B3022172B32094500827889 /* 1fae3.gif in Resources */,
 				0B30223B2B32094500827889 /* 1f600.gif in Resources */,
-				0B3126F52B6AC3440063FC0E /* RewardLightEffect.json in Resources */,
 				0BF81DE62ABE398E00B8892E /* Poppins-ThinItalic.ttf in Resources */,
 				0B3022372B32094500827889 /* 1f972.gif in Resources */,
 				0BF81DE42ABE398E00B8892E /* Poppins-Medium.ttf in Resources */,
-				0B3126EF2B6ABDE80063FC0E /* Reviews.json in Resources */,
 				0B30221A2B32094500827889 /* 1f44d.gif in Resources */,
 				0BF81DE02ABE398E00B8892E /* Poppins-Light.ttf in Resources */,
 				0BF81DDE2ABE398E00B8892E /* Poppins-SemiBoldItalic.ttf in Resources */,
@@ -2192,7 +2189,6 @@
 				0B3021F52B32094400827889 /* 2615.gif in Resources */,
 				0B3022422B32094500827889 /* 1f920.gif in Resources */,
 				0B30222C2B32094500827889 /* 1f3d5_fe0f.gif in Resources */,
-				0B3126F12B6ABEA80063FC0E /* Friends.json in Resources */,
 				0B3022112B32094500827889 /* 1f340.gif in Resources */,
 				0B30220F2B32094500827889 /* 1f609.gif in Resources */,
 				0B77EA562AAFCAA800C8DF87 /* Welcome.json in Resources */,
@@ -2202,9 +2198,7 @@
 				0B3022402B32094500827889 /* 1f911.gif in Resources */,
 				0B3021F02B32094400827889 /* 1f49c.gif in Resources */,
 				0B3022052B32094400827889 /* 1f4a9.gif in Resources */,
-				0B3126ED2B6ABB560063FC0E /* DrinkingCoffee.json in Resources */,
 				0BF81DEA2ABE398E00B8892E /* Poppins-Italic.ttf in Resources */,
-				0B3126F32B6AC2870063FC0E /* Rewards.json in Resources */,
 				0B30223A2B32094500827889 /* 1f47d.gif in Resources */,
 				0BF81DE32ABE398E00B8892E /* Poppins-ExtraBold.ttf in Resources */,
 				0B3021EE2B32094400827889 /* 1f35c.gif in Resources */,
@@ -2234,7 +2228,6 @@
 				0B0BB7802BB4618100DE3728 /* FetchedMapRect.swift in Sources */,
 				0B9950D72BBEE2180060B6AF /* NSManagedObjectContext.swift in Sources */,
 				0B9950CC2BBEDC3B0060B6AF /* PersistentParticipantDataItem+CoreDataExt.swift in Sources */,
-				0B3126E52B6AB0700063FC0E /* OnboardingView.swift in Sources */,
 				0B1610DD2B63265100DCAFA5 /* FeedReview.swift in Sources */,
 				0BD1942D2B06681B00C1C35F /* HomeVM.swift in Sources */,
 				0BC84A712AD0A8B100D723AA /* PlaceMediaVM.swift in Sources */,
@@ -2301,6 +2294,7 @@
 				0B6A47C22ABC9157000CBDA3 /* FeedDM.swift in Sources */,
 				0BE8EC7A2ABCD3BA00512872 /* ProfileActivityFollowingView.swift in Sources */,
 				0BB2440D2BCD823000A136CB /* String.swift in Sources */,
+				0BFDA1522BD6660000DE83B5 /* OnboardingView.swift in Sources */,
 				0B73EAC82BBF0E4C00991B13 /* ObservableResultPublisher.swift in Sources */,
 				0B51A8D62ACEC61000DA38DC /* MediasView.swift in Sources */,
 				0B997B6A2AC7377C00579C9C /* UserProfileVM.swift in Sources */,
@@ -2463,7 +2457,7 @@
 				0B29207C2B5587250026DDDE /* ExploreSearchVM.swift in Sources */,
 				0B29207E2B55876C0026DDDE /* SearchDM.swift in Sources */,
 				0B695D7E2AF15EEE00C11870 /* ConnectionsDM.swift in Sources */,
-				0B77EA502AAF8C3B00C8DF87 /* WelcomeView.swift in Sources */,
+				0B77EA502AAF8C3B00C8DF87 /* AuthWelcomeView.swift in Sources */,
 				0B1610C82B631DE000DCAFA5 /* PlaceOverview.swift in Sources */,
 				0B2694AF2B8E3C64004FA5C8 /* CameraView.swift in Sources */,
 				0B384FA52B2B57B200C98245 /* UserActivityView.swift in Sources */,
@@ -2474,6 +2468,7 @@
 				0B35B7AB2B0D14CA00822BA6 /* SignInOptionsView.swift in Sources */,
 				0B8AA3CB2AFE8817008284F5 /* MapKit.swift in Sources */,
 				0B0E6D322ABB816F00EC62EE /* Checkin.swift in Sources */,
+				0BA37D6D2BD2A43B001E9D6C /* InviteFriendsBanner.swift in Sources */,
 				0B7A80B22BA1EE6E00192192 /* CTAButton.swift in Sources */,
 				0B2D20E92B4632D600D4F0C1 /* UserProfileListsVM.swift in Sources */,
 				0BB437292B7673DD002B57D1 /* AchievementsEnum.swift in Sources */,
@@ -2488,6 +2483,7 @@
 				0BDBD3CC2ACB5FCD003B8D2D /* GoogleRatingView.swift in Sources */,
 				0BE3C8882B261DB40048F2A6 /* PhotosPickerItem.swift in Sources */,
 				0B27AE1F2B75786400C97559 /* ReportDM.swift in Sources */,
+				0B85AF002BD3E8C8001E95A7 /* InviteFriendsVM.swift in Sources */,
 				0B0183702AB3DE8A008E887F /* AuthRoute.swift in Sources */,
 				0BBFFE312B9BE817003A05B1 /* EventCheckInsView.swift in Sources */,
 				0BDBD3CA2ACB32B7003B8D2D /* PhantomScoreView.swift in Sources */,

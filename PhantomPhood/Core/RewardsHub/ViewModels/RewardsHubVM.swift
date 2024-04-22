@@ -8,24 +8,19 @@
 import Foundation
 import SwiftUI
 import CoreData
-import BranchSDK
 
 @MainActor
 final class RewardsHubVM: ObservableObject {
-    private let auth = Authentication.shared
     private let pcVM = PhantomCoinsVM.shared
     private let rewardsDM = RewardsDM()
-    private let userProfileDM = UserProfileDM()
     
     init() {
-        getUserInvites()
         Task {
             await getPrizes()
         }
     }
     
     enum LoadingSection: Hashable {
-        case inviteLink
         case dailyReward
         case missions
         case mission(String)
@@ -39,10 +34,6 @@ final class RewardsHubVM: ObservableObject {
     @Published var missions: [Mission]? = nil
     @Published var prizes: [Prize]? = nil
     @Published var selectedPrize: Prize? = nil
-    
-    @Published var userInviteLinks: [InviteLinkEntity]? = nil
-    
-    @Published var invitedUsersList: [UserProfileDM.UserEssentialsWithCreationDate]? = nil
     
     func claimDailyReward() async {
         guard !pcVM.hasClaimedToday && !loadingSections.contains(.dailyReward) else { return }
@@ -122,161 +113,5 @@ final class RewardsHubVM: ObservableObject {
             presentErrorToast(error)
         }
         self.loadingSections.remove(.mission(id))
-    }
-    
-    func getInviteLink() {
-        guard !loadingSections.contains(.inviteLink) else { return }
-        
-        guard UserSettings.shared.inviteCredits > 0 else {
-            self.error = "You don't have any invites left."
-            return
-        }
-        
-        if let currentUser = auth.currentUser {
-            self.loadingSections.insert(.inviteLink)
-            HapticManager.shared.impact(style: .light)
-            
-            let buo: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "signup/\(currentUser.id)")
-            buo.title = "Join \(currentUser.name) on Phantom Phood"
-            buo.contentDescription = "You've been invited by \(currentUser.name) to Phantom Phood. Join friends in your dining experiences."
-            
-            if let profileImage = currentUser.profileImage {
-                buo.imageUrl = profileImage.absoluteString
-            } else {
-                buo.imageUrl = "https://phantomphood.ai/img/NoProfileImage.jpg"
-            }
-            
-            let lp: BranchLinkProperties = BranchLinkProperties()
-            lp.feature = "referral"
-            lp.stage = "ref-\((userInviteLinks?.count ?? 0) + 1)"
-            
-            if let topViewController = UIApplication.shared.topViewController() {
-                buo.showShareSheet(with: lp, andShareText: "Join \(currentUser.name) on Phantom Phood", from: topViewController) { (activityType, completed, error) in
-                    if let error {
-                        print(error)
-                    } else {
-                        self.loadingSections.remove(.inviteLink)
-                        if completed {
-                            if let url = URL(string: buo.getShortUrl(with: lp) ?? "") {
-                                Task {
-                                    await self.addInviteLink(url)
-                                    self.getUserInvites()
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                self.loadingSections.remove(.inviteLink)
-            }
-        }
-    }
-    
-    func assignReferredUsers() async {
-        guard let userInviteLinks else { return }
-        
-        do {
-            let usersResponse = try await userProfileDM.getReferredUsers()
-            self.invitedUsersList = usersResponse.data
-            
-            guard !usersResponse.data.isEmpty else { return }
-            
-            let pendingInvites = userInviteLinks.filter { $0.referredUser == nil }
-            
-            for user in usersResponse.data {
-                if !userInviteLinks.contains(where: { inviteLinkEntity in
-                    if let referredUser = inviteLinkEntity.referredUser {
-                        return referredUser == user.id
-                    }
-                    return false
-                }) {
-                    if let first = pendingInvites.first {
-                        first.referredUser = user.id
-                        first.confirmedAt = .now
-                        
-                        await saveCoreData()
-                    } else {
-                        await addInviteLink(referredUser: user.id)
-                    }
-                }
-            }
-        } catch {
-            presentErrorToast(error, silent: true)
-        }
-    }
-    
-    // MARK: - Core Data
-    
-    func getUserInvites() {
-        let request = NSFetchRequest<InviteLinkEntity>(entityName: "InviteLinkEntity")
-        // first sort by confirmedAt and then with createdAt date
-        request.sortDescriptors = [
-            NSSortDescriptor(keyPath: \InviteLinkEntity.confirmedAt, ascending: true),
-            NSSortDescriptor(keyPath: \InviteLinkEntity.createdAt, ascending: true)
-        ]
-        
-        do {
-            var data = try UserDataStack.shared.viewContext.fetch(request)
-            
-            // remove expired invites (30 days old)
-            data = data.compactMap { invite in
-                if let confirmedAt = invite.confirmedAt, confirmedAt.timeIntervalSinceNow < -2592000 {
-                    UserDataStack.shared.viewContext.delete(invite)
-                    return nil
-                }
-                return invite
-            }
-            
-            let uncomfirmed = data.filter { $0.referredUser == nil }
-            
-            if uncomfirmed.count + UserSettings.shared.inviteCredits < UserSettings.maxInviteCredits {
-                if UserSettings.shared.inviteCredits == 0, UserSettings.shared.inviteCreditsLastGiven.timeIntervalSinceNow < -172800 {
-                    // 2 days for next credit
-                    UserSettings.shared.inviteCredits += 1
-                    UserSettings.shared.inviteCreditsLastGiven = .now
-                } else if UserSettings.shared.inviteCreditsLastGiven.timeIntervalSinceNow < -604800 {
-                    // 7 days for next credit
-                    UserSettings.shared.inviteCredits += 1
-                    UserSettings.shared.inviteCreditsLastGiven = .now
-                }
-            }
-            
-            self.userInviteLinks = data
-            Task {
-                await assignReferredUsers()
-            }
-        } catch {
-            presentErrorToast(error, silent: true)
-        }
-    }
-    
-    /// Also changes UserSettings.shared.inviteCredits
-    private func addInviteLink(_ link: URL) async {
-        let context = UserDataStack.shared.viewContext
-        let inviteLink = InviteLinkEntity(context: context)
-        inviteLink.link = link
-        inviteLink.createdAt = .now
-        
-        UserSettings.shared.inviteCredits -= 1
-        
-        await saveCoreData()
-    }
-    
-    func addInviteLink(referredUser: String) async {
-        let context = UserDataStack.shared.viewContext
-        let inviteLink = InviteLinkEntity(context: context)
-        inviteLink.referredUser = referredUser
-        inviteLink.createdAt = .now
-        inviteLink.confirmedAt = .now
-        
-        await saveCoreData()
-    }
-    
-    private func saveCoreData() async {
-        do {
-            try await UserDataStack.shared.saveContext()
-        } catch {
-            presentErrorToast(error, silent: true)
-        }
     }
 }

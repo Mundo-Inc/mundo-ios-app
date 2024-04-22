@@ -98,14 +98,11 @@ class ConversationVM: ObservableObject {
         ObservableResultPublisher(with: request, context: coreDataDelegate.viewContext)
             .receive(on: DispatchQueue.main)
             .sink(
-                receiveCompletion: {
-                    print("Completion from fetch messages - \($0)")
-                },
+                receiveCompletion: { _ in },
                 receiveValue: { [weak self] items in
-                    DispatchQueue.main.async {
-                        self?.messages = items
-                    }
-                })
+                    self?.messages = items
+                }
+            )
             .store(in: &cancellables)
     }
     
