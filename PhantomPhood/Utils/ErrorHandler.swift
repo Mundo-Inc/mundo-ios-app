@@ -25,7 +25,7 @@ func presentErrorToast(_ error: Error, title: String? = nil, debug: String? = ni
  
 #if DEBUG
     if let debug {
-        print(debug)
+        print(debug, error)
     } else if error.localizedDescription != "cancelled" {
         print(error)
     }

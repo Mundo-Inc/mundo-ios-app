@@ -24,7 +24,7 @@ final class InboxVM: ObservableObject {
                 self.usersDict.updateValue(user, forKey: user.id)
             }
         } catch {
-            presentErrorToast(error, debug: "Error fetching user info")
+            presentErrorToast(error, debug: "Error fetching user info \(id)")
         }
     }
     

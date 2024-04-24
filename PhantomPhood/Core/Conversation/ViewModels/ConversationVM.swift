@@ -13,7 +13,7 @@ class ConversationVM: ObservableObject {
     @Published var messages = [PersistentMessageDataItem]()
     
     @Published var messageText = ""
-    @Published var user: UserEssentials? = nil
+    @Published var usersDict: [String:UserEssentials] = [:]
     @Published var loadingSections = Set<LoadingSection>()
     
     enum LoadingSection: Hashable {
@@ -26,6 +26,9 @@ class ConversationVM: ObservableObject {
     private var cancellables: Set<AnyCancellable> = []
     
     let conversationSid: String
+    
+    @Published var friendlyName: String? = nil
+    @Published var participants: [TCHParticipant] = []
     private var conversation: TCHConversation? = nil
     
     init(sid: String) {
@@ -52,6 +55,10 @@ class ConversationVM: ObservableObject {
     private func getTargetUserInfo() async {
         guard let conversation = try? await getConversation() else { return }
         
+        DispatchQueue.main.async {
+            self.friendlyName = conversation.friendlyName
+        }
+        
         if let currentUser = Authentication.shared.currentUser {
             let participants = conversation.participants().filter({ p in
                 if let identity = p.identity {
@@ -60,17 +67,25 @@ class ConversationVM: ObservableObject {
                 return false
             })
             
-            if let first = participants.first, let userId = first.identity {
-                do {
-                    if let user = try await userProfileDM.getUserEssentialsAndUpdate(id: userId, returnIfFound: true, coreDataCompletion: { user in
-                        DispatchQueue.main.async {
-                            self.user = user
+            DispatchQueue.main.async {
+                self.participants = participants
+            }
+            
+            for p in participants {
+                if let userId = p.identity {
+                    do {
+                        if let user = try await userProfileDM.getUserEssentialsAndUpdate(id: userId, returnIfFound: true, coreDataCompletion: { user in
+                            DispatchQueue.main.async {
+                                self.usersDict[user.id] = user
+                            }
+                        }) {
+                            DispatchQueue.main.async {
+                                self.usersDict[user.id] = user
+                            }
                         }
-                    }) {
-                        self.user = user
+                    } catch {
+                        presentErrorToast(error, debug: "Error fetching user info")
                     }
-                } catch {
-                    presentErrorToast(error, debug: "Error fetching user info")
                 }
             }
         }

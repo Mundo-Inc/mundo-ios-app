@@ -16,6 +16,7 @@
         <attribute name="muted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="participantsCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sid" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="uniqueName" optional="YES" attributeType="String"/>
         <attribute name="unreadMessagesCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <uniquenessConstraints>

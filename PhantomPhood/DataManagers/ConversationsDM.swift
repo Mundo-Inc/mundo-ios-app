@@ -38,6 +38,19 @@ final class ConversationsDM {
         return data.data
     }
     
+    func removeParticipantFromConversation(userId: String, from sid: String) async throws {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        struct Body: Encodable {
+            let user: String
+        }
+        
+        let body = try apiManager.createRequestBody(Body(user: userId))
+        try await apiManager.requestNoContent("/conversations/\(sid)/participant", method: .delete, body: body, token: token)
+    }
+    
     // MARK: Structs
     
     struct CreateConversationResponse: Decodable {

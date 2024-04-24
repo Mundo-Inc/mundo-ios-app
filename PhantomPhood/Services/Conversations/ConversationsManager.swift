@@ -12,6 +12,8 @@ import TwilioConversationsClient
 final class ConversationsManager: NSObject, ObservableObject {
     static let shared = ConversationsManager()
     
+    private let conversationsDM = ConversationsDM()
+    
     @Published var conversations = [PersistentConversationDataItem]()
     @Published var isConversationsLoading = false
     @Published var isConversationsRefreshing = false
@@ -19,7 +21,7 @@ final class ConversationsManager: NSObject, ObservableObject {
     
     @Published var conversationsError: TCHError? = nil
     
-    private var clientState: TCHClientConnectionState = .unknown
+    @Published var clientState: TCHClientConnectionState = .unknown
     private(set) var client: ConversationsClientWrapper = ConversationsClientWrapper()
     
     var coreDataManager = ConversationsCoreDataManager()
@@ -40,12 +42,12 @@ final class ConversationsManager: NSObject, ObservableObject {
         } else {
             isConversationsLoading = true
         }
-        print("Setting up Core Data update subscription for Conversations")
         
         let request = PersistentConversationDataItem.fetchRequest()
         request.sortDescriptors = [
             NSSortDescriptor(key: "lastMessageDate", ascending: false),
-            NSSortDescriptor(key: "friendlyName", ascending: true)]
+            NSSortDescriptor(key: "friendlyName", ascending: true)
+        ]
         
         ObservableResultPublisher(with: request, context: coreDataManager.viewContext)
             .receive(on: DispatchQueue.main)
@@ -159,15 +161,12 @@ final class ConversationsManager: NSObject, ObservableObject {
         }
     }
     
-    func leave(conversation item: PersistentConversationDataItem) async {
-        if let conversationSid = item.sid, let conversation = try? await retrieveConversation(conversationSid) {
-            let result = await conversation.leave()
-            if result.isSuccessful {
-                self.conversationEventPublisher.send(.leftConversation)
-            } else {
-                print("Failed to leave conversation")
-            }
-        }
+    func leave(conversation item: PersistentConversationDataItem) async throws {
+        guard let conversationSid = item.sid, let currentUser = Authentication.shared.currentUser else { return }
+        
+        try await conversationsDM.removeParticipantFromConversation(userId: currentUser.id, from: conversationSid)
+        
+        self.conversationEventPublisher.send(.leftConversation)
     }
     
     // MARK: Typing
@@ -205,7 +204,9 @@ extension ConversationsManager: TwilioConversationsClientDelegate {
     // MARK: Client changes
     
     func conversationsClient(_ client: TwilioConversationsClient, connectionStateUpdated state: TCHClientConnectionState) {
-        self.clientState = state
+        DispatchQueue.main.async {
+            self.clientState = state
+        }
     }
     
     func conversationsClientTokenWillExpire(_ client: TwilioConversationsClient) {
@@ -234,12 +235,10 @@ extension ConversationsManager: TwilioConversationsClientDelegate {
     // MARK: Conversation changes
     
     func conversationsClient(_ client: TwilioConversationsClient, conversationAdded conversation: TCHConversation) {
-        print("Conversation added: \(String(describing: conversation.sid)) w/ name \(String(describing: conversation.friendlyName))")
         conversation.delegate = self
         if let _ = PersistentConversationDataItem.from(conversation: conversation, inContext: coreDataManager.viewContext) {
             Task {
                 try await coreDataManager.saveContext()
-                print("Conversation upserted")
             }
         }
     }

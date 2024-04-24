@@ -101,7 +101,6 @@ struct InboxView: View {
                 NotificationsView()
                     .tag(InboxVM.Tab.notifications)
             }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .ignoresSafeArea(edges: .bottom)
         }
         .environmentObject(vm)

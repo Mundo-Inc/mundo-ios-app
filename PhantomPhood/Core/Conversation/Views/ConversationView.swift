@@ -334,23 +334,65 @@ struct ConversationView: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                NavigationLink(value: AppRoute.userProfile(userId: vm.user?.id ?? "-")) {
-                    VStack {
-                        Text(vm.user?.name ?? "Name")
-                            .font(.custom(style: .subheadline))
-                        
-                        Text("@\(vm.user?.username ?? "username")")
-                            .font(.custom(style: .caption))
-                            .foregroundStyle(.secondary)
+                if vm.participants.count > 1 {
+                    Text(vm.friendlyName ?? "Name")
+                        .fontWeight(.semibold)
+                        .font(.custom(style: .subheadline))
+                } else {
+                    let user = vm.usersDict.first?.value
+                    
+                    NavigationLink(value: AppRoute.userProfile(userId: user?.id ?? "-")) {
+                        VStack {
+                            Text(user?.name ?? "Name")
+                                .font(.custom(style: .subheadline))
+                            
+                            Text("@\(user?.username ?? "username")")
+                                .font(.custom(style: .caption))
+                                .foregroundStyle(.secondary)
+                        }
+                        .redacted(reason: vm.usersDict.isEmpty ? .placeholder : [])
                     }
-                    .redacted(reason: vm.user == nil ? .placeholder : [])
+                    .foregroundStyle(.primary)
                 }
-                .foregroundStyle(.primary)
             }
             
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink(value: AppRoute.userProfile(userId: vm.user?.id ?? "-")) {
-                    ProfileImage(vm.user?.profileImage, size: 36)
+                if vm.participants.count > 3 {
+                    HStack(spacing: -20) {
+                        ForEach(Array(vm.usersDict.keys.prefix(3)), id: \.self) { key in
+                            if let user = vm.usersDict[key] {
+                                NavigationLink(value: AppRoute.userProfile(userId: user.id)) {
+                                    ProfileImage(user.profileImage, size: 36)
+                                }
+                                .foregroundStyle(.primary)
+                            }
+                        }
+                    }
+                    .overlay(alignment: .topTrailing) {
+                        Text("+\(vm.participants.count - 3)")
+                            .font(.custom(style: .caption))
+                            .foregroundStyle(.secondary)
+                            .padding(.all, 2)
+                            .background(Color.themePrimary, in: Circle())
+                    }
+                } else if vm.participants.count > 1 {
+                    HStack(spacing: -20) {
+                        ForEach(Array(vm.usersDict.keys), id: \.self) { key in
+                            if let user = vm.usersDict[key] {
+                                NavigationLink(value: AppRoute.userProfile(userId: user.id)) {
+                                    ProfileImage(user.profileImage, size: 36)
+                                }
+                                .foregroundStyle(.primary)
+                            }
+                        }
+                    }
+                } else if let user = vm.usersDict.first?.value {
+                    NavigationLink(value: AppRoute.userProfile(userId: user.id)) {
+                        ProfileImage(user.profileImage, size: 36)
+                    }
+                    .foregroundStyle(.primary)
+                } else {
+                    ProfileImage("", size: 36)
                 }
             }
         }

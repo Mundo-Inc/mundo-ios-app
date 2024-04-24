@@ -138,11 +138,10 @@ final class Authentication: ObservableObject {
         Auth.auth().addStateDidChangeListener { [weak self] (_, user) in
             DispatchQueue.main.async {
                 self?.userSession = user
+                if user == nil {
+                    self?.currentUser = nil
+                }
             }
-        }
-        
-        DispatchQueue.main.async {
-            self.userSession = Auth.auth().currentUser
         }
         
         Task {
@@ -298,11 +297,6 @@ final class Authentication: ObservableObject {
         do {
             try Auth.auth().signOut()
             
-            DispatchQueue.main.async {
-                self.currentUser = nil
-                self.userSession = nil
-            }
-            
             DataStack.shared.deleteAll { status in
                 print("Deleting CoreData info status for DataStack: \(status)")
             }
@@ -315,6 +309,7 @@ final class Authentication: ObservableObject {
             ConversationsManager.shared.logOutHandler()
             
             UserSettings.shared.logoutCleanup()
+            
             appData.reset()
         } catch {
             print("DEBUG: Failed to sign out | Error: \(error.localizedDescription)")

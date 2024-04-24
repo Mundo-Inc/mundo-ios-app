@@ -10,9 +10,9 @@ import TwilioConversationsClient
 
 extension PersistentConversationDataItem {
 
-    var title: String {
+    var name: String {
         get {
-            self.friendlyName ?? self.uniqueName ?? self.sid ?? "<unknown>"
+            self.title ?? self.friendlyName ?? self.uniqueName ?? self.sid ?? "<unknown>"
         }
     }
     
@@ -59,7 +59,17 @@ extension PersistentConversationDataItem {
     }
     
     static let formatter = RelativeDateTimeFormatter()
-
+    
+    public var targetUserId: String? {
+        get {
+            if self.participantsCount == 2,
+               let authId = Authentication.shared.currentUser?.id {
+                return self.friendlyName?.split(separator: "_").map({ String($0) }).filter({ $0 != authId && $0.count == 24 }).first
+            }
+            return nil
+        }
+    }
+    
     public var lastMessageDateFormatted: String {
         get {
             guard let date = self.lastMessageDate else {
@@ -85,30 +95,35 @@ extension PersistentConversationDataItem {
         
         // update/import participants associated with this conversation
         
+        var conversationParticipants = Set<PersistentParticipantDataItem>()
+        
         conversation.participants().forEach { participant in
             if let item = PersistentParticipantDataItem.from(participant: participant, inConversation: conversation, inContext: context) {
                 item.update(with: participant, withConversationSid: conversationSid, inContext: context)
+                conversationParticipants.insert(item)
             } else {
                 context.performAndWait {
-                    let item = PersistentParticipantDataItem.from(participant: participant, inConversation: conversation, inContext: context)
-                    item?.update(with: participant, withConversationSid: conversationSid, inContext: context)
+                    if let item = PersistentParticipantDataItem.from(participant: participant, inConversation: conversation, inContext: context) {
+                        item.update(with: participant, withConversationSid: conversationSid, inContext: context)
+                        conversationParticipants.insert(item)
+                    }
                 }
             }
         }
         
         if let item = PersistentConversationDataItem.from(sid: conversationSid, inContext: context) {
-            item.update(with: conversation, inContext: context)
+            item.update(with: conversation, participants: conversationParticipants, inContext: context)
             return item
         } else {
             return context.performAndWait {
                 let item = PersistentConversationDataItem(context: context)
-                item.update(with: conversation, inContext: context)
+                item.update(with: conversation, participants: conversationParticipants, inContext: context)
                 return item
             }
         }
     }
 
-    func update(with conversation: TCHConversation, inContext context: NSManagedObjectContext) {
+    func update(with conversation: TCHConversation, participants: Set<PersistentParticipantDataItem>, inContext context: NSManagedObjectContext) {
         context.perform {
             self.sid = conversation.sid
             self.attributes = conversation.attributes()?.string
@@ -137,6 +152,25 @@ extension PersistentConversationDataItem {
         
 
         DispatchQueue.global(qos: .background).async {
+            if participants.count == 2, let currentUserId = Authentication.shared.currentUser?.id, let userId = participants.first(where: { $0.getDisplayName() != currentUserId })?.identity {
+                let userProfileDM = UserProfileDM()
+                Task {
+                    if let user = try? await userProfileDM.getUserEssentialsAndUpdate(id: userId, returnIfFound: true, coreDataCompletion: { user in
+                        context.perform {
+                            self.title = user.name
+                        }
+                    }) {
+                        await context.perform {
+                            self.title = user.name
+                        }
+                    }
+                }
+            } else {
+                context.perform {
+                    self.title = self.friendlyName
+                }
+            }
+            
             conversation.getParticipantsCount { result, count in
                 guard result.isSuccessful else {
                     return
