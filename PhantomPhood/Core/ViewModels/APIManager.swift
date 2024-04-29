@@ -9,7 +9,7 @@ import Foundation
 
 final class APIManager {
     static let shared = APIManager()
-    static let baseURL = "https://phantomphood.ai/api/v1"
+    static let baseURL = Bundle.main.object(forInfoDictionaryKey: "APIBaseURL") as! String
     private let session: URLSession
     
     private init() {

@@ -107,21 +107,6 @@ final class InviteFriendsVM: ObservableObject {
     func fetchReferredUsers() async {
         do {
             let resData = try await userProfileDM.getReferredUsers()
-            
-            resData.data.forEach { user in
-                let referredUserEntity = ReferredUserEntity(context: coreDataManager.viewContext)
-                referredUserEntity.id = user.id
-                referredUserEntity.name = user.name
-                referredUserEntity.username = user.username
-                referredUserEntity.verified = user.verified
-                referredUserEntity.profileImage = user.profileImage?.absoluteString
-                referredUserEntity.level = Int16(user.progress.level)
-                referredUserEntity.xp = Int16(user.progress.xp)
-                referredUserEntity.createdAt = user.createdAt
-                referredUserEntity.savedAt = .now
-            }
-            
-            try? await coreDataManager.saveContext()
         } catch {
             presentErrorToast(error, silent: true)
         }

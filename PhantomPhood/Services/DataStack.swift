@@ -108,39 +108,41 @@ final class DataStack {
         }
     }
     
-    func createOrUpdateUser(userEssentials: UserEssentials) {
-        do {
-            let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-            request.predicate = NSPredicate(format: "id == %@", userEssentials.id)
-            request.fetchLimit = 1
-            
-            if let user = try self.viewContext.fetch(request).first {
-                user.name = userEssentials.name
-                user.username = userEssentials.username
-                user.verified = userEssentials.verified
-                user.profileImage = userEssentials.profileImage?.absoluteString
-                user.level = Int16(userEssentials.progress.level)
-                user.xp = Int16(userEssentials.progress.xp)
-                user.savedAt = Date()
+    func saveUser(userEssentials: UserEssentials) {
+        viewContext.perform {
+            do {
+                let user = try self.fetchUser(withID: userEssentials.id) ?? UserEntity(context: self.viewContext)
                 
-                if user.hasChanges {
+                self.updateUserEntity(user, with: userEssentials)
+                if self.viewContext.hasChanges {
                     try self.viewContext.save()
                 }
-            } else {
-                let user = UserEntity(context: self.viewContext)
-                user.id = userEssentials.id
-                user.name = userEssentials.name
-                user.username = userEssentials.username
-                user.verified = userEssentials.verified
-                user.profileImage = userEssentials.profileImage?.absoluteString
-                user.level = Int16(userEssentials.progress.level)
-                user.xp = Int16(userEssentials.progress.xp)
-                user.savedAt = Date()
-                
-                try self.viewContext.save()
+            } catch {
+                presentErrorToast(error, debug: "Error saving user info to CoreData", silent: true)
             }
-        } catch {
-            presentErrorToast(error, debug: "Error saving user infor to CoreData", silent: true)
+        }
+    }
+    
+    func saveUsers(userEssentialsList: [UserEssentials]) {
+        let ids: Set<String> = Set(userEssentialsList.compactMap { $0.id })
+
+        viewContext.perform {
+            let existingUsers = self.fetchUsers(withIDs: ids)
+
+            let existingUsersDict = Dictionary(uniqueKeysWithValues: existingUsers.compactMap { ($0.id, $0) })
+
+            for essentials in userEssentialsList {
+                let user = existingUsersDict[essentials.id] ?? UserEntity(context: self.viewContext)
+                self.updateUserEntity(user, with: essentials)
+            }
+            
+            if self.viewContext.hasChanges {
+                do {
+                    try self.viewContext.save()
+                } catch {
+                    presentErrorToast(error, debug: "Error saving users info to CoreData", silent: false)
+                }
+            }
         }
     }
     
@@ -152,5 +154,36 @@ final class DataStack {
                 try self.viewContext.save()
             }
         }
+    }
+    
+    // MARK: Private methods
+    
+    private func fetchUser(withID id: String) throws -> UserEntity? {
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", id)
+        request.fetchLimit = 1
+        return try self.viewContext.fetch(request).first
+    }
+    
+    private func fetchUsers(withIDs ids: Set<String>) -> [UserEntity] {
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id IN %@", ids)
+        do {
+            return try self.viewContext.fetch(request)
+        } catch {
+            presentErrorToast(error, debug: "Failed to fetch users from CoreData", silent: true)
+            return []
+        }
+    }
+    
+    private func updateUserEntity(_ user: UserEntity, with essentials: UserEssentials) {
+        user.id = essentials.id
+        user.name = essentials.name
+        user.username = essentials.username
+        user.verified = essentials.verified
+        user.profileImage = essentials.profileImage?.absoluteString
+        user.level = Int16(essentials.progress.level)
+        user.xp = Int16(essentials.progress.xp)
+        user.savedAt = Date()
     }
 }

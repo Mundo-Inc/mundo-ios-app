@@ -9,12 +9,15 @@ import Firebase
 import FirebaseCore
 import GoogleSignIn
 import BranchSDK
+import StripePaymentSheet
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     let gcmMessageIDKey = "gcm.message_id"
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
+        
+        StripeAPI.defaultPublishableKey = (Bundle.main.object(forInfoDictionaryKey: "StripeDefaultPublishableKey") as! String)
         
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
             guard let data = params as? [String: AnyObject] else { return }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-func presentErrorToast(_ error: Error, title: String? = nil, debug: String? = nil, silent: Bool = false) {
+func presentErrorToast(_ error: Error, title: String? = nil, debug: String? = nil, silent: Bool = false, function: String? = nil) {
     if !silent {
         if let apiError = error as? APIManager.APIError {
             switch apiError {
@@ -25,7 +25,7 @@ func presentErrorToast(_ error: Error, title: String? = nil, debug: String? = ni
  
 #if DEBUG
     if let debug {
-        print(debug, error)
+        print(debug, error, function ?? "-")
     } else if error.localizedDescription != "cancelled" {
         print(error)
     }

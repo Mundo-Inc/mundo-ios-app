@@ -26,10 +26,8 @@ struct ContentView: View {
         .environmentObject(alertManager)
         .environmentObject(actionManager)
         .alert("Confirmation", isPresented: Binding(optionalValue: $alertManager.value), presenting: alertManager.value) { item in
-            Button {
-                item.callback()
-            } label: {
-                Text("Yes")
+            Button(role: item.role, action: item.callback) {
+                Text(item.confirmationText)
             }
             
             Button("Cancel", role: .cancel) {

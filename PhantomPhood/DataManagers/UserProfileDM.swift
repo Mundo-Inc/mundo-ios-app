@@ -17,6 +17,9 @@ final class UserProfileDM {
     func getUserEssentials(id: String) async throws -> UserEssentials {
         let data: APIResponse<UserEssentials> = try await apiManager.requestData("/users/\(id)?view=basic", method: .get)
         
+        // update CoreData
+        self.dataManager.saveUser(userEssentials: data.data)
+        
         return data.data
     }
     
@@ -41,11 +44,9 @@ final class UserProfileDM {
         }
         
         let data: APIResponse<UserEssentials> = try await apiManager.requestData("/users/\(id)?view=basic", method: .get)
-
-        DispatchQueue.main.async {
-            // update CoreData
-            self.dataManager.createOrUpdateUser(userEssentials: data.data)
-        }
+        
+        // update CoreData
+        self.dataManager.saveUser(userEssentials: data.data)
         
         return data.data
     }
@@ -57,6 +58,9 @@ final class UserProfileDM {
         
         let data: APIResponse<UserDetail> = try await apiManager.requestData("/users/\(id)", method: .get, token: token)
         
+        // update CoreData
+        self.dataManager.saveUser(userEssentials: UserEssentials(userDetail: data.data))
+        
         return data.data
     }
     
@@ -66,6 +70,9 @@ final class UserProfileDM {
         }
         
         let data: APIResponse<UserDetail> = try await apiManager.requestData("/users/@\(username)", method: .get, token: token)
+        
+        // update CoreData
+        self.dataManager.saveUser(userEssentials: UserEssentials(userDetail: data.data))
         
         return data.data
     }
@@ -109,6 +116,8 @@ final class UserProfileDM {
         
         let data: APIResponseWithPagination<[UserEssentialsWithCreationDate]> = try await apiManager.requestData("/users/latestReferrals", method: .get, token: token)
         
+        UserDataStack.shared.saveUsers(userEssentialsList: data.data)
+        
         return data
     }
     
@@ -136,7 +145,7 @@ final class UserProfileDM {
             verified = try container.decode(Bool.self, forKey: .verified)
             progress = try container.decode(UserEssentials.CompactUserProgress.self, forKey: .progress)
             createdAt = try container.decode(Date.self, forKey: .createdAt)
-
+            
             if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
                 profileImage = URL(string: profileImageString)
             } else {

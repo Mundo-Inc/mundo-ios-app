@@ -399,7 +399,9 @@ extension ConversationsManager: TCHConversationDelegate {
     }
     
     func logOutHandler() {
-        self.myUser = nil
+        DispatchQueue.main.async {
+            self.myUser = nil
+        }
         self.client.shutdown()
     }
 }

@@ -185,6 +185,7 @@ struct EventView: View {
             ExpandedMedia()
         }
         .background(Color.themeBG.ignoresSafeArea())
+        .navigationBarTitleDisplayMode(.inline)
     }
     
     @ViewBuilder

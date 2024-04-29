@@ -47,7 +47,7 @@ struct UserProfileListsView: View {
             })
             
             
-            if vm.isLoading {
+            if vm.loadingSections.contains(.fetchLists) {
                 ListItemPlaceholder()
             } else {
                 if vm.lists.isEmpty {

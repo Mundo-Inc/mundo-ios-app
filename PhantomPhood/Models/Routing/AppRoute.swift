@@ -23,6 +23,7 @@ enum AppRoute: Hashable {
     
     // My Profile
     case settings
+    case paymentsSetting
     case myConnections(initTab: UserConnectionsTab)
     
     // Place

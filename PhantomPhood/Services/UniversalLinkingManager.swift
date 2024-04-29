@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import StripePaymentSheet
 
 @MainActor
 final class UniversalLinkingManager {
@@ -149,35 +150,39 @@ final class UniversalLinkingManager {
     /// Handles incoming URL
     /// - Note: e.g. `phantom://tab=home/nav=place/id=645c1d1ab41f8e12a0d166bc`
     func handleIncomingURL(_ url: URL) {
-        var pathComponents = url.pathComponents
+        let stripeHandled = StripeAPI.handleURLCallback(with: url)
         
-        if let first = pathComponents.first, first == "/" {
+        if !stripeHandled {
+            var pathComponents = url.pathComponents
+            
+            if let first = pathComponents.first, first == "/" {
+                pathComponents.removeFirst()
+            }
+            
+            guard
+                let startScheme = pathComponents.first,
+                let item = UniversalLinkingManager.routingSchemes[startScheme]
+            else { return }
+            
             pathComponents.removeFirst()
-        }
-        
-        guard
-            let startScheme = pathComponents.first,
-            let item = UniversalLinkingManager.routingSchemes[startScheme]
-        else { return }
-        
-        pathComponents.removeFirst()
-        
-        do {
-            try item.validate(pathComponents)
-        } catch {
-            return
-        }
-        
-        switch item.router {
-        case .app:
-            guard let route = try? item.getRoute(pathComponents) else { return }
-            /// return if not signed in
-            guard auth.userSession != nil else { return }
-            appData.goTo(route)
-        case .auth:
-            guard let route = try? item.getAuthRoute(pathComponents), auth.userSession == nil else { return }
-            if appData.authNavStack.isEmpty {
-                appData.authNavStack.append(route)
+            
+            do {
+                try item.validate(pathComponents)
+            } catch {
+                return
+            }
+            
+            switch item.router {
+            case .app:
+                guard let route = try? item.getRoute(pathComponents) else { return }
+                /// return if not signed in
+                guard auth.userSession != nil else { return }
+                appData.goTo(route)
+            case .auth:
+                guard let route = try? item.getAuthRoute(pathComponents), auth.userSession == nil else { return }
+                if appData.authNavStack.isEmpty {
+                    appData.authNavStack.append(route)
+                }
             }
         }
     }

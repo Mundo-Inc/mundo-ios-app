@@ -47,6 +47,9 @@
 		0B1610DB2B63263300DCAFA5 /* PlaceReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1610DA2B63263300DCAFA5 /* PlaceReview.swift */; };
 		0B1610DD2B63265100DCAFA5 /* FeedReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1610DC2B63265100DCAFA5 /* FeedReview.swift */; };
 		0B1610DF2B63267400DCAFA5 /* ReviewScores.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1610DE2B63267400DCAFA5 /* ReviewScores.swift */; };
+		0B1E01572BDBEA9E00FEE5C3 /* TransactionsDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1E01562BDBEA9E00FEE5C3 /* TransactionsDM.swift */; };
+		0B1E015B2BDBF27200FEE5C3 /* SettingsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1E015A2BDBF27200FEE5C3 /* SettingsVM.swift */; };
+		0B1E015F2BDBF35B00FEE5C3 /* AccountDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1E015E2BDBF35B00FEE5C3 /* AccountDM.swift */; };
 		0B1E79072B86AB1A00549D71 /* PlaceReviewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1E79062B86AB1A00549D71 /* PlaceReviewItem.swift */; };
 		0B1E79092B86C1D800549D71 /* GoogleReviewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1E79082B86C1D800549D71 /* GoogleReviewItem.swift */; };
 		0B1E790B2B86C1E100549D71 /* YelpReviewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1E790A2B86C1E100549D71 /* YelpReviewItem.swift */; };
@@ -213,6 +216,8 @@
 		0B547D822B3F33BA002C6336 /* MyProfileListsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B547D812B3F33BA002C6336 /* MyProfileListsVM.swift */; };
 		0B547D852B3F3D3B002C6336 /* CreateNewListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B547D842B3F3D3B002C6336 /* CreateNewListVM.swift */; };
 		0B547D872B3F3D52002C6336 /* CreateNewListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B547D862B3F3D52002C6336 /* CreateNewListView.swift */; };
+		0B5BD1EE2BD95FCE00DDCD28 /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = 0B5BD1ED2BD95FCE00DDCD28 /* StripeApplePay */; };
+		0B5BD1F02BD95FCE00DDCD28 /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 0B5BD1EF2BD95FCE00DDCD28 /* StripePaymentSheet */; };
 		0B5EB1C02B56DB6A00497847 /* CustomMapMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5EB1BF2B56DB6A00497847 /* CustomMapMarker.swift */; };
 		0B62BE902B69A9A5004A3CFE /* HomeForYouView17.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B62BE8F2B69A9A5004A3CFE /* HomeForYouView17.swift */; };
 		0B6495532AB0A51F000E57AF /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6495522AB0A51F000E57AF /* Validator.swift */; };
@@ -305,6 +310,9 @@
 		0BA37D6D2BD2A43B001E9D6C /* InviteFriendsBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA37D6C2BD2A43B001E9D6C /* InviteFriendsBanner.swift */; };
 		0BA43C232B516DCA00F0DDBF /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */; };
 		0BA43C252B517F3100F0DDBF /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA43C242B517F3100F0DDBF /* UserSettings.swift */; };
+		0BA5BDAA2BDFADDF00B4D35E /* PaymentsSettingVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA5BDA92BDFADDF00B4D35E /* PaymentsSettingVM.swift */; };
+		0BA5BDAC2BDFADF300B4D35E /* PaymentsSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA5BDAB2BDFADF300B4D35E /* PaymentsSettingView.swift */; };
+		0BA5BDAE2BDFB7C700B4D35E /* LoadingSections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA5BDAD2BDFB7C700B4D35E /* LoadingSections.swift */; };
 		0BAAC8032B98CEFE00FFFC32 /* GoogleReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAAC8022B98CEFE00FFFC32 /* GoogleReview.swift */; };
 		0BAAC8052B98CF0600FFFC32 /* YelpReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAAC8042B98CF0600FFFC32 /* YelpReview.swift */; };
 		0BABE9D62B59822B003EF70B /* RewardsHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BABE9D52B59822B003EF70B /* RewardsHubView.swift */; };
@@ -470,6 +478,9 @@
 		0B1610DA2B63263300DCAFA5 /* PlaceReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceReview.swift; sourceTree = "<group>"; };
 		0B1610DC2B63265100DCAFA5 /* FeedReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedReview.swift; sourceTree = "<group>"; };
 		0B1610DE2B63267400DCAFA5 /* ReviewScores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewScores.swift; sourceTree = "<group>"; };
+		0B1E01562BDBEA9E00FEE5C3 /* TransactionsDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsDM.swift; sourceTree = "<group>"; };
+		0B1E015A2BDBF27200FEE5C3 /* SettingsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVM.swift; sourceTree = "<group>"; };
+		0B1E015E2BDBF35B00FEE5C3 /* AccountDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDM.swift; sourceTree = "<group>"; };
 		0B1E79062B86AB1A00549D71 /* PlaceReviewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceReviewItem.swift; sourceTree = "<group>"; };
 		0B1E79082B86C1D800549D71 /* GoogleReviewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleReviewItem.swift; sourceTree = "<group>"; };
 		0B1E790A2B86C1E100549D71 /* YelpReviewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpReviewItem.swift; sourceTree = "<group>"; };
@@ -717,6 +728,11 @@
 		0BA37D6C2BD2A43B001E9D6C /* InviteFriendsBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteFriendsBanner.swift; sourceTree = "<group>"; };
 		0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		0BA43C242B517F3100F0DDBF /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		0BA5BDA92BDFADDF00B4D35E /* PaymentsSettingVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsSettingVM.swift; sourceTree = "<group>"; };
+		0BA5BDAB2BDFADF300B4D35E /* PaymentsSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsSettingView.swift; sourceTree = "<group>"; };
+		0BA5BDAD2BDFB7C700B4D35E /* LoadingSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingSections.swift; sourceTree = "<group>"; };
+		0BA5BDB22BDFE12C00B4D35E /* Environment.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Environment.xcconfig; sourceTree = "<group>"; };
+		0BA5BDB52BDFE30500B4D35E /* DevEnvironment.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DevEnvironment.xcconfig; sourceTree = "<group>"; };
 		0BAAC8022B98CEFE00FFFC32 /* GoogleReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleReview.swift; sourceTree = "<group>"; };
 		0BAAC8042B98CF0600FFFC32 /* YelpReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpReview.swift; sourceTree = "<group>"; };
 		0BABE9D52B59822B003EF70B /* RewardsHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsHubView.swift; sourceTree = "<group>"; };
@@ -855,6 +871,7 @@
 				0B83B7952B09CD8200D81CE8 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				0B77EA532AAF8CB800C8DF87 /* Lottie in Frameworks */,
 				0B35B7A52B0D095A00822BA6 /* GoogleSignIn in Frameworks */,
+				0B5BD1EE2BD95FCE00DDCD28 /* StripeApplePay in Frameworks */,
 				0B83B79B2B09CD8200D81CE8 /* FirebaseInstallations in Frameworks */,
 				0B4016702B045D56000F1263 /* SwiftUIPager in Frameworks */,
 				0B83B7992B09CD8200D81CE8 /* FirebaseAuth in Frameworks */,
@@ -869,6 +886,7 @@
 				0BECB8E52B73F77C007B51A1 /* StoreKit.framework in Frameworks */,
 				0BECB8E32B73F772007B51A1 /* AdSupport.framework in Frameworks */,
 				0BECB8E12B73F76A007B51A1 /* AdServices.framework in Frameworks */,
+				0B5BD1F02BD95FCE00DDCD28 /* StripePaymentSheet in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1280,6 +1298,7 @@
 			isa = PBXGroup;
 			children = (
 				0BF81DC32ABE369500B8892E /* CustomFonts.swift */,
+				0BA5BDAD2BDFB7C700B4D35E /* LoadingSections.swift */,
 				0BC2E3112B2207820002649D /* ImageHelper.swift */,
 				0B2694B52B8E90C4004FA5C8 /* ImageSaver.swift */,
 				0BE1E17D2AD5B84A00645AA0 /* Location.swift */,
@@ -1332,6 +1351,7 @@
 				0B695D762AF131DD00C11870 /* MyConnections */,
 				0B0183542AB3BEFB008E887F /* MyProfile */,
 				0B1610BE2B62A10300DCAFA5 /* NewCheckin */,
+				0BA5BDB72BDFED1700B4D35E /* PaymentsSetting */,
 				0B0183612AB3C0B1008E887F /* Place */,
 				0B9C02672B45A1D7000C4774 /* PlacesList */,
 				0B27AE1D2B75784300C97559 /* Report */,
@@ -1375,17 +1395,10 @@
 		0B64C4C62AB4BDB4009F0D43 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				0B64C4C72AB4BDBB009F0D43 /* Views */,
+				0B64C4C82AB4BDC6009F0D43 /* SettingsView.swift */,
+				0B1E015A2BDBF27200FEE5C3 /* SettingsVM.swift */,
 			);
 			path = Settings;
-			sourceTree = "<group>";
-		};
-		0B64C4C72AB4BDBB009F0D43 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				0B64C4C82AB4BDC6009F0D43 /* SettingsView.swift */,
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 		0B695D762AF131DD00C11870 /* MyConnections */ = {
@@ -1459,6 +1472,8 @@
 				0B77EA3C2AAF855500C8DF87 /* ContentView.swift */,
 				0B77EA3A2AAF855500C8DF87 /* PhantomPhoodApp.swift */,
 				0B77EA3E2AAF855600C8DF87 /* Assets.xcassets */,
+				0BA5BDB52BDFE30500B4D35E /* DevEnvironment.xcconfig */,
+				0BA5BDB22BDFE12C00B4D35E /* Environment.xcconfig */,
 				0B6495582AB1FD04000E57AF /* Core */,
 				0B9950BD2BBED5640060B6AF /* CoreDataModels */,
 				0BCD57E32B28B35700A1C914 /* DataManagers */,
@@ -1565,8 +1580,8 @@
 		0B85AEFE2BD3E89B001E95A7 /* Root */ = {
 			isa = PBXGroup;
 			children = (
-				0B9844882BB8227D00390579 /* RootView.swift */,
 				0B85AEFF2BD3E8C8001E95A7 /* InviteFriendsVM.swift */,
+				0B9844882BB8227D00390579 /* RootView.swift */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -1709,6 +1724,15 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		0BA5BDB72BDFED1700B4D35E /* PaymentsSetting */ = {
+			isa = PBXGroup;
+			children = (
+				0BA5BDA92BDFADDF00B4D35E /* PaymentsSettingVM.swift */,
+				0BA5BDAB2BDFADF300B4D35E /* PaymentsSettingView.swift */,
+			);
+			path = PaymentsSetting;
+			sourceTree = "<group>";
+		};
 		0BABE9D02B5981F6003EF70B /* RewardsHub */ = {
 			isa = PBXGroup;
 			children = (
@@ -1811,6 +1835,7 @@
 				0B86F9362B4433CB00DD4C85 /* EmojisVM.swift */,
 				0BF5B49C2AB292D500DEC403 /* KeychainHelper.swift */,
 				0B51A8D32ACEC58400DA38DC /* MediasVM.swift */,
+				0B3126E22B6A9FE30063FC0E /* OnboardingVM.swift */,
 				0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */,
 				0BC2E3172B2208880002649D /* PickerVM.swift */,
 				0BC84A6C2AD08A6D00D723AA /* SelectReactionsVM.swift */,
@@ -1818,7 +1843,6 @@
 				0B37ABFB2AD7408E00E8D4BC /* ToastVM.swift */,
 				0BC2E3132B2207B40002649D /* UploadManager.swift */,
 				0B7DD5402B14DCC100D2EECB /* VideoPlayerVM.swift */,
-				0B3126E22B6A9FE30063FC0E /* OnboardingVM.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -1826,6 +1850,7 @@
 		0BCD57E32B28B35700A1C914 /* DataManagers */ = {
 			isa = PBXGroup;
 			children = (
+				0B1E015E2BDBF35B00FEE5C3 /* AccountDM.swift */,
 				0BBFFE292B9B99F4003A05B1 /* CheckInDM.swift */,
 				0B39A0C42B67E4A10091F246 /* ChecksDM.swift */,
 				0B695D7D2AF15EEE00C11870 /* ConnectionsDM.swift */,
@@ -1844,6 +1869,7 @@
 				0BC9BBEE2B922FE100477654 /* ReviewDM.swift */,
 				0B026CD72B5AB4CD002DAD24 /* RewardsDM.swift */,
 				0B29207D2B55876C0026DDDE /* SearchDM.swift */,
+				0B1E01562BDBEA9E00FEE5C3 /* TransactionsDM.swift */,
 				0B384FA62B2B591000C98245 /* UserActivityDM.swift */,
 				0B997B6D2AC7381700579C9C /* UserProfileDM.swift */,
 			);
@@ -2033,6 +2059,8 @@
 				0B30218E2B3208D200827889 /* SDWebImageSwiftUI */,
 				0BECB8D32B73F6A1007B51A1 /* BranchSDK */,
 				0B5070562BBC32DB00593C1B /* TwilioConversationsClient */,
+				0B5BD1ED2BD95FCE00DDCD28 /* StripeApplePay */,
+				0B5BD1EF2BD95FCE00DDCD28 /* StripePaymentSheet */,
 			);
 			productName = PhantomPhood;
 			productReference = 0B77EA372AAF855500C8DF87 /* PhantomPhood.app */;
@@ -2072,6 +2100,7 @@
 				0B30218D2B3208D200827889 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				0BECB8D22B73F6A1007B51A1 /* XCRemoteSwiftPackageReference "ios-branch-sdk-spm" */,
 				0B5070552BBC32DB00593C1B /* XCRemoteSwiftPackageReference "conversations-ios" */,
+				0B5BD1EC2BD95FCE00DDCD28 /* XCRemoteSwiftPackageReference "stripe-ios-spm" */,
 			);
 			productRefGroup = 0B77EA382AAF855500C8DF87 /* Products */;
 			projectDirPath = "";
@@ -2256,6 +2285,7 @@
 				0BF81DC02ABDF00300B8892E /* DateFormatter.swift in Sources */,
 				0B547D852B3F3D3B002C6336 /* CreateNewListVM.swift in Sources */,
 				0BC9BBFC2B924B1A00477654 /* ActionManager.swift in Sources */,
+				0B1E015F2BDBF35B00FEE5C3 /* AccountDM.swift in Sources */,
 				0BEF7A3C2B0EB2D4001532E7 /* OAuthVM.swift in Sources */,
 				0BF81DC42ABE369500B8892E /* CustomFonts.swift in Sources */,
 				0BB37E9C2ABA52C7009E1272 /* Shaders.metal in Sources */,
@@ -2315,6 +2345,7 @@
 				0B448E692B832DEC00179D0E /* QuickActionsVM.swift in Sources */,
 				0B91A7252B57F049007F7969 /* ExploreView.swift in Sources */,
 				0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */,
+				0BA5BDAC2BDFADF300B4D35E /* PaymentsSettingView.swift in Sources */,
 				0BB37E9E2ABA6D84009E1272 /* HomeFollowingView.swift in Sources */,
 				0B026CE02B5AED32002DAD24 /* RewardsHubVM.swift in Sources */,
 				0B9950CA2BBEDC1B0060B6AF /* PersistentConversationDataItem+CoreDataExt.swift in Sources */,
@@ -2325,6 +2356,7 @@
 				0B2D20EB2B46334C00D4F0C1 /* UserProfileListsView.swift in Sources */,
 				0BB805862AC203EB0074155D /* ProfileActivityReviewView.swift in Sources */,
 				0B47FDA12B11060600F39527 /* AppRouter.swift in Sources */,
+				0BA5BDAA2BDFADDF00B4D35E /* PaymentsSettingVM.swift in Sources */,
 				0BBFFE242B9B6C2E003A05B1 /* EventView.swift in Sources */,
 				0BEE152A2AB50A8800DF7211 /* ProfileStats.swift in Sources */,
 				0B997B632AC70E1A00579C9C /* Notification.swift in Sources */,
@@ -2404,6 +2436,7 @@
 				0B1610D82B63245700DCAFA5 /* UserConnection.swift in Sources */,
 				0B9950D92BBEE4E80060B6AF /* ConversationsDM.swift in Sources */,
 				0B5070592BBC434900593C1B /* AppDelegate.swift in Sources */,
+				0B1E015B2BDBF27200FEE5C3 /* SettingsVM.swift in Sources */,
 				0BCA625B2BB6387B0045F100 /* CheckInCard.swift in Sources */,
 				0BC2E3162B2207EB0002649D /* TaskManager.swift in Sources */,
 				0BB0C9592B30B3F00013DEAE /* Emoji.swift in Sources */,
@@ -2472,6 +2505,7 @@
 				0B7A80B22BA1EE6E00192192 /* CTAButton.swift in Sources */,
 				0B2D20E92B4632D600D4F0C1 /* UserProfileListsVM.swift in Sources */,
 				0BB437292B7673DD002B57D1 /* AchievementsEnum.swift in Sources */,
+				0BA5BDAE2BDFB7C700B4D35E /* LoadingSections.swift in Sources */,
 				0B46814D2AC5EAFB009C5EF9 /* FirstLoadingView.swift in Sources */,
 				0B2694B42B8E3CC8004FA5C8 /* PhotoCaptureVM.swift in Sources */,
 				0B7DD5412B14DCC100D2EECB /* VideoPlayerVM.swift in Sources */,
@@ -2484,6 +2518,7 @@
 				0BE3C8882B261DB40048F2A6 /* PhotosPickerItem.swift in Sources */,
 				0B27AE1F2B75786400C97559 /* ReportDM.swift in Sources */,
 				0B85AF002BD3E8C8001E95A7 /* InviteFriendsVM.swift in Sources */,
+				0B1E01572BDBEA9E00FEE5C3 /* TransactionsDM.swift in Sources */,
 				0B0183702AB3DE8A008E887F /* AuthRoute.swift in Sources */,
 				0BBFFE312B9BE817003A05B1 /* EventCheckInsView.swift in Sources */,
 				0BDBD3CA2ACB32B7003B8D2D /* PhantomScoreView.swift in Sources */,
@@ -2502,6 +2537,7 @@
 /* Begin XCBuildConfiguration section */
 		0B77EA432AAF855600C8DF87 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0BA5BDB52BDFE30500B4D35E /* DevEnvironment.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -2564,6 +2600,7 @@
 		};
 		0B77EA442AAF855600C8DF87 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0BA5BDB22BDFE12C00B4D35E /* Environment.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -2648,7 +2685,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.67.4;
+				MARKETING_VERSION = 0.68.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2688,7 +2725,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.67.4;
+				MARKETING_VERSION = 0.68.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2762,6 +2799,14 @@
 				kind = branch;
 			};
 		};
+		0B5BD1EC2BD95FCE00DDCD28 /* XCRemoteSwiftPackageReference "stripe-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stripe/stripe-ios-spm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 23.27.1;
+			};
+		};
 		0B67C8B52AF0539E002781B3 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -2826,6 +2871,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0B5070552BBC32DB00593C1B /* XCRemoteSwiftPackageReference "conversations-ios" */;
 			productName = TwilioConversationsClient;
+		};
+		0B5BD1ED2BD95FCE00DDCD28 /* StripeApplePay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B5BD1EC2BD95FCE00DDCD28 /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
+			productName = StripeApplePay;
+		};
+		0B5BD1EF2BD95FCE00DDCD28 /* StripePaymentSheet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B5BD1EC2BD95FCE00DDCD28 /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
+			productName = StripePaymentSheet;
 		};
 		0B67C8B62AF0539E002781B3 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;

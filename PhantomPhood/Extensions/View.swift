@@ -83,6 +83,8 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     
                 case .settings:
                     SettingsView()
+                case .paymentsSetting:
+                    PaymentsSettingView()
                 case .myConnections(let initTab):
                     MyConnections(activeTab: initTab)
                     
