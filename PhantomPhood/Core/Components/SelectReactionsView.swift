@@ -8,11 +8,18 @@
 import SwiftUI
 
 struct SelectReactionsView: View {
-    @ObservedObject var vm: SelectReactionsVM
+    @Environment(\.dismiss) private var dismiss
+    
     @ObservedObject private var emojisVM = EmojisVM.shared
     
-    @State var selectedTab: EmojisManager.EmojiCategory = .common
-    @State var isAnimating = true
+    @State private var selectedTab: EmojisManager.EmojiCategory = .common
+    @State private var isAnimating = true
+    
+    private let onSelect: (EmojisManager.Emoji) -> Void
+    
+    init(onSelect: @escaping (EmojisManager.Emoji) -> Void) {
+        self.onSelect = onSelect
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -50,8 +57,8 @@ struct SelectReactionsView: View {
                         ], spacing: 16, content: {
                             ForEach(emojisVM.getEmojis(category: category)) { emoji in
                                 Button {
-                                    vm.onSelect?(emoji)
-                                    vm.isPresented = false
+                                    dismiss()
+                                    onSelect(emoji)
                                 } label: {
                                     Emoji(emoji, isAnimating: $isAnimating, size: 40)
                                 }
@@ -81,5 +88,5 @@ struct SelectReactionsView: View {
 }
 
 #Preview {
-    SelectReactionsView(vm: SelectReactionsVM())
+    SelectReactionsView { _ in }
 }

@@ -12,22 +12,13 @@ import Combine
 final class UserSelectorVM: ObservableObject {
     private let searchDM = SearchDM()
     
-    let onSelect: (UserEssentials) -> Void
-    
     @Published var searchText = ""
     @Published var isLoading = false
     @Published var searchResults: [UserEssentials] = []
     
-    @Published var error: String? = nil
-    private var cancellable = [AnyCancellable]()
+    private var cancellable = Set<AnyCancellable>()
     
-    init(onSelect: @escaping (UserEssentials) -> Void) {
-        self.onSelect = onSelect
-        
-        Task {
-            await self.search("")
-        }
-        
+    init() {
         $searchText
             .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
             .sink { value in
@@ -43,10 +34,8 @@ final class UserSelectorVM: ObservableObject {
         do {
             let data = try await self.searchDM.searchUsers(q: value)
             self.searchResults = data
-            self.isLoading = false
         } catch {
-            self.isLoading = false
-            self.error = getErrorMessage(error)
+            presentErrorToast(error, silent: true, function: #function)
         }
         self.isLoading = false
     }

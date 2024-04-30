@@ -18,8 +18,8 @@ struct Comment: Decodable, Identifiable {
     let createdAt: Date
     let updatedAt: Date
     let author: UserEssentials
-    let likes: Int
-    let liked: Bool
+    var likes: Int
+    var liked: Bool
     let mentions: [UserMentions]?
 
     enum CodingKeys: String, CodingKey {

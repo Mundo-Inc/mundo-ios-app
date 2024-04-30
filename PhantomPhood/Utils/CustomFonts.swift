@@ -67,8 +67,8 @@ enum CustomFontStyles: CGFloat {
     case title2 = 20 // 22
     case title3 = 18 // 20
     case headline = 16 // 16
-    case body = 15 // 16
-    case subheadline = 14 // 15
+    case body = 14.5 // 16
+    case subheadline = 13.5 // 15
     case callout = 13 // 15
     case footnote = 12.5 // 13
     case caption = 12 // 12

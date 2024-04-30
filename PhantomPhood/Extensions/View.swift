@@ -35,8 +35,8 @@ struct RoundedCorner: Shape {
 }
 
 extension View {
-    func withFilledStyle(size: TextFieldSize = .medium, paddingLeading: CGFloat? = nil) -> some View {
-        modifier(FilledTextFieldViewModifier(size: size, paddingLeading: paddingLeading))
+    func withFilledStyle(size: TextFieldSize = .medium, paddingLeading: CGFloat? = nil, paddingTrailing: CGFloat? = nil) -> some View {
+        modifier(FilledTextFieldViewModifier(size: size, paddingLeading: paddingLeading, paddingTrailing: paddingTrailing))
     }
 }
 

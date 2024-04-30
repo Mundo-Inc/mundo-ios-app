@@ -225,14 +225,14 @@ struct HomeMadeView: View {
                             .foregroundStyle(Color.accentColor)
                             .sheet(isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: HomeMadeVM.Sheets.userSelector)) {
                                 if #available(iOS 16.4, *) {
-                                    UserSelector { user in
+                                    UserSelectorView { user in
                                         if !vm.tags.contains(where: { $0.id == user.id }) {
                                             vm.tags.append(user)
                                         }
                                     }
                                     .presentationBackground(.thinMaterial)
                                 } else {
-                                    UserSelector { user in
+                                    UserSelectorView { user in
                                         if !vm.tags.contains(where: { $0.id == user.id }) {
                                             vm.tags.append(user)
                                         }

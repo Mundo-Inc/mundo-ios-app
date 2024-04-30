@@ -124,6 +124,7 @@ struct PlacesListView: View {
                             }
                         }
                     }
+                    .redacted(reason: vm.list == nil ? .placeholder : [])
                     .padding()
                 }
                 .tag(PlacesListVM.Tabs.list)
@@ -143,7 +144,7 @@ struct PlacesListView: View {
                 .tag(PlacesListVM.Tabs.map)
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .redacted(reason: vm.list == nil ? .placeholder : [])
+            .ignoresSafeArea(edges: .bottom)
         }
         .toolbar {
             if let list = vm.list, let currentUser = Authentication.shared.currentUser, list.owner.id == currentUser.id {
@@ -207,7 +208,7 @@ fileprivate struct PlaceItem: View {
                     
                     if let list = vm.list, let currentUser = Authentication.shared.currentUser, list.collaborators.contains(where: { $0.user.id == currentUser.id && $0.access == .edit }) {
                         Button {
-                            alertManager.value = .init(message: "Are you sure you want to remove this place from the list?", callback: {
+                            alertManager.value = .init(message: "Are you sure you want to remove this place from the list?", confirmationText: "Delete", role: .destructive, callback: {
                                 Task {
                                     await vm.removePlaceFromList(placeId: place.place.id)
                                 }
@@ -230,7 +231,7 @@ fileprivate struct PlaceItem: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 220)
+            .frame(height: 180)
             .padding()
             .background(Color.black.opacity(0.5))
             .background {

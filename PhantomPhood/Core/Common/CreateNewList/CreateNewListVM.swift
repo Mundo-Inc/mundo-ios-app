@@ -15,12 +15,13 @@ final class CreateNewListVM: ObservableObject {
     
     private let listsDM = ListsDM()
     
+    @Published var presentingSheet: Sheet? = nil
+    
     @Published var step: Step = .general
     
     @Published var isEmojiAnimating = true
     
     @Published var isLoading = false
-    @Published var showAddListCollaborators = false
     
     @Published var name: String = ""
     @Published var icon: EmojisManager.Emoji = .init(symbol: "❤️", title: "Heart", keywords: [], categories: [], isAnimated: true, unicode: "2764_fe0f")
@@ -51,8 +52,24 @@ final class CreateNewListVM: ObservableObject {
         self.isLoading = false
     }
     
+    // MARK: Enums
+    
     enum Step {
         case general
         case collaborators
+    }
+    
+    enum Sheet: Identifiable {
+        case reactionSelector(onSelect: (EmojisManager.Emoji) -> Void)
+        case userSelector(onSelect: (UserEssentials) -> Void)
+        
+        var id: String {
+            switch self {
+            case .reactionSelector(let onSelect):
+                return String(describing: onSelect)
+            case .userSelector(let onSelect):
+                return String(describing: onSelect)
+            }
+        }
     }
 }

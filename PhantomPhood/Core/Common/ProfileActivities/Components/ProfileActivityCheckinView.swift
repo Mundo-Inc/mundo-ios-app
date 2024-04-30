@@ -45,11 +45,11 @@ struct ProfileActivityCheckinView: View {
         } footer: {
             WrappingHStack(horizontalSpacing: 4, verticalSpacing: 6) {
                 Button {
-                    SelectReactionsVM.shared.select { reaction in
+                    SheetsManager.shared.presenting = .reactionSelector(onSelect: { reaction in
                         Task {
                             await addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), data)
                         }
-                    }
+                    })
                 } label: {
                     Image(.Icons.addReaction)
                         .resizable()
@@ -58,7 +58,7 @@ struct ProfileActivityCheckinView: View {
                 }
                 
                 Button {
-                    CommentsVM.shared.showComments(activityId: data.id)
+                    SheetsManager.shared.presenting = .comments(activityId: data.id)
                 } label: {
                     Image(systemName: "bubble.left")
                         .font(.system(size: 22))

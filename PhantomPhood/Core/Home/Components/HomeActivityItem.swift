@@ -808,11 +808,11 @@ struct HomeActivityItem: View {
                 .background(Color.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 10))
                 .background(.bar.opacity(0.7), in: RoundedRectangle(cornerRadius: 10))
                 .onTapGesture {
-                    SelectReactionsVM.shared.select { reaction in
+                    SheetsManager.shared.presenting = .reactionSelector(onSelect: { reaction in
                         Task {
                             await vm.addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), to: $item)
                         }
-                    }
+                    })
                 }
             
             
@@ -831,7 +831,7 @@ struct HomeActivityItem: View {
             .background(Color.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 10))
             .background(.bar.opacity(0.7), in: RoundedRectangle(cornerRadius: 10))
             .onTapGesture {
-                CommentsVM.shared.showComments(activityId: item.id)
+                SheetsManager.shared.presenting = .comments(activityId: item.id)
             }
             
             switch item.activityType {

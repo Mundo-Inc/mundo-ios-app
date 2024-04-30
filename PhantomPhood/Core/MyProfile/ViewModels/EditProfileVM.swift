@@ -25,7 +25,7 @@ class EditProfileVM: ObservableObject {
     @Published var isUsernameValid: Bool = false
     @Published var usernameError: String? = nil
     
-    private var cancellable = [AnyCancellable]()
+    private var cancellable = Set<AnyCancellable>()
     
     init() {
         $username

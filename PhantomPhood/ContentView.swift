@@ -10,9 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject private var auth = Authentication.shared
     @ObservedObject private var appData = AppData.shared
-    @ObservedObject private var selectReactionsVM = SelectReactionsVM.shared
-    @ObservedObject private var commentsVM = CommentsVM.shared
-    @ObservedObject private var placeSelectorVM = PlaceSelectorVM.shared
+    @ObservedObject private var sheetsManager = SheetsManager.shared
     
     @StateObject private var onboardingVM = OnboardingVM()
     
@@ -47,22 +45,21 @@ struct ContentView: View {
                 }
             }
         }
-        .sheet(isPresented: $placeSelectorVM.isPresented) {
-            PlaceSelectorView()
-        }
-        .sheet(isPresented: $selectReactionsVM.isPresented, content: {
-            if #available(iOS 16.4, *) {
-                SelectReactionsView(vm: selectReactionsVM)
-                    .presentationBackground(.thinMaterial)
-            } else {
-                SelectReactionsView(vm: selectReactionsVM)
+        .sheet(item: $sheetsManager.presenting) { item in
+            switch item {
+            case .placeSelector(let onSelect):
+                PlaceSelectorView(onSelect: onSelect)
+            case .reactionSelector(let onSelect):
+                if #available(iOS 16.4, *) {
+                    SelectReactionsView(onSelect: onSelect)
+                        .presentationBackground(.thinMaterial)
+                } else {
+                    SelectReactionsView(onSelect: onSelect)
+                }
+            case .comments(let activityId):
+                CommentsView(for: activityId)
             }
-        })
-        .sheet(isPresented: Binding(optionalValue: $commentsVM.currentActivityId), onDismiss: {
-            commentsVM.onDismiss()
-        }, content: {
-            CommentsView()
-        })
+        }
         .fullScreenCover(isPresented: Binding(get: {
             if let user = auth.currentUser, user.acceptedEula != nil {
                 return onboardingVM.isPresented

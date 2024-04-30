@@ -82,9 +82,7 @@ struct HomeActivityInfoView: View {
                 HStack(spacing: 20) {
                     Button {
                         dismiss()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            SelectReactionsVM.shared.select(onSelect: vm.handleAddReaction)
-                        }
+                        SheetsManager.shared.presenting = .reactionSelector(onSelect: vm.handleAddReaction)
                     } label: {
                         HStack {
                             Image(.Icons.addReaction)
@@ -100,9 +98,7 @@ struct HomeActivityInfoView: View {
                     
                     Button {
                         dismiss()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            CommentsVM.shared.showComments(activityId: data.id)
-                        }
+                        SheetsManager.shared.presenting = .comments(activityId: data.id)
                     } label: {
                         HStack {
                             Image(systemName: "bubble.left")

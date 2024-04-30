@@ -30,4 +30,14 @@ final class UserActivityDM {
         
         return data
     }
+    
+    func getActivityComments(for activityId: String, page: Int) async throws -> APIResponseWithPagination<[Comment]> {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let data: APIResponseWithPagination<[Comment]> = try await apiManager.requestData("/feeds/\(activityId)/comments?page=\(page)", token: token)
+        
+        return data
+    }
 }

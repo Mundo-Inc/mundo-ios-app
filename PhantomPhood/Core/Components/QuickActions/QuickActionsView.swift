@@ -9,7 +9,6 @@ import SwiftUI
 
 struct QuickActionsView: View {
     @StateObject private var vm = QuickActionsVM()
-    private let toastVM = ToastVM.shared
     
     @Environment(\.dismiss) private var dismiss
     

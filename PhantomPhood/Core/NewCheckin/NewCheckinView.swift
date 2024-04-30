@@ -337,14 +337,14 @@ struct NewCheckinView: View {
                     .scrollIndicators(.never)
                     .sheet(isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: NewCheckinVM.Sheets.userSelector)) {
                         if #available(iOS 16.4, *) {
-                            UserSelector { user in
+                            UserSelectorView { user in
                                 if !vm.mentions.contains(where: { $0.id == user.id }) {
                                     vm.mentions.append(user)
                                 }
                             }
                             .presentationBackground(.thinMaterial)
                         } else {
-                            UserSelector { user in
+                            UserSelectorView { user in
                                 if !vm.mentions.contains(where: { $0.id == user.id }) {
                                     vm.mentions.append(user)
                                 }

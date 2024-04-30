@@ -297,7 +297,7 @@
 		0B997B6A2AC7377C00579C9C /* UserProfileVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B692AC7377C00579C9C /* UserProfileVM.swift */; };
 		0B997B6E2AC7381700579C9C /* UserProfileDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B6D2AC7381700579C9C /* UserProfileDM.swift */; };
 		0B997B702AC74BFA00579C9C /* UserProfileStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B997B6F2AC74BFA00579C9C /* UserProfileStats.swift */; };
-		0B9C02602B4465E3000C4774 /* UserSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9C025F2B4465E3000C4774 /* UserSelector.swift */; };
+		0B9C02602B4465E3000C4774 /* UserSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9C025F2B4465E3000C4774 /* UserSelectorView.swift */; };
 		0B9C02622B4468B3000C4774 /* UserSelectorVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9C02612B4468B3000C4774 /* UserSelectorVM.swift */; };
 		0B9C02642B458F76000C4774 /* AppRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9C02632B458F76000C4774 /* AppRoute.swift */; };
 		0B9C026A2B45A1F0000C4774 /* PlacesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9C02692B45A1F0000C4774 /* PlacesListView.swift */; };
@@ -313,6 +313,8 @@
 		0BA5BDAA2BDFADDF00B4D35E /* PaymentsSettingVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA5BDA92BDFADDF00B4D35E /* PaymentsSettingVM.swift */; };
 		0BA5BDAC2BDFADF300B4D35E /* PaymentsSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA5BDAB2BDFADF300B4D35E /* PaymentsSettingView.swift */; };
 		0BA5BDAE2BDFB7C700B4D35E /* LoadingSections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA5BDAD2BDFB7C700B4D35E /* LoadingSections.swift */; };
+		0BA5BDB92BDFEE9900B4D35E /* SheetsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA5BDB82BDFEE9900B4D35E /* SheetsManager.swift */; };
+		0BA5BDBB2BE0386A00B4D35E /* CommentsDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA5BDBA2BE0386A00B4D35E /* CommentsDM.swift */; };
 		0BAAC8032B98CEFE00FFFC32 /* GoogleReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAAC8022B98CEFE00FFFC32 /* GoogleReview.swift */; };
 		0BAAC8052B98CF0600FFFC32 /* YelpReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAAC8042B98CF0600FFFC32 /* YelpReview.swift */; };
 		0BABE9D62B59822B003EF70B /* RewardsHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BABE9D52B59822B003EF70B /* RewardsHubView.swift */; };
@@ -352,7 +354,6 @@
 		0BC84A652AD0339F00D723AA /* ReactionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A642AD0339F00D723AA /* ReactionLabel.swift */; };
 		0BC84A692AD06F8200D723AA /* WrappingHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A682AD06F8200D723AA /* WrappingHStack.swift */; };
 		0BC84A6B2AD071EE00D723AA /* SelectReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A6A2AD071EE00D723AA /* SelectReactionsView.swift */; };
-		0BC84A6D2AD08A6D00D723AA /* SelectReactionsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A6C2AD08A6D00D723AA /* SelectReactionsVM.swift */; };
 		0BC84A6F2AD0A83900D723AA /* PlaceMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A6E2AD0A83900D723AA /* PlaceMediaView.swift */; };
 		0BC84A712AD0A8B100D723AA /* PlaceMediaVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A702AD0A8B100D723AA /* PlaceMediaVM.swift */; };
 		0BC9BBEF2B922FE100477654 /* ReviewDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC9BBEE2B922FE100477654 /* ReviewDM.swift */; };
@@ -715,7 +716,7 @@
 		0B997B692AC7377C00579C9C /* UserProfileVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileVM.swift; sourceTree = "<group>"; };
 		0B997B6D2AC7381700579C9C /* UserProfileDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileDM.swift; sourceTree = "<group>"; };
 		0B997B6F2AC74BFA00579C9C /* UserProfileStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileStats.swift; sourceTree = "<group>"; };
-		0B9C025F2B4465E3000C4774 /* UserSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSelector.swift; sourceTree = "<group>"; };
+		0B9C025F2B4465E3000C4774 /* UserSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSelectorView.swift; sourceTree = "<group>"; };
 		0B9C02612B4468B3000C4774 /* UserSelectorVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSelectorVM.swift; sourceTree = "<group>"; };
 		0B9C02632B458F76000C4774 /* AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoute.swift; sourceTree = "<group>"; };
 		0B9C02692B45A1F0000C4774 /* PlacesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesListView.swift; sourceTree = "<group>"; };
@@ -733,6 +734,8 @@
 		0BA5BDAD2BDFB7C700B4D35E /* LoadingSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingSections.swift; sourceTree = "<group>"; };
 		0BA5BDB22BDFE12C00B4D35E /* Environment.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Environment.xcconfig; sourceTree = "<group>"; };
 		0BA5BDB52BDFE30500B4D35E /* DevEnvironment.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DevEnvironment.xcconfig; sourceTree = "<group>"; };
+		0BA5BDB82BDFEE9900B4D35E /* SheetsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetsManager.swift; sourceTree = "<group>"; };
+		0BA5BDBA2BE0386A00B4D35E /* CommentsDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsDM.swift; sourceTree = "<group>"; };
 		0BAAC8022B98CEFE00FFFC32 /* GoogleReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleReview.swift; sourceTree = "<group>"; };
 		0BAAC8042B98CF0600FFFC32 /* YelpReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpReview.swift; sourceTree = "<group>"; };
 		0BABE9D52B59822B003EF70B /* RewardsHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsHubView.swift; sourceTree = "<group>"; };
@@ -772,7 +775,6 @@
 		0BC84A642AD0339F00D723AA /* ReactionLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionLabel.swift; sourceTree = "<group>"; };
 		0BC84A682AD06F8200D723AA /* WrappingHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappingHStack.swift; sourceTree = "<group>"; };
 		0BC84A6A2AD071EE00D723AA /* SelectReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectReactionsView.swift; sourceTree = "<group>"; };
-		0BC84A6C2AD08A6D00D723AA /* SelectReactionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectReactionsVM.swift; sourceTree = "<group>"; };
 		0BC84A6E2AD0A83900D723AA /* PlaceMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMediaView.swift; sourceTree = "<group>"; };
 		0BC84A702AD0A8B100D723AA /* PlaceMediaVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMediaVM.swift; sourceTree = "<group>"; };
 		0BC9BBEE2B922FE100477654 /* ReviewDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewDM.swift; sourceTree = "<group>"; };
@@ -1066,7 +1068,7 @@
 		0B1610E02B63357000DCAFA5 /* UserSelector */ = {
 			isa = PBXGroup;
 			children = (
-				0B9C025F2B4465E3000C4774 /* UserSelector.swift */,
+				0B9C025F2B4465E3000C4774 /* UserSelectorView.swift */,
 				0B9C02612B4468B3000C4774 /* UserSelectorVM.swift */,
 			);
 			path = UserSelector;
@@ -1690,6 +1692,7 @@
 				0B96D66B2AD2E73500612C27 /* LocationManager.swift */,
 				0BA43C222B516DCA00F0DDBF /* NetworkMonitor.swift */,
 				0B73EAC72BBF0E4C00991B13 /* ObservableResultPublisher.swift */,
+				0BA5BDB82BDFEE9900B4D35E /* SheetsManager.swift */,
 				0BCF5D6A2B5DE93400D729E2 /* SoundManager.swift */,
 				0BFAC3B62B7425A700F1A036 /* UniversalLinkingManager.swift */,
 				0B0BB77A2BB4610100DE3728 /* UserDataStack.swift */,
@@ -1838,7 +1841,6 @@
 				0B3126E22B6A9FE30063FC0E /* OnboardingVM.swift */,
 				0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */,
 				0BC2E3172B2208880002649D /* PickerVM.swift */,
-				0BC84A6C2AD08A6D00D723AA /* SelectReactionsVM.swift */,
 				0BC2E3152B2207EB0002649D /* TaskManager.swift */,
 				0B37ABFB2AD7408E00E8D4BC /* ToastVM.swift */,
 				0BC2E3132B2207B40002649D /* UploadManager.swift */,
@@ -1853,6 +1855,7 @@
 				0B1E015E2BDBF35B00FEE5C3 /* AccountDM.swift */,
 				0BBFFE292B9B99F4003A05B1 /* CheckInDM.swift */,
 				0B39A0C42B67E4A10091F246 /* ChecksDM.swift */,
+				0BA5BDBA2BE0386A00B4D35E /* CommentsDM.swift */,
 				0B695D7D2AF15EEE00C11870 /* ConnectionsDM.swift */,
 				0B9950D82BBEE4E70060B6AF /* ConversationsDM.swift */,
 				0BBFFE1B2B9B57E9003A05B1 /* EventsDM.swift */,
@@ -2347,12 +2350,13 @@
 				0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */,
 				0BA5BDAC2BDFADF300B4D35E /* PaymentsSettingView.swift in Sources */,
 				0BB37E9E2ABA6D84009E1272 /* HomeFollowingView.swift in Sources */,
+				0BA5BDBB2BE0386A00B4D35E /* CommentsDM.swift in Sources */,
 				0B026CE02B5AED32002DAD24 /* RewardsHubVM.swift in Sources */,
 				0B9950CA2BBEDC1B0060B6AF /* PersistentConversationDataItem+CoreDataExt.swift in Sources */,
 				0B9C02712B45C275000C4774 /* AddToListVM.swift in Sources */,
 				0BAE47322ACC91DF001FBDAF /* PlaceReviewsView.swift in Sources */,
 				0B86F9372B4433CB00DD4C85 /* EmojisVM.swift in Sources */,
-				0B9C02602B4465E3000C4774 /* UserSelector.swift in Sources */,
+				0B9C02602B4465E3000C4774 /* UserSelectorView.swift in Sources */,
 				0B2D20EB2B46334C00D4F0C1 /* UserProfileListsView.swift in Sources */,
 				0BB805862AC203EB0074155D /* ProfileActivityReviewView.swift in Sources */,
 				0B47FDA12B11060600F39527 /* AppRouter.swift in Sources */,
@@ -2365,7 +2369,6 @@
 				0BA43C232B516DCA00F0DDBF /* NetworkMonitor.swift in Sources */,
 				0B985AE12AC9AFC200019A06 /* PlaceDM.swift in Sources */,
 				0B0BB7752BB45ABE00DE3728 /* DataContainer.xcdatamodeld in Sources */,
-				0BC84A6D2AD08A6D00D723AA /* SelectReactionsVM.swift in Sources */,
 				0B0BB7792BB460DE00DE3728 /* DataStack.swift in Sources */,
 				0B026CDE2B5AC863002DAD24 /* PhantomCoinsVM.swift in Sources */,
 				0B1E79072B86AB1A00549D71 /* PlaceReviewItem.swift in Sources */,
@@ -2479,6 +2482,7 @@
 				0B91A7292B57F166007F7969 /* ExploreView17.swift in Sources */,
 				0BCBC1922ACDF22100992D8E /* CommentsVM.swift in Sources */,
 				0B8B15D22BB5CF2900A955EA /* MapActivitySheet.swift in Sources */,
+				0BA5BDB92BDFEE9900B4D35E /* SheetsManager.swift in Sources */,
 				0BF5B4BC2AB37B8200DEC403 /* AppData.swift in Sources */,
 				0B9C026A2B45A1F0000C4774 /* PlacesListView.swift in Sources */,
 				0B0BB7822BB4B47B00DE3728 /* Double.swift in Sources */,
@@ -2685,7 +2689,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.68.0;
+				MARKETING_VERSION = 0.68.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2725,7 +2729,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.68.0;
+				MARKETING_VERSION = 0.68.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

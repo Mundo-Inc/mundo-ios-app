@@ -118,7 +118,7 @@ final class ExploreSearchVM: ObservableObject {
     
     private var queueSearch: (() async -> Void)?
     
-    private var cancellable = [AnyCancellable]()
+    private var cancellable = Set<AnyCancellable>()
     
     init() {
         $text

@@ -24,12 +24,14 @@ enum TextFieldSize: CGFloat {
 struct FilledTextFieldViewModifier: ViewModifier {
     let size: TextFieldSize
     let paddingLeading: CGFloat?
+    let paddingTrailing: CGFloat?
     
     func body(content: Content) -> some View {
         content
             .font(.custom(style: .headline))
             .fontWeight(.regular)
             .padding(.leading, paddingLeading)
+            .padding(.trailing, paddingTrailing)
             .frame(height: size.rawValue)
             .background(Color.themePrimary)
             .cornerRadius(8)

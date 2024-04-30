@@ -12,19 +12,11 @@ struct CreateNewListView: View {
     
     @StateObject private var vm: CreateNewListVM
     
-    @Environment(\.dismiss) private var dismiss
-    
-    // Creating new instance because of the sheet
-    @StateObject var selectReactionsVM = SelectReactionsVM()
-    
     init(onSuccess: @escaping (UserPlacesList) -> Void = { _ in }, onCancel: @escaping () -> Void = {}) {
         self._vm = StateObject(wrappedValue: CreateNewListVM(onSuccess: onSuccess, onCancel: onCancel))
     }
     
-    enum TextFields: Hashable {
-        case name
-    }
-    @FocusState var focusedField: TextFields?
+    @FocusState var focusedField: Bool
     
     var body: some View {
         VStack(spacing: 0) {
@@ -46,64 +38,67 @@ struct CreateNewListView: View {
             ZStack {
                 switch vm.step {
                 case .general:
-                    VStack(spacing: 30) {
-                        VStack {
-                            Text("Name your list")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .font(.custom(style: .headline))
-                            Text("Choose a name for your list")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .font(.custom(style: .body))
-                                .foregroundStyle(.secondary)
-                            
-                            HStack {
-                                Button {
-                                    selectReactionsVM.select { emoji in
-                                        vm.icon = emoji
-                                    }
-                                } label: {
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .foregroundStyle(.themePrimary)
-                                        .frame(width: 52, height: 52)
-                                        .overlay {
-                                            Emoji(vm.icon, isAnimating: $vm.isEmojiAnimating, size: 28)
-                                        }
-                                }
-                                
-                                TextField("e.g. Want To Go", text: $vm.name)
-                                    .focused($focusedField, equals: TextFields.name)
-                                    .withFilledStyle(size: .large)
-                                    .overlay(alignment: .bottomTrailing) {
-                                        Text("\(vm.name.count)/16")
-                                            .font(.custom(style: .caption))
-                                            .padding(.trailing, 8)
-                                            .padding(.bottom, 4)
-                                            .foregroundStyle(vm.name.count <= 16 ? Color.secondary : Color.red)
-                                            .opacity(0.7)
-                                    }
-                            }
-                        }
-                        
-                        Toggle(isOn: $vm.isPrivate) {
+                    ScrollView {
+                        VStack(spacing: 30) {
                             VStack {
-                                Text(vm.isPrivate ? "Private" : "Public")
+                                Text("Name your list")
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .font(.custom(style: .headline))
-                                Text(vm.isPrivate ? "Only collaborators can view" : "Everyone can view")
+                                Text("Choose a name for your list")
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .multilineTextAlignment(.leading)
                                     .font(.custom(style: .body))
                                     .foregroundStyle(.secondary)
+                                
+                                HStack {
+                                    Button {
+                                        vm.presentingSheet = .reactionSelector(onSelect: { reaction in
+                                            vm.icon = reaction
+                                        })
+                                    } label: {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .foregroundStyle(.themePrimary)
+                                            .frame(width: 52, height: 52)
+                                            .overlay {
+                                                Emoji(vm.icon, isAnimating: $vm.isEmojiAnimating, size: 28)
+                                            }
+                                    }
+                                    
+                                    TextField("e.g. Want To Go", text: $vm.name)
+                                        .focused($focusedField)
+                                        .withFilledStyle(size: .large)
+                                        .overlay(alignment: .bottomTrailing) {
+                                            Text("\(vm.name.count)/16")
+                                                .font(.custom(style: .caption))
+                                                .padding(.trailing, 8)
+                                                .padding(.bottom, 4)
+                                                .foregroundStyle(vm.name.count <= 16 ? Color.secondary : Color.red)
+                                                .opacity(0.7)
+                                        }
+                                }
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            Toggle(isOn: $vm.isPrivate) {
+                                VStack {
+                                    Text(vm.isPrivate ? "Private" : "Public")
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .font(.custom(style: .headline))
+                                    Text(vm.isPrivate ? "Only collaborators can view" : "Everyone can view")
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .multilineTextAlignment(.leading)
+                                        .font(.custom(style: .body))
+                                        .foregroundStyle(.secondary)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .toggleStyle(.switch)
+                            .tint(.accentColor)
+                            
+                            Spacer()
                         }
-                        .toggleStyle(.switch)
-                        .tint(.accentColor)
-                        
-                        Spacer()
+                        .padding()
                     }
-                    .padding()
-                    
+                    .scrollIndicators(.never)
+                    .scrollDismissesKeyboard(.immediately)
                 case .collaborators:
                     VStack(spacing: 0) {
                         VStack {
@@ -172,7 +167,11 @@ struct CreateNewListView: View {
                             }
                             
                             Button {
-                                vm.showAddListCollaborators = true
+                                vm.presentingSheet = .userSelector(onSelect: { user in
+                                    if !vm.collaborators.contains(where: { $0.user.id == user.id }) {
+                                        vm.collaborators.append(.init(user: user, access: .edit))
+                                    }
+                                })
                             } label: {
                                 Label {
                                     Text("Add Member")
@@ -203,9 +202,9 @@ struct CreateNewListView: View {
                             Text(vm.step == .general ? "Cancel" : "Back")
                                 .font(.custom(style: .subheadline))
                                 .frame(maxWidth: .infinity)
+                                .frame(height: 32)
                         }
                         .buttonStyle(.borderless)
-                        .controlSize(.large)
                         
                         Button {
                             switch vm.step {
@@ -226,48 +225,35 @@ struct CreateNewListView: View {
                                 }
                                 Text(vm.step == .general ? "Next" : "Create")
                             }
-                            .font(.custom(style: .subheadline))
                             .frame(maxWidth: .infinity)
+                            .frame(height: 32)
+                            .font(.custom(style: .subheadline))
                         }
                         .buttonStyle(.borderedProminent)
-                        .controlSize(.large)
                         .opacity(vm.isReadyToSubmit ? 1 : 0.6)
                         .disabled(!vm.isReadyToSubmit)
                     }
                     .padding(.horizontal)
-                    .padding(.vertical, 10)
+                    .padding(.vertical, 8)
                     .background(.ultraThinMaterial)
                 }
             }
         }
-        .sheet(isPresented: $selectReactionsVM.isPresented, content: {
-            if #available(iOS 16.4, *) {
-                SelectReactionsView(vm: selectReactionsVM)
-                    .presentationBackground(.thinMaterial)
-            } else {
-                SelectReactionsView(vm: selectReactionsVM)
-            }
-        })
-        .sheet(isPresented: $vm.showAddListCollaborators, content: {
-            if #available(iOS 16.4, *) {
-                UserSelector { user in
-                    if !vm.collaborators.contains(where: { $0.user.id == user.id }) {
-                        vm.collaborators.append(.init(user: user, access: .edit))
-                    }
-                }
-                .presentationBackground(.thinMaterial)
-            } else {
-                UserSelector { user in
-                    if !vm.collaborators.contains(where: { $0.user.id == user.id }) {
-                        vm.collaborators.append(.init(user: user, access: .edit))
-                    }
+        .sheet(item: $vm.presentingSheet) { item in
+            switch item {
+            case .userSelector(let onSelect):
+                UserSelectorView(onSelect: onSelect)
+            case .reactionSelector(let onSelect):
+                if #available(iOS 16.4, *) {
+                    SelectReactionsView(onSelect: onSelect)
+                        .presentationBackground(.thinMaterial)
+                } else {
+                    SelectReactionsView(onSelect: onSelect)
                 }
             }
-        })
+        }
         .onAppear {
-            if vm.name.isEmpty {
-                focusedField = .name
-            }
+            focusedField = true
         }
         .onDisappear {
             vm.isEmojiAnimating = false

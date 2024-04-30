@@ -1,5 +1,5 @@
 //
-//  CommentsViewModel.swift
+//  CommentsVM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 10/4/23.
@@ -7,100 +7,125 @@
 
 import Foundation
 
-@MainActor
-final class CommentsVM: ObservableObject {
-    static let shared = CommentsVM()
+final class CommentsVM: LoadingSections, ObservableObject {
+    private let userActivityDM = UserActivityDM()
+    private let commentsDM = CommentsDM()
     
-    private let auth = Authentication.shared
-    private let apiManager = APIManager.shared
-    private let toastVM = ToastVM.shared
+    private let activityId: String
     
-    @Published var currentActivityId: String? = nil
+    init (activityId: String) {
+        self.activityId = activityId
+    }
     
     @Published var commentContent = ""
     @Published var comments: [Comment] = []
-    @Published var isLoading = false
-    @Published var isSubmitting = false
+    @Published var loadingSections = Set<LoadingSection>()
     
-    private init() {}
+    private var commentsPage = 1
     
-    /// Reset comments when the comments view is dismissed
-    func onDismiss() {
-        self.comments.removeAll()
-        self.commentsPage = 1
-    }
-    
-    var commentsPage = 1
-    
-    func getComments(activityId: String) async {
-        guard !isLoading, let token = await auth.getToken() else { return }
+    func getComments() async {
+        guard !loadingSections.contains(.gettingComments) else { return }
         
-        isLoading = true
+        await setLoadingState(.gettingComments, to: true)
         do {
-            let data: APIResponse<[Comment]> = try await apiManager.requestData("/feeds/\(activityId)/comments?page=\(commentsPage)", token: token)
-            if commentsPage == 1 {
-                comments = data.data
-            } else {
-                comments.append(contentsOf: data.data)
+            let data = try await userActivityDM.getActivityComments(for: activityId, page: commentsPage)
+            
+            await MainActor.run {
+                if commentsPage == 1 {
+                    comments = data.data
+                } else {
+                    comments.append(contentsOf: data.data)
+                }
             }
+            
             commentsPage += 1
         } catch {
-            presentErrorToast(error)
+            presentErrorToast(error, function: #function)
         }
-        isLoading = false
-    }
-    
-    func showComments(activityId: String) {
-        currentActivityId = activityId
-        Task {
-            await getComments(activityId: activityId)
-        }
+        await setLoadingState(.gettingComments, to: false)
     }
     
     func submitComment() async {
-        guard
-            let activityID = self.currentActivityId,
-            let token = await auth.getToken(),
-            !activityID.isEmpty && !self.isSubmitting
-        else { return }
+        guard !loadingSections.contains(.submittingComment) else { return }
         
-        struct RequestBody: Encodable {
-            let content: String
-            let activity: String
-        }
-        
-        self.isSubmitting = true
+        await setLoadingState(.submittingComment, to: true)
         do {
-            let body = try apiManager.createRequestBody(RequestBody(content: commentContent, activity: activityID))
-            let data: APIResponse<Comment> = try await apiManager.requestData("/comments", method: .post, body: body, token: token)
+            let data = try await commentsDM.submitComment(for: activityId, content: commentContent)
+            
             commentContent = ""
-            self.comments.insert(data.data, at: 0)
-            toastVM.toast(.init(type: .success, title: "Success", message: "Comment Added"))
+            
+            await MainActor.run {
+                self.comments.insert(data, at: 0)
+            }
+            
+            HapticManager.shared.notification(type: .success)
         } catch {
-            presentErrorToast(error, title: "Couldn't add your comment")
+            presentErrorToast(error, title: "Couldn't add your comment", function: #function)
         }
-        self.isSubmitting = false
+        await setLoadingState(.submittingComment, to: false)
     }
     
-    func updateCommentLike(id: String, action: LikeAction) async {
-        guard let token = await auth.getToken() else { return }
+    func updateCommentLike(for commentId: String, action: CommentsDM.LikeAction) async {
+        guard !loadingSections.contains(.submittingLike(commentId)) else { return }
         
-        self.isSubmitting = true
-        do {
-            let data: APIResponse<Comment> = try await apiManager.requestData("/comments/\(id)/likes", method: action == .add ? .post : .delete, token: token)
+        HapticManager.shared.impact(style: .light)
+        
+        await MainActor.run {
             self.comments = self.comments.map({ comment in
-                return comment.id == data.data.id ? data.data : comment
+                if comment.id == commentId {
+                    var updatedComment = comment
+                    switch action {
+                    case .add:
+                        updatedComment.liked = true
+                        updatedComment.likes += 1
+                    case .remove:
+                        updatedComment.liked = false
+                        updatedComment.likes -= 1
+                    }
+                    return updatedComment
+                }
+                return comment
             })
-        } catch {
-            presentErrorToast(error)
         }
-        self.isSubmitting = false
+        
+        await setLoadingState(.submittingLike(commentId), to: true)
+        do {
+            let data = try await commentsDM.updateCommentLike(for: commentId, action: action)
+            
+            await MainActor.run {
+                self.comments = self.comments.map({ comment in
+                    return comment.id == commentId ? data : comment
+                })
+            }
+        } catch {
+            HapticManager.shared.impact(style: .heavy)
+            await MainActor.run {
+                self.comments = self.comments.map({ comment in
+                    if comment.id == commentId {
+                        var updatedComment = comment
+                        switch action {
+                        case .add:
+                            updatedComment.liked = false
+                            updatedComment.likes -= 1
+                        case .remove:
+                            updatedComment.liked = true
+                            updatedComment.likes += 1
+                        }
+                        return updatedComment
+                    }
+                    return comment
+                })
+            }
+            presentErrorToast(error, function: #function)
+        }
+        await setLoadingState(.submittingLike(commentId), to: false)
     }
     
     // MARK: Enums
     
-    enum LikeAction {
-        case add
-        case remove
+    enum LoadingSection: Hashable {
+        case gettingComments
+        case submittingComment
+        case submittingLike(String)
     }
 }
