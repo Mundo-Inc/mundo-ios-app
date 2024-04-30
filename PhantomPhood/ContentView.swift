@@ -58,6 +58,13 @@ struct ContentView: View {
                 }
             case .comments(let activityId):
                 CommentsView(for: activityId)
+            case .gifting(let idOrData):
+                if #available(iOS 16.4, *) {
+                    GiftingView(idOrData)
+                        .presentationBackground(.thinMaterial)
+                } else {
+                    GiftingView(idOrData)
+                }
             }
         }
         .fullScreenCover(isPresented: Binding(get: {

@@ -19,6 +19,7 @@ final class SheetsManager: ObservableObject {
         case placeSelector(onSelect: (MKMapItem) -> Void)
         case reactionSelector(onSelect: (EmojisManager.Emoji) -> Void)
         case comments(activityId: String)
+        case gifting(IdOrData<UserEssentials>)
         
         var id: String {
             switch self {
@@ -28,6 +29,13 @@ final class SheetsManager: ObservableObject {
                 return String(describing: onSelect)
             case .comments(let activityId):
                 return activityId
+            case .gifting(let idOrData):
+                switch idOrData {
+                case .id(let userId):
+                    return userId
+                case .data(let user):
+                    return user.id
+                }
             }
         }
     }

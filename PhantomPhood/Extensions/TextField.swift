@@ -25,6 +25,7 @@ struct FilledTextFieldViewModifier: ViewModifier {
     let size: TextFieldSize
     let paddingLeading: CGFloat?
     let paddingTrailing: CGFloat?
+    let color: Color
     
     func body(content: Content) -> some View {
         content
@@ -33,7 +34,7 @@ struct FilledTextFieldViewModifier: ViewModifier {
             .padding(.leading, paddingLeading)
             .padding(.trailing, paddingTrailing)
             .frame(height: size.rawValue)
-            .background(Color.themePrimary)
+            .background(color)
             .cornerRadius(8)
     }
 }

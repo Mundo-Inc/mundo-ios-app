@@ -26,6 +26,11 @@ struct ConversationView: View {
     
     @FocusState private var isFocused: Bool
     
+    struct Attributes: Decodable {
+        let action: String?
+        let transactionId: String?
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             if !vm.messages.isEmpty {
@@ -51,16 +56,106 @@ struct ConversationView: View {
                                     }
                                 }
                                 
-                                HStack {
-                                    if message.direction == MessageDirection.outgoing.rawValue {
-                                        Spacer()
+                                if let attributes = message.attributes, !attributes.isEmpty, let attributesData = attributes.data(using: .utf8),
+                                   let data = try? APIManager.decoder.decode(Attributes.self, from: attributesData),
+                                   let _ = data.action, let transactionId = data.transactionId {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 15) {
+                                            ZStack {
+                                                if let transaction = vm.transactionsDict[transactionId] {
+                                                    VStack {
+                                                        Group {
+                                                            if let authId = Authentication.shared.currentUser?.id, authId == transaction.sender.id {
+                                                                Text("You Gifted")
+                                                            } else {
+                                                                Text("\(transaction.sender.name) Gifted")
+                                                            }
+                                                        }
+                                                        .font(.custom(style: .title3))
+                                                        .fontWeight(.semibold)
+                                                        .foregroundStyle(Color.white)
+                                                        .padding(.vertical, 3)
+                                                        
+                                                        HStack(spacing: 3) {
+                                                            Image(systemName: "dollarsign")
+                                                                .font(.system(size: 26))
+                                                                .fontWeight(.semibold)
+                                                                .foregroundStyle(Color.white.opacity(0.4))
+                                                            
+                                                            Text(transaction.amount.formatted())
+                                                                .font(.custom(style: .largeTitle))
+                                                                .fontWeight(.semibold)
+                                                                .foregroundStyle(Color.white)
+                                                        }
+                                                        .padding(.top, 5)
+                                                    }
+                                                } else {
+                                                    ProgressView()
+                                                        .onAppear {
+                                                            Task {
+                                                                await vm.fetchTransaction(withId: transactionId)
+                                                            }
+                                                        }
+                                                }
+                                            }
+                                            .frame(height: 90)
+                                            .frame(minWidth: 220)
+                                            
+                                            
+                                            if let body = message.body {
+                                                if body.isSingleEmoji {
+                                                    Emoji(symbol: body, isAnimating: $isAnimating, size: 46)
+                                                } else {
+                                                    Text(body)
+                                                        .foregroundStyle(Color.white)
+                                                }
+                                            }
+                                        }
+                                        .padding(.all, 8)
+                                        .padding(.bottom, 14)
+                                        .background(LinearGradient(colors: [Color(hue: 37 / 360, saturation: 0.83, brightness: 0.59), Color(hue: 10 / 360, saturation: 0.73, brightness: 0.5)], startPoint: .topLeading, endPoint: .bottomTrailing), in: RoundedRectangle(cornerRadius: 10))
+                                        .shadow(color: Color(hue: 36 / 360, saturation: 1, brightness: 0.8).opacity(0.5), radius: 25)
+                                        .overlay(alignment: .bottomTrailing) {
+                                            if let createdAt = message.dateCreated {
+                                                Text(createdAt.formattedTime())
+                                                    .font(.custom(style: .caption2))
+                                                    .foregroundStyle(Color.white.opacity(0.4))
+                                                    .padding(.bottom, 3)
+                                                    .padding(.trailing, 8)
+                                            }
+                                        }
                                     }
-                                    
-                                    if let body = message.body {
-                                        if body.isSingleEmoji {
-                                            Emoji(symbol: body, isAnimating: $isAnimating, size: 46)
-                                                .padding(.top, 8)
-                                                .padding(.bottom, 22)
+                                    .padding(.horizontal)
+                                    .id(message.messageIndex)
+                                    .transition(AnyTransition.opacity.animation(.easeIn))
+                                } else {
+                                    HStack {
+                                        if message.direction == MessageDirection.outgoing.rawValue {
+                                            Spacer()
+                                        }
+                                        
+                                        if let body = message.body {
+                                            if body.isSingleEmoji {
+                                                Emoji(symbol: body, isAnimating: $isAnimating, size: 46)
+                                                    .padding(.top, 8)
+                                                    .padding(.bottom, 22)
+                                                    .overlay(alignment: .bottomTrailing) {
+                                                        if let createdAt = message.dateCreated {
+                                                            Text(createdAt.formattedTime())
+                                                                .font(.custom(style: .caption2))
+                                                                .foregroundStyle(.secondary)
+                                                                .padding(.bottom, 3)
+                                                                .padding(.trailing, 8)
+                                                        }
+                                                    }
+                                            } else {
+                                                VStack(alignment: .leading) {
+                                                    Text(body)
+                                                        .frame(minWidth: 50, alignment: .leading)
+                                                }
+                                                .padding(.all, 8)
+                                                .padding(.bottom, 14)
+                                                .background(message.direction == MessageDirection.outgoing.rawValue ? Color.accentColor.opacity(0.7) : Color.themePrimary)
                                                 .overlay(alignment: .bottomTrailing) {
                                                     if let createdAt = message.dateCreated {
                                                         Text(createdAt.formattedTime())
@@ -70,43 +165,27 @@ struct ConversationView: View {
                                                             .padding(.trailing, 8)
                                                     }
                                                 }
+                                                .clipShape(
+                                                    message.direction == MessageDirection.outgoing.rawValue ?
+                                                        .rect(topLeadingRadius: 10, bottomLeadingRadius: 10, bottomTrailingRadius: 0, topTrailingRadius: 10) :
+                                                            .rect(topLeadingRadius: 10, bottomLeadingRadius: 0, bottomTrailingRadius: 10, topTrailingRadius: 10)
+                                                )
+                                            }
                                         } else {
-                                            VStack(alignment: .leading) {
-                                                Text(body)
-                                                    .frame(minWidth: 50, alignment: .leading)
-                                            }
-                                            .padding(.all, 8)
-                                            .padding(.bottom, 14)
-                                            .background(message.direction == MessageDirection.outgoing.rawValue ? Color.accentColor.opacity(0.7) : Color.themePrimary)
-                                            .overlay(alignment: .bottomTrailing) {
-                                                if let createdAt = message.dateCreated {
-                                                    Text(createdAt.formattedTime())
-                                                        .font(.custom(style: .caption2))
-                                                        .foregroundStyle(.secondary)
-                                                        .padding(.bottom, 3)
-                                                        .padding(.trailing, 8)
-                                                }
-                                            }
-                                            .clipShape(
-                                                message.direction == MessageDirection.outgoing.rawValue ?
-                                                    .rect(topLeadingRadius: 10, bottomLeadingRadius: 10, bottomTrailingRadius: 0, topTrailingRadius: 10) :
-                                                        .rect(topLeadingRadius: 10, bottomLeadingRadius: 0, bottomTrailingRadius: 10, topTrailingRadius: 10)
-                                            )
+                                            // TODO: Might be a custom action
+                                            Text("Unsupported message")
+                                                .foregroundStyle(.secondary)
                                         }
-                                    } else {
-                                        Text("Unsupported message")
-                                            .foregroundStyle(.secondary)
+                                        
+                                        if message.direction == MessageDirection.incoming.rawValue {
+                                            Spacer()
+                                        }
                                     }
-                                    
-                                    
-                                    if message.direction == MessageDirection.incoming.rawValue {
-                                        Spacer()
-                                    }
+                                    .padding(.horizontal)
+                                    .padding(message.direction == MessageDirection.outgoing.rawValue ? .leading : .trailing, mainWindowSize.width * 0.1)
+                                    .id(message.messageIndex)
+                                    .transition(AnyTransition.opacity.animation(.easeIn))
                                 }
-                                .padding(.horizontal)
-                                .padding(message.direction == MessageDirection.outgoing.rawValue ? .leading : .trailing, mainWindowSize.width * 0.1)
-                                .id(message.messageIndex)
-                                .transition(AnyTransition.opacity.animation(.easeIn))
                             }
                         }
                         .onAppear {
@@ -300,36 +379,49 @@ struct ConversationView: View {
                 }
             }
             
-            TextField("Message", text: $vm.messageText, axis: .vertical)
-                .lineLimit(1...5)
-                .focused($isFocused)
-                .padding(.all, 10)
-                .padding(.trailing, 37)
-                .background {
-                    RoundedRectangle(cornerRadius: 10)
-                        .foregroundStyle(Color.themeBG.opacity(0.7))
-                }
-                .overlay(alignment: .bottomTrailing) {
-                    Button {
-                        Task {
-                            await vm.sendMessage() { error in
-                                if let scrollProxy {
-                                    withAnimation {
-                                        scrollProxy.scrollTo("bottom")
+            HStack {
+                TextField("Message", text: $vm.messageText, axis: .vertical)
+                    .lineLimit(1...5)
+                    .focused($isFocused)
+                    .padding(.all, 10)
+                    .padding(.trailing, 37)
+                    .background(Color.themeBG.opacity(0.7), in: RoundedRectangle(cornerRadius: 10))
+                    .overlay(alignment: .bottomTrailing) {
+                        Button {
+                            Task {
+                                await vm.sendMessage() { error in
+                                    if let scrollProxy {
+                                        withAnimation {
+                                            scrollProxy.scrollTo("bottom")
+                                        }
                                     }
                                 }
                             }
+                        } label: {
+                            Text("Send")
+                        }
+                        .opacity(vm.loadingSections.contains(.sendingMessage) ? 0.6 : 1)
+                        .disabled(vm.messageText.isEmpty || vm.loadingSections.contains(.sendingMessage))
+                        .padding(.all, 11)
+                    }
+                
+                if vm.participants.count == 1 {
+                    Button {
+                        if let user = vm.usersDict.first?.value {
+                            SheetsManager.shared.presenting = .gifting(.data(user))
                         }
                     } label: {
-                        Text("Send")
+                        Image(systemName: "gift.fill")
+                            .font(.system(size: 18))
+                            .frame(width: 32)
+                            .foregroundStyle(Color.yellow)
                     }
-                    .opacity(vm.loadingSections.contains(.sendingMessage) ? 0.6 : 1)
-                    .disabled(vm.messageText.isEmpty || vm.loadingSections.contains(.sendingMessage))
-                    .padding(.all, 11)
+                    .disabled(vm.usersDict.first?.value == nil)
                 }
-                .padding(.horizontal)
-                .padding(.vertical, 10)
-                .background(Color.themePrimary)
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 10)
+            .background(Color.themePrimary)
         }
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {

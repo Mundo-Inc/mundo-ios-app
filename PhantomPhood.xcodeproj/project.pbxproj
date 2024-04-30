@@ -356,6 +356,9 @@
 		0BC84A6B2AD071EE00D723AA /* SelectReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A6A2AD071EE00D723AA /* SelectReactionsView.swift */; };
 		0BC84A6F2AD0A83900D723AA /* PlaceMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A6E2AD0A83900D723AA /* PlaceMediaView.swift */; };
 		0BC84A712AD0A8B100D723AA /* PlaceMediaVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC84A702AD0A8B100D723AA /* PlaceMediaVM.swift */; };
+		0BC9A3992BE106EC00C0EA4E /* GiftingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC9A3982BE106EC00C0EA4E /* GiftingView.swift */; };
+		0BC9A39B2BE10B6000C0EA4E /* GiftingVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC9A39A2BE10B5F00C0EA4E /* GiftingVM.swift */; };
+		0BC9A39D2BE14F2200C0EA4E /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC9A39C2BE14F2200C0EA4E /* Transaction.swift */; };
 		0BC9BBEF2B922FE100477654 /* ReviewDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC9BBEE2B922FE100477654 /* ReviewDM.swift */; };
 		0BC9BBF62B92495900477654 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC9BBF52B92495900477654 /* AlertManager.swift */; };
 		0BC9BBFC2B924B1A00477654 /* ActionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC9BBFB2B924B1A00477654 /* ActionManager.swift */; };
@@ -777,6 +780,9 @@
 		0BC84A6A2AD071EE00D723AA /* SelectReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectReactionsView.swift; sourceTree = "<group>"; };
 		0BC84A6E2AD0A83900D723AA /* PlaceMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMediaView.swift; sourceTree = "<group>"; };
 		0BC84A702AD0A8B100D723AA /* PlaceMediaVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMediaVM.swift; sourceTree = "<group>"; };
+		0BC9A3982BE106EC00C0EA4E /* GiftingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftingView.swift; sourceTree = "<group>"; };
+		0BC9A39A2BE10B5F00C0EA4E /* GiftingVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftingVM.swift; sourceTree = "<group>"; };
+		0BC9A39C2BE14F2200C0EA4E /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		0BC9BBEE2B922FE100477654 /* ReviewDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewDM.swift; sourceTree = "<group>"; };
 		0BC9BBF52B92495900477654 /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
 		0BC9BBFB2B924B1A00477654 /* ActionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionManager.swift; sourceTree = "<group>"; };
@@ -1519,6 +1525,7 @@
 				0BBEFAF22B7E41E800A78FF0 /* Prize.swift */,
 				0B0E6D332ABB872F00EC62EE /* Reaction.swift */,
 				0B383CF22B87852200D68678 /* RepeatItem.swift */,
+				0BC9A39C2BE14F2200C0EA4E /* Transaction.swift */,
 				0B547D7D2B3EEC61002C6336 /* UserPlacesList.swift */,
 				0B0BB77C2BB4614600DE3728 /* Map */,
 				0B1610CB2B631E0A00DCAFA5 /* Place */,
@@ -1535,7 +1542,6 @@
 				0B226F682B3359F40036B8BE /* Achievement.swift */,
 				0B76C9D22B712F120013CE3E /* AnimatedStarRating.swift */,
 				0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */,
-				0BCBC1932ACDF30600992D8E /* CommentsView.swift */,
 				0B7A80B12BA1EE6E00192192 /* CTAButton.swift */,
 				0B5EB1BF2B56DB6A00497847 /* CustomMapMarker.swift */,
 				0B64C4CC2AB4CCA1009F0D43 /* DataCard.swift */,
@@ -1554,6 +1560,8 @@
 				0B226F622B3325350036B8BE /* StarRating.swift */,
 				0BC84A682AD06F8200D723AA /* WrappingHStack.swift */,
 				0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */,
+				0BC9A3952BE1059400C0EA4E /* Comments */,
+				0BC9A3972BE106AD00C0EA4E /* Gifting */,
 				0B448E672B832DD100179D0E /* QuickActions */,
 				0BD9F9872B4DAF4A0040FCDA /* UserActivity */,
 			);
@@ -1685,6 +1693,7 @@
 			children = (
 				0BC9BBFB2B924B1A00477654 /* ActionManager.swift */,
 				0BC9BBF52B92495900477654 /* AlertManager.swift */,
+				0B6495552AB10F5E000E57AF /* APIManager.swift */,
 				0B9EF2802B302E1D0025F464 /* ContactsService.swift */,
 				0B0BB7782BB460DE00DE3728 /* DataStack.swift */,
 				0B86F9342B44339400DD4C85 /* EmojisManager.swift */,
@@ -1827,14 +1836,30 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		0BC9A3952BE1059400C0EA4E /* Comments */ = {
+			isa = PBXGroup;
+			children = (
+				0BCBC1932ACDF30600992D8E /* CommentsView.swift */,
+				0BCBC1912ACDF22100992D8E /* CommentsVM.swift */,
+			);
+			path = Comments;
+			sourceTree = "<group>";
+		};
+		0BC9A3972BE106AD00C0EA4E /* Gifting */ = {
+			isa = PBXGroup;
+			children = (
+				0BC9A3982BE106EC00C0EA4E /* GiftingView.swift */,
+				0BC9A39A2BE10B5F00C0EA4E /* GiftingVM.swift */,
+			);
+			path = Gifting;
+			sourceTree = "<group>";
+		};
 		0BCBC1952ACDFEC700992D8E /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				0B6495552AB10F5E000E57AF /* APIManager.swift */,
 				0BF5B4BB2AB37B8200DEC403 /* AppData.swift */,
 				0B2BF8812B17AA8000C10A5E /* AppGeneralVM.swift */,
 				0B77EA5A2AAFE31300C8DF87 /* Authentication.swift */,
-				0BCBC1912ACDF22100992D8E /* CommentsVM.swift */,
 				0B86F9362B4433CB00DD4C85 /* EmojisVM.swift */,
 				0BF5B49C2AB292D500DEC403 /* KeychainHelper.swift */,
 				0B51A8D32ACEC58400DA38DC /* MediasVM.swift */,
@@ -2325,10 +2350,12 @@
 				0B4681512AC61D49009C5EF9 /* ProfileActivityCheckinView.swift in Sources */,
 				0B9950DF2BBEF2BC0060B6AF /* TCHAdapter.swift in Sources */,
 				0B6A47C22ABC9157000CBDA3 /* FeedDM.swift in Sources */,
+				0BC9A3992BE106EC00C0EA4E /* GiftingView.swift in Sources */,
 				0BE8EC7A2ABCD3BA00512872 /* ProfileActivityFollowingView.swift in Sources */,
 				0BB2440D2BCD823000A136CB /* String.swift in Sources */,
 				0BFDA1522BD6660000DE83B5 /* OnboardingView.swift in Sources */,
 				0B73EAC82BBF0E4C00991B13 /* ObservableResultPublisher.swift in Sources */,
+				0BC9A39D2BE14F2200C0EA4E /* Transaction.swift in Sources */,
 				0B51A8D62ACEC61000DA38DC /* MediasView.swift in Sources */,
 				0B997B6A2AC7377C00579C9C /* UserProfileVM.swift in Sources */,
 				0B9950BC2BBED12B0060B6AF /* ConversationsClientWrapper.swift in Sources */,
@@ -2459,6 +2486,7 @@
 				0B0E6D262ABB22ED00EC62EE /* ProfileActivityLevelUpView.swift in Sources */,
 				0B8B15D42BB5D06400A955EA /* ClusteredMapActivity.swift in Sources */,
 				0BCBC1942ACDF30600992D8E /* CommentsView.swift in Sources */,
+				0BC9A39B2BE10B6000C0EA4E /* GiftingVM.swift in Sources */,
 				0B83A0CB2AF403510096780B /* ProfileActivitiesVM.swift in Sources */,
 				0BB02DA42AD34B9E00F65822 /* AddReviewView.swift in Sources */,
 				0B0253072B18F284003702AF /* HomeActivityInfoVM.swift in Sources */,
@@ -2689,7 +2717,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.68.1;
+				MARKETING_VERSION = 0.69.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2729,7 +2757,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.68.1;
+				MARKETING_VERSION = 0.69.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

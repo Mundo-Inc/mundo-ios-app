@@ -9,18 +9,21 @@ import Foundation
 import TwilioConversationsClient
 import Combine
 
-class ConversationVM: ObservableObject {
+class ConversationVM: LoadingSections, ObservableObject {
     @Published var messages = [PersistentMessageDataItem]()
     
     @Published var messageText = ""
     @Published var usersDict: [String:UserEssentials] = [:]
+    @Published var transactionsDict: [String:Transaction] = [:]
     @Published var loadingSections = Set<LoadingSection>()
     
     enum LoadingSection: Hashable {
         case sendingMessage
+        case loadingTransaction(String)
     }
     
     private let userProfileDM = UserProfileDM()
+    private let transactionsDM = TransactionsDM()
     private var coreDataDelegate = ConversationsManager.shared.coreDataManager
     private var conversationManager = ConversationsManager.shared
     private var cancellables: Set<AnyCancellable> = []
@@ -340,5 +343,23 @@ class ConversationVM: ObservableObject {
         } catch {
             presentErrorToast(error, silent: true)
         }
+    }
+}
+
+
+extension ConversationVM {
+    func fetchTransaction(withId id: String) async {
+        guard transactionsDict[id] == nil, !loadingSections.contains(.loadingTransaction(id)) else { return }
+        
+        await setLoadingState(.loadingTransaction(id), to: true)
+        do {
+            let data = try await transactionsDM.getTransaction(withId: id)
+            await MainActor.run {
+                transactionsDict[id] = data
+            }
+        } catch {
+            presentErrorToast(error, function: #function)
+        }
+        await setLoadingState(.loadingTransaction(id), to: false)
     }
 }
