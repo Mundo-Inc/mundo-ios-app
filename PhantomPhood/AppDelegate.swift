@@ -52,9 +52,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         application.registerForRemoteNotifications()
         
-        if UserDefaults.standard.bool(forKey: "AppTerminatedGracefully") {
+        if UserDefaults.standard.bool(forKey: K.UserDefaults.appTerminatedGracefully) {
             // Reset the flag as we are starting a new session
-            UserDefaults.standard.set(false, forKey: "AppTerminatedGracefully")
+            UserDefaults.standard.set(false, forKey: K.UserDefaults.appTerminatedGracefully)
         } else {
             // The app did not terminate gracefully last time
             // Perform necessary cleanup or reset operations here
@@ -75,7 +75,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func applicationWillTerminate(_ application: UIApplication) {
         // App is terminating normally
-        UserDefaults.standard.set(true, forKey: "AppTerminatedGracefully")
+        UserDefaults.standard.set(true, forKey: K.UserDefaults.appTerminatedGracefully)
     }
 }
 
@@ -84,11 +84,11 @@ extension AppDelegate: MessagingDelegate {
         // Get APN token
         if let deviceToken = messaging.apnsToken {
             let apnToken = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
-            UserDefaults.standard.set(apnToken, forKey: "apnToken")
+            UserDefaults.standard.set(apnToken, forKey: K.UserDefaults.apnToken)
         }
         
         // Get FCM token
-        UserDefaults.standard.set(fcmToken, forKey: "fcmToken")
+        UserDefaults.standard.set(fcmToken, forKey: K.UserDefaults.fcmToken)
     }
 }
 

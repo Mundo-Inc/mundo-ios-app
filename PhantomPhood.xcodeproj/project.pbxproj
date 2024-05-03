@@ -35,6 +35,7 @@
 		0B0E6D2E2ABB676300EC62EE /* PlaceDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D2D2ABB676300EC62EE /* PlaceDetail.swift */; };
 		0B0E6D322ABB816F00EC62EE /* Checkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D312ABB816F00EC62EE /* Checkin.swift */; };
 		0B0E6D342ABB872F00EC62EE /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D332ABB872F00EC62EE /* Reaction.swift */; };
+		0B1275AC2BE52DB6007CCE20 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1275AB2BE52DB6007CCE20 /* Constants.swift */; };
 		0B1610C42B62A14500DCAFA5 /* NewCheckinVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1610C32B62A14500DCAFA5 /* NewCheckinVM.swift */; };
 		0B1610C62B62A14E00DCAFA5 /* NewCheckinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1610C52B62A14E00DCAFA5 /* NewCheckinView.swift */; };
 		0B1610C82B631DE000DCAFA5 /* PlaceOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1610C72B631DE000DCAFA5 /* PlaceOverview.swift */; };
@@ -252,7 +253,6 @@
 		0B7A80B22BA1EE6E00192192 /* CTAButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7A80B12BA1EE6E00192192 /* CTAButton.swift */; };
 		0B7A80B42BA1FB8A00192192 /* HomeMadeDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7A80B32BA1FB8A00192192 /* HomeMadeDM.swift */; };
 		0B7A80B62BA2024B00192192 /* HomeMade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7A80B52BA2024B00192192 /* HomeMade.swift */; };
-		0B7DD5412B14DCC100D2EECB /* VideoPlayerVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7DD5402B14DCC100D2EECB /* VideoPlayerVM.swift */; };
 		0B7E788D2BC578B300767995 /* HomeFollowingView17.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7E788C2BC578B300767995 /* HomeFollowingView17.swift */; };
 		0B7E78912BC58E5C00767995 /* HomeActivityItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7E78902BC58E5C00767995 /* HomeActivityItem.swift */; };
 		0B83A0CB2AF403510096780B /* ProfileActivitiesVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B83A0CA2AF403510096780B /* ProfileActivitiesVM.swift */; };
@@ -471,6 +471,7 @@
 		0B0E6D2D2ABB676300EC62EE /* PlaceDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceDetail.swift; sourceTree = "<group>"; };
 		0B0E6D312ABB816F00EC62EE /* Checkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkin.swift; sourceTree = "<group>"; };
 		0B0E6D332ABB872F00EC62EE /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
+		0B1275AB2BE52DB6007CCE20 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		0B1610C32B62A14500DCAFA5 /* NewCheckinVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCheckinVM.swift; sourceTree = "<group>"; };
 		0B1610C52B62A14E00DCAFA5 /* NewCheckinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCheckinView.swift; sourceTree = "<group>"; };
 		0B1610C72B631DE000DCAFA5 /* PlaceOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceOverview.swift; sourceTree = "<group>"; };
@@ -681,7 +682,6 @@
 		0B7A80B12BA1EE6E00192192 /* CTAButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTAButton.swift; sourceTree = "<group>"; };
 		0B7A80B32BA1FB8A00192192 /* HomeMadeDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMadeDM.swift; sourceTree = "<group>"; };
 		0B7A80B52BA2024B00192192 /* HomeMade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMade.swift; sourceTree = "<group>"; };
-		0B7DD5402B14DCC100D2EECB /* VideoPlayerVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerVM.swift; sourceTree = "<group>"; };
 		0B7E788C2BC578B300767995 /* HomeFollowingView17.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFollowingView17.swift; sourceTree = "<group>"; };
 		0B7E78902BC58E5C00767995 /* HomeActivityItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeActivityItem.swift; sourceTree = "<group>"; };
 		0B83A0CA2AF403510096780B /* ProfileActivitiesVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileActivitiesVM.swift; sourceTree = "<group>"; };
@@ -1478,6 +1478,7 @@
 				0B35B7A82B0D09EB00822BA6 /* GoogleService-Info.plist */,
 				0BF5B4AF2AB377C600DEC403 /* Info.plist */,
 				0B5070582BBC434900593C1B /* AppDelegate.swift */,
+				0B1275AB2BE52DB6007CCE20 /* Constants.swift */,
 				0B47FDA02B11060600F39527 /* AppRouter.swift */,
 				0B77EA3C2AAF855500C8DF87 /* ContentView.swift */,
 				0B77EA3A2AAF855500C8DF87 /* PhantomPhoodApp.swift */,
@@ -1872,7 +1873,6 @@
 				0BC2E3152B2207EB0002649D /* TaskManager.swift */,
 				0B37ABFB2AD7408E00E8D4BC /* ToastVM.swift */,
 				0BC2E3132B2207B40002649D /* UploadManager.swift */,
-				0B7DD5402B14DCC100D2EECB /* VideoPlayerVM.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -2352,6 +2352,7 @@
 				0B4681512AC61D49009C5EF9 /* ProfileActivityCheckinView.swift in Sources */,
 				0B6D56CE2BE2A09E003C2853 /* VideoPlayer.swift in Sources */,
 				0B9950DF2BBEF2BC0060B6AF /* TCHAdapter.swift in Sources */,
+				0B1275AC2BE52DB6007CCE20 /* Constants.swift in Sources */,
 				0B6A47C22ABC9157000CBDA3 /* FeedDM.swift in Sources */,
 				0BC9A3992BE106EC00C0EA4E /* GiftingView.swift in Sources */,
 				0BE8EC7A2ABCD3BA00512872 /* ProfileActivityFollowingView.swift in Sources */,
@@ -2544,7 +2545,6 @@
 				0BA5BDAE2BDFB7C700B4D35E /* LoadingSections.swift in Sources */,
 				0B46814D2AC5EAFB009C5EF9 /* FirstLoadingView.swift in Sources */,
 				0B2694B42B8E3CC8004FA5C8 /* PhotoCaptureVM.swift in Sources */,
-				0B7DD5412B14DCC100D2EECB /* VideoPlayerVM.swift in Sources */,
 				0BCAE7442B7E6B5D005AD0EF /* MissionItem.swift in Sources */,
 				0B7E788D2BC578B300767995 /* HomeFollowingView17.swift in Sources */,
 				0B383CF52B87F9A600D68678 /* EnvironmentValues.swift in Sources */,
@@ -2721,7 +2721,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.70.0;
+				MARKETING_VERSION = 0.70.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2761,7 +2761,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.70.0;
+				MARKETING_VERSION = 0.70.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

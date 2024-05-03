@@ -20,7 +20,8 @@ struct HomeActivityItem: View {
     @EnvironmentObject private var actionManager: ActionManager
     
     @ObservedObject private var appData = AppData.shared
-    @ObservedObject private var videoPlayerVM = VideoPlayerVM.shared
+    
+    @AppStorage(K.UserDefaults.isMute) private var isMute = false
     
     @Binding private var item: FeedItem
     @ObservedObject private var vm: HomeVM
@@ -98,7 +99,7 @@ struct HomeActivityItem: View {
                         }
                     })
                     .onTapGesture {
-                        videoPlayerVM.isMute = !videoPlayerVM.isMute
+                        isMute.toggle()
                     }
             }
             
@@ -815,7 +816,7 @@ struct HomeActivityItem: View {
                 .foregroundStyle(.clear)
                 .frame(width: 40, height: 40)
                 .overlay {
-                    if videoPlayerVM.isMute {
+                    if isMute {
                         Image(systemName: "speaker.slash.fill")
                             .foregroundStyle(.secondary)
                             .font(.system(size: 24))
@@ -849,9 +850,9 @@ extension HomeActivityItem {
             case .video:
                 switch forTab {
                 case .following:
-                    VideoPlayer(url: url, playing: vm.followingItemOnViewPort == self.item.id && tabPage == media.id, isMute: videoPlayerVM.isMute)
+                    VideoPlayer(url: url, playing: vm.followingItemOnViewPort == self.item.id && tabPage == media.id, isMute: isMute)
                 case .forYou:
-                    VideoPlayer(url: url, playing: vm.forYouItemOnViewPort == self.item.id && tabPage == media.id, isMute: videoPlayerVM.isMute)
+                    VideoPlayer(url: url, playing: vm.forYouItemOnViewPort == self.item.id && tabPage == media.id, isMute: isMute)
                 }
             }
         } else {

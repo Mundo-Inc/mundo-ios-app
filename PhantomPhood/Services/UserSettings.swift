@@ -16,17 +16,17 @@ struct UserSettings {
     
     // MARK: - User Info
     
-    @AppStorage(Keys.userRole.rawValue) private(set) var userRole: UserRole = .user
+    @AppStorage(K.UserDefaults.userRole) private(set) var userRole: UserRole = .user
     
     // MARK: - App settings
     
-    @AppStorage(Keys.isBetaTester.rawValue) var isBetaTester: Bool = false
+    @AppStorage(K.UserDefaults.isBetaTester) var isBetaTester: Bool = false
     
-    @AppStorage(Keys.inviteCredits.rawValue) var inviteCredits: Int = UserSettings.maxInviteCredits
-    @AppStorage(Keys.inviteCreditsLastGiven.rawValue) var inviteCreditsLastGiven: Date = .now
+    @AppStorage(K.UserDefaults.inviteCredits) var inviteCredits: Int = UserSettings.maxInviteCredits
+    @AppStorage(K.UserDefaults.inviteCreditsLastGiven) var inviteCreditsLastGiven: Date = .now
     
     /// Onboarding Version
-    @AppStorage(Keys.onboardingVersion.rawValue) var onboardingVersion: Int = 0
+    @AppStorage(K.UserDefaults.onboardingVersion) var onboardingVersion: Int = 0
     
     // MARK: - Public Methods
     
@@ -39,27 +39,6 @@ struct UserSettings {
     /// Used in sign in flow to set user information
     func setUserInfo(_ user: CurrentUserFullData) {
         userRole = user.role
-    }
-    
-    enum Keys: String, CaseIterable {
-        
-        /// User role - (user, admin)
-        case userRole
-
-        /// Beta tester status
-        case isBetaTester
-
-        /// Referral code (used in sign up flow)
-        case referredBy
-        
-        /// Number of new invites user can generate
-        case inviteCredits
-        /// Last time user was given invite credits
-        case inviteCreditsLastGiven
-
-        /// Onboarding Version
-        case onboardingVersion
-        
     }
 }
 

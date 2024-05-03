@@ -126,7 +126,7 @@ final class UniversalLinkingManager {
         }),
         "signup": RouteScheme(pattern: ["ref?"], authRouteGetter: { components in
             if let first = components.first {
-                UserDefaults.standard.setValue(first, forKey: UserSettings.Keys.referredBy.rawValue)
+                UserDefaults.standard.setValue(first, forKey: K.UserDefaults.referredBy)
                 return AuthRoute.signUpOptions
             }
             

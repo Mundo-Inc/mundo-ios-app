@@ -9,11 +9,12 @@ import Foundation
 import Contacts
 
 final class ContactsService {
+    static let daysBetweenSync: Int = 20
     static let shared = ContactsService()
     
-    private init() {}
-    
     private let store = CNContactStore()
+    
+    private init() {}
     
     /// Request access to the user's contacts
     private func requestAccess(completion: @escaping (Bool) -> Void) {
@@ -46,7 +47,7 @@ final class ContactsService {
         }
     }
     
-    /// Sync contacts with server if access is granted and lastSyncDateKey is checked
+    /// Sync contacts with server if access is granted and contactsLastSyncDate is checked
     func tryToSyncContacts() {
         requestAccess { accessGranted in
             guard accessGranted else { return }
@@ -57,7 +58,6 @@ final class ContactsService {
             self.fetchContacts { result in
                 switch result {
                 case .success(let data):
-                    print("Contacts Access Granted: \(data.count)")
 //                    if let first = success.first {
 //                        for phoneNumber in first.phoneNumbers {
 //                            print(phoneNumber)
@@ -75,14 +75,11 @@ final class ContactsService {
 
 /// Last synced date
 extension ContactsService {
-    static let lastSyncDateKey = "contactsLastSyncDate"
-    static let daysBetweenSync: Int = 20
-    
     var lastSyncDate: Date? {
-        UserDefaults.standard.object(forKey: ContactsService.lastSyncDateKey) as? Date
+        UserDefaults.standard.object(forKey: K.UserDefaults.contactsLastSyncDate) as? Date
     }
     
     func updateLastSyncDate() {
-        UserDefaults.standard.set(Date(), forKey: ContactsService.lastSyncDateKey)
+        UserDefaults.standard.set(Date(), forKey: K.UserDefaults.contactsLastSyncDate)
     }
 }

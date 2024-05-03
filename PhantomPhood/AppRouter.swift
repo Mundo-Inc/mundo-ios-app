@@ -17,7 +17,7 @@ struct AppRouter: View {
     @ObservedObject private var toastVM = ToastVM.shared
     @ObservedObject private var appGeneralVM = AppGeneralVM.shared
     
-    @AppStorage("theme") var theme: String = ""
+    @AppStorage(K.UserDefaults.theme) var theme: String = ""
     
     var body: some View {
         ZStack {
@@ -141,7 +141,7 @@ struct AppRouter: View {
                 }
             case .background, .inactive:
                 // Considered as a graceful termination
-                UserDefaults.standard.set(true, forKey: "AppTerminatedGracefully")
+                UserDefaults.standard.set(true, forKey: K.UserDefaults.appTerminatedGracefully)
             default:
                 break
             }

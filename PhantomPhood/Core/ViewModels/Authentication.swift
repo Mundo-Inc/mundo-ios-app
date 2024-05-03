@@ -345,8 +345,8 @@ final class Authentication: ObservableObject {
     }
     
     func setDeviceToken() async {
-        let apnToken = UserDefaults.standard.string(forKey: "apnToken")
-        let fcmToken = UserDefaults.standard.string(forKey: "fcmToken")
+        let apnToken = UserDefaults.standard.string(forKey: K.UserDefaults.apnToken)
+        let fcmToken = UserDefaults.standard.string(forKey: K.UserDefaults.fcmToken)
         
         guard let token = await getToken(), let currentUser, let apnToken, !apnToken.isEmpty, let fcmToken, !fcmToken.isEmpty else {
             return
@@ -364,8 +364,8 @@ final class Authentication: ObservableObject {
             
             try await apiManager.requestNoContent("/users/\(currentUser.id)/settings", method: .put, body: body, token: token)
             
-            UserDefaults.standard.removeObject(forKey: "apnToken")
-            UserDefaults.standard.removeObject(forKey: "fcmToken")
+            UserDefaults.standard.removeObject(forKey: K.UserDefaults.apnToken)
+            UserDefaults.standard.removeObject(forKey: K.UserDefaults.fcmToken)
         } catch {
             presentErrorToast(error, debug: "Couldn't send device token", silent: true)
         }

@@ -21,9 +21,10 @@ struct PlaceView: View {
     }
     
     @Namespace private var namespace
-    @ObservedObject private var videoPlayerVM = VideoPlayerVM.shared
     
     @State private var interactingWithMap = false
+    
+    @AppStorage(K.UserDefaults.isMute) private var isMute = false
     
     var body: some View {
         ZStack {
@@ -505,13 +506,7 @@ struct PlaceView: View {
                                 .matchedGeometryEffect(id: media.id, in: namespace)
                             } else if media.type == .video, let url = media.src {
                                 ZStack(alignment: .bottom) {
-                                    VideoPlayer(url: url, playing: videoPlayerVM.playId == media.id, isMute: videoPlayerVM.isMute)
-                                        .onAppear {
-                                            videoPlayerVM.playId = media.id
-                                        }
-                                        .onDisappear {
-                                            videoPlayerVM.playId = nil
-                                        }
+                                    VideoPlayer(url: url, playing: true, isMute: isMute)
                                 }
                             }
                         }

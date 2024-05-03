@@ -140,7 +140,7 @@ struct SignUpWithPasswordView: View {
     
     @FocusState private var focusedField: Field?
     
-    @AppStorage(UserSettings.Keys.referredBy.rawValue) var referredBy: String = ""
+    @AppStorage(K.UserDefaults.referredBy) var referredBy: String = ""
     
     var body: some View {
         VStack {

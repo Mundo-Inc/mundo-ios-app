@@ -11,7 +11,7 @@ struct SettingsView: View {
     @ObservedObject private var auth = Authentication.shared
     @EnvironmentObject private var alertManager: AlertManager
     
-    @AppStorage("theme") private var theme: String = ""
+    @AppStorage(K.UserDefaults.theme) private var theme: String = ""
     
     @StateObject private var vm = SettingsVM()
     
