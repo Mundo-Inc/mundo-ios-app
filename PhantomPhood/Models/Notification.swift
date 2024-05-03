@@ -44,27 +44,12 @@ extension Notification {
         self.batchCount = try container.decode(Int.self, forKey: .batchCount)
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
         self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
-        self.activity = try container.decodeIfPresent(String.self, forKey: .activity)
+        self.activity = try container.decodeOptionalString(forKey: .activity)
         self.readAt = try container.decodeIfPresent(Date.self, forKey: .readAt)
-        self.failReason = try container.decodeIfPresent(String.self, forKey: .failReason)
-        
-        if let title = try container.decodeIfPresent(String.self, forKey: .title), !title.isEmpty {
-            self.title = title
-        } else {
-            self.title = nil
-        }
-        
-        if let content = try container.decodeIfPresent(String.self, forKey: .content), !content.isEmpty {
-            self.content = content
-        } else {
-            self.content = nil
-        }
-        
-        if let imageString = try container.decodeIfPresent(String.self, forKey: .image), !imageString.isEmpty {
-            self.image = URL(string: imageString)
-        } else {
-            self.image = nil
-        }
+        self.failReason = try container.decodeOptionalString(forKey: .failReason)
+        self.title = try container.decodeOptionalString(forKey: .title)
+        self.content = try container.decodeOptionalString(forKey: .content)
+        self.image = try container.decodeURLIfPresent(forKey: .image)
     }
 }
 

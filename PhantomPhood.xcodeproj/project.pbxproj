@@ -36,6 +36,8 @@
 		0B0E6D322ABB816F00EC62EE /* Checkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D312ABB816F00EC62EE /* Checkin.swift */; };
 		0B0E6D342ABB872F00EC62EE /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D332ABB872F00EC62EE /* Reaction.swift */; };
 		0B1275AC2BE52DB6007CCE20 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1275AB2BE52DB6007CCE20 /* Constants.swift */; };
+		0B1275B02BE56143007CCE20 /* KeyedDecodingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1275AF2BE56143007CCE20 /* KeyedDecodingContainer.swift */; };
+		0B1275B22BE56743007CCE20 /* UserActivityMapAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1275B12BE56743007CCE20 /* UserActivityMapAnnotation.swift */; };
 		0B1610C42B62A14500DCAFA5 /* NewCheckinVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1610C32B62A14500DCAFA5 /* NewCheckinVM.swift */; };
 		0B1610C62B62A14E00DCAFA5 /* NewCheckinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1610C52B62A14E00DCAFA5 /* NewCheckinView.swift */; };
 		0B1610C82B631DE000DCAFA5 /* PlaceOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1610C72B631DE000DCAFA5 /* PlaceOverview.swift */; };
@@ -472,6 +474,8 @@
 		0B0E6D312ABB816F00EC62EE /* Checkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkin.swift; sourceTree = "<group>"; };
 		0B0E6D332ABB872F00EC62EE /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		0B1275AB2BE52DB6007CCE20 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		0B1275AF2BE56143007CCE20 /* KeyedDecodingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedDecodingContainer.swift; sourceTree = "<group>"; };
+		0B1275B12BE56743007CCE20 /* UserActivityMapAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityMapAnnotation.swift; sourceTree = "<group>"; };
 		0B1610C32B62A14500DCAFA5 /* NewCheckinVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCheckinVM.swift; sourceTree = "<group>"; };
 		0B1610C52B62A14E00DCAFA5 /* NewCheckinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCheckinView.swift; sourceTree = "<group>"; };
 		0B1610C72B631DE000DCAFA5 /* PlaceOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceOverview.swift; sourceTree = "<group>"; };
@@ -1330,6 +1334,7 @@
 				0BF81DC52ABE36EB00B8892E /* Fonts.swift */,
 				0BC5A2042B5FF34E0029A7A9 /* Int.swift */,
 				0BFEB5F32B7FC4AA006F6A17 /* InviteLinkEntity.swift */,
+				0B1275AF2BE56143007CCE20 /* KeyedDecodingContainer.swift */,
 				0B8AA3CA2AFE8817008284F5 /* MapKit.swift */,
 				0B9950D62BBEE2180060B6AF /* NSManagedObjectContext.swift */,
 				0BE3C8872B261DB40048F2A6 /* PhotosPickerItem.swift */,
@@ -2018,6 +2023,7 @@
 			children = (
 				0BB37E982ABA0CC2009E1272 /* ViewModels */,
 				0BF5B4AC2AB375C700DEC403 /* Views */,
+				0B1275B12BE56743007CCE20 /* UserActivityMapAnnotation.swift */,
 			);
 			path = Explore;
 			sourceTree = "<group>";
@@ -2535,6 +2541,7 @@
 				0B95AD432B7EEE1F00F6E85B /* UserDataContainer.xcdatamodeld in Sources */,
 				0B29207A2B5575720026DDDE /* ExploreSearchView.swift in Sources */,
 				0B35B7AB2B0D14CA00822BA6 /* SignInOptionsView.swift in Sources */,
+				0B1275B02BE56143007CCE20 /* KeyedDecodingContainer.swift in Sources */,
 				0B8AA3CB2AFE8817008284F5 /* MapKit.swift in Sources */,
 				0B0E6D322ABB816F00EC62EE /* Checkin.swift in Sources */,
 				0B0DC5572BE3F1180060421E /* VideoCachingManager.swift in Sources */,
@@ -2549,6 +2556,7 @@
 				0B7E788D2BC578B300767995 /* HomeFollowingView17.swift in Sources */,
 				0B383CF52B87F9A600D68678 /* EnvironmentValues.swift in Sources */,
 				0BAD22342BC0123B002F7C8F /* MessagesView.swift in Sources */,
+				0B1275B22BE56743007CCE20 /* UserActivityMapAnnotation.swift in Sources */,
 				0BF5B4B42AB3787200DEC403 /* Tab.swift in Sources */,
 				0BDBD3CC2ACB5FCD003B8D2D /* GoogleRatingView.swift in Sources */,
 				0BE3C8882B261DB40048F2A6 /* PhotosPickerItem.swift in Sources */,
@@ -2721,7 +2729,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.70.1;
+				MARKETING_VERSION = 0.70.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2761,7 +2769,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.70.1;
+				MARKETING_VERSION = 0.70.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

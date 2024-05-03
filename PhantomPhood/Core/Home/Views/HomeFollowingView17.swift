@@ -128,7 +128,7 @@ struct HomeFollowingView17: View {
                             } else {
                                 ForEach(0..<4) { index in
                                     HStack {
-                                        ProfileImage("", size: 40)
+                                        ProfileImage(nil, size: 40)
                                         
                                         VStack(alignment: .leading) {
                                             Text("Name")

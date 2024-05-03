@@ -42,21 +42,15 @@ struct CurrentUserCoreData: Codable, Identifiable {
 extension CurrentUserCoreData {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
         id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         username = try container.decode(String.self, forKey: .username)
-        bio = try container.decodeIfPresent(String.self, forKey: .bio)
+        bio = try container.decodeOptionalString(forKey: .bio)
         email = try container.decode(Email.self, forKey: .email)
         role = try container.decode(UserRole.self, forKey: .role)
         verified = try container.decode(Bool.self, forKey: .verified)
         progress = try container.decode(UserProgress.self, forKey: .progress)
-        
-        if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
-            profileImage = URL(string: profileImageString)
-        } else {
-            profileImage = nil
-        }
+        profileImage = try container.decodeURLIfPresent(forKey: .profileImage)
     }
 }
 
@@ -91,11 +85,10 @@ struct CurrentUserFullData: Codable {
 extension CurrentUserFullData {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
         id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         username = try container.decode(String.self, forKey: .username)
-        bio = try container.decodeIfPresent(String.self, forKey: .bio)
+        bio = try container.decodeOptionalString(forKey: .bio)
         email = try container.decode(Email.self, forKey: .email)
         rank = try container.decode(Int.self, forKey: .rank)
         remainingXp = try container.decode(Int.self, forKey: .remainingXp)
@@ -108,12 +101,7 @@ extension CurrentUserFullData {
         verified = try container.decode(Bool.self, forKey: .verified)
         progress = try container.decode(UserProgress.self, forKey: .progress)
         acceptedEula = try container.decodeIfPresent(Date.self, forKey: .acceptedEula)
-        
-        if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
-            profileImage = URL(string: profileImageString)
-        } else {
-            profileImage = nil
-        }
+        profileImage = try container.decodeURLIfPresent(forKey: .profileImage)
     }
 }
 

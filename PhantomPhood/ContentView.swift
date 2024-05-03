@@ -87,7 +87,7 @@ struct ContentView: View {
                 }
             }
             
-            ContactsService.shared.tryToSyncContacts()
+//            ContactsService.shared.tryToSyncContacts()
         }
     }
 }

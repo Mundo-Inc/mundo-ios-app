@@ -484,7 +484,7 @@ struct ConversationView: View {
                     }
                     .foregroundStyle(.primary)
                 } else {
-                    ProfileImage("", size: 36)
+                    ProfileImage(nil, size: 36)
                 }
             }
         }

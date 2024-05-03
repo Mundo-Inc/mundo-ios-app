@@ -74,16 +74,11 @@ extension PlaceDetail {
         media = try container.decode([MediaItem].self, forKey: .media)
         
         amenity = try container.decodeIfPresent(PlaceAmenity.self, forKey: .amenity)
-        description = try container.decodeIfPresent(String.self, forKey: .description)
-        phone = try container.decodeIfPresent(String.self, forKey: .phone)
-        website = try container.decodeIfPresent(String.self, forKey: .website)
+        description = try container.decodeOptionalString(forKey: .description)
+        phone = try container.decodeOptionalString(forKey: .phone)
+        website = try container.decodeOptionalString(forKey: .website)
         priceRange = try container.decodeIfPresent(Int.self, forKey: .priceRange)
-
-        if let thumbnailString = try container.decodeIfPresent(String.self, forKey: .thumbnail), !thumbnailString.isEmpty {
-            thumbnail = URL(string: thumbnailString)
-        } else {
-            thumbnail = nil
-        }
+        thumbnail = try container.decodeURLIfPresent(forKey: .thumbnail)
     }
 }
 

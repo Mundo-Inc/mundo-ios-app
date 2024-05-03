@@ -58,11 +58,11 @@ final class ContactsService {
             self.fetchContacts { result in
                 switch result {
                 case .success(let data):
-//                    if let first = success.first {
-//                        for phoneNumber in first.phoneNumbers {
-//                            print(phoneNumber)
-//                        }
-//                    }
+                    if let first = data.first {
+                        for phoneNumber in first.phoneNumbers {
+                            print(phoneNumber)
+                        }
+                    }
                     
                     self.updateLastSyncDate()
                 case .failure(let failure):

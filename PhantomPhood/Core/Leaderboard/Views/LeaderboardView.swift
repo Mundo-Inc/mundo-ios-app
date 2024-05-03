@@ -63,7 +63,7 @@ struct LeaderboardView: View {
                                         .foregroundStyle(item.index == 0 ? Color.gold : item.index == 1 ? Color.silver : item.index == 2 ? Color.bronze : Color.secondary.opacity(0.7))
                                         .frame(minWidth: 40)
                                     
-                                    ProfileImage("", size: 38, cornerRadius: 10)
+                                    ProfileImage(nil, size: 38, cornerRadius: 10)
                                         .redacted(reason: .placeholder)
                                     
                                     LevelView(level: 50)

@@ -172,7 +172,7 @@ extension PlaceReviewItem {
     static var placeholder: some View {
         VStack {
             HStack {
-                ProfileImage("", size: 52, cornerRadius: 8)
+                ProfileImage(nil, size: 52, cornerRadius: 8)
                 
                 VStack(spacing: 2) {
                     HStack {

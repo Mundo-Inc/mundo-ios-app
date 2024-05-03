@@ -51,7 +51,7 @@ struct InviteFriendsBanner: View {
                     ForEach(vm.referredUsers.count > Self.maxReferredUsersDisplayCount ? vm.referredUsers.prefix(Self.maxReferredUsersDisplayCount).reversed() : vm.referredUsers.reversed(), id: \.self) { user in
                         NavigationLink(value: AppRoute.userProfile(userId: user.id ?? "-")) {
                             VStack(spacing: 4) {
-                                ProfileImage(user.profileImage, size: 42, cornerRadius: 21)
+                                ProfileImage(URL(string: user.profileImage ?? ""), size: 42, cornerRadius: 21)
                                 Text(user.name ?? "-")
                                     .lineLimit(1)
                                     .font(.custom(style: .caption2))

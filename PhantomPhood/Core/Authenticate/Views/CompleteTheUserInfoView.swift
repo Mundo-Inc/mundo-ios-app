@@ -379,7 +379,7 @@ struct CompleteTheUserInfoView: View {
                             }
                         } else if !referredBy.isEmpty {
                             HStack {
-                                ProfileImage("", size: 52, cornerRadius: 10)
+                                ProfileImage(nil, size: 52, cornerRadius: 10)
                                     .redacted(reason: .placeholder)
                                 
                                 VStack(alignment: .leading) {

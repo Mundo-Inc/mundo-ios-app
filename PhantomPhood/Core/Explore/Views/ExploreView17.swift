@@ -30,16 +30,16 @@ struct ExploreView17: View {
                             return false
                         }
                     })) { item in
-                        CustomAnnotation(item: item)
+                        UserActivityMapAnnotation(item: item)
                     }
                 } else {
                     ForEach(vm.activities) { item in
-                        CustomAnnotation(item: item)
+                        UserActivityMapAnnotation(item: item)
                     }
                 }
                 
                 ForEach(vm.events) { item in
-                    CustomAnnotation(item: item)
+                    UserActivityMapAnnotation(item: item)
                 }
                                 
                 if let searchResults = vm.searchResults, !searchResults.isEmpty {
@@ -205,126 +205,6 @@ struct ExploreView17: View {
             case .activityCluster(let clusteredMapActivity):
                 MapActivitySheet(clusteredMapActivity)
             }
-        }
-    }
-}
-
-@available(iOS 17.0, *)
-fileprivate struct CustomAnnotation: MapContent {
-    let item: ClusteredMapActivity
-    @EnvironmentObject private var vm: ExploreVM17
-    
-    var body: some MapContent {
-        if let event = item.event {
-            Annotation(event.place.name, coordinate: event.place.coordinates) {
-                ImageLoader(event.logo) { _ in
-                    Image(systemName: "arrow.down.circle.dotted")
-                        .foregroundStyle(Color.white.opacity(0.5))
-                }
-                .frame(width: 50, height: 50)
-                .clipShape(.rect(cornerRadius: 5))
-                .overlay(alignment: .topTrailing) {
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundStyle(Color.themeBG)
-                        .frame(width: 20, height: 20)
-                        .overlay {
-                            Text("\(item.items.count)")
-                                .foregroundStyle(Color.white.opacity(0.7))
-                        }
-                        .font(.custom(style: .caption2))
-                        .offset(x: 5, y: -5)
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    AppData.shared.goTo(.event(.data(event)))
-                }
-                .scaleEffect(vm.scale)
-                .onAppear {
-                    vm.showSet.insert(item.id)
-                }
-                .onDisappear {
-                    vm.showSet.remove(item.id)
-                }
-            }
-            .annotationTitles(vm.scale > 0.8 ? .automatic : .hidden)
-        } else if let first = item.first {
-            Annotation(first.place.name, coordinate: first.place.coordinates) {
-                ZStack(alignment: .topLeading) {
-                    if vm.showSet.contains(item.id) {
-                        Group {
-                            if item.items.count > 1 {
-                                let items = Array(item.items.prefix(4))
-                                
-                                // Skip first item
-                                ForEach(1...(items.count - 1), id: \.self) { i in
-                                    Circle()
-                                        .stroke(items[i].user.color.opacity(0.85 - Double(i) * 0.15), lineWidth: 1.2)
-                                        .frame(width: 50 - Double(i) * 2)
-                                        .offset(x: -Double(i) * 1.2, y: -Double(i) * 1.2)
-                                        .zIndex(Double(4 - i))
-                                }
-                                
-                                
-                                Circle()
-                                    .foregroundStyle(Color.white.opacity(0.6))
-                                    .frame(width: 50)
-                                    .shadow(radius: 5)
-                                    .zIndex(4)
-                                
-                                ProfileImage(first.user.profileImage, size: 47, borderColor: LinearGradient(colors: [
-                                    Color(hue: 324 / 360, saturation: 1, brightness: 0.41),
-                                    Color(hue: 209 / 360, saturation: 1, brightness: 0.48),
-                                    Color(hue: 50 / 360, saturation: 1, brightness: 0.55),
-                                ], startPoint: .bottomLeading, endPoint: .topTrailing), shadow: Color.clear)
-                                .padding(.all, 1.5)
-                                .zIndex(5)
-                                
-                                Text("\(item.items.count)")
-                                    .font(.custom(style: .caption2))
-                                    .foregroundStyle(Color.white.opacity(0.7))
-                                    .frame(width: 24)
-                                    .background(Color.black, in: Circle())
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                                    .zIndex(6)
-                            } else {
-                                Circle()
-                                    .foregroundStyle(Color.white.opacity(0.6))
-                                    .frame(width: 50)
-                                    .shadow(radius: 5)
-                                
-                                ProfileImage(first.user.profileImage, size: 47, borderColor: LinearGradient(colors: [
-                                    Color(hue: 324 / 360, saturation: 1, brightness: 0.41),
-                                    Color(hue: 209 / 360, saturation: 1, brightness: 0.48),
-                                    Color(hue: 50 / 360, saturation: 1, brightness: 0.55),
-                                ], startPoint: .bottomLeading, endPoint: .topTrailing), shadow: Color.clear)
-                                .padding(.all, 1.5)
-                            }
-                        }
-                        .transition(AnyTransition.asymmetric(insertion: .scale.animation(.bouncy(duration: 0.5)), removal: .identity.animation(.easeIn(duration: 0))))
-                    }
-                }
-                .frame(width: 50, height: 50)
-                .onTapGesture {
-                    withAnimation {
-                        if let latestMapContext = vm.latestMapContext {
-                            let span = latestMapContext.region.span.latitudeDelta < 0.3 ? latestMapContext.region.span : .init(latitudeDelta: 0.2, longitudeDelta: 0.15)
-                            vm.panToRegion(.init(center: first.place.coordinates, span: span).shiftCenter(yPercentage: -0.3))
-                        } else {
-                            vm.panToRegion(.init(center: first.place.coordinates, latitudinalMeters: 9000, longitudinalMeters: 9000).shiftCenter(yPercentage: -0.3))
-                        }
-                        
-                        vm.presentedSheet = .activityCluster(item)
-                    }
-                }
-                .scaleEffect(vm.scale)
-                .onAppear {
-                    vm.showSet.insert(item.id)
-                }
-                .onDisappear {
-                    vm.showSet.remove(item.id)
-                }
-            }
-            .annotationTitles(vm.scale > 0.8 ? .automatic : .hidden)
         }
     }
 }

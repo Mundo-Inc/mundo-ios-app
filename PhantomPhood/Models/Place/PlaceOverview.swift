@@ -38,20 +38,15 @@ extension PlaceOverview {
         id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         amenity = try container.decodeIfPresent(PlaceAmenity.self, forKey: .amenity)
-        description = try container.decodeIfPresent(String.self, forKey: .description)
+        description = try container.decodeOptionalString(forKey: .description)
         location = try container.decode(PlaceLocation.self, forKey: .location)
-        phone = try container.decodeIfPresent(String.self, forKey: .phone)
-        website = try container.decodeIfPresent(String.self, forKey: .website)
+        phone = try container.decodeOptionalString(forKey: .phone)
+        website = try container.decodeOptionalString(forKey: .website)
         categories = try container.decode([String].self, forKey: .categories)
         priceRange = try container.decodeIfPresent(Int.self, forKey: .priceRange)
         scores = try container.decode(PlaceScores.self, forKey: .scores)
         activities = try container.decode(Activities.self, forKey: .activities)
-
-        if let thumbnailString = try container.decodeIfPresent(String.self, forKey: .thumbnail), !thumbnailString.isEmpty {
-            thumbnail = URL(string: thumbnailString)
-        } else {
-            thumbnail = nil
-        }
+        thumbnail = try container.decodeURLIfPresent(forKey: .thumbnail)
     }
 }
 

@@ -40,13 +40,8 @@ extension Event {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
-        description = try container.decodeIfPresent(String.self, forKey: .description)
+        description = try container.decodeOptionalString(forKey: .description)
         place = try container.decode(PlaceEssentials.self, forKey: .place)
-
-        if let logoString = try container.decodeIfPresent(String.self, forKey: .logo), !logoString.isEmpty {
-            logo = URL(string: logoString)
-        } else {
-            logo = nil
-        }
+        logo = try container.decodeURLIfPresent(forKey: .logo)
     }
 }

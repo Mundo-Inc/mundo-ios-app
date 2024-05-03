@@ -22,7 +22,7 @@ struct CommentsView: View {
                 List(RepeatItem.create(2)) { _ in
                     HStack(alignment: .top) {
                         VStack(spacing: -14) {
-                            ProfileImage("", size: 44)
+                            ProfileImage(nil, size: 44)
                             
                             LevelView(level: 20)
                                 .frame(width: 20, height: 25)

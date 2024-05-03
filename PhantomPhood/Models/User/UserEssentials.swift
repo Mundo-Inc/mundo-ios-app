@@ -60,12 +60,7 @@ extension UserEssentials {
         verified = try container.decode(Bool.self, forKey: .verified)
         progress = try container.decode(CompactUserProgress.self, forKey: .progress)
         connectionStatus = try container.decodeIfPresent(ConnectionStatus.self, forKey: .connectionStatus)
-        
-        if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
-            profileImage = URL(string: profileImageString)
-        } else {
-            profileImage = nil
-        }
+        profileImage = try container.decodeURLIfPresent(forKey: .profileImage)
     }
 }
 

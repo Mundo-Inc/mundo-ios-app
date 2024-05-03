@@ -105,7 +105,7 @@ fileprivate struct UserCard: View {
 extension UserCard {
     static var placeholder: some View {
         HStack {
-            ProfileImage("", size: 42, cornerRadius: 10)
+            ProfileImage(nil, size: 42, cornerRadius: 10)
             
             VStack {
                 Text("Name")

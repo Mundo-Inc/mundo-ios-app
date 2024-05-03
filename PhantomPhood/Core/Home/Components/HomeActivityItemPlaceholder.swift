@@ -45,7 +45,7 @@ struct HomeActivityItemPlaceholder: View {
     @ViewBuilder
     private func HeaderContent() -> some View {
         HStack {
-            ProfileImage("", size: 54)
+            ProfileImage(nil, size: 54)
                 .overlay(alignment: .bottom) {
                     LevelView(level: 50)
                         .shadow(radius: 3)
@@ -199,7 +199,7 @@ struct HomeActivityItemPlaceholder: View {
     @ViewBuilder
     private func TaggedUser() -> some View {
         HStack(spacing: 5) {
-            ProfileImage("", size: 28)
+            ProfileImage(nil, size: 28)
             
             Text("user.username")
                 .font(.custom(style: .caption))

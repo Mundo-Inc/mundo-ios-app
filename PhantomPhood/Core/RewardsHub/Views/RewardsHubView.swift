@@ -241,7 +241,7 @@ struct RewardsHubView: View {
                     ForEach(inviteFriendsVM.referredUsers.count > 3 ? inviteFriendsVM.referredUsers.prefix(3).reversed() : inviteFriendsVM.referredUsers.reversed(), id: \.self) { user in
                         NavigationLink(value: AppRoute.userProfile(userId: user.id ?? "-")) {
                             VStack(spacing: 4) {
-                                ProfileImage(user.profileImage, size: 50, cornerRadius: 25)
+                                ProfileImage(URL(string: user.profileImage ?? ""), size: 50, cornerRadius: 25)
                                 Text(user.name ?? "-")
                                     .lineLimit(1)
                                     .font(.custom(style: .caption2))
@@ -260,7 +260,7 @@ struct RewardsHubView: View {
                         if let expiresIn = link.expiresAt.remainingTime(), let url = link.link {
                             ShareLink(item: url) {
                                 VStack(spacing: 4) {
-                                    ProfileImage("", size: 50, cornerRadius: 25)
+                                    ProfileImage(nil, size: 50, cornerRadius: 25)
                                         .overlay {
                                             Circle()
                                                 .foregroundStyle(Color.black.opacity(0.6))

@@ -146,12 +146,7 @@ final class UserProfileDM {
             verified = try container.decode(Bool.self, forKey: .verified)
             progress = try container.decode(UserEssentials.CompactUserProgress.self, forKey: .progress)
             createdAt = try container.decode(Date.self, forKey: .createdAt)
-            
-            if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
-                profileImage = URL(string: profileImageString)
-            } else {
-                profileImage = nil
-            }
+            profileImage = try container.decodeURLIfPresent(forKey: .profileImage)
         }
     }
 }

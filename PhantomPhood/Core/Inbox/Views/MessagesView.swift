@@ -19,7 +19,7 @@ struct MessagesView: View {
                         if let user = inboxVM.usersDict[userId] {
                             ProfileImage(user.profileImage, size: 56, cornerRadius: 28)
                         } else {
-                            ProfileImage("", size: 56, cornerRadius: 28)
+                            ProfileImage(nil, size: 56, cornerRadius: 28)
                                 .task {
                                     await inboxVM.getUser(id: userId)
                                 }

@@ -55,12 +55,7 @@ extension UserDetail {
         verified = try container.decode(Bool.self, forKey: .verified)
         connectionStatus = try container.decode(ConnectionStatus.self, forKey: .connectionStatus)
         progress = try container.decode(UserProgress.self, forKey: .progress)
-        
-        if let profileImageString = try container.decodeIfPresent(String.self, forKey: .profileImage), !profileImageString.isEmpty {
-            profileImage = URL(string: profileImageString)
-        } else {
-            profileImage = nil
-        }
+        profileImage = try container.decodeURLIfPresent(forKey: .profileImage)
     }
 }
 
