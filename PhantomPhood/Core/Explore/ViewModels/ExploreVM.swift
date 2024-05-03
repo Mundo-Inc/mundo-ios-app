@@ -13,6 +13,9 @@ import Combine
 
 @available(iOS 17.0, *)
 final class ExploreVM17: ObservableObject {
+    static let annotationLimitOnMap: Int = 30
+    static let mapAnnotationUpdateThruttle: Double = 0.8
+    
     private static let intersectionThreshold: Double = 0.5
     private static let cachedRegionExpirySeconds: Double = 90
     
@@ -154,28 +157,29 @@ final class ExploreVM17: ObservableObject {
         
         throttles.insert(.display)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.mapAnnotationUpdateThruttle) {
             self.throttles.remove(.display)
             self.updateAnnotations()
         }
     }
     
     private func updateAnnotations() {
-        if let context = self.latestMapContext {
-            DispatchQueue.global(qos: .userInitiated).async {
-                var (acttivities, events) = self.makeCluster(self.originalItems.filter({ context.rect.contains(.init($0.place.coordinates)) }), events: self.originalEvents?.filter({ context.rect.contains(.init($0.place
-                    .coordinates)) }))
-                
-                DispatchQueue.main.async {
-                    if acttivities.count > 40 {
-                        acttivities = Array(acttivities.prefix(40))
-                    }
-                    self.events = events
-                    self.activities = acttivities
+        guard let context = self.latestMapContext else { return }
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            var (acttivities, events) = self.makeCluster(self.originalItems.filter({ context.rect.contains(.init($0.place.coordinates)) }), events: self.originalEvents?.filter({ context.rect.contains(.init($0.place
+                .coordinates)) }))
+            
+            DispatchQueue.main.async {
+                if acttivities.count > Self.annotationLimitOnMap {
+                    acttivities = Array(acttivities.prefix(Self.annotationLimitOnMap))
                 }
+                self.events = events
+                self.activities = acttivities
             }
         }
     }
+    
     
     private func makeCluster(_ items: [MapActivity], events: [Event]?) -> ([ClusteredMapActivity], [ClusteredMapActivity]) {
         /// placeId, activity
@@ -217,24 +221,22 @@ final class ExploreVM17: ObservableObject {
         }
         
         for item in unitRects {
-            let entity = RequestedRegionEntity(context: dataStack.viewContext)
-            entity.x = item.origin.x
-            entity.y = item.origin.y
-            entity.width = item.width
-            entity.height = item.height
-            entity.savedAt = .now
-            
-            do {
-                try dataStack.viewContext.obtainPermanentIDs(for: [entity])
-            } catch {
-                presentErrorToast(error, debug: "Error on obtainPermanentIDs", silent: true)
+            dataStack.viewContext.performAndWait {
+                let entity = RequestedRegionEntity(context: dataStack.viewContext)
+                entity.x = item.origin.x
+                entity.y = item.origin.y
+                entity.width = item.width
+                entity.height = item.height
+                entity.savedAt = .now
+                
+                try? dataStack.viewContext.obtainPermanentIDs(for: [entity])
             }
         }
         
         do {
             try await self.dataStack.saveContext()
         } catch {
-            presentErrorToast(error, debug: "Error saving new RequestedRegionEntity", silent: true)
+            presentErrorToast(error, debug: "Error saving new RequestedRegionEntity", silent: true, function: #function)
         }
         
         updateFetchedRegions()

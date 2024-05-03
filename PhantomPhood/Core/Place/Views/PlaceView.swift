@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import VideoPlayer
 import CoreMedia
 import MapKit
 
@@ -23,9 +22,6 @@ struct PlaceView: View {
     
     @Namespace private var namespace
     @ObservedObject private var videoPlayerVM = VideoPlayerVM.shared
-    @State private var videoTime: CMTime = .zero
-    @State private var videoState: VideoPlayer.State? = nil
-    @State private var videoTotalDuration: Double = .zero
     
     @State private var interactingWithMap = false
     
@@ -509,60 +505,13 @@ struct PlaceView: View {
                                 .matchedGeometryEffect(id: media.id, in: namespace)
                             } else if media.type == .video, let url = media.src {
                                 ZStack(alignment: .bottom) {
-                                    VideoPlayer(url: url, play: Binding(get: {
-                                        videoPlayerVM.playId == media.id
-                                    }, set: { value in
-                                        if !value {
-                                            videoPlayerVM.playId = nil
-                                        } else {
+                                    VideoPlayer(url: url, playing: videoPlayerVM.playId == media.id, isMute: videoPlayerVM.isMute)
+                                        .onAppear {
                                             videoPlayerVM.playId = media.id
                                         }
-                                    }), time: $videoTime)
-                                    .onStateChanged { state in
-                                        videoState = state
-                                        switch state {
-                                        case .playing(let totalDuration):
-                                            videoTotalDuration = totalDuration
-                                        default:
-                                            break
+                                        .onDisappear {
+                                            videoPlayerVM.playId = nil
                                         }
-                                    }
-                                    .autoReplay(true)
-                                    .mute(videoPlayerVM.isMute)
-                                    .contentMode(.scaleAspectFill)
-                                    .onAppear {
-                                        videoPlayerVM.playId = media.id
-                                    }
-                                    .onDisappear {
-                                        videoPlayerVM.playId = nil
-                                    }
-                                    
-                                    if let videoState, case .playing(_) = videoState {
-                                        EmptyView()
-                                    } else if let videoState, case .error = videoState {
-                                        Image(systemName: "exclamationmark.triangle")
-                                            .font(.system(size: 50))
-                                            .foregroundStyle(Color.red)
-                                    } else {
-                                        if let thumbnail = media.thumbnail {
-                                            ImageLoader(thumbnail, contentMode: .fill) { progress in
-                                                Rectangle()
-                                                    .foregroundStyle(.clear)
-                                                    .frame(maxWidth: 150)
-                                                    .overlay {
-                                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                            .progressViewStyle(LinearProgressViewStyle())
-                                                            .padding(.horizontal)
-                                                    }
-                                            }
-                                            .matchedGeometryEffect(id: media.id, in: namespace)
-                                            .grayscale(1)
-                                            .overlay {
-                                                ProgressView()
-                                                    .controlSize(.large)
-                                            }
-                                        }
-                                    }
                                 }
                             }
                         }

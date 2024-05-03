@@ -75,7 +75,7 @@ struct HomeFollowingView: View {
                 .bounces(false)
                 .vertical()
                 .onPageChanged({ pageIndex in
-                    if vm.followingItems.count >= pageIndex + 1 {
+                    if !vm.followingItems.isEmpty && pageIndex >= 0 {
                         vm.followingItemOnViewPort = vm.followingItems[pageIndex].id
                     }
                     
@@ -271,7 +271,6 @@ struct HomeFollowingView: View {
                 }
             }
         }
-        .environment(\.colorScheme, .dark)
         .onAppear {
             if vm.scrollFollowingToItem == nil {
                 vm.scrollFollowingToItem = { id in
@@ -283,9 +282,6 @@ struct HomeFollowingView: View {
                 }
             }
         }
-        .onDisappear {
-            vm.followingItemOnViewPort = nil
-        }
         .task {
             if vm.followingItems.isEmpty {
                 await vm.updateFollowingData(.refresh)
@@ -293,6 +289,7 @@ struct HomeFollowingView: View {
                 await vm.updateForYouIfNeeded()
             }
             
+            // Updateing `followingItemOnViewPort` on first data load
             if !vm.followingItems.isEmpty, vm.followingItems.count >= page.index + 1 {
                 vm.followingItemOnViewPort = vm.followingItems[page.index].id
             }

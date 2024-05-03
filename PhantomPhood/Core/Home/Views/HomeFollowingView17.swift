@@ -207,22 +207,17 @@ struct HomeFollowingView17: View {
         .scrollPosition(id: $scrollPosition)
         .scrollTargetBehavior(.paging)
         .scrollIndicators(.never)
-        .onChange(of: vm.followingItems.isEmpty) { isEmpty in
-            if !isEmpty && scrollPosition == nil, let first = vm.followingItems.first  {
-                scrollPosition = first.id
-            }
-        }
         .onChange(of: scrollPosition) { newValue in
-            if let scrollPosition = newValue {
-                guard let itemIndex = vm.followingItems.firstIndex(where: { $0.id == scrollPosition }) else { return }
-                
-                vm.followingItemOnViewPort = vm.followingItems[itemIndex].id
-                
-                guard itemIndex >= vm.followingItems.count - 5 else { return }
-                
-                Task {
-                    await vm.updateFollowingData(.new)
-                }
+            guard let scrollPosition,
+                  let itemIndex = vm.followingItems.firstIndex(where: { $0.id == scrollPosition }) else { return }
+            
+            // Updateing `followingItemOnViewPort` on scroll
+            vm.followingItemOnViewPort = vm.followingItems[itemIndex].id
+            
+            guard itemIndex >= vm.followingItems.count - 5 else { return }
+            
+            Task {
+                await vm.updateFollowingData(.new)
             }
         }
         .onChange(of: appData.tappedTwice) { tapped in
@@ -253,9 +248,6 @@ struct HomeFollowingView17: View {
                 }
             }
         }
-        .onDisappear {
-            vm.followingItemOnViewPort = nil
-        }
         .task {
             if vm.followingItems.isEmpty {
                 await vm.updateFollowingData(.refresh)
@@ -263,6 +255,11 @@ struct HomeFollowingView17: View {
                 await vm.updateFollowingIfNeeded()
             }
             
+            if scrollPosition == nil {
+                scrollPosition = vm.followingItems.first?.id
+            }
+            
+            // Updateing `followingItemOnViewPort` on first data load
             if let scrollPosition, let itemIndex = vm.followingItems.firstIndex(where: { $0.id == scrollPosition }) {
                 vm.followingItemOnViewPort = vm.followingItems[itemIndex].id
             }

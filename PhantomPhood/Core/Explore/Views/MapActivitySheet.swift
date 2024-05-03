@@ -414,7 +414,6 @@ struct MapActivitySheet: View {
                         Spacer()
                     }
                     .frame(maxWidth: .infinity)
-                    .clipShape(.rect(cornerRadius: 15))
                     .padding(.horizontal)
                     .ignoresSafeArea()
                     .tag(index)

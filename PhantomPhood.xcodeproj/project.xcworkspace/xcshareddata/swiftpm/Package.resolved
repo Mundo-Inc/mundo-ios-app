@@ -1,5 +1,5 @@
 {
-  "originHash" : "ef66916d4111157d9dcce721b3220b394d1e104daa0ca6599f559ab78a229ddd",
+  "originHash" : "fca5e543f67aaf30b7c39b7b73ada1eb450ad5b7c9f4ab39e7ea5dede3b6797c",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk",
       "state" : {
-        "revision" : "42eae77a0af79e9c3f41df04a23c76f05cfdda77",
-        "version" : "10.24.0"
+        "revision" : "97940381e57703c07f31a8058d8f39ec53b7c272",
+        "version" : "10.25.0"
       }
     },
     {
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "51ba746a9d51a4bd0774b68499b0c73ef6e8570d",
-        "version" : "10.24.0"
+        "revision" : "16244d177c4e989f87b25e9db1012b382cfedc55",
+        "version" : "10.25.0"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleUtilities.git",
       "state" : {
-        "revision" : "26c898aed8bed13b8a63057ee26500abbbcb8d55",
-        "version" : "7.13.1"
+        "revision" : "8e5d57ed87057cd7b0e4e8f474d9e78f73eb85f7",
+        "version" : "7.13.2"
       }
     },
     {
@@ -89,15 +89,6 @@
       "state" : {
         "revision" : "e9fad491d0673bdda7063a0341fb6b47a30c5359",
         "version" : "1.62.2"
-      }
-    },
-    {
-      "identity" : "gsplayer",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/wxxsw/GSPlayer.git",
-      "state" : {
-        "revision" : "706fc28fcc8e33607993903eca82d9f6c7c3f6d2",
-        "version" : "0.2.27"
       }
     },
     {
@@ -233,15 +224,6 @@
       "state" : {
         "revision" : "b643e5bbe4131615cb9b950ba549091f0e366441",
         "version" : "2.0.4"
-      }
-    },
-    {
-      "identity" : "videoplayer",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/wxxsw/VideoPlayer",
-      "state" : {
-        "revision" : "0a271928849292713daf471398a2a9185f28709c",
-        "version" : "1.2.4"
       }
     }
   ],

@@ -28,6 +28,7 @@
 		0B0BB77E2BB4615000DE3728 /* AreaLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0BB77D2BB4615000DE3728 /* AreaLevel.swift */; };
 		0B0BB7802BB4618100DE3728 /* FetchedMapRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0BB77F2BB4618100DE3728 /* FetchedMapRect.swift */; };
 		0B0BB7822BB4B47B00DE3728 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0BB7812BB4B47B00DE3728 /* Double.swift */; };
+		0B0DC5572BE3F1180060421E /* VideoCachingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0DC5562BE3F1180060421E /* VideoCachingManager.swift */; };
 		0B0E6D222ABB077B00EC62EE /* UserActivityItemTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D212ABB077B00EC62EE /* UserActivityItemTemplate.swift */; };
 		0B0E6D262ABB22ED00EC62EE /* ProfileActivityLevelUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D252ABB22ED00EC62EE /* ProfileActivityLevelUpView.swift */; };
 		0B0E6D282ABB242700EC62EE /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E6D272ABB242700EC62EE /* Comment.swift */; };
@@ -194,7 +195,6 @@
 		0B3E50AA2BA08AFF0082078B /* HomeMadeVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3E50A92BA08AFF0082078B /* HomeMadeVM.swift */; };
 		0B3E50AC2BA08B070082078B /* HomeMadeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3E50AB2BA08B070082078B /* HomeMadeView.swift */; };
 		0B4016702B045D56000F1263 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 0B40166F2B045D56000F1263 /* SwiftUIPager */; };
-		0B4016732B046A83000F1263 /* VideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = 0B4016722B046A83000F1263 /* VideoPlayer */; };
 		0B4016752B046AA5000F1263 /* HomeForYouView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4016742B046AA5000F1263 /* HomeForYouView.swift */; };
 		0B43C14C2BC44FC3001CEDCA /* WanderingGhost.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B43C14B2BC44FC3001CEDCA /* WanderingGhost.json */; };
 		0B448E692B832DEC00179D0E /* QuickActionsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B448E682B832DEC00179D0E /* QuickActionsVM.swift */; };
@@ -233,6 +233,7 @@
 		0B6A47C42ABC9806000CBDA3 /* FeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6A47C32ABC9806000CBDA3 /* FeedItem.swift */; };
 		0B6B4AB32B482D2D002C9FE0 /* QuickActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B4AB22B482D2D002C9FE0 /* QuickActionsView.swift */; };
 		0B6CE2522BB566D400FE75A5 /* EntityError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6CE2512BB566D400FE75A5 /* EntityError.swift */; };
+		0B6D56CE2BE2A09E003C2853 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6D56CD2BE2A09E003C2853 /* VideoPlayer.swift */; };
 		0B6E990F2AC7627700D8CE26 /* LeaderboardVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6E990E2AC7627700D8CE26 /* LeaderboardVM.swift */; };
 		0B6E99122AC7629A00D8CE26 /* LeaderboardDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6E99112AC7629A00D8CE26 /* LeaderboardDM.swift */; };
 		0B73EAC82BBF0E4C00991B13 /* ObservableResultPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B73EAC72BBF0E4C00991B13 /* ObservableResultPublisher.swift */; };
@@ -463,6 +464,7 @@
 		0B0BB77D2BB4615000DE3728 /* AreaLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreaLevel.swift; sourceTree = "<group>"; };
 		0B0BB77F2BB4618100DE3728 /* FetchedMapRect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchedMapRect.swift; sourceTree = "<group>"; };
 		0B0BB7812BB4B47B00DE3728 /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
+		0B0DC5562BE3F1180060421E /* VideoCachingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCachingManager.swift; sourceTree = "<group>"; };
 		0B0E6D212ABB077B00EC62EE /* UserActivityItemTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityItemTemplate.swift; sourceTree = "<group>"; };
 		0B0E6D252ABB22ED00EC62EE /* ProfileActivityLevelUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileActivityLevelUpView.swift; sourceTree = "<group>"; };
 		0B0E6D272ABB242700EC62EE /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
@@ -659,6 +661,7 @@
 		0B6A47C32ABC9806000CBDA3 /* FeedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedItem.swift; sourceTree = "<group>"; };
 		0B6B4AB22B482D2D002C9FE0 /* QuickActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsView.swift; sourceTree = "<group>"; };
 		0B6CE2512BB566D400FE75A5 /* EntityError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityError.swift; sourceTree = "<group>"; };
+		0B6D56CD2BE2A09E003C2853 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		0B6E990E2AC7627700D8CE26 /* LeaderboardVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardVM.swift; sourceTree = "<group>"; };
 		0B6E99112AC7629A00D8CE26 /* LeaderboardDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardDM.swift; sourceTree = "<group>"; };
 		0B73EAC72BBF0E4C00991B13 /* ObservableResultPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableResultPublisher.swift; sourceTree = "<group>"; };
@@ -883,7 +886,6 @@
 				0B83B79B2B09CD8200D81CE8 /* FirebaseInstallations in Frameworks */,
 				0B4016702B045D56000F1263 /* SwiftUIPager in Frameworks */,
 				0B83B7992B09CD8200D81CE8 /* FirebaseAuth in Frameworks */,
-				0B4016732B046A83000F1263 /* VideoPlayer in Frameworks */,
 				0B35B7A72B0D095A00822BA6 /* GoogleSignInSwift in Frameworks */,
 				0BECB8DF2B73F761007B51A1 /* CoreSpotlight.framework in Frameworks */,
 				0BECB8DD2B73F759007B51A1 /* WebKit.framework in Frameworks */,
@@ -1692,6 +1694,7 @@
 			isa = PBXGroup;
 			children = (
 				0BC9BBFB2B924B1A00477654 /* ActionManager.swift */,
+				0B0DC5562BE3F1180060421E /* VideoCachingManager.swift */,
 				0BC9BBF52B92495900477654 /* AlertManager.swift */,
 				0B6495552AB10F5E000E57AF /* APIManager.swift */,
 				0B9EF2802B302E1D0025F464 /* ContactsService.swift */,
@@ -1955,6 +1958,7 @@
 				0BCA625A2BB6387B0045F100 /* CheckInCard.swift */,
 				0B45BB4F2BB6FB48003BFA7C /* ImageLoader.swift */,
 				0B50705A2BBC4ABA00593C1B /* LoadingView.swift */,
+				0B6D56CD2BE2A09E003C2853 /* VideoPlayer.swift */,
 				0B6B4AB42B484A7F002C9FE0 /* AddReview */,
 				0B9C026D2B45C258000C4774 /* AddToList */,
 				0B2694A72B8E3BFA004FA5C8 /* CameraView */,
@@ -2076,7 +2080,6 @@
 				0B77EA522AAF8CB800C8DF87 /* Lottie */,
 				0B67C8B62AF0539E002781B3 /* Kingfisher */,
 				0B40166F2B045D56000F1263 /* SwiftUIPager */,
-				0B4016722B046A83000F1263 /* VideoPlayer */,
 				0B83B7942B09CD8200D81CE8 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				0B83B7982B09CD8200D81CE8 /* FirebaseAuth */,
 				0B83B79A2B09CD8200D81CE8 /* FirebaseInstallations */,
@@ -2122,7 +2125,6 @@
 				0B77EA512AAF8CB800C8DF87 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				0B67C8B52AF0539E002781B3 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				0B40166E2B045D56000F1263 /* XCRemoteSwiftPackageReference "SwiftUIPager" */,
-				0B4016712B046A83000F1263 /* XCRemoteSwiftPackageReference "VideoPlayer" */,
 				0B83B7932B09CD8200D81CE8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				0B35B7A32B0D095A00822BA6 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				0B30218D2B3208D200827889 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
@@ -2348,6 +2350,7 @@
 				0BEF7A382B0EB278001532E7 /* SignUpOptionsView.swift in Sources */,
 				0B51A8D42ACEC58400DA38DC /* MediasVM.swift in Sources */,
 				0B4681512AC61D49009C5EF9 /* ProfileActivityCheckinView.swift in Sources */,
+				0B6D56CE2BE2A09E003C2853 /* VideoPlayer.swift in Sources */,
 				0B9950DF2BBEF2BC0060B6AF /* TCHAdapter.swift in Sources */,
 				0B6A47C22ABC9157000CBDA3 /* FeedDM.swift in Sources */,
 				0BC9A3992BE106EC00C0EA4E /* GiftingView.swift in Sources */,
@@ -2533,6 +2536,7 @@
 				0B35B7AB2B0D14CA00822BA6 /* SignInOptionsView.swift in Sources */,
 				0B8AA3CB2AFE8817008284F5 /* MapKit.swift in Sources */,
 				0B0E6D322ABB816F00EC62EE /* Checkin.swift in Sources */,
+				0B0DC5572BE3F1180060421E /* VideoCachingManager.swift in Sources */,
 				0BA37D6D2BD2A43B001E9D6C /* InviteFriendsBanner.swift in Sources */,
 				0B7A80B22BA1EE6E00192192 /* CTAButton.swift in Sources */,
 				0B2D20E92B4632D600D4F0C1 /* UserProfileListsVM.swift in Sources */,
@@ -2717,7 +2721,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.69.0;
+				MARKETING_VERSION = 0.70.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2757,7 +2761,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.69.0;
+				MARKETING_VERSION = 0.70.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2813,14 +2817,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.5.0;
-			};
-		};
-		0B4016712B046A83000F1263 /* XCRemoteSwiftPackageReference "VideoPlayer" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/wxxsw/VideoPlayer";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.4;
 			};
 		};
 		0B5070552BBC32DB00593C1B /* XCRemoteSwiftPackageReference "conversations-ios" */ = {
@@ -2893,11 +2889,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0B40166E2B045D56000F1263 /* XCRemoteSwiftPackageReference "SwiftUIPager" */;
 			productName = SwiftUIPager;
-		};
-		0B4016722B046A83000F1263 /* VideoPlayer */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0B4016712B046A83000F1263 /* XCRemoteSwiftPackageReference "VideoPlayer" */;
-			productName = VideoPlayer;
 		};
 		0B5070562BBC32DB00593C1B /* TwilioConversationsClient */ = {
 			isa = XCSwiftPackageProductDependency;

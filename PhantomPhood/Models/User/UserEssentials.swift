@@ -107,22 +107,24 @@ extension UserEssentials {
     }
     
     func createUserEntity(context: NSManagedObjectContext) -> UserEntity {
-        let userEntity = UserEntity(context: context)
-        userEntity.id = self.id
-        userEntity.name = self.name
-        userEntity.username = self.username
-        userEntity.verified = self.verified
-        userEntity.profileImage = self.profileImage?.absoluteString
-        userEntity.level = Int16(self.progress.level)
-        userEntity.xp = Int16(self.progress.xp)
-        userEntity.savedAt = .now
-        
-        do {
-            try context.obtainPermanentIDs(for: [userEntity])
-        } catch {
-            presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
+        var userEntity: UserEntity!
+        context.performAndWait {
+            userEntity = UserEntity(context: context)
+            userEntity.id = self.id
+            userEntity.name = self.name
+            userEntity.username = self.username
+            userEntity.verified = self.verified
+            userEntity.profileImage = self.profileImage?.absoluteString
+            userEntity.level = Int16(self.progress.level)
+            userEntity.xp = Int16(self.progress.xp)
+            userEntity.savedAt = .now
+            
+            do {
+                try context.obtainPermanentIDs(for: [userEntity])
+            } catch {
+                presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
+            }
         }
-        
         return userEntity
     }
 }

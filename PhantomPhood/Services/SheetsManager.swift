@@ -8,6 +8,7 @@
 import Foundation
 import MapKit
 
+@MainActor
 final class SheetsManager: ObservableObject {
     static let shared = SheetsManager()
     

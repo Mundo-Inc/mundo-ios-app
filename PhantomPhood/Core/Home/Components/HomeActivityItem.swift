@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import VideoPlayer
 import CoreMedia
 
 struct HomeActivityItem: View {
@@ -51,10 +50,6 @@ struct HomeActivityItem: View {
         }
     }
     
-    @State private var videosState: [String:VideoPlayer.State] = [:]
-    @State private var time: CMTime = .zero
-    @State private var currentVideoTotalDuration: Double = .zero
-    
     @Environment(\.mainWindowSize) private var mainWindowSize
     @Environment(\.mainWindowSafeAreaInsets) private var mainWindowSafeAreaInsets
     
@@ -90,69 +85,6 @@ struct HomeActivityItem: View {
     
     var body: some View {
         ZStack {
-            switch forTab {
-            case .forYou:
-                Color.clear
-                    .onChange(of: vm.forYouItemOnViewPort) { newValue in
-                        if newValue == self.item.id {
-                            switch item.resource {
-                            case .review(let feedReview):
-                                if let first = feedReview.videos.first {
-                                    if let playId = videoPlayerVM.playId, playId != first.id {
-                                        videoPlayerVM.playId = first.id
-                                    } else if videoPlayerVM.playId == nil {
-                                        videoPlayerVM.playId = first.id
-                                    }
-                                } else if videoPlayerVM.playId != nil {
-                                    videoPlayerVM.playId = nil
-                                }
-                            case .homemade(let homemade):
-                                if let first = homemade.media.first, first.type == .video {
-                                    if let playId = videoPlayerVM.playId, playId != first.id {
-                                        videoPlayerVM.playId = first.id
-                                    } else if videoPlayerVM.playId == nil {
-                                        videoPlayerVM.playId = first.id
-                                    }
-                                } else if videoPlayerVM.playId != nil {
-                                    videoPlayerVM.playId = nil
-                                }
-                            default:
-                                videoPlayerVM.playId = nil
-                            }
-                        }
-                    }
-            case .following:
-                Color.clear
-                    .onChange(of: vm.followingItemOnViewPort) { newValue in
-                        if newValue == self.item.id {
-                            switch item.resource {
-                            case .review(let feedReview):
-                                if let first = feedReview.videos.first {
-                                    if let playId = videoPlayerVM.playId, playId != first.id {
-                                        videoPlayerVM.playId = first.id
-                                    } else if videoPlayerVM.playId == nil {
-                                        videoPlayerVM.playId = first.id
-                                    }
-                                } else if videoPlayerVM.playId != nil {
-                                    videoPlayerVM.playId = nil
-                                }
-                            case .homemade(let homemade):
-                                if let first = homemade.media.first, first.type == .video {
-                                    if let playId = videoPlayerVM.playId, playId != first.id {
-                                        videoPlayerVM.playId = first.id
-                                    } else if videoPlayerVM.playId == nil {
-                                        videoPlayerVM.playId = first.id
-                                    }
-                                } else if videoPlayerVM.playId != nil {
-                                    videoPlayerVM.playId = nil
-                                }
-                            default:
-                                videoPlayerVM.playId = nil
-                            }
-                        }
-                    }
-            }
-            
             if appData.navStack.isEmpty && appData.activeTab == .home && appData.homeActiveTab == forTab {
                 BackgroundContent()
                     .onTapGesture(count: 2, perform: {
@@ -166,11 +98,7 @@ struct HomeActivityItem: View {
                         }
                     })
                     .onTapGesture {
-                        if videoPlayerVM.playId != nil {
-                            withAnimation {
-                                videoPlayerVM.isMute = !videoPlayerVM.isMute
-                            }
-                        }
+                        videoPlayerVM.isMute = !videoPlayerVM.isMute
                     }
             }
             
@@ -217,48 +145,6 @@ struct HomeActivityItem: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                     if newValue == self.doubleTapCount {
                         self.doubleTapCount = 0
-                    }
-                }
-            }
-        }
-        .onChange(of: tabPage) { newValue in
-            switch forTab {
-            case .forYou:
-                if vm.forYouItemOnViewPort == self.item.id {
-                    switch item.resource {
-                    case .review(let feedReview):
-                        if feedReview.videos.contains(where: { $0.id == newValue }) {
-                            videoPlayerVM.playId = newValue
-                        } else {
-                            videoPlayerVM.playId = nil
-                        }
-                    case .homemade(let homemade):
-                        if homemade.media.contains(where: { $0.id == newValue && $0.type == .video }) {
-                            videoPlayerVM.playId = newValue
-                        } else {
-                            videoPlayerVM.playId = nil
-                        }
-                    default:
-                        videoPlayerVM.playId = nil
-                    }
-                }
-            case .following:
-                if vm.followingItemOnViewPort == self.item.id {
-                    switch item.resource {
-                    case .review(let feedReview):
-                        if feedReview.videos.contains(where: { $0.id == newValue }) {
-                            videoPlayerVM.playId = newValue
-                        } else {
-                            videoPlayerVM.playId = nil
-                        }
-                    case .homemade(let homemade):
-                        if homemade.media.contains(where: { $0.id == newValue && $0.type == .video }) {
-                            videoPlayerVM.playId = newValue
-                        } else {
-                            videoPlayerVM.playId = nil
-                        }
-                    default:
-                        videoPlayerVM.playId = nil
                     }
                 }
             }
@@ -929,7 +815,7 @@ struct HomeActivityItem: View {
                 .foregroundStyle(.clear)
                 .frame(width: 40, height: 40)
                 .overlay {
-                    if videoPlayerVM.playId != nil && videoPlayerVM.isMute {
+                    if videoPlayerVM.isMute {
                         Image(systemName: "speaker.slash.fill")
                             .foregroundStyle(.secondary)
                             .font(.system(size: 24))
@@ -961,39 +847,11 @@ extension HomeActivityItem {
                 }
                 .contentShape(.rect)
             case .video:
-                ZStack {
-                    VideoPlayer(url: url, play: videoPlayerVM.playBinding(for: media.id), time: $time)
-                        .onStateChanged { state in
-                            videosState.updateValue(state, forKey: media.id)
-                            
-                            switch state {
-                            case .playing(let totalDuration):
-                                currentVideoTotalDuration = totalDuration
-                            default:
-                                break
-                            }
-                        }
-                        .autoReplay(true)
-                        .mute(videoPlayerVM.isMute)
-                    
-                    if let state = videosState[media.id] {
-                        switch state {
-                        case .loading:
-                            ProgressView()
-                        case .error(let err):
-                            Text("Something went wrong\n\(err.localizedDescription)")
-                        default:
-                            EmptyView()
-                        }
-                    }
-                }
-                .overlay(alignment: .bottomLeading) {
-                    if !time.seconds.isZero, !currentVideoTotalDuration.isZero {
-                        Rectangle()
-                            .frame(height: 2)
-                            .frame(width: mainWindowSize.width * (time.seconds / currentVideoTotalDuration))
-                            .foregroundStyle(Color.white)
-                    }
+                switch forTab {
+                case .following:
+                    VideoPlayer(url: url, playing: vm.followingItemOnViewPort == self.item.id && tabPage == media.id, isMute: videoPlayerVM.isMute)
+                case .forYou:
+                    VideoPlayer(url: url, playing: vm.forYouItemOnViewPort == self.item.id && tabPage == media.id, isMute: videoPlayerVM.isMute)
                 }
             }
         } else {

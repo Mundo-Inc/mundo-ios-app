@@ -72,7 +72,7 @@ struct HomeForYouView: View {
                 .bounces(false)
                 .vertical()
                 .onPageChanged({ pageIndex in
-                    if page.index >= 0 && vm.forYouItems.count >= pageIndex + 1 {
+                    if !vm.forYouItems.isEmpty && pageIndex >= 0 {
                         vm.forYouItemOnViewPort = vm.forYouItems[pageIndex].id
                     }
                     
@@ -107,7 +107,6 @@ struct HomeForYouView: View {
                     .ignoresSafeArea(edges: .top)
             }
         }
-        .environment(\.colorScheme, .dark)
         .onAppear {
             if vm.scrollForYouToItem == nil {
                 vm.scrollForYouToItem = { id in
@@ -119,9 +118,6 @@ struct HomeForYouView: View {
                 }
             }
         }
-        .onDisappear {
-            vm.forYouItemOnViewPort = nil
-        }
         .task {
             if vm.forYouItems.isEmpty {
                 await vm.updateForYouData(.refresh)
@@ -129,6 +125,7 @@ struct HomeForYouView: View {
                 await vm.updateForYouIfNeeded()
             }
             
+            // Updateing `forYouItemOnViewPort` on first data load
             if !vm.forYouItems.isEmpty, vm.forYouItems.count >= page.index + 1 {
                 vm.forYouItemOnViewPort = vm.forYouItems[page.index].id
             }

@@ -180,7 +180,7 @@ struct HomeActivityInfoView: View {
                     .frame(maxWidth: 280)
                     
                     if !feedReview.content.isEmpty {
-                        Text("**\(feedReview.writer.name):** feedReview.content")
+                        Text("**\(feedReview.writer.name):** \(feedReview.content)")
                             .foregroundStyle(.secondary)
                             .padding()
                             .frame(maxWidth: .infinity, alignment: .leading)

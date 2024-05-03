@@ -44,22 +44,17 @@ struct HomeForYouView17: View {
         .scrollPosition(id: $scrollPosition)
         .scrollTargetBehavior(.paging)
         .scrollIndicators(.never)
-        .onChange(of: vm.forYouItems.isEmpty) { isEmpty in
-            if !isEmpty && scrollPosition == nil, let first = vm.forYouItems.first  {
-                scrollPosition = first.id
-            }
-        }
-        .onChange(of: scrollPosition) { newValue in
-            if let scrollPosition = newValue {
-                guard let itemIndex = vm.forYouItems.firstIndex(where: { $0.id == scrollPosition }) else { return }
-                
-                vm.forYouItemOnViewPort = vm.forYouItems[itemIndex].id
-                
-                guard itemIndex >= vm.forYouItems.count - 5 else { return }
-                
-                Task {
-                    await vm.updateForYouData(.new)
-                }
+        .onChange(of: scrollPosition) { scrollPosition in
+            guard let scrollPosition,
+                  let itemIndex = vm.forYouItems.firstIndex(where: { $0.id == scrollPosition }) else { return }
+            
+            // Updateing `forYouItemOnViewPort` on scroll
+            vm.forYouItemOnViewPort = vm.forYouItems[itemIndex].id
+            
+            guard itemIndex >= vm.forYouItems.count - 5 else { return }
+            
+            Task {
+                await vm.updateForYouData(.new)
             }
         }
         .onChange(of: appData.tappedTwice) { tapped in
@@ -90,9 +85,6 @@ struct HomeForYouView17: View {
                 }
             }
         }
-        .onDisappear {
-            vm.forYouItemOnViewPort = nil
-        }
         .task {
             if vm.forYouItems.isEmpty {
                 await vm.updateForYouData(.refresh)
@@ -100,6 +92,11 @@ struct HomeForYouView17: View {
                 await vm.updateForYouIfNeeded()
             }
             
+            if scrollPosition == nil {
+                scrollPosition = vm.forYouItems.first?.id
+            }
+            
+            // Updateing `forYouItemOnViewPort` on first data load
             if let scrollPosition, let itemIndex = vm.forYouItems.firstIndex(where: { $0.id == scrollPosition }) {
                 vm.forYouItemOnViewPort = vm.forYouItems[itemIndex].id
             }

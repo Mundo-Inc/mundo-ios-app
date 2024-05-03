@@ -249,32 +249,59 @@ fileprivate struct CustomAnnotation: MapContent {
             .annotationTitles(vm.scale > 0.8 ? .automatic : .hidden)
         } else if let first = item.first {
             Annotation(first.place.name, coordinate: first.place.coordinates) {
-                ZStack {
-                    Group {
-                        if vm.showSet.contains(item.id) {
+                ZStack(alignment: .topLeading) {
+                    if vm.showSet.contains(item.id) {
+                        Group {
                             if item.items.count > 1 {
-                                ForEach(item.items.indices, id: \.self) { i in
-                                    if i < 3 {
-                                        if i == 0 {
-                                            ProfileImage(item.items[0].user.profileImage, size: 50, cornerRadius: 5, borderColor: item.items[0].user.color)
-                                                .zIndex(Double(item.items.count))
-                                        } else {
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .frame(width: 50, height: 50)
-                                                .shadow(color: Color.black.opacity(0.4), radius: 2)
-                                                .foregroundStyle(item.items[i].user.color)
-                                                .rotationEffect(.degrees(Double(-15 * i)))
-                                                .zIndex(Double(item.items.count - i))
-                                        }
-                                        
-                                    }
+                                let items = Array(item.items.prefix(4))
+                                
+                                // Skip first item
+                                ForEach(1...(items.count - 1), id: \.self) { i in
+                                    Circle()
+                                        .stroke(items[i].user.color.opacity(0.85 - Double(i) * 0.15), lineWidth: 1.2)
+                                        .frame(width: 50 - Double(i) * 2)
+                                        .offset(x: -Double(i) * 1.2, y: -Double(i) * 1.2)
+                                        .zIndex(Double(4 - i))
                                 }
+                                
+                                
+                                Circle()
+                                    .foregroundStyle(Color.white.opacity(0.6))
+                                    .frame(width: 50)
+                                    .shadow(radius: 5)
+                                    .zIndex(4)
+                                
+                                ProfileImage(first.user.profileImage, size: 47, borderColor: LinearGradient(colors: [
+                                    Color(hue: 324 / 360, saturation: 1, brightness: 0.41),
+                                    Color(hue: 209 / 360, saturation: 1, brightness: 0.48),
+                                    Color(hue: 50 / 360, saturation: 1, brightness: 0.55),
+                                ], startPoint: .bottomLeading, endPoint: .topTrailing), shadow: Color.clear)
+                                .padding(.all, 1.5)
+                                .zIndex(5)
+                                
+                                Text("\(item.items.count)")
+                                    .font(.custom(style: .caption2))
+                                    .foregroundStyle(Color.white.opacity(0.7))
+                                    .frame(width: 24)
+                                    .background(Color.black, in: Circle())
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                                    .zIndex(6)
                             } else {
-                                ProfileImage(first.user.profileImage, size: 50, cornerRadius: 5, borderColor: first.user.color)
+                                Circle()
+                                    .foregroundStyle(Color.white.opacity(0.6))
+                                    .frame(width: 50)
+                                    .shadow(radius: 5)
+                                
+                                ProfileImage(first.user.profileImage, size: 47, borderColor: LinearGradient(colors: [
+                                    Color(hue: 324 / 360, saturation: 1, brightness: 0.41),
+                                    Color(hue: 209 / 360, saturation: 1, brightness: 0.48),
+                                    Color(hue: 50 / 360, saturation: 1, brightness: 0.55),
+                                ], startPoint: .bottomLeading, endPoint: .topTrailing), shadow: Color.clear)
+                                .padding(.all, 1.5)
                             }
                         }
+                        .transition(AnyTransition.asymmetric(insertion: .scale.animation(.bouncy(duration: 0.5)), removal: .identity.animation(.easeIn(duration: 0))))
                     }
-                    .transition(AnyTransition.asymmetric(insertion: .scale(scale: 0).animation(.bouncy(duration: 0.5)), removal: .identity.animation(.easeIn(duration: 0))))
                 }
                 .frame(width: 50, height: 50)
                 .onTapGesture {

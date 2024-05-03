@@ -7,13 +7,14 @@
 
 import SwiftUI
 
-struct ProfileImage: View {
+struct ProfileImage<BorderStyle>: View where BorderStyle: ShapeStyle {
     let profileImage: URL?
     let size: CGFloat
     let cornerRadius: CGFloat
-    let borderColor: Color
+    let borderColor: BorderStyle
+    let shadow: Color
     
-    init(_ string: String?, size: CGFloat? = nil, cornerRadius: CGFloat? = nil, borderColor: Color = .profileImageStroke) {
+    init(_ string: String?, size: CGFloat? = nil, cornerRadius: CGFloat? = nil, borderColor: BorderStyle = .profileImageStroke, shadow: Color = Color.black.opacity(0.25)) {
         if let string, let url = URL(string: string) {
             self.profileImage = url
         } else {
@@ -26,9 +27,10 @@ struct ProfileImage: View {
             self.cornerRadius = self.size / 2
         }
         self.borderColor = borderColor
+        self.shadow = shadow
     }
     
-    init(_ url: URL?, size: CGFloat? = nil, cornerRadius: CGFloat? = nil, borderColor: Color = .profileImageStroke) {
+    init(_ url: URL?, size: CGFloat? = nil, cornerRadius: CGFloat? = nil, borderColor: BorderStyle = .profileImageStroke, shadow: Color = Color.black.opacity(0.25)) {
         self.profileImage = url
         self.size = size ?? 80
         if let cornerRadius {
@@ -37,6 +39,7 @@ struct ProfileImage: View {
             self.cornerRadius = self.size / 2
         }
         self.borderColor = borderColor
+        self.shadow = shadow
     }
     
     var strokeSize: CGFloat {
@@ -55,7 +58,7 @@ struct ProfileImage: View {
         if let profileImage {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .foregroundStyle(borderColor)
-                .shadow(color: Color.black.opacity(0.25), radius: shadowSize, y: shadowSize)
+                .shadow(color: shadow, radius: shadowSize, y: shadowSize)
                 .overlay {
                     RoundedRectangle(cornerRadius: innerCornerRadius)
                         .foregroundStyle(Color(.profileImageBG))
@@ -72,7 +75,7 @@ struct ProfileImage: View {
         } else {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .foregroundStyle(borderColor)
-                .shadow(color: Color.black.opacity(0.25), radius: shadowSize, y: shadowSize)
+                .shadow(color: shadow, radius: shadowSize, y: shadowSize)
                 .overlay {
                     RoundedRectangle(cornerRadius: innerCornerRadius)
                         .foregroundStyle(Color(.profileImageBG))

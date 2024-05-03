@@ -52,9 +52,8 @@ final class CommentsVM: LoadingSections, ObservableObject {
         do {
             let data = try await commentsDM.submitComment(for: activityId, content: commentContent)
             
-            commentContent = ""
-            
             await MainActor.run {
+                commentContent = ""
                 self.comments.insert(data, at: 0)
             }
             

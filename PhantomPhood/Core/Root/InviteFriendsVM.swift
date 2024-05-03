@@ -106,9 +106,9 @@ final class InviteFriendsVM: ObservableObject {
     
     func fetchReferredUsers() async {
         do {
-            let resData = try await userProfileDM.getReferredUsers()
+            try await userProfileDM.getReferredUsers()
         } catch {
-            presentErrorToast(error, silent: true)
+            presentErrorToast(error, silent: true, function: #function)
         }
     }
     

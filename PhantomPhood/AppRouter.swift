@@ -130,6 +130,15 @@ struct AppRouter: View {
                 Task {
                     await appGeneralVM.checkVersion()
                 }
+                DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 5) {
+                    Task {
+                        do {
+                            try await VideoCachingManager.shared.clearOldCacheFiles()
+                        } catch {
+                            print("Error clearOldCacheFiles", error)
+                        }
+                    }
+                }
             case .background, .inactive:
                 // Considered as a graceful termination
                 UserDefaults.standard.set(true, forKey: "AppTerminatedGracefully")

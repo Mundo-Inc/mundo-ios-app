@@ -109,6 +109,7 @@ final class UserProfileDM {
         try await apiManager.requestNoContent("/users/\(id)/block", method: .delete, token: token)
     }
     
+    @discardableResult
     func getReferredUsers() async throws -> APIResponseWithPagination<[UserEssentialsWithCreationDate]> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)

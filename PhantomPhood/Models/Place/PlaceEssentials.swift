@@ -72,20 +72,25 @@ extension PlaceEssentials {
     }
     
     func createPlaceEntity(context: NSManagedObjectContext) -> PlaceEntity {
-        let placeEntity = PlaceEntity(context: context)
-        placeEntity.id = self.id
-        placeEntity.name = self.name
-        placeEntity.thumbnail = self.thumbnail?.absoluteString
-        placeEntity.latitude = self.location.geoLocation.lat
-        placeEntity.longitude = self.location.geoLocation.lng
-        placeEntity.savedAt = .now
+        var placeEntity: PlaceEntity!
         
-        do {
-            try context.obtainPermanentIDs(for: [placeEntity])
-        } catch {
-            presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
+        context.performAndWait {
+            placeEntity = PlaceEntity(context: context)
+            placeEntity.id = self.id
+            placeEntity.name = self.name
+            placeEntity.thumbnail = self.thumbnail?.absoluteString
+            placeEntity.latitude = self.location.geoLocation.lat
+            placeEntity.longitude = self.location.geoLocation.lng
+            placeEntity.savedAt = .now
+            
+            do {
+                try context.obtainPermanentIDs(for: [placeEntity])
+            } catch {
+                presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
+            }
         }
         
         return placeEntity
+        
     }
 }
