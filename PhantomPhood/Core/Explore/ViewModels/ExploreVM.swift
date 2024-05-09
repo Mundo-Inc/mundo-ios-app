@@ -14,7 +14,7 @@ import Combine
 @available(iOS 17.0, *)
 final class ExploreVM17: ObservableObject {
     static let annotationLimitOnMap: Int = 30
-    static let mapAnnotationUpdateThruttle: Double = 0.8
+    static let mapAnnotationUpdateThruttle: Double = 1.5
     
     private static let intersectionThreshold: Double = 0.5
     private static let cachedRegionExpirySeconds: Double = 90
@@ -64,23 +64,17 @@ final class ExploreVM17: ObservableObject {
         $startDate
             .sink { value in
                 self.getSavedData(startDate: value.getDate)
-                Task {
-                    await self.removeRequestedRegions()
-                }
+                self.removeRequestedRegions()
             }
             .store(in: &cancellables)
         
         $activitiesScope
             .sink { value in
                 if value == .followings {
-                    Task {
-                        try? await self.dataStack.removeMapActivities()
-                    }
+                    try? self.dataStack.removeMapActivities()
                 }
                 
-                Task {
-                    await self.removeRequestedRegions()
-                }
+                self.removeRequestedRegions()
                 
                 self.getSavedData(startDate: self.startDate.getDate)
                 if let context = self.latestMapContext {
@@ -118,8 +112,8 @@ final class ExploreVM17: ObservableObject {
             
             let data = try await mapDM.getMapActivities(ne: ne.coordinate, sw: sw.coordinate, startDate: startDate.getDate, scope: self.activitiesScope)
             
-            await saveActivites(data)
-            await addFetchedRect(fetchRect, areaLevel: areaLevel, intersectingRects: intersectingRects)
+            saveActivites(data)
+            addFetchedRect(fetchRect, areaLevel: areaLevel, intersectingRects: intersectingRects)
         } catch {
             presentErrorToast(error, silent: true)
         }
@@ -213,15 +207,15 @@ final class ExploreVM17: ObservableObject {
     
     // MARK: - Private Methods
     
-    private func addFetchedRect(_ rect: MKMapRect, areaLevel: AreaLevel, intersectingRects: [FetchedMapRect]) async {
+    private func addFetchedRect(_ rect: MKMapRect, areaLevel: AreaLevel, intersectingRects: [FetchedMapRect]) {
         let unitRects = divideRect(rect: rect, areaLevel: areaLevel).filter { r in
             !intersectingRects.contains { fetchedMapRegion in
                 fetchedMapRegion.rect.midX == r.midX && fetchedMapRegion.rect.midY == r.midY
             }
         }
         
-        for item in unitRects {
-            dataStack.viewContext.performAndWait {
+        dataStack.viewContext.performAndWait {
+            for item in unitRects {
                 let entity = RequestedRegionEntity(context: dataStack.viewContext)
                 entity.x = item.origin.x
                 entity.y = item.origin.y
@@ -231,12 +225,14 @@ final class ExploreVM17: ObservableObject {
                 
                 try? dataStack.viewContext.obtainPermanentIDs(for: [entity])
             }
-        }
-        
-        do {
-            try await self.dataStack.saveContext()
-        } catch {
-            presentErrorToast(error, debug: "Error saving new RequestedRegionEntity", silent: true, function: #function)
+            
+            do {
+                if dataStack.viewContext.hasChanges {
+                    try dataStack.viewContext.save()
+                }
+            } catch {
+                presentErrorToast(error, debug: "Error saving new RequestedRegionEntity", silent: true, function: #function)
+            }
         }
         
         updateFetchedRegions()
@@ -255,10 +251,12 @@ final class ExploreVM17: ObservableObject {
         }
         
         if !itemsToDelete.isEmpty {
-            itemsToDelete.forEach { self.dataStack.viewContext.delete($0.entity) }
-            Task {
+            dataStack.viewContext.performAndWait {
+                itemsToDelete.forEach { self.dataStack.viewContext.delete($0.entity) }
                 do {
-                    try await self.dataStack.saveContext()
+                    if dataStack.viewContext.hasChanges {
+                        try dataStack.viewContext.save()
+                    }
                 } catch {
                     presentErrorToast(error, debug: "Error deleting expired areas", silent: true)
                 }
@@ -318,47 +316,51 @@ final class ExploreVM17: ObservableObject {
         return rects
     }
     
-    private func saveActivites(_ activities: [MapActivity]) async {
+    private func saveActivites(_ activities: [MapActivity]) {
         guard !activities.isEmpty else { return }
         
         let context = dataStack.viewContext
         
-        do {
-            // Fetch existing entities
-            let existingActivities = try fetchExistingEntities(MapActivityEntity.self, ids: Set(activities.compactMap { $0.id }), context: context)
-            let existingActivityIDs = Set(existingActivities.compactMap { $0.id })
-            let activitiesToAdd = activities.filter { !existingActivityIDs.contains($0.id) }
-            
-            // Exit if there is nothing to add
-            guard !activitiesToAdd.isEmpty else { return }
-            
-            let existingUsers = try fetchExistingEntities(UserEntity.self, ids: Set(activities.compactMap { $0.user.id }), context: context)
-            let existingPlaces = try fetchExistingEntities(PlaceEntity.self, ids: Set(activities.compactMap { $0.place.id }), context: context)
-            
-            var usersDict = Dictionary(uniqueKeysWithValues: existingUsers.compactMap { ($0.id, $0) })
-            var placesDict = Dictionary(uniqueKeysWithValues: existingPlaces.compactMap { ($0.id, $0) })
-            
-            for activity in activitiesToAdd {
-                let user = usersDict[activity.user.id] ?? {
-                    let newUser = activity.user.createUserEntity(context: context)
-                    usersDict[activity.user.id] = newUser
-                    return newUser
-                }()
+        context.performAndWait {
+            do {
+                // Fetch existing entities
+                let existingActivities = try fetchExistingEntities(MapActivityEntity.self, ids: Set(activities.compactMap { $0.id }), context: context)
+                let existingActivityIDs = Set(existingActivities.compactMap { $0.id })
+                let activitiesToAdd = activities.filter { !existingActivityIDs.contains($0.id) }
                 
-                let place = placesDict[activity.place.id] ?? {
-                    let newPlace = activity.place.createPlaceEntity(context: context)
-                    placesDict[activity.place.id] = newPlace
-                    return newPlace
-                }()
+                // Exit if there is nothing to add
+                guard !activitiesToAdd.isEmpty else { return }
                 
-                activity.createMapActivityEntity(context: context, user: user, place: place)
+                let existingUsers = try fetchExistingEntities(UserEntity.self, ids: Set(activities.compactMap { $0.user.id }), context: context)
+                let existingPlaces = try fetchExistingEntities(PlaceEntity.self, ids: Set(activities.compactMap { $0.place.id }), context: context)
                 
-                originalItems.append(activity)
+                var usersDict = Dictionary(uniqueKeysWithValues: existingUsers.compactMap { ($0.id, $0) })
+                var placesDict = Dictionary(uniqueKeysWithValues: existingPlaces.compactMap { ($0.id, $0) })
+                
+                for activity in activitiesToAdd {
+                    let user = usersDict[activity.user.id] ?? {
+                        let newUser = activity.user.createUserEntity(context: context)
+                        usersDict[activity.user.id] = newUser
+                        return newUser
+                    }()
+                    
+                    let place = placesDict[activity.place.id] ?? {
+                        let newPlace = activity.place.createPlaceEntity(context: context)
+                        placesDict[activity.place.id] = newPlace
+                        return newPlace
+                    }()
+                    
+                    activity.createMapActivityEntity(context: context, user: user, place: place)
+                    
+                    originalItems.append(activity)
+                }
+                
+                if context.hasChanges {
+                    try context.save()
+                }
+            } catch {
+                presentErrorToast(error, debug: "Error getting existing MapActivityEntity", silent: true)
             }
-            
-            try await self.dataStack.saveContext()
-        } catch {
-            presentErrorToast(error, debug: "Error getting existing MapActivityEntity", silent: true)
         }
     }
     
@@ -410,14 +412,10 @@ final class ExploreVM17: ObservableObject {
         }
     }
     
-    private func removeRequestedRegions() async {
-        do {
-            try await dataStack.removeRequestedRegions()
-            
-            updateFetchedRegions()
-        } catch {
-            presentErrorToast(error, silent: true)
-        }
+    private func removeRequestedRegions() {
+        try? dataStack.removeRequestedRegions()
+        
+        updateFetchedRegions()
     }
     
     // MARK: - Enums

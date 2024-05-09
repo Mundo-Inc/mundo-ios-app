@@ -90,7 +90,7 @@ struct MyProfileView: View {
                     .padding(.top)
                     .font(.custom(style: .footnote))
                     
-                    if let bio = auth.currentUser?.bio, !bio.isEmpty {
+                    if let bio = auth.currentUser?.bio {
                         Text(bio)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .font(.custom(style: .footnote))

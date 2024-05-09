@@ -217,6 +217,7 @@ struct GiftingView: View {
                                     name: "Kia Abdi",
                                     username: "TheKia",
                                     verified: true,
+                                    isPrivate: false,
                                     profileImage: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg")!,
                                     progress: .init(level: 35, xp: 2000)
                                 )))
@@ -227,6 +228,7 @@ struct GiftingView: View {
                                     name: "Kia Abdi",
                                     username: "TheKia",
                                     verified: true,
+                                    isPrivate: false,
                                     profileImage: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg")!,
                                     progress: .init(level: 35, xp: 2000)
                                 )))

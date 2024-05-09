@@ -25,6 +25,7 @@ struct CurrentUserCoreData: Codable, Identifiable {
     let email: Email
     let role: UserRole
     let verified: Bool
+    let isPrivate: Bool
     let progress: UserProgress
     
     struct Email: Codable {
@@ -34,7 +35,7 @@ struct CurrentUserCoreData: Codable, Identifiable {
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, username, profileImage, bio, email, role, verified, progress
+        case name, username, profileImage, bio, email, role, verified, isPrivate, progress
     }
     
 }
@@ -49,6 +50,7 @@ extension CurrentUserCoreData {
         email = try container.decode(Email.self, forKey: .email)
         role = try container.decode(UserRole.self, forKey: .role)
         verified = try container.decode(Bool.self, forKey: .verified)
+        isPrivate = try container.decode(Bool.self, forKey: .isPrivate)
         progress = try container.decode(UserProgress.self, forKey: .progress)
         profileImage = try container.decodeURLIfPresent(forKey: .profileImage)
     }
@@ -64,6 +66,7 @@ struct CurrentUserFullData: Codable {
     let rank, remainingXp, prevLevelXp, reviewsCount, followersCount, followingCount, totalCheckins: Int
     let role: UserRole
     let verified: Bool
+    let isPrivate: Bool
     let progress: UserProgress
     let acceptedEula: Date?
     
@@ -74,7 +77,7 @@ struct CurrentUserFullData: Codable {
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, username, profileImage, bio, email, rank, remainingXp, prevLevelXp, reviewsCount, followersCount, followingCount, totalCheckins, role, verified, progress, acceptedEula
+        case name, username, profileImage, bio, email, rank, remainingXp, prevLevelXp, reviewsCount, followersCount, followingCount, totalCheckins, role, verified, isPrivate, progress, acceptedEula
     }
     
     var levelProgress: Double {
@@ -99,6 +102,7 @@ extension CurrentUserFullData {
         totalCheckins = try container.decode(Int.self, forKey: .totalCheckins)
         role = try container.decode(UserRole.self, forKey: .role)
         verified = try container.decode(Bool.self, forKey: .verified)
+        isPrivate = try container.decode(Bool.self, forKey: .isPrivate)
         progress = try container.decode(UserProgress.self, forKey: .progress)
         acceptedEula = try container.decodeIfPresent(Date.self, forKey: .acceptedEula)
         profileImage = try container.decodeURLIfPresent(forKey: .profileImage)
@@ -285,8 +289,10 @@ final class Authentication: ObservableObject {
         do {
             try Auth.auth().signOut()
             
-            DataStack.shared.deleteAll { status in
-                print("Deleting CoreData info status for DataStack: \(status)")
+            do {
+                try DataStack.shared.deleteAll()
+            } catch {
+                presentErrorToast(error, silent: true, function: #function)
             }
             
             let conversationsCoreDataManager = ConversationsCoreDataManager()

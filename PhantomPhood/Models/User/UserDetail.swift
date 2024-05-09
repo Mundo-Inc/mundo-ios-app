@@ -11,7 +11,7 @@ struct UserDetail: Identifiable, Decodable {
     let id: String
     let name: String
     let username: String
-    let bio: String
+    let bio: String?
     let remainingXp: Int
     let prevLevelXp: Int
     let followersCount: Int
@@ -22,11 +22,12 @@ struct UserDetail: Identifiable, Decodable {
     let verified: Bool
     let profileImage: URL?
     let progress: UserProgress
+    let isPrivate: Bool
     var connectionStatus: ConnectionStatus
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, username, bio, remainingXp, prevLevelXp, verified, profileImage, followersCount, followingCount, reviewsCount, totalCheckins, rank, progress, connectionStatus
+        case name, username, bio, remainingXp, prevLevelXp, verified, profileImage, followersCount, followingCount, reviewsCount, totalCheckins, rank, progress, isPrivate, connectionStatus
     }
     
     var levelProgress: Double {
@@ -44,7 +45,7 @@ extension UserDetail {
         id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         username = try container.decode(String.self, forKey: .username)
-        bio = try container.decode(String.self, forKey: .bio)
+        bio = try container.decodeOptionalString(forKey: .bio)
         remainingXp = try container.decode(Int.self, forKey: .remainingXp)
         prevLevelXp = try container.decode(Int.self, forKey: .prevLevelXp)
         followersCount = try container.decode(Int.self, forKey: .followersCount)
@@ -55,6 +56,7 @@ extension UserDetail {
         verified = try container.decode(Bool.self, forKey: .verified)
         connectionStatus = try container.decode(ConnectionStatus.self, forKey: .connectionStatus)
         progress = try container.decode(UserProgress.self, forKey: .progress)
+        isPrivate = try container.decode(Bool.self, forKey: .isPrivate)
         profileImage = try container.decodeURLIfPresent(forKey: .profileImage)
     }
 }

@@ -18,7 +18,7 @@ final class UserProfileDM {
         let data: APIResponse<UserEssentials> = try await apiManager.requestData("/users/\(id)?view=basic", method: .get)
         
         // update CoreData
-        self.dataManager.saveUser(userEssentials: data.data)
+        try? self.dataManager.saveUser(userEssentials: data.data)
         
         return data.data
     }
@@ -46,7 +46,7 @@ final class UserProfileDM {
         let data: APIResponse<UserEssentials> = try await apiManager.requestData("/users/\(id)?view=basic", method: .get)
         
         // update CoreData
-        self.dataManager.saveUser(userEssentials: data.data)
+        try? self.dataManager.saveUser(userEssentials: data.data)
         
         return data.data
     }
@@ -59,7 +59,7 @@ final class UserProfileDM {
         let data: APIResponse<UserDetail> = try await apiManager.requestData("/users/\(id)", method: .get, token: token)
         
         // update CoreData
-        self.dataManager.saveUser(userEssentials: UserEssentials(userDetail: data.data))
+        try? self.dataManager.saveUser(userEssentials: UserEssentials(userDetail: data.data))
         
         return data.data
     }
@@ -72,7 +72,7 @@ final class UserProfileDM {
         let data: APIResponse<UserDetail> = try await apiManager.requestData("/users/@\(username)", method: .get, token: token)
         
         // update CoreData
-        self.dataManager.saveUser(userEssentials: UserEssentials(userDetail: data.data))
+        try? self.dataManager.saveUser(userEssentials: UserEssentials(userDetail: data.data))
         
         return data.data
     }
@@ -129,13 +129,14 @@ final class UserProfileDM {
         let name: String
         let username: String
         let verified: Bool
+        let isPrivate: Bool
         let profileImage: URL?
         let progress: UserEssentials.CompactUserProgress
         let createdAt: Date
         
         enum CodingKeys: String, CodingKey {
             case id = "_id"
-            case name, username, verified, profileImage, progress, createdAt
+            case name, username, verified, isPrivate, profileImage, progress, createdAt
         }
         
         init(from decoder: Decoder) throws {
@@ -144,6 +145,7 @@ final class UserProfileDM {
             name = try container.decode(String.self, forKey: .name)
             username = try container.decode(String.self, forKey: .username)
             verified = try container.decode(Bool.self, forKey: .verified)
+            isPrivate = try container.decode(Bool.self, forKey: .isPrivate)
             progress = try container.decode(UserEssentials.CompactUserProgress.self, forKey: .progress)
             createdAt = try container.decode(Date.self, forKey: .createdAt)
             profileImage = try container.decodeURLIfPresent(forKey: .profileImage)

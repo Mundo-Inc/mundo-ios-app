@@ -55,8 +55,8 @@ struct UserActivityMapAnnotation: MapContent {
                                 .stroke(LinearGradient(colors: [
                                     Color(hue: 29 / 360, saturation: 0.66, brightness: 0.96),
                                     Color(hue: 346 / 360, saturation: 0.73, brightness: 0.94),
-                                ], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 3.5)
-                                .frame(width: 54)
+                                ], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 3)
+                                .frame(width: 53)
                                 .shadow(radius: 5)
                             
                             Circle()
@@ -86,7 +86,7 @@ struct UserActivityMapAnnotation: MapContent {
                     }
                     .transition(AnyTransition.asymmetric(insertion: .scale.animation(.bouncy(duration: 0.5)), removal: .identity.animation(.easeIn(duration: 0))))
                 }
-                .frame(width: 56.5, height: 56.5)
+                .frame(width: 56, height: 56)
                 .scaleEffect(vm.scale - 0.25 + min(Double(item.items.count - 1) * 0.1, 0.5))
                 .onTapGesture {
                     withAnimation {
@@ -115,10 +115,10 @@ struct UserActivityMapAnnotation: MapContent {
 @available(iOS 17.0, *)
 #Preview {
     let place1 = PlaceEssentials(id: "Place1", name: "Place 1", location: .init(geoLocation: .init(lng: -73.9245, lat: 40.82125), address: nil, city: nil, state: nil, country: nil, zip: nil), thumbnail: nil, categories: [])
-    let user1 = UserEssentials(id: "User1", name: "Name 1", username: "Username1", verified: false, profileImage: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg"), progress: .init(level: 35, xp: 2000))
+    let user1 = UserEssentials(id: "User1", name: "Name 1", username: "Username1", verified: false, isPrivate: false, profileImage: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg"), progress: .init(level: 35, xp: 2000))
     
     let place2 = PlaceEssentials(id: "Place2", name: "Place 2", location: .init(geoLocation: .init(lng: -73.9345, lat: 40.81125), address: nil, city: nil, state: nil, country: nil, zip: nil), thumbnail: nil, categories: [])
-    let user2 = UserEssentials(id: "User2", name: "Name 2", username: "Username2", verified: false, profileImage: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/profile.jpg"), progress: .init(level: 45, xp: 4000))
+    let user2 = UserEssentials(id: "User2", name: "Name 2", username: "Username2", verified: false, isPrivate: false, profileImage: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/profile.jpg"), progress: .init(level: 45, xp: 4000))
     
     return Map {
         UserActivityMapAnnotation(item: ClusteredMapActivity(items: [

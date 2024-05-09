@@ -18,10 +18,13 @@ final class DataStack {
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "DataContainer")
         
-        container.loadPersistentStores { _, error in
+        container.loadPersistentStores { storeDescription, error in
             if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                print("Error loading store: \(error), \(error.userInfo)")
             }
+            
+            storeDescription.shouldMigrateStoreAutomatically = true
+            storeDescription.shouldInferMappingModelAutomatically = true
             
             container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
         }
@@ -33,51 +36,67 @@ final class DataStack {
         return persistentContainer.viewContext
     }
     
-    func removeRequestedRegions() async throws {
+    func removeRequestedRegions() throws {
         let fetchedRegionsRequest: NSFetchRequest<RequestedRegionEntity> = RequestedRegionEntity.fetchRequest()
         
-        let fetchedRegions = try persistentContainer.viewContext.fetch(fetchedRegionsRequest)
-        
-        fetchedRegions.forEach { persistentContainer.viewContext.delete($0) }
-        
-        try await saveContext()
+        try viewContext.performAndWait {
+            let fetchedRegions = try viewContext.fetch(fetchedRegionsRequest)
+            
+            fetchedRegions.forEach { viewContext.delete($0) }
+            
+            if viewContext.hasChanges {
+                try viewContext.save()
+            }
+        }
     }
     
-    func removeMapActivities() async throws {
+    func removeMapActivities() throws {
         let mapActivitiesRequest: NSFetchRequest<MapActivityEntity> = MapActivityEntity.fetchRequest()
         
-        let mapActivities = try persistentContainer.viewContext.fetch(mapActivitiesRequest)
-        
-        mapActivities.forEach { persistentContainer.viewContext.delete($0) }
-        
-        try await saveContext()
+        try viewContext.performAndWait {
+            let mapActivities = try viewContext.fetch(mapActivitiesRequest)
+            
+            mapActivities.forEach { viewContext.delete($0) }
+            
+            if viewContext.hasChanges {
+                try viewContext.save()
+            }
+        }
     }
     
-    func removeUsers() async throws {
+    func removeUsers() throws {
         let usersRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
         
-        let users = try persistentContainer.viewContext.fetch(usersRequest)
+        try viewContext.performAndWait {
+            let users = try viewContext.fetch(usersRequest)
+            
+            users.forEach { viewContext.delete($0) }
+            
+            if viewContext.hasChanges {
+                try viewContext.save()
+            }
+        }
+    
         
-        users.forEach { persistentContainer.viewContext.delete($0) }
-        
-        try await saveContext()
     }
     
-    func removePlaces() async throws {
+    func removePlaces() throws {
         let placesRequest: NSFetchRequest<PlaceEntity> = PlaceEntity.fetchRequest()
         
-        let places = try persistentContainer.viewContext.fetch(placesRequest)
-        
-        places.forEach { persistentContainer.viewContext.delete($0) }
-        
-        try await saveContext()
+        try viewContext.performAndWait {
+            let places = try viewContext.fetch(placesRequest)
+            
+            places.forEach { viewContext.delete($0) }
+            
+            if viewContext.hasChanges {
+                try viewContext.save()
+            }
+        }
     }
     
     
-    func deleteAll(completion: @escaping (Bool) -> Void) {
-        let context = viewContext
-        
-        context.perform {
+    func deleteAll() throws {
+        try viewContext.performAndWait {
             let entityNames = ["RequestedRegionEntity", "MapActivityEntity", "UserEntity", "PlaceEntity"]
             
             for entityName in entityNames {
@@ -86,72 +105,47 @@ final class DataStack {
                 batchDeleteRequest.resultType = .resultTypeCount
                 
                 do {
-                    let batchDeleteResult = try context.execute(batchDeleteRequest) as? NSBatchDeleteResult
+                    let batchDeleteResult = try viewContext.execute(batchDeleteRequest) as? NSBatchDeleteResult
+#if DEBUG
                     print("Deleted \(batchDeleteResult?.result ?? 0) records from \(entityName)")
+#endif
                 } catch {
                     presentErrorToast(error, debug: "Error deleting entity \(entityName): \(error)", silent: true)
-                    context.rollback()  // Important to maintain integrity in case of failure
-                    completion(false)
-                    return
                 }
             }
             
-            // Save context to persist changes
-            do {
-                try context.save()
-                completion(true)
-            } catch {
-                presentErrorToast(error, debug: "Failed to save context", silent: true)
-                context.rollback()
-                completion(false)
+            try viewContext.save()
+        }
+    }
+    
+    func saveUser(userEssentials: UserEssentials) throws {
+        try viewContext.performAndWait {
+            let user = try self.fetchUser(withID: userEssentials.id) ?? UserEntity(context: viewContext)
+            
+            self.updateUserEntity(user, with: userEssentials)
+            if viewContext.hasChanges {
+                try viewContext.save()
             }
         }
     }
     
-    func saveUser(userEssentials: UserEssentials) {
-        viewContext.perform {
-            do {
-                let user = try self.fetchUser(withID: userEssentials.id) ?? UserEntity(context: self.viewContext)
-                
-                self.updateUserEntity(user, with: userEssentials)
-                if self.viewContext.hasChanges {
-                    try self.viewContext.save()
-                }
-            } catch {
-                presentErrorToast(error, debug: "Error saving user info to CoreData", silent: true)
-            }
-        }
-    }
-    
-    func saveUsers(userEssentialsList: [UserEssentials]) {
-        let ids: Set<String> = Set(userEssentialsList.compactMap { $0.id })
-
-        viewContext.perform {
-            let existingUsers = self.fetchUsers(withIDs: ids)
-
+    func saveUsers(userEssentialsList: [UserEssentials]) throws {
+        guard !userEssentialsList.isEmpty else { return }
+        
+        let ids = Set(userEssentialsList.compactMap { $0.id })
+        let context = viewContext
+        
+        try context.performAndWait {
+            let existingUsers = try self.fetchUsers(withIDs: ids)
             let existingUsersDict = Dictionary(uniqueKeysWithValues: existingUsers.compactMap { ($0.id, $0) })
-
+            
             for essentials in userEssentialsList {
-                let user = existingUsersDict[essentials.id] ?? UserEntity(context: self.viewContext)
+                let user = existingUsersDict[essentials.id] ?? UserEntity(context: context)
                 self.updateUserEntity(user, with: essentials)
             }
             
-            if self.viewContext.hasChanges {
-                do {
-                    try self.viewContext.save()
-                } catch {
-                    presentErrorToast(error, debug: "Error saving users info to CoreData", silent: false)
-                }
-            }
-        }
-    }
-    
-    // MARK: - Core Data Saving support
-    
-    func saveContext() async throws {
-        try await viewContext.perform {
-            if self.viewContext.hasChanges {
-                try self.viewContext.save()
+            if context.hasChanges {
+                try context.save()
             }
         }
     }
@@ -162,18 +156,13 @@ final class DataStack {
         let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", id)
         request.fetchLimit = 1
-        return try self.viewContext.fetch(request).first
+        return try viewContext.fetch(request).first
     }
     
-    private func fetchUsers(withIDs ids: Set<String>) -> [UserEntity] {
+    private func fetchUsers(withIDs ids: Set<String>) throws -> [UserEntity] {
         let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id IN %@", ids)
-        do {
-            return try self.viewContext.fetch(request)
-        } catch {
-            presentErrorToast(error, debug: "Failed to fetch users from CoreData", silent: true)
-            return []
-        }
+        return try viewContext.fetch(request)
     }
     
     private func updateUserEntity(_ user: UserEntity, with essentials: UserEssentials) {
@@ -181,6 +170,7 @@ final class DataStack {
         user.name = essentials.name
         user.username = essentials.username
         user.verified = essentials.verified
+        user.isPrivate = essentials.isPrivate
         user.profileImage = essentials.profileImage?.absoluteString
         user.level = Int16(essentials.progress.level)
         user.xp = Int16(essentials.progress.xp)

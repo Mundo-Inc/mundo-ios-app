@@ -2,19 +2,37 @@
 //  UserProfileView.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 15.09.2023.
+//  Created by Kia Abdi on 5/6/24.
 //
 
 import SwiftUI
 
-enum UserProfileTab: String, Hashable, CaseIterable {
-    case stats = "Stats"
-    case achievements = "Achievements"
-    case lists = "Lists"
-}
-
-
 struct UserProfileView: View {
+    enum UserProfileTab: Hashable, CaseIterable {
+        case posts
+        case achievements
+        case lists
+        case gifts
+        
+        var title: String {
+            switch self {
+            case .posts:
+                return "Posts"
+            case .achievements:
+                return "Achievements"
+            case .lists:
+                return "Lists"
+            case .gifts:
+                return "Gifts"
+            }
+        }
+    }
+    
+    @EnvironmentObject private var actionManager: ActionManager
+    
+    @Environment(\.mainWindowSize) private var mainWindowSize
+    @Environment(\.mainWindowSafeAreaInsets) private var mainWindowSafeAreaInsets
+    
     @StateObject private var vm: UserProfileVM
     
     init(id: String) {
@@ -25,316 +43,286 @@ struct UserProfileView: View {
         self._vm = StateObject(wrappedValue: UserProfileVM(username: username))
     }
     
-    @State private var activeTab: UserProfileTab = .stats
+    @State private var activeTab: UserProfileTab = .posts
     
     var body: some View {
         ScrollView {
             if let blockStatus = vm.blockStatus {
-                Color.clear
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(.top, 200)
-                    .ignoresSafeArea()
-                    .overlay {
-                        switch blockStatus {
-                        case .isBlocked:
-                            Text("You have blocked this user")
-                                .font(.custom(style: .headline))
-                        case .hasBlocked:
-                            Text("This user has blocked you")
-                                .font(.custom(style: .headline))
-                        }
-                    }
-            } else {
                 VStack {
-                    HStack(spacing: 12) {
-                        ProfileImage(vm.user?.profileImage, size: 82, cornerRadius: 15)
-                        
-                        VStack {
-                            if (vm.user != nil && vm.user!.verified) {
+                    switch blockStatus {
+                    case .isBlocked:
+                        Text("You have blocked this user")
+                            .font(.custom(style: .headline))
+                    case .hasBlocked:
+                        Text("This user has blocked you")
+                            .font(.custom(style: .headline))
+                    }
+                }
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(minHeight: mainWindowSize.height - mainWindowSafeAreaInsets.top - mainWindowSafeAreaInsets.bottom)
+            } else {
+                VStack(spacing: 0) {
+                    VStack(spacing: 15) {
+                        HStack(spacing: 12) {
+                            ProfileImage(vm.user?.profileImage, size: 80, cornerRadius: 15)
+                            
+                            VStack {
                                 HStack {
+                                    LevelView(level: vm.user?.progress.level ?? -1)
+                                        .frame(height: 28)
+                                    
                                     Text(vm.user?.name ?? "User Name")
                                         .font(.custom(style: .title2))
-                                        .bold()
-                                    Image(systemName: "checkmark.seal")
-                                        .foregroundStyle(.blue)
+                                        .fontWeight(.bold)
+                                    
+                                    if let user = vm.user, user.verified {
+                                        Image(systemName: "checkmark.seal")
+                                            .foregroundStyle(.blue)
+                                    }
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                            } else {
-                                Text(vm.user?.name ?? "User Name")
-                                    .font(.custom(style: .title2))
-                                    .bold()
+                                Text("@\(vm.user?.username ?? "Loading")")
+                                    .font(.custom(style: .footnote))
+                                    .foregroundStyle(.secondary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            
-                            Text("@\(vm.user?.username ?? "Loading")")
-                                .font(.custom(style: .footnote))
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            .redacted(reason: vm.user == nil ? .placeholder : [])
+                            .frame(maxWidth: .infinity)
                         }
-                        .redacted(reason: vm.user == nil ? .placeholder : [])
-                        .frame(maxWidth: .infinity)
-                    }
-                    .padding(.horizontal)
-                    
-                    HStack {
-                        Group {
-                            if let isFollowedByUser = vm.isFollowedByUser, let user = vm.user {
-                                Button {
-                                    Task {
-                                        if isFollowedByUser {
-                                            await vm.unfollow()
-                                        } else {
-                                            await vm.follow()
+                        .padding(.horizontal)
+                        
+                        HStack {
+                            Group {
+                                if let isFollowedByUser = vm.isFollowedByUser, let user = vm.user {
+                                    Button {
+                                        Task {
+                                            if isFollowedByUser {
+                                                await vm.unfollow()
+                                            } else {
+                                                await vm.follow()
+                                            }
                                         }
-                                    }
-                                } label: {
-                                    HStack {
-                                        if vm.loadingSections.contains(.followOperation) {
-                                            ProgressView()
-                                                .controlSize(.mini)
-                                        } else if isFollowedByUser {
-                                            Text("Unfollow")
-                                        } else {
-                                            Text(user.connectionStatus.followsUser ? "Follow Back" : "Follow")
+                                    } label: {
+                                        HStack {
+                                            if vm.loadingSections.contains(.followOperation) {
+                                                ProgressView()
+                                                    .controlSize(.mini)
+                                            } else if isFollowedByUser {
+                                                Text("Unfollow")
+                                            } else {
+                                                Text(user.connectionStatus.followsUser ? "Follow Back" : "Follow")
+                                            }
                                         }
-                                    }
-                                    .frame(height: 32)
-                                    .frame(maxWidth: .infinity)
-                                    .background(isFollowedByUser ? Color.themeBorder : Color.accentColor)
-                                    .clipShape(.rect(cornerRadius: 5))
-                                    .foregroundStyle(isFollowedByUser ? Color.primary : Color.black)
-                                }
-                            } else {
-                                Button {} label: {
-                                    Text("Loading")
                                         .frame(height: 32)
                                         .frame(maxWidth: .infinity)
-                                        .background(Color.themeBorder)
+                                        .background(isFollowedByUser ? Color.themeBorder : Color.accentColor)
                                         .clipShape(.rect(cornerRadius: 5))
-                                        .foregroundStyle(Color.primary)
-                                }
-                            }
-                        }
-                        .disabled(vm.loadingSections.contains(.followOperation))
-                        
-                        Button {
-                            Task {
-                                await vm.startConversation()
-                            }
-                        } label: {
-                            HStack {
-                                if vm.loadingSections.contains(.startingConversation) {
-                                    ProgressView()
-                                        .controlSize(.mini)
+                                        .foregroundStyle(isFollowedByUser ? Color.primary : Color.black)
+                                    }
                                 } else {
-                                    Text("Message")
+                                    Button {} label: {
+                                        Text("Loading")
+                                            .frame(height: 32)
+                                            .frame(maxWidth: .infinity)
+                                            .background(Color.themeBorder)
+                                            .clipShape(.rect(cornerRadius: 5))
+                                            .foregroundStyle(Color.primary)
+                                    }
                                 }
                             }
-                            .frame(height: 32)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.themeBorder)
-                            .clipShape(.rect(cornerRadius: 5))
-                            .foregroundStyle(Color.primary)
-                        }
-                        .disabled(vm.loadingSections.contains(.startingConversation))
-                        
-                        Button {
-                            if let user = vm.user {
-                                SheetsManager.shared.presenting = .gifting(.data(UserEssentials(userDetail: user)))
-                            }
-                        } label: {
-                            Image(systemName: "gift.fill")
-                                .font(.system(size: 18))
+                            .disabled(vm.loadingSections.contains(.followOperation))
+                            
+                            Button {
+                                Task {
+                                    await vm.startConversation()
+                                }
+                            } label: {
+                                HStack {
+                                    if vm.loadingSections.contains(.startingConversation) {
+                                        ProgressView()
+                                            .controlSize(.mini)
+                                    } else {
+                                        Text("Message")
+                                    }
+                                }
                                 .frame(height: 32)
-                                .frame(maxWidth: 70)
-                                .background(Color.yellow)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.themeBorder)
                                 .clipShape(.rect(cornerRadius: 5))
-                                .foregroundStyle(Color.black)
+                                .foregroundStyle(Color.primary)
+                            }
+                            .disabled(vm.loadingSections.contains(.startingConversation))
+                            
+                            Button {
+                                if let user = vm.user {
+                                    SheetsManager.shared.presenting = .gifting(.data(UserEssentials(userDetail: user)))
+                                }
+                            } label: {
+                                Image(systemName: "gift.fill")
+                                    .font(.system(size: 18))
+                                    .frame(height: 32)
+                                    .frame(maxWidth: 70)
+                                    .background(Color.yellow)
+                                    .clipShape(.rect(cornerRadius: 5))
+                                    .foregroundStyle(Color.black)
+                            }
+                            .disabled(vm.user == nil)
                         }
-                        .disabled(vm.user == nil)
-                    }
-                    .padding(.horizontal)
-                    .font(.custom(style: .footnote))
-                    
-                    
-                    if let user = vm.user {
-                        if !user.bio.isEmpty {
-                            Text(user.bio)
+                        .padding(.horizontal)
+                        .font(.custom(style: .footnote))
+                        
+                        
+                        if let bio = vm.user?.bio {
+                            Text(bio)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .font(.custom(style: .footnote))
                                 .multilineTextAlignment(.leading)
                                 .padding(.horizontal)
-                                .padding(.top)
-                                .transition(AnyTransition.opacity.animation(.easeIn))
+                                .foregroundStyle(.secondary)
+                                .transition(AnyTransition.fade.animation(.easeIn))
                         }
-                    } else {
-                        Text("Placeholder bio")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.custom(style: .footnote))
-                            .multilineTextAlignment(.leading)
+                        
+                        HStack(spacing: 0) {
+                            Group {
+                                VStack(spacing: 0) {
+                                    Text((vm.user?.reviewsCount ?? 10).formattedWithSuffix())
+                                        .font(.custom(style: .headline))
+                                    
+                                    Text("Reviews")
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.secondary)
+                                }
+                                .onTapGesture {
+                                    if let user = vm.user {
+                                        AppData.shared.goTo(AppRoute.userActivities(userId: UserIdEnum.withId(user.id), activityType: .newReview))
+                                    }
+                                }
+                                
+                                VStack(spacing: 0) {
+                                    Text((vm.user?.followersCount ?? 10).formattedWithSuffix())
+                                        .font(.custom(style: .headline))
+                                    
+                                    Text("Followers")
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.secondary)
+                                }
+                                .onTapGesture {
+                                    if let user = vm.user {
+                                        AppData.shared.goTo(AppRoute.userConnections(userId: user.id, initTab: .followers))
+                                    }
+                                }
+                                
+                                VStack(spacing: 0) {
+                                    Text((vm.user?.followingCount ?? 10).formattedWithSuffix())
+                                        .font(.custom(style: .headline))
+                                    
+                                    Text("Followings")
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.secondary)
+                                }
+                                .onTapGesture {
+                                    if let user = vm.user {
+                                        AppData.shared.goTo(AppRoute.userConnections(userId: user.id, initTab: .followings))
+                                    }
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .padding(.top, 5)
+                        .fontWeight(.semibold)
+                        .redacted(reason: vm.user == nil ? .placeholder : [])
+                    }
+                    .padding(.top, 5)
+                    .padding(.bottom)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.themePrimary)
+                    
+                    VStack(spacing: 0) {
+                        ScrollView(.horizontal) {
+                            HStack(spacing: 12) {
+                                ForEach(UserProfileTab.allCases, id: \.self) { tab in
+                                    Button {
+                                        activeTab = tab
+                                    } label: {
+                                        Text(tab.title.uppercased())
+                                            .frame(height: 32)
+                                            .padding(.horizontal)
+                                            .background(activeTab == tab ? Color.accentColor : Color.clear, in: RoundedRectangle(cornerRadius: 5))
+                                            .background {
+                                                if activeTab != tab {
+                                                    RoundedRectangle(cornerRadius: 5)
+                                                        .stroke(Color.accentColor, lineWidth: 2)
+                                                }
+                                            }
+                                            .opacity(activeTab == tab ? 1 : 0.6)
+                                    }
+                                    .foregroundStyle(activeTab == tab ? Color.black : Color.accentColor)
+                                    .animation(.easeInOut(duration: 0), value: activeTab)
+                                }
+                            }
+                            .padding(.vertical, 12)
                             .padding(.horizontal)
-                            .padding(.top)
-                            .redacted(reason: .placeholder)
-                    }
-                    
-                    
-                    HStack {
-                        Divider()
-                            .opacity(0)
-                        
-                        Button {
-                            activeTab = .stats
-                        } label: {
-                            Text(UserProfileTab.stats.rawValue)
-                                .padding(.vertical)
-                                .padding(.leading)
                         }
-                        .foregroundStyle(
-                            activeTab == UserProfileTab.stats ? Color.accentColor : Color.secondary
-                        )
+                        .scrollIndicators(.never)
+                        
+                        if let user = vm.user {
+                            switch activeTab {
+                            case .posts:
+                                UserProfilePostsView(user: vm.user, activeTab: $activeTab)
+                            case .achievements:
+                                UserProfileAchievements(user: user)
+                            case .lists:
+                                UserProfileListsView(user: user)
+                            case .gifts:
+                                Text("Gifts")
+                            }
+                        } else {
+                            Text("Loading")
+                        }
                         
                         Spacer()
-                        Divider()
-                            .frame(maxHeight: 20)
-                        
-                        Button {
-                            activeTab = .achievements
-                        } label: {
-                            Text(UserProfileTab.achievements.rawValue)
-                                .padding()
-                        }
-                        .foregroundStyle(
-                            activeTab == UserProfileTab.achievements ? Color.accentColor : Color.secondary
-                        )
-                        
-                        Divider()
-                            .frame(maxHeight: 20)
-                        Spacer()
-                        
-                        Button {
-                            activeTab = .lists
-                        } label: {
-                            Text(UserProfileTab.lists.rawValue)
-                                .padding(.vertical)
-                                .padding(.trailing)
-                        }
-                        .foregroundStyle(
-                            activeTab == UserProfileTab.lists ? Color.accentColor : Color.secondary
-                        )
-                        
-                        Divider()
-                            .opacity(0)
                     }
-                    .font(.custom(style: .footnote))
-                    .bold()
-                    .textCase(.uppercase)
-                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.themeBG)
                 }
+                .frame(minHeight: mainWindowSize.height, maxHeight: .infinity)
                 .frame(maxWidth: .infinity)
-                .background {
-                    Color.themePrimary
-                        .clipShape(
-                            .rect(
-                                bottomLeadingRadius: 20,
-                                bottomTrailingRadius: 20
-                            )
-                        )
-                }
-                
-                VStack {
-                    switch activeTab {
-                    case .stats:
-                        UserProfileStats(user: vm.user, activeTab: $activeTab)
-                    case .achievements:
-                        if let user = vm.user {
-                            UserProfileAchievements(user: user)
-                        } else {
-                            VStack {
-                                Text("Loading")
-                            }
-                            .font(.custom(style: .headline))
-                            .frame(maxWidth: .infinity)
-                        }
-                    case .lists:
-                        if let user = vm.user {
-                            UserProfileListsView(user: user)
-                        } else {
-                            VStack {
-                                Text("Loading")
-                            }
-                            .font(.custom(style: .headline))
-                            .frame(maxWidth: .infinity)
-                        }
-                    }
-                }
-                .frame(minHeight: UIScreen.main.bounds.height / 1.5)
-                .background(
-                    Color.themeBG
-                        .offset(y: -30)
-                )
-                .zIndex(-1)
             }
         }
         .scrollIndicators(.hidden)
         .refreshable {
             await vm.fetchUser()
         }
-        .frame(maxHeight: .infinity)
-        .background {
-            if vm.blockStatus != nil {
-                Color.themePrimary.ignoresSafeArea()
-                    .frame(maxHeight: .infinity)
-            } else {
-                VStack(spacing: 0) {
-                    Color.themePrimary.ignoresSafeArea()
-                    Color.themeBG.ignoresSafeArea()
-                }
-                .frame(maxHeight: .infinity)
-            }
-        }
+        .background(LinearGradient(stops: [.init(color: Color.themePrimary, location: 0.5), .init(color: Color.themeBG, location: 0.5)], startPoint: .top, endPoint: .bottom).ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
-        .confirmationDialog("Actions", isPresented: $vm.showActions, actions: {
-            if let blockStatus = vm.blockStatus, blockStatus == .isBlocked {
-                Button("Unblock User", role: .destructive) {
-                    Task {
-                        await vm.unblock()
-                    }
-                }
-            } else if vm.blockStatus == nil {
-                Button("Block User", role: .destructive) {
-                    Task {
-                        await vm.block()
-                    }
-                }
-            }
-        })
         .toolbar {
             if vm.blockStatus != .hasBlocked {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        vm.showActions = true
+                        if let blockStatus = vm.blockStatus, blockStatus == .isBlocked {
+                            actionManager.value = [
+                                .init(title: "Unblock User", alertMessage: "Are you sure you want unblock this user?", callback: {
+                                    Task {
+                                        await vm.unblock()
+                                    }
+                                })
+                            ]
+                        } else if vm.blockStatus == nil {
+                            actionManager.value = [
+                                .init(title: "Block User", alertMessage: "Are you sure you want to block this user?", callback: {
+                                    Task {
+                                        await vm.block()
+                                    }
+                                })
+                            ]
+                        }
                     } label: {
-                        Image(systemName: "ellipsis")
+                        Label("Actions", systemImage: "ellipsis")
                     }
                 }
             }
-        }
-        
-        if let blockStatus = vm.blockStatus, blockStatus == .isBlocked {
-            Button {
-                Task {
-                    await vm.unblock()
-                }
-            } label: {
-                Text("Unblock")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.themePrimary)
-                    .padding(.bottom)
-                    .font(.custom(style: .body))
-            }
-            .disabled(vm.loadingSections.contains(.blockOperation))
         }
     }
 }

@@ -230,7 +230,7 @@ extension PlaceReviewItem {
                 createdAt: .now,
                 updatedAt: .now,
                 userActivityId: "UserActivityId",
-                writer: UserEssentials(id: "UserId", name: "Test User", username: "TestUser", verified: false, profileImage: nil, progress: .init(level: 72, xp: 8920), connectionStatus: nil),
+                writer: UserEssentials(id: "UserId", name: "Test User", username: "TestUser", verified: false, isPrivate: false, profileImage: nil, progress: .init(level: 72, xp: 8920), connectionStatus: nil),
                 comments: [],
                 reactions: .init(
                     total: [.init(reaction: "❤️", type: .emoji, count: 4), .init(reaction: "😍", type: .emoji, count: 2)],

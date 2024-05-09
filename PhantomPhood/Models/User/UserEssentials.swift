@@ -20,6 +20,7 @@ struct UserEssentials: Identifiable, Equatable, Decodable {
     let name: String
     let username: String
     let verified: Bool
+    let isPrivate: Bool
     let profileImage: URL?
     let progress: CompactUserProgress
     var connectionStatus: ConnectionStatus?
@@ -31,7 +32,7 @@ struct UserEssentials: Identifiable, Equatable, Decodable {
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, username, verified, profileImage, progress, connectionStatus
+        case name, username, verified, isPrivate, profileImage, progress, connectionStatus
     }
     
     var color: Color {
@@ -58,6 +59,7 @@ extension UserEssentials {
         name = try container.decode(String.self, forKey: .name)
         username = try container.decode(String.self, forKey: .username)
         verified = try container.decode(Bool.self, forKey: .verified)
+        isPrivate = try container.decode(Bool.self, forKey: .isPrivate)
         progress = try container.decode(CompactUserProgress.self, forKey: .progress)
         connectionStatus = try container.decodeIfPresent(ConnectionStatus.self, forKey: .connectionStatus)
         profileImage = try container.decodeURLIfPresent(forKey: .profileImage)
@@ -70,6 +72,7 @@ extension UserEssentials {
         self.name = userDetail.name
         self.username = userDetail.username
         self.verified = userDetail.verified
+        self.isPrivate = userDetail.isPrivate
         self.profileImage = userDetail.profileImage
         self.progress = CompactUserProgress(level: userDetail.progress.level, xp: userDetail.progress.xp)
         self.connectionStatus = userDetail.connectionStatus
@@ -82,6 +85,7 @@ extension UserEssentials {
         self.name = entity.name ?? ""
         self.username = entity.username ?? ""
         self.verified = entity.verified
+        self.isPrivate = entity.isPrivate
         self.profileImage = entity.profileImage != nil ? URL(string: entity.profileImage!) : nil
         self.progress = .init(level: Int(entity.level), xp: Int(entity.xp))
         self.connectionStatus = nil
@@ -96,6 +100,7 @@ extension UserEssentials {
         self.name = name
         self.username = username
         self.verified = entity.verified
+        self.isPrivate = entity.isPrivate
         self.profileImage = entity.profileImage != nil ? URL(string: entity.profileImage!) : nil
         self.progress = .init(level: Int(entity.level), xp: Int(entity.xp))
         self.connectionStatus = nil
@@ -109,6 +114,7 @@ extension UserEssentials {
             userEntity.name = self.name
             userEntity.username = self.username
             userEntity.verified = self.verified
+            userEntity.isPrivate = self.isPrivate
             userEntity.profileImage = self.profileImage?.absoluteString
             userEntity.level = Int16(self.progress.level)
             userEntity.xp = Int16(self.progress.xp)

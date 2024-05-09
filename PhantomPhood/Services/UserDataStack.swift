@@ -18,10 +18,13 @@ final class UserDataStack {
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "UserDataContainer")
         
-        container.loadPersistentStores { _, error in
+        container.loadPersistentStores { storeDescription, error in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
+            
+            storeDescription.shouldMigrateStoreAutomatically = true
+            storeDescription.shouldInferMappingModelAutomatically = true
             
             container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
         }
@@ -83,6 +86,7 @@ final class UserDataStack {
         user.name = essentialsWithDate.name
         user.username = essentialsWithDate.username
         user.verified = essentialsWithDate.verified
+        user.isPrivate = essentialsWithDate.isPrivate
         user.profileImage = essentialsWithDate.profileImage?.absoluteString
         user.level = Int16(essentialsWithDate.progress.level)
         user.xp = Int16(essentialsWithDate.progress.xp)
