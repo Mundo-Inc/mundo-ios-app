@@ -21,12 +21,23 @@ final class UserActivityDM {
         return data.data
     }
     
-    func getUserActivities(_ userId: String, page: Int, activityType: FeedItemActivityType) async throws -> APIResponseWithPagination<[FeedItem]> {
+    func getUserActivities(_ userId: String, page: Int, activityType: FeedItemActivityType, limit: Int = 20) async throws -> APIResponseWithPagination<[FeedItem]> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data: APIResponseWithPagination<[FeedItem]> = try await apiManager.requestData("/users/\(userId)/userActivities?page=\(page)\(activityType == .all ? "" : "&type=\(activityType.rawValue)")", method: .get, token: token)
+        let data: APIResponseWithPagination<[FeedItem]> = try await apiManager.requestData("/users/\(userId)/userActivities?page=\(page)&limit=\(limit)\(activityType == .all ? "" : "&type=\(activityType.rawValue)")", method: .get, token: token)
+        
+        return data
+    }
+    
+    func getUserActivities(_ userId: String, page: Int, activityTypes: [FeedItemActivityType], limit: Int = 20) async throws -> APIResponseWithPagination<[FeedItem]> {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let types = activityTypes.map { $0.rawValue }.joined(separator: ",")
+        let data: APIResponseWithPagination<[FeedItem]> = try await apiManager.requestData("/users/\(userId)/userActivities?types=\(types)&page=\("\(page)")&limit=\(limit)", method: .get, token: token)
         
         return data
     }

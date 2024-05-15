@@ -20,6 +20,8 @@ struct GiftingView: View {
         }
     }
     
+    @FocusState private var isCustomAmountFocused
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(spacing: 15) {
@@ -84,6 +86,7 @@ struct GiftingView: View {
                     }
                     
                     TextField("Custom Amount", text: $vm.customAmount)
+                        .focused($isCustomAmountFocused)
                         .font(.custom(style: .title3))
                         .withFilledStyle(size: .large, color: Color.themeBorder, paddingLeading: 50)
                         .keyboardType(.decimalPad)
@@ -103,7 +106,12 @@ struct GiftingView: View {
                     Text("Payment method")
                     
                     Button {
-                        vm.presentPaymentSheet()
+                        if isCustomAmountFocused {
+                            isCustomAmountFocused = false
+                            vm.presentPaymentSheet()
+                        } else {
+                            vm.presentPaymentSheet()
+                        }
                     } label: {
                         Group {
                             if let selectedPaymentOption = vm.selectedPaymentOption {

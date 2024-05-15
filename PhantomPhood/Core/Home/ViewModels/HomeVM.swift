@@ -157,9 +157,9 @@ class HomeVM: ObservableObject {
     func followResourceUser(item: Binding<FeedItem>, userId: String) async {
         self.loadingSections.insert(.followRequest(userId))
         do {
-            try await userProfileDM.follow(id: userId)
+            let status = try await userProfileDM.follow(id: userId)
             
-            item.wrappedValue.followFromResourceUsers(userId: userId)
+            item.wrappedValue.followFromResourceUsers(userId: userId, response: status)
         } catch {
             presentErrorToast(error)
         }
@@ -169,8 +169,14 @@ class HomeVM: ObservableObject {
     func followUser(item: Binding<FeedItem>) async {
         self.loadingSections.insert(.followRequest(item.wrappedValue.user.id))
         do {
-            try await userProfileDM.follow(id: item.wrappedValue.user.id)
-            item.wrappedValue.user.setFollowedByUserStatus(true)
+            let status = try await userProfileDM.follow(id: item.wrappedValue.user.id)
+            
+            switch status {
+            case .following:
+                item.wrappedValue.user.setConnectionStatus(following: .following)
+            case .requested:
+                item.wrappedValue.user.setConnectionStatus(following: .requested)
+            }
         } catch {
             presentErrorToast(error)
         }
@@ -243,10 +249,15 @@ class HomeVM: ObservableObject {
     func followLeaderboardUser(userId: String) async {
         self.loadingSections.insert(.followRequest(userId))
         do {
-            try await userProfileDM.follow(id: userId)
+            let status = try await userProfileDM.follow(id: userId)
             
             if let leaderboard, let userIndex = leaderboard.firstIndex(where: { $0.id == userId }) {
-                self.leaderboard![userIndex].setFollowedByUserStatus(true)
+                switch status {
+                case .following:
+                    self.leaderboard![userIndex].setConnectionStatus(following: .following)
+                case .requested:
+                    self.leaderboard![userIndex].setConnectionStatus(following: .requested)
+                }
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {

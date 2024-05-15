@@ -157,7 +157,9 @@ struct HomeView: View {
                 .task {
                     await notificationsVM.updateUnreadNotificationsCount()
                 }
-                    
+                .task {
+                    await notificationsVM.getFollowRequests(.refresh)
+                }
             }
             .padding(.horizontal)
             .frame(maxHeight: Self.headerHeight)

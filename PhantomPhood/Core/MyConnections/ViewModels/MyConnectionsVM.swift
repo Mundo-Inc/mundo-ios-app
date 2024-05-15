@@ -7,108 +7,120 @@
 
 import Foundation
 
-@MainActor
-class MyConnectionsVM: ObservableObject {
+class MyConnectionsVM: LoadingSections, ObservableObject {
     private let connectionsDM = ConnectionsDM()
+    private let userProfileDM = UserProfileDM()
+    
     private let auth = Authentication.shared
     
-    @Published var isLoading: Bool = false
+    @Published var loadingSections = Set<LoadingSection>()
     
     @Published var followers: [UserConnection]? = nil
     @Published var followings: [UserConnection]? = nil
     
-    private var followersPage = 1
-    private var followingsPage = 1
-    private var totalFollowings: Int? = nil
-    private var totalFollowers: Int? = nil
+    private var followersPagination: Pagination?
+    private var followingsPagination: Pagination?
     
     private let DATA_LIMIT: Int = 30
     
-    enum RequestType {
-        case refresh
-        case new
-    }
-    
-    func getConnections(type: ConnectionsDM.UserConnectionType, requestType: RequestType) async {
-        guard let userId = auth.currentUser?.id, !isLoading else { return }
+    func getFollowers(_ requestType: RefreshNewAction) async {
+        guard let userId = auth.currentUser?.id, !loadingSections.contains(.fetchingFollowers) else { return }
         
-        isLoading = true
-
         if requestType == .refresh {
-            switch type {
-            case .followers:
-                followersPage = 1
-            case .followings:
-                followingsPage = 1
-            }
-        } else {
-            switch type {
-            case .followings:
-                if let totalFollowings {
-                    if followings?.count ?? 0 >= totalFollowings {
-                        isLoading = false
-                        return
-                    }
-                }
-            case .followers:
-                if let totalFollowers {
-                    if followers?.count ?? 0 >= totalFollowers {
-                        isLoading = false
-                        return
-                    }
-                }
-            }
+            followersPagination = nil
+        } else if let followersPagination, !followersPagination.hasMore {
+            return
         }
         
+        setLoadingState(.fetchingFollowers, to: true)
         do {
-            let connections = try await connectionsDM.getConnections(userId: userId, type: type, page: type == .followers ? followersPage : followingsPage, limit: DATA_LIMIT)
+            let page = (followersPagination?.page ?? 0) + 1
             
-            switch type {
-            case .followers:
-                self.followersPage += 1
-                self.totalFollowers = connections.pagination.totalCount
+            let result = try await connectionsDM.getConnections(userId: userId, type: .followers, page: page, limit: DATA_LIMIT)
+            
+            followersPagination = result.pagination
+            
+            await MainActor.run {
                 if self.followers != nil && requestType == .new {
-                    self.followers!.append(contentsOf: connections.data)
+                    self.followers!.append(contentsOf: result.data)
                 } else {
-                    self.followers = connections.data
-                }
-            case .followings:
-                self.followingsPage += 1
-                self.totalFollowings = connections.pagination.totalCount
-                if self.followings != nil && requestType == .new {
-                    self.followings!.append(contentsOf: connections.data)
-                } else {
-                    self.followings = connections.data
+                    self.followers = result.data
                 }
             }
         } catch {
             presentErrorToast(error)
         }
+        setLoadingState(.fetchingFollowers, to: false)
+    }
+    
+    func getFollowings(_ requestType: RefreshNewAction) async {
+        guard let userId = auth.currentUser?.id, !loadingSections.contains(.fetchingFollowings) else { return }
         
-        isLoading = false
+        if requestType == .refresh {
+            followingsPagination = nil
+        } else if let followingsPagination, !followingsPagination.hasMore {
+            return
+        }
+        
+        setLoadingState(.fetchingFollowers, to: true)
+        do {
+            let page = (followingsPagination?.page ?? 0) + 1
+            
+            let result = try await connectionsDM.getConnections(userId: userId, type: .followings, page: page, limit: DATA_LIMIT)
+            
+            followingsPagination = result.pagination
+            
+            await MainActor.run {
+                if self.followings != nil && requestType == .new {
+                    self.followings!.append(contentsOf: result.data)
+                } else {
+                    self.followings = result.data
+                }
+            }
+        } catch {
+            presentErrorToast(error)
+        }
+        setLoadingState(.fetchingFollowers, to: false)
     }
     
     func loadMore(type: ConnectionsDM.UserConnectionType, currentItem: UserConnection) async {
-        var thresholdIndex: Int
         switch type {
         case .followings:
-            if let followings {
-                thresholdIndex = followings.index(followings.endIndex, offsetBy: -5)
-                if followings.firstIndex(where: { $0.id == currentItem.id }) == thresholdIndex {
-                    await getConnections(type: .followings, requestType: .new)
-                }
-            } else {
-                return
+            guard let followings, !loadingSections.contains(.fetchingFollowings) else { return }
+            let thresholdIndex = followings.index(followings.endIndex, offsetBy: -5)
+            if followings.firstIndex(where: { $0.id == currentItem.id }) == thresholdIndex {
+                await getFollowings(.new)
             }
         case .followers:
-            if let followers {
-                thresholdIndex = followers.index(followers.endIndex, offsetBy: -5)
-                if followers.firstIndex(where: { $0.id == currentItem.id }) == thresholdIndex {
-                    await getConnections(type: .followers, requestType: .new)
-                }
-            } else {
-                return
+            guard let followers, !loadingSections.contains(.fetchingFollowers) else { return }
+            let thresholdIndex = followers.index(followers.endIndex, offsetBy: -5)
+            if followers.firstIndex(where: { $0.id == currentItem.id }) == thresholdIndex {
+                await getFollowers(.new)
             }
         }
+    }
+    
+    func removeFollower(userId: String) async {
+        guard !loadingSections.contains(.removingFollower(userId)) else { return }
+        
+        setLoadingState(.removingFollower(userId), to: true)
+        do {
+            try await userProfileDM.removeFollower(id: userId)
+            await MainActor.run {
+                self.followers = self.followers?.filter({ $0.user.id != userId })
+            }
+            HapticManager.shared.notification(type: .success)
+        } catch {
+            presentErrorToast(error)
+        }
+        setLoadingState(.removingFollower(userId), to: false)
+    }
+    
+    // MARK: Enums
+    
+    enum LoadingSection: Hashable {
+        case fetchingFollowers
+        case fetchingFollowings
+        case removingFollower(String)
     }
 }

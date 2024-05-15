@@ -87,32 +87,40 @@ struct HomeFollowingView17: View {
                                             }
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                             
-                                            if let connectionStatus = user.connectionStatus, !connectionStatus.followedByUser {
-                                                HStack {
-                                                    if vm.loadingSections.contains(.followRequest(user.id)) {
-                                                        ProgressView()
-                                                            .controlSize(.mini)
-                                                    } else {
-                                                        Text(connectionStatus.followsUser ? "Follow Back" : "Follow")
+                                            if let connectionStatus = user.connectionStatus {
+                                                switch connectionStatus.followingStatus {
+                                                case .following:
+                                                    Text("Following")
+                                                        .font(.custom(style: .caption))
+                                                        .foregroundStyle(.secondary)
+                                                case .notFollowing:
+                                                    HStack {
+                                                        if vm.loadingSections.contains(.followRequest(user.id)) {
+                                                            ProgressView()
+                                                                .controlSize(.mini)
+                                                        } else {
+                                                            Text(connectionStatus.followedByStatus == .following ? "Follow Back" : "Follow")
+                                                        }
                                                     }
-                                                }
-                                                .frame(height: 20)
-                                                .frame(minWidth: 60)
-                                                .font(.custom(style: .caption))
-                                                .foregroundStyle(.secondary)
-                                                .padding(.horizontal, 8)
-                                                .padding(.vertical, 4)
-                                                .background(RoundedRectangle(cornerRadius: 5).stroke(Color.secondary, lineWidth: 1))
-                                                .onTapGesture {
-                                                    Task {
-                                                        await vm.followLeaderboardUser(userId: user.id)
-                                                    }
-                                                }
-                                                .foregroundStyle(.primary)
-                                            } else {
-                                                Text("Following")
+                                                    .frame(height: 20)
+                                                    .frame(minWidth: 60)
                                                     .font(.custom(style: .caption))
                                                     .foregroundStyle(.secondary)
+                                                    .padding(.horizontal, 8)
+                                                    .padding(.vertical, 4)
+                                                    .background(RoundedRectangle(cornerRadius: 5).stroke(Color.secondary, lineWidth: 1))
+                                                    .onTapGesture {
+                                                        Task {
+                                                            await vm.followLeaderboardUser(userId: user.id)
+                                                        }
+                                                    }
+                                                    .foregroundStyle(.primary)
+                                                case .requested:
+                                                    Text("Requested")
+                                                        .font(.custom(style: .caption))
+                                                        .foregroundStyle(.secondary)
+                                                }
+                                                
                                             }
                                         }
                                         .padding()

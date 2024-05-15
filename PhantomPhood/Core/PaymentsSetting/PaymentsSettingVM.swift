@@ -62,12 +62,12 @@ final class PaymentsSettingVM: LoadingSections, ObservableObject {
     }
 
     private func getPaymentOptionSelection() async {
-        await setLoadingState(.retrievePaymentOptionSelection, to: true)
+        setLoadingState(.retrievePaymentOptionSelection, to: true)
         let paymentOptionSelection = try? await customerAdapter.retrievePaymentOptionSelection()
         await MainActor.run {
             selectedPaymentOption = paymentOptionSelection
         }
-        await setLoadingState(.retrievePaymentOptionSelection, to: false)
+        setLoadingState(.retrievePaymentOptionSelection, to: false)
     }
     
     // MARK: Enums

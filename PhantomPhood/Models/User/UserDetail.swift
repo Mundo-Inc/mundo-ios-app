@@ -34,8 +34,16 @@ struct UserDetail: Identifiable, Decodable {
         Double(self.progress.xp - self.prevLevelXp) / Double(self.progress.xp + self.remainingXp - self.prevLevelXp)
     }
     
-    mutating func setFollowedByUserStatus(_ status: Bool) {
-        self.connectionStatus = ConnectionStatus(followedByUser: status, followsUser: connectionStatus.followsUser)
+    mutating func setConnectionStatus(following: FollowStatusEnum) {
+        self.connectionStatus = ConnectionStatus(followingStatus: following, followedByStatus: connectionStatus.followedByStatus)
+    }
+    
+    mutating func setConnectionStatus(followedBy: FollowStatusEnum) {
+        self.connectionStatus = ConnectionStatus(followingStatus: connectionStatus.followingStatus, followedByStatus: followedBy)
+    }
+    
+    mutating func setConnectionStatus(following: FollowStatusEnum, followedBy: FollowStatusEnum) {
+        self.connectionStatus = ConnectionStatus(followingStatus: following, followedByStatus: followedBy)
     }
 }
 
@@ -62,8 +70,30 @@ extension UserDetail {
 }
 
 struct ConnectionStatus: Decodable {
-    let followedByUser: Bool
-    let followsUser: Bool
+    /// The status of the current user following the target user
+    let followingStatus: FollowStatusEnum
+    
+    /// The status of the target user following the current user
+    let followedByStatus: FollowStatusEnum
+}
+
+enum FollowStatusEnum: String, Decodable, CaseIterable {
+    case following = "following"
+    case notFollowing = "notfollowing"
+    case requested = "requested"
+}
+
+extension FollowStatusEnum {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(String.self).lowercased()
+        
+        if let status = FollowStatusEnum(rawValue: rawValue) {
+            self = status
+        } else {
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Invalid value for FollowStatusEnum"))
+        }
+    }
 }
 
 struct UserProgress: Codable {

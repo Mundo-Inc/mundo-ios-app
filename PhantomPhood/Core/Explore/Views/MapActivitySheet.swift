@@ -20,52 +20,52 @@ struct MapActivitySheet: View {
     
     var body: some View {
         VStack {
-                ScrollView(.horizontal) {
-                    HStack(spacing: -15) {
-                        ForEach(clusteredMapActivity.items.indices, id: \.self) { index in
-                            HStack {
-                                ProfileImage(clusteredMapActivity.items[index].user.profileImage, size: 50, cornerRadius: 10)
-                                    .opacity(vm.show ? (index == vm.selection ? 1 : 0.4) : 0)
-                                    .rotationEffect(vm.show ? .zero : .degrees(-15))
-                                    .offset(x: vm.show ? 0 : -Double(index) * 20.0)
-                                    .animation(.bouncy(duration: 0.6).delay(min(0.1 * Double(index), 1)), value: vm.show)
-                                    .onTapGesture {
-                                        if vm.selection == index {
-                                            AppData.shared.goToUser(clusteredMapActivity.items[index].user.id)
-                                            dismiss()
-                                        } else {
-                                            withAnimation {
-                                                vm.selection = index
-                                            }
-                                        }
-                                    }
-                                
-                                if vm.selection == index {
-                                    VStack(alignment: .leading) {
-                                        Text(clusteredMapActivity.items[index].user.name)
-                                        
-                                        Text("@\(clusteredMapActivity.items[index].user.username)")
-                                            .font(.custom(style: .caption))
-                                            .foregroundStyle(.secondary)
-                                    }
-                                    .padding(.trailing, 15)
-                                    .onTapGesture {
+            ScrollView(.horizontal) {
+                HStack(spacing: -15) {
+                    ForEach(clusteredMapActivity.items.indices, id: \.self) { index in
+                        HStack {
+                            ProfileImage(clusteredMapActivity.items[index].user.profileImage, size: 50, cornerRadius: 10)
+                                .opacity(vm.show ? (index == vm.selection ? 1 : 0.4) : 0)
+                                .rotationEffect(vm.show ? .zero : .degrees(-15))
+                                .offset(x: vm.show ? 0 : -Double(index) * 20.0)
+                                .animation(.bouncy(duration: 0.6).delay(min(0.1 * Double(index), 1)), value: vm.show)
+                                .onTapGesture {
+                                    if vm.selection == index {
                                         AppData.shared.goToUser(clusteredMapActivity.items[index].user.id)
                                         dismiss()
+                                    } else {
+                                        withAnimation {
+                                            vm.selection = index
+                                        }
                                     }
                                 }
+                            
+                            if vm.selection == index {
+                                VStack(alignment: .leading) {
+                                    Text(clusteredMapActivity.items[index].user.name)
+                                    
+                                    Text("@\(clusteredMapActivity.items[index].user.username)")
+                                        .font(.custom(style: .caption))
+                                        .foregroundStyle(.secondary)
+                                }
+                                .padding(.trailing, 15)
+                                .onTapGesture {
+                                    AppData.shared.goToUser(clusteredMapActivity.items[index].user.id)
+                                    dismiss()
+                                }
                             }
-                            .background(RoundedRectangle(cornerRadius: 10).foregroundStyle(Color.themePrimary))
-                            .padding(.trailing, index == vm.selection ? 25 : 0)
-                            .animation(.bouncy, value: vm.selection)
                         }
-                        
-                        Spacer()
+                        .background(RoundedRectangle(cornerRadius: 10).foregroundStyle(Color.themePrimary))
+                        .padding(.trailing, index == vm.selection ? 25 : 0)
+                        .animation(.bouncy, value: vm.selection)
                     }
-                    .padding()
+                    
+                    Spacer()
                 }
-                .scrollIndicators(.hidden)
-                .padding(.top)
+                .padding()
+            }
+            .scrollIndicators(.hidden)
+            .padding(.top)
             
             HStack {
                 if clusteredMapActivity.items.count >= vm.selection + 1 && Authentication.shared.currentUser?.id != clusteredMapActivity.items[vm.selection].user.id {
@@ -227,7 +227,7 @@ struct MapActivitySheet: View {
                                         .fontWeight(.semibold)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .padding(.top)
-
+                                        
                                         ForEach(tags) { user in
                                             HStack(spacing: 8) {
                                                 ProfileImage(user.profileImage, size: 28)
@@ -308,7 +308,7 @@ struct MapActivitySheet: View {
                                             }
                                         }
                                         
-                                        if !review.images.isEmpty || !review.videos.isEmpty {
+                                        if !review.medias.isEmpty {
                                             Label {
                                                 Text("Media")
                                             } icon: {
@@ -323,31 +323,32 @@ struct MapActivitySheet: View {
                                             
                                             ScrollView(.horizontal) {
                                                 HStack {
-                                                    ForEach(review.videos) { media in
-                                                        ImageLoader(media.thumbnail) { _ in
-                                                            Image(systemName: "arrow.down.circle.dotted")
-                                                                .foregroundStyle(Color.white.opacity(0.5))
-                                                        }
-                                                        .frame(width: 100, height: 100)
-                                                        .overlay {
-                                                            ZStack {
-                                                                Color.black.opacity(0.5)
-                                                                
-                                                                Image(systemName: "video.fill")
-                                                                    .font(.system(size: 24))
-                                                                    .foregroundStyle(Color.white.opacity(0.8))
+                                                    ForEach(review.medias) { item in
+                                                        switch item.type {
+                                                        case .video:
+                                                            ImageLoader(item.thumbnail) { _ in
+                                                                Image(systemName: "arrow.down.circle.dotted")
+                                                                    .foregroundStyle(Color.white.opacity(0.5))
                                                             }
+                                                            .frame(width: 100, height: 100)
+                                                            .overlay {
+                                                                ZStack {
+                                                                    Color.black.opacity(0.5)
+                                                                    
+                                                                    Image(systemName: "video.fill")
+                                                                        .font(.system(size: 24))
+                                                                        .foregroundStyle(Color.white.opacity(0.8))
+                                                                }
+                                                            }
+                                                            .clipShape(.rect(cornerRadius: 8))
+                                                        case .image:
+                                                            ImageLoader(item.src) { _ in
+                                                                Image(systemName: "arrow.down.circle.dotted")
+                                                                    .foregroundStyle(Color.white.opacity(0.5))
+                                                            }
+                                                            .frame(width: 100, height: 100)
+                                                            .clipShape(.rect(cornerRadius: 8))
                                                         }
-                                                        .clipShape(.rect(cornerRadius: 8))
-                                                    }
-                                                    
-                                                    ForEach(review.images) { media in
-                                                        ImageLoader(media.src) { _ in
-                                                            Image(systemName: "arrow.down.circle.dotted")
-                                                                .foregroundStyle(Color.white.opacity(0.5))
-                                                        }
-                                                        .frame(width: 100, height: 100)
-                                                        .clipShape(.rect(cornerRadius: 8))
                                                     }
                                                 }
                                             }

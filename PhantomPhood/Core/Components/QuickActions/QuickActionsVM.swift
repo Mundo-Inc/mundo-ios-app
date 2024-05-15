@@ -46,7 +46,7 @@ final class QuickActionsVM: LoadingSections, ObservableObject {
     func updateNearestPlace() async {
         guard let location = locationManager.location else { return }
         
-        await setLoadingState(.nearestPlace, to: true)
+        setLoadingState(.nearestPlace, to: true)
         do {
             let places = try await searchDM.searchAppleMapsPlaces(region: MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 100, longitudinalMeters: 100))
             
@@ -59,7 +59,7 @@ final class QuickActionsVM: LoadingSections, ObservableObject {
         } catch {
             presentErrorToast(error, silent: true, function: #function)
         }
-        await setLoadingState(.nearestPlace, to: false)
+        setLoadingState(.nearestPlace, to: false)
     }
 }
 

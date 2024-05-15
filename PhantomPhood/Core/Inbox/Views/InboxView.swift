@@ -17,8 +17,8 @@ struct InboxView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            VStack {
-                HStack {
+            VStack(spacing: 0) {
+                HStack(spacing: 0) {
                     Button {
                         withAnimation {
                             vm.activeTab = .messages
@@ -48,6 +48,7 @@ struct InboxView: View {
                             
                         }
                         .frame(maxWidth: .infinity)
+                        .padding(.vertical)
                     }
                     .foregroundStyle(vm.activeTab == .messages ? Color.accentColor : Color.secondary)
                     
@@ -80,6 +81,7 @@ struct InboxView: View {
                             }
                         }
                         .frame(maxWidth: .infinity)
+                        .padding(.vertical)
                     }
                     .foregroundStyle(vm.activeTab == .notifications ? Color.accentColor : Color.secondary)
                 }

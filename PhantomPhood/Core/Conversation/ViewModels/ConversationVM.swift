@@ -351,7 +351,7 @@ extension ConversationVM {
     func fetchTransaction(withId id: String) async {
         guard transactionsDict[id] == nil, !loadingSections.contains(.loadingTransaction(id)) else { return }
         
-        await setLoadingState(.loadingTransaction(id), to: true)
+        setLoadingState(.loadingTransaction(id), to: true)
         do {
             let data = try await transactionsDM.getTransaction(withId: id)
             await MainActor.run {
@@ -360,6 +360,6 @@ extension ConversationVM {
         } catch {
             presentErrorToast(error, function: #function)
         }
-        await setLoadingState(.loadingTransaction(id), to: false)
+        setLoadingState(.loadingTransaction(id), to: false)
     }
 }

@@ -211,7 +211,12 @@ struct HomeActivityInfoView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 
                                 if let connectionStatus = user.connectionStatus {
-                                    if !connectionStatus.followedByUser {
+                                    switch connectionStatus.followingStatus {
+                                    case .following:
+                                        Text("Following")
+                                            .font(.custom(style: .caption))
+                                            .foregroundStyle(.secondary)
+                                    case .notFollowing:
                                         Text("Show Profile")
                                             .frame(height: 20)
                                             .font(.custom(style: .caption))
@@ -220,8 +225,8 @@ struct HomeActivityInfoView: View {
                                             .padding(.vertical, 4)
                                             .background(RoundedRectangle(cornerRadius: 5).stroke(Color.secondary, lineWidth: 1))
                                             .foregroundStyle(.primary)
-                                    } else {
-                                        Text("Following")
+                                    case .requested:
+                                        Text("Requested")
                                             .font(.custom(style: .caption))
                                             .foregroundStyle(.secondary)
                                     }

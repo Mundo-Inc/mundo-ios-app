@@ -45,10 +45,18 @@ struct UserEssentials: Identifiable, Equatable, Decodable {
         return Self.colors[Int(hexValue % 10)]
     }
     
-    mutating func setFollowedByUserStatus(_ status: Bool) {
-        if let connectionStatus {
-            self.connectionStatus = ConnectionStatus(followedByUser: status, followsUser: connectionStatus.followsUser)
-        }
+    mutating func setConnectionStatus(following: FollowStatusEnum) {
+        guard let connectionStatus else { return }
+        self.connectionStatus = ConnectionStatus(followingStatus: following, followedByStatus: connectionStatus.followedByStatus)
+    }
+    
+    mutating func setConnectionStatus(followedBy: FollowStatusEnum) {
+        guard let connectionStatus else { return }
+        self.connectionStatus = ConnectionStatus(followingStatus: connectionStatus.followingStatus, followedByStatus: followedBy)
+    }
+    
+    mutating func setConnectionStatus(following: FollowStatusEnum, followedBy: FollowStatusEnum) {
+        self.connectionStatus = ConnectionStatus(followingStatus: following, followedByStatus: followedBy)
     }
 }
 

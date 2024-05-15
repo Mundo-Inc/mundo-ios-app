@@ -25,6 +25,7 @@ enum AppRoute: Hashable {
     case settings
     case paymentsSetting
     case myConnections(initTab: UserConnectionsTab)
+    case requests
     
     // Place
     case place(id: String, action: PlaceAction? = nil)

@@ -14,12 +14,15 @@ protocol LoadingSections: AnyObject {
 }
 
 extension LoadingSections {
-    @MainActor
     func setLoadingState(_ section: LoadingSection, to: Bool) {
         if to {
-            loadingSections.insert(section)
+            DispatchQueue.main.async {
+                self.loadingSections.insert(section)
+            }
         } else {
-            loadingSections.remove(section)
+            DispatchQueue.main.async {
+                self.loadingSections.remove(section)
+            }
         }
     }
 }

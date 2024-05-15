@@ -32,8 +32,14 @@ final class GiftingVM: LoadingSections, ObservableObject {
         self.user = user
         
         customerAdapter = StripeCustomerAdapter(customerEphemeralKeyProvider: {
-            let data = try await Self.transactionsDM.getCustomerEphemeralKey()
-            return CustomerEphemeralKey(customerId: data.customer, ephemeralKeySecret: data.ephemeralKeySecret)
+            do {
+                let data = try await Self.transactionsDM.getCustomerEphemeralKey()
+                return CustomerEphemeralKey(customerId: data.customer, ephemeralKeySecret: data.ephemeralKeySecret)
+            } catch {
+                presentErrorToast(error)
+                throw error
+            }
+            
         })
         
         var configuration = CustomerSheet.Configuration()
@@ -82,7 +88,7 @@ final class GiftingVM: LoadingSections, ObservableObject {
     func submit(callback: @escaping (Bool) -> Void = { _ in }) async {
         guard let user, let selectedPaymentOption, let giftAmount, !loadingSections.contains(.submitting) else { return }
         
-        await setLoadingState(.submitting, to: true)
+        setLoadingState(.submitting, to: true)
         do {
             if case .paymentMethod(let paymentMethod, _) = selectedPaymentOption {
                 try await Self.transactionsDM.sendGift(amount: giftAmount, to: user.id, using: paymentMethod.stripeId, message: message)
@@ -98,7 +104,7 @@ final class GiftingVM: LoadingSections, ObservableObject {
             callback(false)
             presentErrorToast(error, function: #function)
         }
-        await setLoadingState(.submitting, to: false)
+        setLoadingState(.submitting, to: false)
     }
     
     func onPaymentMethodCompletion(result: CustomerSheet.CustomerSheetResult) {
@@ -126,18 +132,22 @@ final class GiftingVM: LoadingSections, ObservableObject {
     }
 
     private func getPaymentOptionSelection() async {
-        await setLoadingState(.retrievePaymentOptionSelection, to: true)
-        let paymentOptionSelection = try? await customerAdapter.retrievePaymentOptionSelection()
-        await MainActor.run {
-            selectedPaymentOption = paymentOptionSelection
+        setLoadingState(.retrievePaymentOptionSelection, to: true)
+        do {
+            let paymentOptionSelection = try await customerAdapter.retrievePaymentOptionSelection()
+            await MainActor.run {
+                selectedPaymentOption = paymentOptionSelection
+            }
+        } catch {
+            presentErrorToast(error, function: #function)
         }
-        await setLoadingState(.retrievePaymentOptionSelection, to: false)
+        setLoadingState(.retrievePaymentOptionSelection, to: false)
     }
     
     private func getUserInfo(byId userId: String) async {
         guard !loadingSections.contains(.fetchingUser) else { return }
         
-        await setLoadingState(.fetchingUser, to: true)
+        setLoadingState(.fetchingUser, to: true)
         do {
             let data = try await userProfileDM.getUserEssentials(id: userId)
             
@@ -147,7 +157,7 @@ final class GiftingVM: LoadingSections, ObservableObject {
         } catch {
             presentErrorToast(error, function: #function)
         }
-        await setLoadingState(.fetchingUser, to: false)
+        setLoadingState(.fetchingUser, to: false)
     }
 }
 

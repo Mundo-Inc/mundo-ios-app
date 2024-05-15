@@ -7,26 +7,24 @@
 
 import Foundation
 
-@MainActor
-class UserProfileVM: ObservableObject {
-    private var id: String? = nil
-    
+class UserProfileVM: LoadingSections, ObservableObject {
     private let userProfileDM = UserProfileDM()
+    private let userActivityDM = UserActivityDM()
     private let conversationsDM = ConversationsDM()
     
-    @Published private(set) var loadingSections = Set<LoadingSection>()
-    @Published private(set) var isFollowedByUser: Bool? = nil
+    @Published var loadingSections = Set<LoadingSection>()
+    
     @Published private(set) var user: UserDetail?
     @Published private(set) var error: String?
+    
+    @Published var posts: [FeedItem] = []
     
     @Published var showActions = false
     @Published var blockStatus: BlockStatus? = nil
     
     init(id: String) {
-        self.id = id
-        
         Task {
-            await fetchUser()
+            await fetchUser(id: id)
         }
     }
     
@@ -36,39 +34,19 @@ class UserProfileVM: ObservableObject {
         }
     }
     
-    func fetchUser(username: String? = nil) async {
-        self.loadingSections.insert(.fetchingUserData)
-        if let id = self.id {
-            do {
-                let theUser = try await userProfileDM.fetch(id: id)
+    func fetchUser(username: String) async {
+        guard !loadingSections.contains(.fetchingUserData) else { return }
+        
+        setLoadingState(.fetchingUserData, to: true)
+        do {
+            let theUser = try await userProfileDM.fetch(username: username)
+            
+            await MainActor.run {
                 self.user = theUser
-                self.isFollowedByUser = theUser.connectionStatus.followedByUser
                 self.error = nil
-            } catch {
-                self.error = getErrorMessage(error)
-                
-                guard let theError = error as? APIManager.APIError else { return }
-                
-                if case .serverError(let serverError) = theError {
-                    if serverError.statusCode == 403 {
-                        if serverError.message == "You have blocked this user" {
-                            self.blockStatus = .isBlocked
-                        } else {
-                            self.blockStatus = .hasBlocked
-                        }
-                        self.user = nil
-                        self.isFollowedByUser = nil
-                    }
-                }
             }
-        } else if let username {
-            do {
-                let theUser = try await userProfileDM.fetch(username: username)
-                self.id = theUser.id
-                self.user = theUser
-                self.isFollowedByUser = theUser.connectionStatus.followedByUser
-                self.error = nil
-            } catch {
+        } catch {
+            await MainActor.run {
                 self.error = getErrorMessage(error)
                 
                 guard let theError = error as? APIManager.APIError else { return }
@@ -81,79 +59,147 @@ class UserProfileVM: ObservableObject {
                             self.blockStatus = .hasBlocked
                         }
                         self.user = nil
-                        self.isFollowedByUser = nil
                     }
                 }
             }
         }
-        self.loadingSections.remove(.fetchingUserData)
+        setLoadingState(.fetchingUserData, to: false)
+    }
+    
+    func fetchUser(id: String) async {
+        guard !loadingSections.contains(.fetchingUserData) else { return }
+        
+        setLoadingState(.fetchingUserData, to: true)
+        do {
+            let theUser = try await userProfileDM.fetch(id: id)
+            
+            await MainActor.run {
+                self.user = theUser
+                self.error = nil
+            }
+        } catch {
+            await MainActor.run {
+                self.error = getErrorMessage(error)
+                
+                guard let theError = error as? APIManager.APIError else { return }
+                
+                if case .serverError(let serverError) = theError {
+                    if serverError.statusCode == 403 {
+                        if serverError.message == "You have blocked this user" {
+                            self.blockStatus = .isBlocked
+                        } else {
+                            self.blockStatus = .hasBlocked
+                        }
+                        self.user = nil
+                    }
+                }
+            }
+        }
+        setLoadingState(.fetchingUserData, to: false)
     }
     
     func follow() async {
-        guard let id = self.id else { return }
+        guard let id = self.user?.id, !loadingSections.contains(.followOperation) else { return }
         
-        self.loadingSections.insert(.followOperation)
+        setLoadingState(.followOperation, to: true)
         do {
-            try await userProfileDM.follow(id: id)
-            self.isFollowedByUser = true
+            let status = try await userProfileDM.follow(id: id)
+            await MainActor.run {
+                if self.user != nil {
+                    switch status {
+                    case .following:
+                        self.user!.setConnectionStatus(following: .following)
+                    case .requested:
+                        self.user!.setConnectionStatus(following: .requested)
+                    }
+                }
+            }
             HapticManager.shared.notification(type: .success)
         } catch {
             presentErrorToast(error)
         }
-        self.loadingSections.remove(.followOperation)
+        setLoadingState(.followOperation, to: false)
     }
     
     func unfollow() async {
-        guard let id = self.id else { return }
+        guard let id = self.user?.id, !loadingSections.contains(.followOperation) else { return }
         
-        self.loadingSections.insert(.followOperation)
+        setLoadingState(.followOperation, to: true)
         do {
             try await userProfileDM.unfollow(id: id)
-            self.isFollowedByUser = false
+            await MainActor.run {
+                if self.user != nil {
+                    self.user!.setConnectionStatus(following: .notFollowing)
+                }
+            }
             HapticManager.shared.notification(type: .success)
         } catch {
             presentErrorToast(error)
         }
-        self.loadingSections.remove(.followOperation)
+        setLoadingState(.followOperation, to: false)
+    }
+    
+    func removeFollower() async {
+        guard let id = self.user?.id, !loadingSections.contains(.removeFollower) else { return }
+        
+        setLoadingState(.removeFollower, to: true)
+        do {
+            try await userProfileDM.removeFollower(id: id)
+            await MainActor.run {
+                if self.user != nil {
+                    self.user!.setConnectionStatus(followedBy: .notFollowing)
+                }
+            }
+            HapticManager.shared.notification(type: .success)
+        } catch {
+            presentErrorToast(error)
+        }
+        setLoadingState(.removeFollower, to: false)
     }
     
     func block() async {
-        guard let id = self.id else { return }
+        guard let id = self.user?.id, !loadingSections.contains(.blockOperation) else { return }
         
-        self.loadingSections.insert(.blockOperation)
+        setLoadingState(.blockOperation, to: true)
         do {
             try await userProfileDM.block(id: id)
-            self.user = nil
-            self.isFollowedByUser = nil
-            self.blockStatus = .isBlocked
+            
+            await MainActor.run {
+                self.user = nil
+                self.blockStatus = .isBlocked
+            }
             
             HapticManager.shared.notification(type: .success)
         } catch {
             presentErrorToast(error)
         }
-        self.loadingSections.remove(.blockOperation)
+        setLoadingState(.blockOperation, to: false)
     }
     
     func unblock() async {
-        guard let id = self.id else { return }
+        guard let id = self.user?.id, !loadingSections.contains(.blockOperation) else { return }
         
-        self.loadingSections.insert(.blockOperation)
+        setLoadingState(.blockOperation, to: true)
         do {
             try await userProfileDM.unblock(id: id)
-            self.blockStatus = nil
-            await fetchUser()
+            
+            await MainActor.run {
+                self.blockStatus = nil
+            }
+            
+            await fetchUser(id: id)
             
             HapticManager.shared.notification(type: .success)
         } catch {
             presentErrorToast(error)
         }
-        self.loadingSections.remove(.blockOperation)
+        setLoadingState(.blockOperation, to: false)
     }
     
     func startConversation() async {
-        guard let id else { return }
+        guard let id = self.user?.id, !loadingSections.contains(.startingConversation) else { return }
         
-        self.loadingSections.insert(.startingConversation)
+        setLoadingState(.startingConversation, to: true)
         do {
             let conversation = try await conversationsDM.createConversation(with: id)
             
@@ -163,7 +209,47 @@ class UserProfileVM: ObservableObject {
         } catch {
             presentErrorToast(error)
         }
-        self.loadingSections.remove(.startingConversation)
+        setLoadingState(.startingConversation, to: false)
+    }
+    
+    private var userPostsPagination: Pagination? = nil
+    func getPosts(_ requestType: RefreshNewAction) async {
+        guard let id = self.user?.id, !loadingSections.contains(.gettingPosts) else { return }
+        
+        if requestType == .refresh {
+            userPostsPagination = nil
+        } else if let userPostsPagination, !userPostsPagination.hasMore {
+            return
+        }
+        
+        setLoadingState(.gettingPosts, to: true)
+        do {
+            let page = (userPostsPagination?.page ?? 0) + 1
+            
+            let result = try await userActivityDM.getUserActivities(id, page: page, activityTypes: [.newCheckin, .newReview, .newHomemade], limit: 21)
+            
+            userPostsPagination = result.pagination
+            
+            await MainActor.run {
+                if requestType == .new {
+                    self.posts.append(contentsOf: result.data)
+                } else {
+                    self.posts = result.data
+                }
+            }
+        } catch {
+            presentErrorToast(error)
+        }
+        setLoadingState(.gettingPosts, to: false)
+    }
+    
+    func loadMorePosts(currentItem: FeedItem) async {
+        guard !loadingSections.contains(.gettingPosts) else { return }
+        
+        let thresholdIndex = posts.index(posts.endIndex, offsetBy: -3)
+        if posts.firstIndex(where: { $0.id == currentItem.id }) == thresholdIndex {
+            await getPosts(.new)
+        }
     }
     
     // MARK: Enums
@@ -178,5 +264,7 @@ class UserProfileVM: ObservableObject {
         case startingConversation
         case blockOperation
         case followOperation
+        case removeFollower
+        case gettingPosts
     }
 }

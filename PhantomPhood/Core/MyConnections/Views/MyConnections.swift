@@ -16,49 +16,51 @@ struct MyConnections: View {
         self._activeTab = State(wrappedValue: activeTab)
     }
     
+    @Environment(\.mainWindowSize) private var mainWindowSize
+    
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Button {
-                    withAnimation {
-                        activeTab = .followers
+            VStack(spacing: 0) {
+                HStack(spacing: 0) {
+                    Button {
+                        withAnimation {
+                            activeTab = .followers
+                        }
+                    } label: {
+                        Text("Followers".uppercased())
+                            .font(.custom(style: .footnote))
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical)
                     }
-                } label: {
-                    Text("Followers")
-                        .font(.custom(style: .footnote))
-                        .bold()
-                        .textCase(.uppercase)
-                        .padding(.vertical, 5)
-                        .frame(maxWidth: .infinity, alignment: .center)
+                    .foregroundStyle(activeTab == .followers ? Color.accentColor : Color.secondary)
+                    
+                    Divider()
+                        .frame(maxHeight: 20)
+                    
+                    Button {
+                        withAnimation {
+                            activeTab = .followings
+                        }
+                    } label: {
+                        Text("Followings".uppercased())
+                            .font(.custom(style: .footnote))
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical)
+                    }
+                    .foregroundStyle(activeTab == .followings ? Color.accentColor : Color.secondary)
                 }
-                .foregroundStyle(
-                    activeTab == .followers ? Color.accentColor : Color.secondary
-                )
-                .padding(.trailing)
                 
                 Divider()
-                    .frame(maxHeight: 30)
-                
-                Button {
-                    withAnimation {
-                        activeTab = .followings
-                    }
-                } label: {
-                    Text("Followings")
-                        .font(.custom(style: .footnote))
-                        .bold()
-                        .textCase(.uppercase)
-                        .padding(.vertical, 5)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                }
-                .foregroundStyle(
-                    activeTab == .followings ? Color.accentColor : Color.secondary
-                )
-                .padding(.leading)
             }
-            
-            Divider()
-                .padding(.top, 4)
+            .background(alignment: .bottomLeading) {
+                Rectangle()
+                    .frame(width: mainWindowSize.width / 2, height: 2)
+                    .foregroundStyle(Color.accentColor)
+                    .offset(x: activeTab == .followers ? 0 : mainWindowSize.width / 2)
+                    .animation(.bouncy, value: activeTab)
+            }
             
             List {
                 switch activeTab {
@@ -66,59 +68,77 @@ struct MyConnections: View {
                     if let connections = vm.followers {
                         ForEach(connections) { connection in
                             UserCard(connection: connection)
-                                .onAppear {
-                                    if !vm.isLoading {
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                    Button(role: .destructive) {
                                         Task {
-                                            await vm.loadMore(type: .followers, currentItem: connection)
+                                            await vm.removeFollower(userId: connection.user.id)
                                         }
+                                    } label: {
+                                        Label("Remove", systemImage: "person.crop.circle.fill.badge.xmark")
+                                    }
+                                }
+                                .disabled(vm.loadingSections.contains(.removingFollower(connection.user.id)))
+                                .onAppear {
+                                    Task {
+                                        await vm.loadMore(type: .followers, currentItem: connection)
                                     }
                                 }
                         }
                     } else {
                         UserCard(connection: UserConnection.dummy)
                             .redacted(reason: .placeholder)
-                        UserCard(connection: UserConnection.dummy)
-                            .redacted(reason: .placeholder)
                             .task {
-                                await vm.getConnections(type: .followers, requestType: .refresh)
+                                await vm.getFollowers(.refresh)
                             }
+                        ForEach(1...20, id: \.self) { _ in
+                            UserCard(connection: UserConnection.dummy)
+                                .redacted(reason: .placeholder)
+                        }
                     }
                 case .followings:
                     if let connections = vm.followings {
                         ForEach(connections) { connection in
                             UserCard(connection: connection)
                                 .onAppear {
-                                    if !vm.isLoading {
-                                        Task {
-                                            await vm.loadMore(type: .followings, currentItem: connection)
-                                        }
+                                    Task {
+                                        await vm.loadMore(type: .followings, currentItem: connection)
                                     }
                                 }
                         }
                     } else {
                         UserCard(connection: UserConnection.dummy)
                             .redacted(reason: .placeholder)
-                        UserCard(connection: UserConnection.dummy)
-                            .redacted(reason: .placeholder)
                             .task {
-                                await vm.getConnections(type: .followings, requestType: .refresh)
+                                await vm.getFollowings(.refresh)
                             }
+                        ForEach(21...40, id: \.self) { _ in
+                            UserCard(connection: UserConnection.dummy)
+                                .redacted(reason: .placeholder)
+                        }
                     }
                 }
             }
             .listStyle(PlainListStyle())
             .scrollIndicators(.hidden)
             .refreshable {
-                await vm.getConnections(type: activeTab == .followers ? .followers : .followings, requestType: .refresh)
+                Task {
+                    switch activeTab {
+                    case .followers:
+                        await vm.getFollowers(.refresh)
+                    case .followings:
+                        await vm.getFollowings(.refresh)
+                    }
+                }
             }
         }
         .navigationTitle("Connections")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem {
-                if vm.isLoading {
+                if !vm.loadingSections.isEmpty {
                     ProgressView()
                         .transition(.opacity)
-                        .animation(.easeInOut, value: vm.isLoading)
+                        .animation(.easeInOut, value: vm.loadingSections.isEmpty)
                 }
             }
         }
@@ -130,19 +150,20 @@ fileprivate struct UserCard: View {
     
     var body: some View {
         HStack(spacing: 10) {
-            ProfileImage(connection.user.profileImage, size: 42, cornerRadius: 10)
+            ProfileImage(connection.user.profileImage, size: 46, cornerRadius: 10)
             
             VStack(spacing: 0) {
-                HStack {
+                HStack(spacing: 5) {
                     LevelView(level: connection.user.progress.level)
-                        .frame(width: 20, height: 26)
+                        .frame(width: 20, height: 24)
                     
                     Text(connection.user.name)
-                        .font(.custom(style: .headline))
+                        .font(.custom(style: .body))
+                        .fontWeight(.semibold)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 Text("@" + connection.user.username)
-                    .font(.custom(style: .subheadline))
+                    .font(.custom(style: .caption))
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

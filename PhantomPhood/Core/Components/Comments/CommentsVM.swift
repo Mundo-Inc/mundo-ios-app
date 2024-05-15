@@ -26,7 +26,7 @@ final class CommentsVM: LoadingSections, ObservableObject {
     func getComments() async {
         guard !loadingSections.contains(.gettingComments) else { return }
         
-        await setLoadingState(.gettingComments, to: true)
+        setLoadingState(.gettingComments, to: true)
         do {
             let data = try await userActivityDM.getActivityComments(for: activityId, page: commentsPage)
             
@@ -42,13 +42,13 @@ final class CommentsVM: LoadingSections, ObservableObject {
         } catch {
             presentErrorToast(error, function: #function)
         }
-        await setLoadingState(.gettingComments, to: false)
+        setLoadingState(.gettingComments, to: false)
     }
     
     func submitComment() async {
         guard !loadingSections.contains(.submittingComment) else { return }
         
-        await setLoadingState(.submittingComment, to: true)
+        setLoadingState(.submittingComment, to: true)
         do {
             let data = try await commentsDM.submitComment(for: activityId, content: commentContent)
             
@@ -61,7 +61,7 @@ final class CommentsVM: LoadingSections, ObservableObject {
         } catch {
             presentErrorToast(error, title: "Couldn't add your comment", function: #function)
         }
-        await setLoadingState(.submittingComment, to: false)
+        setLoadingState(.submittingComment, to: false)
     }
     
     func updateCommentLike(for commentId: String, action: CommentsDM.LikeAction) async {
@@ -87,7 +87,7 @@ final class CommentsVM: LoadingSections, ObservableObject {
             })
         }
         
-        await setLoadingState(.submittingLike(commentId), to: true)
+        setLoadingState(.submittingLike(commentId), to: true)
         do {
             let data = try await commentsDM.updateCommentLike(for: commentId, action: action)
             
@@ -117,7 +117,7 @@ final class CommentsVM: LoadingSections, ObservableObject {
             }
             presentErrorToast(error, function: #function)
         }
-        await setLoadingState(.submittingLike(commentId), to: false)
+        setLoadingState(.submittingLike(commentId), to: false)
     }
     
     // MARK: Enums

@@ -21,11 +21,15 @@ struct APIResponseWithPagination<T: Decodable>: Decodable {
     let success: Bool
     let data: T
     let pagination: Pagination
+}
+
+struct Pagination: Decodable {
+    let totalCount: Int
+    let page: Int
+    let limit: Int
     
-    struct Pagination: Decodable {
-        let totalCount: Int
-        let page: Int
-        let limit: Int
+    var hasMore: Bool {
+        page * limit < totalCount
     }
 }
 

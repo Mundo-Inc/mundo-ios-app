@@ -48,6 +48,20 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            
+            Section(header: Text("Privacy")) {
+                Toggle(isOn: Binding(get: {
+                    auth.currentUser?.isPrivate ?? false
+                }, set: { value in
+                    Task {
+                        await vm.setAccountPrivacy(to: value)
+                    }
+                })) {
+                    Text("Private Account")
+                }
+                .disabled(vm.loadingSections.contains(.accountPrivacyRequest))
+            }
+            
             Section(header: Text("Appearance")) {
                 Picker("Theme", selection: $theme) {
                     Text("System").tag("")

@@ -11,22 +11,66 @@ struct NotificationsView: View {
     @ObservedObject private var notificationsVM = NotificationsVM.shared
     
     var body: some View {
-        List(notificationsVM.notificationsCluster.indices, id: \.self) { index in
-            let cluster = notificationsVM.notificationsCluster[index]
-            
-            NotificationCluster(cluster)
-                .onAppear {
-                    if !notificationsVM.isLoading && notificationsVM.hasMore {
-                        Task {
-                            await notificationsVM.loadMore(index: index)
+        List {
+            HStack {
+                Circle()
+                    .foregroundStyle(Color.themeBorder)
+                    .frame(width: 46)
+                    .overlay {
+                        Image(systemName: "person.badge.clock")
+                    }
+                
+                VStack(alignment: .leading) {
+                    Text("Follow Requests")
+                        .font(.custom(style: .headline))
+                        .fontWeight(.bold)
+                    
+                    Group {
+                        if let first = notificationsVM.followRequests.first, let followRequestsCount = notificationsVM.followRequestsCount {
+                            if followRequestsCount > 1 {
+                                Text("\(first.user.name), +\(followRequestsCount - 1) Others")
+                            } else {
+                                Text(first.user.name)
+                            }
+                        } else {
+                            Text("No new request")
                         }
                     }
+                    .font(.custom(style: .subheadline))
+                    .foregroundStyle(.secondary)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Image(systemName: "chevron.forward")
+            }
+            .padding()
+            .background(Color.themePrimary, in: RoundedRectangle(cornerRadius: 10))
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden, edges: .top)
+            .onTapGesture {
+                AppData.shared.goTo(AppRoute.requests)
+            }
+            
+            ForEach(notificationsVM.notificationsCluster.indices, id: \.self) { index in
+                let cluster = notificationsVM.notificationsCluster[index]
+                
+                NotificationCluster(cluster)
+                    .task {
+                        await notificationsVM.loadMore(index: index)
+                    }
+            }
         }
-        .listStyle(.grouped)
+        .listStyle(.plain)
         .refreshable {
-            if !notificationsVM.isLoading {
-                await notificationsVM.getNotifications(.refresh)
+            if !notificationsVM.loadingSections.contains(.fetchingNotifications) {
+                Task {
+                    await notificationsVM.getNotifications(.refresh)
+                }
+            }
+            if !notificationsVM.loadingSections.contains(.fetchingFollowRequests) {
+                Task {
+                    await notificationsVM.getFollowRequests(.refresh)
+                }
             }
         }
         .scrollIndicators(.hidden)

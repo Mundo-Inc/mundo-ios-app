@@ -227,6 +227,7 @@
 		0B64C4CD2AB4CCA1009F0D43 /* DataCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B64C4CC2AB4CCA1009F0D43 /* DataCard.swift */; };
 		0B6796C52BED059E00CC3DA1 /* DataContainer.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0B6796C12BED059E00CC3DA1 /* DataContainer.xcdatamodeld */; };
 		0B6796C62BED059E00CC3DA1 /* UserDataContainer.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0B6796C32BED059E00CC3DA1 /* UserDataContainer.xcdatamodeld */; };
+		0B6796CB2BED1F3600CC3DA1 /* RequestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6796CA2BED1F3600CC3DA1 /* RequestsView.swift */; };
 		0B67C8B72AF0539E002781B3 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 0B67C8B62AF0539E002781B3 /* Kingfisher */; };
 		0B6839922AEC335D0082661A /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6839912AEC335D0082661A /* ReportView.swift */; };
 		0B695D792AF131FB00C11870 /* MyConnections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B695D782AF131FB00C11870 /* MyConnections.swift */; };
@@ -274,6 +275,7 @@
 		0B91A7272B57F157007F7969 /* ExploreView16.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B91A7262B57F157007F7969 /* ExploreView16.swift */; };
 		0B91A7292B57F166007F7969 /* ExploreView17.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B91A7282B57F166007F7969 /* ExploreView17.swift */; };
 		0B9307F32B0709F1005FA1C3 /* ProfileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9307F22B0709F1005FA1C3 /* ProfileImage.swift */; };
+		0B937DF62BF27EC100CBDC79 /* FollowRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B937DF52BF27EC100CBDC79 /* FollowRequest.swift */; };
 		0B93B86D2B83C9AB004AECEF /* PlaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B93B86C2B83C9AB004AECEF /* PlaceView.swift */; };
 		0B93B86F2B83CA63004AECEF /* PlaceVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B93B86E2B83CA63004AECEF /* PlaceVM.swift */; };
 		0B95AD402B7EDAF800F6E85B /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B95AD3F2B7EDAF800F6E85B /* HapticManager.swift */; };
@@ -660,6 +662,7 @@
 		0B6796C42BED059E00CC3DA1 /* UserDataContainer.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UserDataContainer.xcdatamodel; sourceTree = "<group>"; };
 		0B6796C72BED073C00CC3DA1 /* DataContainerWithUserPrivacyFlag.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataContainerWithUserPrivacyFlag.xcdatamodel; sourceTree = "<group>"; };
 		0B6796C82BED099000CC3DA1 /* UserDataContainerWithUserPrivacyFlag.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UserDataContainerWithUserPrivacyFlag.xcdatamodel; sourceTree = "<group>"; };
+		0B6796CA2BED1F3600CC3DA1 /* RequestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestsView.swift; sourceTree = "<group>"; };
 		0B6839912AEC335D0082661A /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
 		0B695D782AF131FB00C11870 /* MyConnections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyConnections.swift; sourceTree = "<group>"; };
 		0B695D7B2AF14E0C00C11870 /* MyConnectionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyConnectionsVM.swift; sourceTree = "<group>"; };
@@ -702,6 +705,7 @@
 		0B91A7262B57F157007F7969 /* ExploreView16.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreView16.swift; sourceTree = "<group>"; };
 		0B91A7282B57F166007F7969 /* ExploreView17.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreView17.swift; sourceTree = "<group>"; };
 		0B9307F22B0709F1005FA1C3 /* ProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImage.swift; sourceTree = "<group>"; };
+		0B937DF52BF27EC100CBDC79 /* FollowRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowRequest.swift; sourceTree = "<group>"; };
 		0B93B86C2B83C9AB004AECEF /* PlaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceView.swift; sourceTree = "<group>"; };
 		0B93B86E2B83CA63004AECEF /* PlaceVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceVM.swift; sourceTree = "<group>"; };
 		0B95AD3F2B7EDAF800F6E85B /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
@@ -1372,6 +1376,7 @@
 				0B0183612AB3C0B1008E887F /* Place */,
 				0B9C02672B45A1D7000C4774 /* PlacesList */,
 				0B27AE1D2B75784300C97559 /* Report */,
+				0B6796C92BED1F2600CC3DA1 /* Requests */,
 				0BABE9D02B5981F6003EF70B /* RewardsHub */,
 				0B85AEFE2BD3E89B001E95A7 /* Root */,
 				0B64C4C62AB4BDB4009F0D43 /* Settings */,
@@ -1416,6 +1421,14 @@
 				0B1E015A2BDBF27200FEE5C3 /* SettingsVM.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		0B6796C92BED1F2600CC3DA1 /* Requests */ = {
+			isa = PBXGroup;
+			children = (
+				0B6796CA2BED1F3600CC3DA1 /* RequestsView.swift */,
+			);
+			path = Requests;
 			sourceTree = "<group>";
 		};
 		0B695D762AF131DD00C11870 /* MyConnections */ = {
@@ -1526,6 +1539,7 @@
 				0B6CE2512BB566D400FE75A5 /* EntityError.swift */,
 				0BBFFE1D2B9B5843003A05B1 /* Event.swift */,
 				0B6A47C32ABC9806000CBDA3 /* FeedItem.swift */,
+				0B937DF52BF27EC100CBDC79 /* FollowRequest.swift */,
 				0BF17BAA2AF2FDE800D87812 /* GeneralTypes.swift */,
 				0B7A80B52BA2024B00192192 /* HomeMade.swift */,
 				0B1610CC2B631E5500DCAFA5 /* MediaItem.swift */,
@@ -2457,6 +2471,7 @@
 				0BE1E17E2AD5B84A00645AA0 /* Location.swift in Sources */,
 				0B1610CA2B631DF900DCAFA5 /* PlaceEssentials.swift in Sources */,
 				0B1610CD2B631E5500DCAFA5 /* MediaItem.swift in Sources */,
+				0B6796CB2BED1F3600CC3DA1 /* RequestsView.swift in Sources */,
 				0B6796C52BED059E00CC3DA1 /* DataContainer.xcdatamodeld in Sources */,
 				0B0BB77B2BB4610100DE3728 /* UserDataStack.swift in Sources */,
 				0B77EA4E2AAF889100C8DF87 /* SignUpWithPasswordView.swift in Sources */,
@@ -2466,6 +2481,7 @@
 				0B1E790B2B86C1E100549D71 /* YelpReviewItem.swift in Sources */,
 				0B226F612B331FF10036B8BE /* HomeActivityItemPlaceholder.swift in Sources */,
 				0BF5B49D2AB292D500DEC403 /* KeychainHelper.swift in Sources */,
+				0B937DF62BF27EC100CBDC79 /* FollowRequest.swift in Sources */,
 				0B0BB77E2BB4615000DE3728 /* AreaLevel.swift in Sources */,
 				0B1E79092B86C1D800549D71 /* GoogleReviewItem.swift in Sources */,
 				0B35B7B52B0DFEB300822BA6 /* SignInWithAppleButtonViewRepresentable.swift in Sources */,
@@ -2731,7 +2747,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.70.3;
+				MARKETING_VERSION = 0.71.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2771,7 +2787,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.70.3;
+				MARKETING_VERSION = 0.71.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

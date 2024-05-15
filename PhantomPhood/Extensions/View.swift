@@ -92,6 +92,8 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     PaymentsSettingView()
                 case .myConnections(let initTab):
                     MyConnections(activeTab: initTab)
+                case .requests:
+                    RequestsView()
                     
                     // User
                     

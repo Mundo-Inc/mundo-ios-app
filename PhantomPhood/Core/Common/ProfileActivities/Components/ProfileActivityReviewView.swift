@@ -26,7 +26,7 @@ struct ProfileActivityReviewView: View {
     private func showMedia() {
         switch data.resource {
         case .review(let feedReview):
-            mediasViewModel.show(medias: feedReview.videos + feedReview.images)
+            mediasViewModel.show(medias: feedReview.medias)
         default:
             return
         }
@@ -109,12 +109,13 @@ struct ProfileActivityReviewView: View {
                 switch data.resource {
                 case .review(let review):
                     VStack {
-                        if !review.images.isEmpty || !review.videos.isEmpty {
+                        if !review.medias.isEmpty {
                             ZStack {
                                 TabView {
-                                    if !review.videos.isEmpty {
-                                        ForEach(review.videos) { video in
-                                            ReviewVideoView(url: video.src, mute: true)
+                                    ForEach(review.medias) { item in
+                                        switch item.type {
+                                        case .video:
+                                            ReviewVideoView(url: item.src, mute: true)
                                                 .frame(height: 300)
                                                 .frame(maxWidth: UIScreen.main.bounds.width)
                                                 .clipShape(RoundedRectangle(cornerRadius: 15))
@@ -123,28 +124,23 @@ struct ProfileActivityReviewView: View {
                                                         .padding(.top, 8)
                                                         .padding(.trailing, 5)
                                                 }
-                                        }
-                                    }
-                                    if !review.images.isEmpty {
-                                        ForEach(review.images) { image in
-                                            if let url = image.src {
-                                                ImageLoader(url, contentMode: .fill) { progress in
-                                                    Rectangle()
-                                                        .foregroundStyle(.clear)
-                                                        .frame(maxWidth: 150)
-                                                        .overlay {
-                                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                                .progressViewStyle(LinearProgressViewStyle())
-                                                                .padding(.horizontal)
-                                                        }
-                                                }
-                                                .frame(height: 300)
-                                                .clipShape(RoundedRectangle(cornerRadius: 15))
-                                                .overlay(alignment: .topTrailing) {
-                                                    Image(systemName: "photo")
-                                                        .padding(.top, 8)
-                                                        .padding(.trailing, 5)
-                                                }
+                                        case .image:
+                                            ImageLoader(item.src, contentMode: .fill) { progress in
+                                                Rectangle()
+                                                    .foregroundStyle(.clear)
+                                                    .frame(maxWidth: 150)
+                                                    .overlay {
+                                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                            .progressViewStyle(LinearProgressViewStyle())
+                                                            .padding(.horizontal)
+                                                    }
+                                            }
+                                            .frame(height: 300)
+                                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                                            .overlay(alignment: .topTrailing) {
+                                                Image(systemName: "photo")
+                                                    .padding(.top, 8)
+                                                    .padding(.trailing, 5)
                                             }
                                         }
                                     }

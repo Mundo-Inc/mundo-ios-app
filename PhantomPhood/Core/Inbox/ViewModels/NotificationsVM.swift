@@ -8,59 +8,189 @@
 import Foundation
 import SwiftUI
 
-@MainActor
-final class NotificationsVM: ObservableObject {
+final class NotificationsVM: LoadingSections, ObservableObject {
     static let shared = NotificationsVM()
     
     private init() {}
     
     private let notificationsDM = NotificationsDM()
+    private let userProfileDM = UserProfileDM()
     
-    @Published var notificationsCluster: [NotificationsUserCluster] = []
-    @Published var unreadCount: Int? = nil
-    @Published var isLoading: Bool = false
-    @Published var hasMore: Bool = true
+    @Published var loadingSections = Set<LoadingSection>()
     
-    private var page: Int = 1
+    @Published private(set) var notificationsCluster: [NotificationsUserCluster] = []
+    @Published private(set) var unreadCount: Int? = nil
+    
+    @Published private(set) var followRequests: [FollowRequest] = []
+    @Published private(set) var followRequestsCount: Int? = nil
+    
+    private var notificationsPagination: Pagination? = nil
+    private var followRequestsPagination: Pagination? = nil
     
     func getNotifications(_ action: RefreshNewAction) async {
-        guard !isLoading else { return }
+        guard !loadingSections.contains(.fetchingNotifications) else { return }
 
         if action == .refresh {
-            page = 1
+            notificationsPagination = nil
+        } else if let notificationsPagination {
+            if notificationsPagination.page * notificationsPagination.limit >= notificationsPagination.totalCount {
+                return
+            }
         }
 
-        self.isLoading = true
+        setLoadingState(.fetchingNotifications, to: true)
         do {
-            let data = try await notificationsDM.getNotifications(page: self.page)
-            
-            hasMore = data.pagination.totalCount > data.pagination.page * data.pagination.limit
-            
-            if action == .refresh || self.notificationsCluster.isEmpty {
-                self.notificationsCluster = getNotificationClusterByUser(data.data)
+            let page: Int
+            if let notificationsPagination {
+                page = notificationsPagination.page + 1
             } else {
-                self.notificationsCluster.append(contentsOf: getNotificationClusterByUser(data.data))
+                page = 1
             }
             
-            page += 1
+            let data = try await notificationsDM.getNotifications(page: page)
+            
+            await MainActor.run {
+                if action == .refresh || self.notificationsCluster.isEmpty {
+                    self.notificationsCluster = getNotificationClusterByUser(data.data)
+                } else {
+                    self.notificationsCluster.append(contentsOf: getNotificationClusterByUser(data.data))
+                }
+            }
+            
+            notificationsPagination = data.pagination
         } catch {
             presentErrorToast(error)
         }
-        self.isLoading = false
+        setLoadingState(.fetchingNotifications, to: false)
+    }
+    
+    func getFollowRequests(_ action: RefreshNewAction) async {
+        guard !loadingSections.contains(.fetchingFollowRequests) else { return }
+
+        if action == .refresh {
+            followRequestsPagination = nil
+        } else if let followRequestsPagination {
+            if followRequestsPagination.page * followRequestsPagination.limit >= followRequestsPagination.totalCount {
+                return
+            }
+        }
+
+        setLoadingState(.fetchingFollowRequests, to: true)
+        do {
+            let page: Int
+            if let followRequestsPagination {
+                page = followRequestsPagination.page + 1
+            } else {
+                page = 1
+            }
+            
+            let data = try await userProfileDM.getFollowRequests(page: page)
+            
+            await MainActor.run {
+                if action == .refresh || self.notificationsCluster.isEmpty {
+                    self.followRequests = data.data
+                } else {
+                    self.followRequests.append(contentsOf: data.data)
+                }
+                followRequestsCount = data.pagination.totalCount
+            }
+            
+            followRequestsPagination = data.pagination
+        } catch {
+            presentErrorToast(error)
+        }
+        setLoadingState(.fetchingFollowRequests, to: false)
+    }
+    
+    func acceptRequest(for requestId: String) async {
+        guard !loadingSections.contains(.acceptingRequest(requestId)) else { return }
+        
+        setLoadingState(.acceptingRequest(requestId), to: true)
+        do {
+            try await userProfileDM.acceptRequest(for: requestId)
+            await MainActor.run {
+                followRequests = followRequests.map({ req in
+                    if req.id == requestId {
+                        var newReq = req
+                        newReq.user.setConnectionStatus(followedBy: .following)
+                        return newReq
+                    } else {
+                        return req
+                    }
+                })
+            }
+        } catch {
+            presentErrorToast(error, function: #function)
+        }
+        setLoadingState(.acceptingRequest(requestId), to: false)
+    }
+    
+    func rejectRequest(for requestId: String) async {
+        guard !loadingSections.contains(.rejectingRequest(requestId)) else { return }
+        
+        setLoadingState(.rejectingRequest(requestId), to: true)
+        do {
+            try await userProfileDM.rejectRequest(for: requestId)
+            await MainActor.run {
+                followRequests = followRequests.map({ req in
+                    if req.id == requestId {
+                        var newReq = req
+                        newReq.user.setConnectionStatus(followedBy: .notFollowing)
+                        return newReq
+                    } else {
+                        return req
+                    }
+                })
+            }
+        } catch {
+            presentErrorToast(error, function: #function)
+        }
+        setLoadingState(.rejectingRequest(requestId), to: false)
+    }
+    
+    func follow(user userId: String) async {
+        guard !loadingSections.contains(.followRequest(userId)) else { return }
+        
+        setLoadingState(.followRequest(userId), to: true)
+        do {
+            let status = try await userProfileDM.follow(id: userId)
+            
+            await MainActor.run {
+                followRequests = followRequests.map({ req in
+                    if req.user.id == userId {
+                        var newReq = req
+                        switch status {
+                        case .following:
+                            newReq.user.setConnectionStatus(following: .following)
+                        case .requested:
+                            newReq.user.setConnectionStatus(following: .requested)
+                        }
+                        return newReq
+                    } else {
+                        return req
+                    }
+                })
+            }
+        } catch {
+            presentErrorToast(error, function: #function)
+        }
+        setLoadingState(.followRequest(userId), to: false)
     }
     
     func loadMore(index: Int) async {
         let thresholdIndex = notificationsCluster.index(notificationsCluster.endIndex, offsetBy: -5)
-        if index == thresholdIndex {
+        if index >= thresholdIndex {
             await getNotifications(.new)
         }
     }
     
     func updateUnreadNotificationsCount() async {
         do {
-            let data = try await notificationsDM.getNotifications(page: self.page, unread: true)
+            let data = try await notificationsDM.getNotifications(page: 1, unread: true)
             
-            self.unreadCount = data.pagination.totalCount
+            await MainActor.run {
+                self.unreadCount = data.pagination.totalCount
+            }
             try? await UNUserNotificationCenter.current().setBadgeCount(data.pagination.totalCount)
         } catch {
             presentErrorToast(error)
@@ -124,5 +254,13 @@ final class NotificationsVM: ObservableObject {
         mutating func add(_ item: Notification) {
             self.items.append(item)
         }
+    }
+    
+    enum LoadingSection: Hashable {
+        case fetchingNotifications
+        case fetchingFollowRequests
+        case rejectingRequest(String)
+        case acceptingRequest(String)
+        case followRequest(String)
     }
 }

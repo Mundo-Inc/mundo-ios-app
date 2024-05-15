@@ -8,7 +8,7 @@
 import Foundation
 
 final class SettingsVM: LoadingSections, ObservableObject {
-    static let accountDM = AccountDM()
+    private let accountDM = AccountDM()
     
     @Published var isAccountSettingsVisible: Bool = false
     @Published var loadingSections = Set<LoadingSection>()
@@ -17,7 +17,7 @@ final class SettingsVM: LoadingSections, ObservableObject {
     
     func deleteAccount() async {
         do {
-            try await Self.accountDM.deleteAccount()
+            try await accountDM.deleteAccount()
             
             ToastVM.shared.toast(.init(type: .success, title: "Success", message: "Your account has been deleted"))
             
@@ -30,7 +30,7 @@ final class SettingsVM: LoadingSections, ObservableObject {
     func resetPasswordRequest() async {
         guard let userEmail = Authentication.shared.currentUser?.email.address else { return }
         
-        await setLoadingState(.resetPassword, to: true)
+        setLoadingState(.resetPassword, to: true)
         do {
             try await Authentication.shared.requestResetPassword(email: userEmail)
             
@@ -38,12 +38,25 @@ final class SettingsVM: LoadingSections, ObservableObject {
         } catch {
             presentErrorToast(error, function: #function)
         }
-        await setLoadingState(.resetPassword, to: false)
+        setLoadingState(.resetPassword, to: false)
     }
-        
+    
+    func setAccountPrivacy(to isPrivate: Bool) async {
+        setLoadingState(.accountPrivacyRequest, to: true)
+        do {
+            try await accountDM.setPrivacy(to: isPrivate)
+            await Authentication.shared.updateUserInfo()
+            ToastVM.shared.toast(.init(type: .success, title: "Account Privacy Changed", message: "Your account is \(isPrivate ? "Private" : "Public") now"))
+        } catch {
+            presentErrorToast(error, function: #function)
+        }
+        setLoadingState(.accountPrivacyRequest, to: false)
+    }
+    
     // MARK: Enums
     
     enum LoadingSection: Hashable {
         case resetPassword
+        case accountPrivacyRequest
     }
 }

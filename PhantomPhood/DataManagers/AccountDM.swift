@@ -22,4 +22,21 @@ final class AccountDM {
         
         try await apiManager.requestNoContent("/users/\(userId)", method: .delete, token: token)
     }
+    
+    func setPrivacy(to: Bool) async throws {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        guard let userId = auth.currentUser?.id else {
+            throw URLError(.badServerResponse)
+        }
+        
+        struct RequestBody: Encodable {
+            let isPrivate: Bool
+        }
+        
+        let body = try apiManager.createRequestBody(RequestBody(isPrivate: to))
+        try await apiManager.requestNoContent("/users/\(userId)/privacy", method: .put, body: body, token: token)
+    }
 }

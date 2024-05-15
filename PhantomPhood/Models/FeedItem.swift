@@ -201,12 +201,17 @@ struct FeedItem: Identifiable, Decodable, Equatable {
 
 extension FeedItem {
     // Follow users (NewFollowing user actrivity)
-    mutating func followFromResourceUsers(userId: String) {
+    mutating func followFromResourceUsers(userId: String, response: UserProfileDM.FollowRequestStatus) {
         if case .users(let users) = self.resource {
             let newUsers = users.map { user in
                 if user.id == userId {
                     var newUser = user
-                    newUser.setFollowedByUserStatus(true)
+                    switch response {
+                    case .following:
+                        newUser.setConnectionStatus(following: .following)
+                    case .requested:
+                        newUser.setConnectionStatus(following: .requested)
+                    }
                     return newUser
                 } else {
                     return user

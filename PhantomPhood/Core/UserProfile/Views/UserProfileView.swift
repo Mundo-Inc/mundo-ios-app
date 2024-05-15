@@ -95,13 +95,16 @@ struct UserProfileView: View {
                         
                         HStack {
                             Group {
-                                if let isFollowedByUser = vm.isFollowedByUser, let user = vm.user {
+                                if let user = vm.user {
                                     Button {
                                         Task {
-                                            if isFollowedByUser {
+                                            switch user.connectionStatus.followingStatus {
+                                            case .following:
                                                 await vm.unfollow()
-                                            } else {
+                                            case .notFollowing:
                                                 await vm.follow()
+                                            case .requested:
+                                                await vm.unfollow()
                                             }
                                         }
                                     } label: {
@@ -109,17 +112,25 @@ struct UserProfileView: View {
                                             if vm.loadingSections.contains(.followOperation) {
                                                 ProgressView()
                                                     .controlSize(.mini)
-                                            } else if isFollowedByUser {
-                                                Text("Unfollow")
                                             } else {
-                                                Text(user.connectionStatus.followsUser ? "Follow Back" : "Follow")
+                                                switch user.connectionStatus.followingStatus {
+                                                case .following:
+                                                    Text("Unfollow")
+                                                case .notFollowing:
+                                                    Text(user.connectionStatus.followedByStatus == .following ? "Follow Back" : "Follow")
+                                                case .requested:
+                                                    Text("Requested")
+                                                }
                                             }
                                         }
                                         .frame(height: 32)
                                         .frame(maxWidth: .infinity)
-                                        .background(isFollowedByUser ? Color.themeBorder : Color.accentColor)
+                                        .background(user.connectionStatus.followingStatus == .notFollowing ? Color.accentColor : Color.themeBorder)
                                         .clipShape(.rect(cornerRadius: 5))
-                                        .foregroundStyle(isFollowedByUser ? Color.primary : Color.black)
+                                        .foregroundStyle(user.connectionStatus.followingStatus == .notFollowing ? Color.black : Color.primary)
+                                    }
+                                    .task {
+                                        await vm.getPosts(.refresh)
                                     }
                                 } else {
                                     Button {} label: {
@@ -240,46 +251,67 @@ struct UserProfileView: View {
                     .background(Color.themePrimary)
                     
                     VStack(spacing: 0) {
-                        ScrollView(.horizontal) {
-                            HStack(spacing: 12) {
-                                ForEach(UserProfileTab.allCases, id: \.self) { tab in
-                                    Button {
-                                        activeTab = tab
-                                    } label: {
-                                        Text(tab.title.uppercased())
-                                            .frame(height: 32)
-                                            .padding(.horizontal)
-                                            .background(activeTab == tab ? Color.accentColor : Color.clear, in: RoundedRectangle(cornerRadius: 5))
-                                            .background {
-                                                if activeTab != tab {
-                                                    RoundedRectangle(cornerRadius: 5)
-                                                        .stroke(Color.accentColor, lineWidth: 2)
-                                                }
-                                            }
-                                            .opacity(activeTab == tab ? 1 : 0.6)
-                                    }
-                                    .foregroundStyle(activeTab == tab ? Color.black : Color.accentColor)
-                                    .animation(.easeInOut(duration: 0), value: activeTab)
-                                }
-                            }
-                            .padding(.vertical, 12)
-                            .padding(.horizontal)
-                        }
-                        .scrollIndicators(.never)
-                        
                         if let user = vm.user {
-                            switch activeTab {
-                            case .posts:
-                                UserProfilePostsView(user: vm.user, activeTab: $activeTab)
-                            case .achievements:
-                                UserProfileAchievements(user: user)
-                            case .lists:
-                                UserProfileListsView(user: user)
-                            case .gifts:
-                                Text("Gifts")
+                            if user.isPrivate && user.connectionStatus.followingStatus != .following {
+                                VStack(spacing: 12) {
+                                    Image(.profileLock)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(maxHeight: 170)
+                                        .padding(.bottom, 8)
+                                    
+                                    Text("Private Account")
+                                        .font(.custom(style: .title3))
+                                    
+                                    Text("You need to follow \(user.name)\nto see their content")
+                                        .font(.custom(style: .body))
+                                        .foregroundStyle(.secondary)
+                                        .multilineTextAlignment(.center)
+                                }
+                                .padding(.top, 50)
+                            } else {
+                                ScrollView(.horizontal) {
+                                    HStack(spacing: 12) {
+                                        ForEach(UserProfileTab.allCases, id: \.self) { tab in
+                                            Button {
+                                                activeTab = tab
+                                            } label: {
+                                                Text(tab.title.uppercased())
+                                                    .frame(height: 32)
+                                                    .padding(.horizontal)
+                                                    .background(activeTab == tab ? Color.accentColor : Color.clear, in: RoundedRectangle(cornerRadius: 5))
+                                                    .background {
+                                                        if activeTab != tab {
+                                                            RoundedRectangle(cornerRadius: 5)
+                                                                .stroke(Color.accentColor, lineWidth: 2)
+                                                        }
+                                                    }
+                                                    .opacity(activeTab == tab ? 1 : 0.6)
+                                            }
+                                            .foregroundStyle(activeTab == tab ? Color.black : Color.accentColor)
+                                            .animation(.easeInOut(duration: 0), value: activeTab)
+                                            .disabled(tab == .gifts)
+                                        }
+                                    }
+                                    .padding(.vertical, 12)
+                                    .padding(.horizontal)
+                                }
+                                .scrollIndicators(.never)
+                                
+                                Group {
+                                    switch activeTab {
+                                    case .posts:
+                                        UserProfilePostsView(user: vm.user, activeTab: $activeTab)
+                                    case .achievements:
+                                        UserProfileAchievements(user: user)
+                                    case .lists:
+                                        UserProfileListsView(user: user)
+                                    case .gifts:
+                                        Text("Gifts")
+                                    }
+                                }
+                                .environmentObject(vm)
                             }
-                        } else {
-                            Text("Loading")
                         }
                         
                         Spacer()
@@ -293,7 +325,14 @@ struct UserProfileView: View {
         }
         .scrollIndicators(.hidden)
         .refreshable {
-            await vm.fetchUser()
+            if let userId = vm.user?.id {
+                Task {
+                    await vm.fetchUser(id: userId)
+                }
+                Task {
+                    await vm.getPosts(.refresh)
+                }
+            }
         }
         .background(LinearGradient(stops: [.init(color: Color.themePrimary, location: 0.5), .init(color: Color.themeBG, location: 0.5)], startPoint: .top, endPoint: .bottom).ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
@@ -301,23 +340,28 @@ struct UserProfileView: View {
             if vm.blockStatus != .hasBlocked {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
+                        var actions: [ActionManager.Action] = []
                         if let blockStatus = vm.blockStatus, blockStatus == .isBlocked {
-                            actionManager.value = [
-                                .init(title: "Unblock User", alertMessage: "Are you sure you want unblock this user?", callback: {
-                                    Task {
-                                        await vm.unblock()
-                                    }
-                                })
-                            ]
+                            actions.append(.init(title: "Unblock User", alertMessage: "Are you sure you want unblock this user?", callback: {
+                                Task {
+                                    await vm.unblock()
+                                }
+                            }))
                         } else if vm.blockStatus == nil {
-                            actionManager.value = [
-                                .init(title: "Block User", alertMessage: "Are you sure you want to block this user?", callback: {
-                                    Task {
-                                        await vm.block()
-                                    }
-                                })
-                            ]
+                            actions.append(.init(title: "Block User", alertMessage: "Are you sure you want to block this user?", callback: {
+                                Task {
+                                    await vm.block()
+                                }
+                            }))
                         }
+                        if vm.user?.connectionStatus.followedByStatus == .following {
+                            actions.append(.init(title: "Remove Follower", alertMessage: "Are you sure you want to remove this user from your followers?", callback: {
+                                Task {
+                                    await vm.removeFollower()
+                                }
+                            }))
+                        }
+                        actionManager.value = actions
                     } label: {
                         Label("Actions", systemImage: "ellipsis")
                     }

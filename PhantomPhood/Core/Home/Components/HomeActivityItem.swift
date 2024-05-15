@@ -37,10 +37,8 @@ struct HomeActivityItem: View {
         
         switch item.wrappedValue.resource {
         case .review(let feedReview):
-            if let firstVideo = feedReview.videos.first {
-                self._tabPage = State(wrappedValue: firstVideo.id)
-            } else if let firstImage = feedReview.images.first {
-                self._tabPage = State(wrappedValue: firstImage.id)
+            if let firstMedia = feedReview.medias.first {
+                self._tabPage = State(wrappedValue: firstMedia.id)
             }
         case .homemade(let homemade):
             if let firstMedia = homemade.media.first {
@@ -196,20 +194,15 @@ struct HomeActivityItem: View {
             }
         case .newReview:
             if case .review(let feedReview) = item.resource {
-                if feedReview.images.count + feedReview.videos.count > 1 {
+                if feedReview.medias.count > 1 {
                     TabView(selection: $tabPage) {
-                        ForEach(feedReview.videos) { video in
-                            MediaItem(media: video)
-                                .tag(video.id)
-                        }
-                        
-                        ForEach(feedReview.images) { image in
-                            MediaItem(media: image)
-                                .tag(image.id)
+                        ForEach(feedReview.medias) { item in
+                            MediaItem(media: item)
+                                .tag(item.id)
                         }
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-                } else if let media = feedReview.images.first ?? feedReview.videos.first {
+                } else if let media = feedReview.medias.first {
                     MediaItem(media: media)
                 } else if let place = item.place {
                     LinearGradient(
@@ -320,7 +313,7 @@ struct HomeActivityItem: View {
                             AppData.shared.goToUser(item.user.id)
                         }
                     
-                    if let connectionStatus = item.user.connectionStatus, !connectionStatus.followedByUser {
+                    if let connectionStatus = item.user.connectionStatus, connectionStatus.followingStatus == .notFollowing {
                         HStack {
                             if vm.loadingSections.contains(.followRequest(item.user.id)) {
                                 ProgressView()
@@ -563,13 +556,18 @@ struct HomeActivityItem: View {
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     
                                     if let connectionStatus = usersList[index].connectionStatus {
-                                        if !connectionStatus.followedByUser {
+                                        switch connectionStatus.followingStatus {
+                                        case .following:
+                                            Text("Following")
+                                                .font(.custom(style: .caption))
+                                                .foregroundStyle(.secondary)
+                                        case .notFollowing:
                                             HStack {
                                                 if vm.loadingSections.contains(.followRequest(usersList[index].id)) {
                                                     ProgressView()
                                                         .controlSize(.mini)
                                                 } else {
-                                                    Text(connectionStatus.followsUser ? "Follow Back" : "Follow")
+                                                    Text(connectionStatus.followedByStatus == .following ? "Follow Back" : "Follow")
                                                 }
                                             }
                                             .frame(height: 20)
@@ -585,10 +583,11 @@ struct HomeActivityItem: View {
                                                 }
                                             }
                                             .foregroundStyle(.primary)
-                                        } else {
-                                            Text("Following")
+                                        case .requested:
+                                            Text("Requested")
                                                 .font(.custom(style: .caption))
                                                 .foregroundStyle(.secondary)
+                                            
                                         }
                                     }
                                 }

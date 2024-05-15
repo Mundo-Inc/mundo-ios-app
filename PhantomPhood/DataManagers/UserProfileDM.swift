@@ -10,7 +10,7 @@ import CoreData
 
 final class UserProfileDM {
     private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
+    private let auth = Authentication.shared
     private let dataManager = DataStack.shared
     
     /// No authentication needed
@@ -77,12 +77,30 @@ final class UserProfileDM {
         return data.data
     }
     
-    func follow(id: String) async throws {
+    func getFollowRequests(page: Int = 1, limit: Int = 30) async throws -> APIResponseWithPagination<[FollowRequest]> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        try await apiManager.requestNoContent("/users/\(id)/connections", method: .post, token: token)
+        let data: APIResponseWithPagination<[FollowRequest]> = try await apiManager.requestData("/users/followRequests?page=\(page)&limit=\(limit)", method: .get, token: token)
+        
+        return data
+    }
+    
+    func follow(id: String) async throws -> FollowRequestStatus {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let httpResponse = try await apiManager.requestNoContent("/users/\(id)/connections", method: .post, token: token)
+        
+        if httpResponse.statusCode == 201 {
+            return .following
+        } else if httpResponse.statusCode == 202 {
+            return .requested
+        } else {
+            throw URLError(.badServerResponse)
+        }
     }
     
     func unfollow(id: String) async throws {
@@ -91,6 +109,30 @@ final class UserProfileDM {
         }
         
         try await apiManager.requestNoContent("/users/\(id)/connections", method: .delete, token: token)
+    }
+    
+    func removeFollower(id: String) async throws {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        try await apiManager.requestNoContent("/users/followers/\(id)", method: .delete, token: token)
+    }
+    
+    func acceptRequest(for requestId: String) async throws {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        try await apiManager.requestNoContent("/users/followRequests/\(requestId)", method: .post, token: token)
+    }
+    
+    func rejectRequest(for requestId: String) async throws {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        try await apiManager.requestNoContent("/users/followRequests/\(requestId)", method: .delete, token: token)
     }
     
     func block(id: String) async throws {
@@ -150,5 +192,12 @@ final class UserProfileDM {
             createdAt = try container.decode(Date.self, forKey: .createdAt)
             profileImage = try container.decodeURLIfPresent(forKey: .profileImage)
         }
+    }
+    
+    // MARK: Enums
+    
+    enum FollowRequestStatus {
+        case following
+        case requested
     }
 }
