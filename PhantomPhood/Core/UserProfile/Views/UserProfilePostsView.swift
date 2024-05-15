@@ -208,6 +208,28 @@ struct UserProfilePostsView: View {
                                     } else {
                                         Image(systemName: "play.slash")
                                     }
+                                    
+                                    VStack(alignment: .leading) {
+                                        Image(systemName: "house")
+                                            .font(.system(size: 14))
+                                            .foregroundStyle(Color.white.opacity(0.8))
+                                            .frame(width: 22, height: 22)
+                                            .background(Color.black.opacity(0.4), in: RoundedRectangle(cornerRadius: 5))
+                                        
+                                        if !homemade.content.isEmpty {
+                                            Text(homemade.content)
+                                                .lineLimit(3)
+                                                .foregroundStyle(Color.white)
+                                                .multilineTextAlignment(.leading)
+                                                .font(.custom(style: .caption))
+                                                .shadow(radius: 2)
+                                        }
+                                        
+                                        Spacer()
+                                    }
+                                    .padding(.all, 4)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                                    .background(LinearGradient(colors: [Color.black.opacity(0.3), Color.clear], startPoint: .top, endPoint: .bottom))
                                 }
                             }
                         default:
