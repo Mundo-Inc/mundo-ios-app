@@ -23,10 +23,7 @@ final class AppData: ObservableObject {
     
     // Home Active Tab
     @Published var homeActiveTab: HomeTab = .following
-    
-    @Published var myProfileActiveTab: MyProfileActiveTab = .stats
-    @Published var showEditProfile: Bool = false
-    
+        
     @Published var tappedTwice: Tab? = nil
     
     var tabViewSelectionHandler: Binding<Tab> {
@@ -47,9 +44,6 @@ final class AppData: ObservableObject {
             
             self.navStack.removeAll()
             self.authNavStack.removeAll()
-            
-            self.myProfileActiveTab = .stats
-            self.showEditProfile = false
         }
     }
     

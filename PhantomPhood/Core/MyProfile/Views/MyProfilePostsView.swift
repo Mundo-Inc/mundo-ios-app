@@ -1,22 +1,22 @@
 //
-//  UserProfilePostsView.swift
+//  MyProfilePostsView.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 5/6/24.
+//  Created by Kia Abdi on 5/16/24.
 //
 
 import SwiftUI
 
-struct UserProfilePostsView: View {
+struct MyProfilePostsView: View {
     static let heightMultiplier: CGFloat = 0.5
     static let spacing: CGFloat = 2
     
-    let user: UserDetail?
-    @Binding var activeTab: UserProfileVM.Tab
-    
-    @EnvironmentObject private var userProfileVM: UserProfileVM
-    
+    @ObservedObject private var auth = Authentication.shared
+    @EnvironmentObject private var userProfileVM: MyProfileVM
+
     @Environment(\.mainWindowSize) private var mainWindowSize
+
+    @Binding var activeTab: MyProfileVM.Tab
     
     private let gridColumns: [GridItem] = [
         GridItem(.flexible(), spacing: Self.spacing),
@@ -259,10 +259,11 @@ struct UserProfilePostsView: View {
             }
         }
         .padding(.top)
+
     }
 }
 
 #Preview {
-    UserProfilePostsView(user: nil, activeTab: .constant(.posts))
-        .environmentObject(UserProfileVM(username: "TheKia"))
+    MyProfilePostsView(activeTab: .constant(.posts))
+        .environmentObject(MyProfileVM())
 }

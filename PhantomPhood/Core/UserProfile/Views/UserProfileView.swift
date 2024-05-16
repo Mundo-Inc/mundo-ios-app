@@ -8,26 +8,6 @@
 import SwiftUI
 
 struct UserProfileView: View {
-    enum UserProfileTab: Hashable, CaseIterable {
-        case posts
-        case achievements
-        case lists
-        case gifts
-        
-        var title: String {
-            switch self {
-            case .posts:
-                return "Posts"
-            case .achievements:
-                return "Achievements"
-            case .lists:
-                return "Lists"
-            case .gifts:
-                return "Gifts"
-            }
-        }
-    }
-    
     @EnvironmentObject private var actionManager: ActionManager
     
     @Environment(\.mainWindowSize) private var mainWindowSize
@@ -43,24 +23,10 @@ struct UserProfileView: View {
         self._vm = StateObject(wrappedValue: UserProfileVM(username: username))
     }
     
-    @State private var activeTab: UserProfileTab = .posts
-    
     var body: some View {
         ScrollView {
             if let blockStatus = vm.blockStatus {
-                VStack {
-                    switch blockStatus {
-                    case .isBlocked:
-                        Text("You have blocked this user")
-                            .font(.custom(style: .headline))
-                    case .hasBlocked:
-                        Text("This user has blocked you")
-                            .font(.custom(style: .headline))
-                    }
-                }
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .frame(minHeight: mainWindowSize.height - mainWindowSafeAreaInsets.top - mainWindowSafeAreaInsets.bottom)
+                BlockView(status: blockStatus)
             } else {
                 VStack(spacing: 0) {
                     VStack(spacing: 15) {
@@ -270,47 +236,54 @@ struct UserProfileView: View {
                                 }
                                 .padding(.top, 50)
                             } else {
-                                ScrollView(.horizontal) {
-                                    HStack(spacing: 12) {
-                                        ForEach(UserProfileTab.allCases, id: \.self) { tab in
-                                            Button {
-                                                activeTab = tab
-                                            } label: {
-                                                Text(tab.title.uppercased())
+                                VStack(spacing: 0) {
+                                    Divider()
+                                    ScrollView(.horizontal) {
+                                        HStack(spacing: 12) {
+                                            ForEach(UserProfileVM.Tab.allCases, id: \.self) { tab in
+                                                Button {
+                                                    vm.activeTab = tab
+                                                } label: {
+                                                    Label {
+                                                        Text(tab.title.uppercased())
+                                                            .fontWeight(.semibold)
+                                                    } icon: {
+                                                        Image(systemName: tab.iconSystemName)
+                                                    }
                                                     .frame(height: 32)
                                                     .padding(.horizontal)
-                                                    .background(activeTab == tab ? Color.accentColor : Color.clear, in: RoundedRectangle(cornerRadius: 5))
-                                                    .background {
-                                                        if activeTab != tab {
-                                                            RoundedRectangle(cornerRadius: 5)
-                                                                .stroke(Color.accentColor, lineWidth: 2)
-                                                        }
-                                                    }
-                                                    .opacity(activeTab == tab ? 1 : 0.6)
+                                                    .foregroundStyle(vm.activeTab == tab ? Color.accentColor : Color.secondary)
+                                                    .opacity(tab == .gifts ? 0.5 : 1)
+                                                }
+                                                .animation(.easeInOut(duration: 0), value: vm.activeTab)
+                                                .disabled(tab == .gifts)
+                                                
+                                                if tab != Array(UserProfileVM.Tab.allCases).last {
+                                                    Divider()
+                                                        .frame(maxHeight: 20)
+                                                }
                                             }
-                                            .foregroundStyle(activeTab == tab ? Color.black : Color.accentColor)
-                                            .animation(.easeInOut(duration: 0), value: activeTab)
-                                            .disabled(tab == .gifts)
                                         }
+                                        .padding(.vertical, 8)
+                                        .padding(.trailing)
                                     }
-                                    .padding(.vertical, 12)
-                                    .padding(.horizontal)
+                                    .scrollIndicators(.never)
+                                    Divider()
                                 }
-                                .scrollIndicators(.never)
+                                .background(Color.themePrimary)
+                                .sticky(K.CoordinateSpace.userProfile)
                                 
-                                Group {
-                                    switch activeTab {
-                                    case .posts:
-                                        UserProfilePostsView(user: vm.user, activeTab: $activeTab)
-                                    case .achievements:
-                                        UserProfileAchievements(user: user)
-                                    case .lists:
-                                        UserProfileListsView(user: user)
-                                    case .gifts:
-                                        Text("Gifts")
-                                    }
+                                switch vm.activeTab {
+                                case .posts:
+                                    UserProfilePostsView(user: vm.user, activeTab: $vm.activeTab)
+                                        .environmentObject(vm)
+                                case .achievements:
+                                    UserProfileAchievements(user: user)
+                                case .lists:
+                                    UserProfileListsView(user: user)
+                                case .gifts:
+                                    Text("Gifts")
                                 }
-                                .environmentObject(vm)
                             }
                         }
                         
@@ -323,6 +296,7 @@ struct UserProfileView: View {
                 .frame(maxWidth: .infinity)
             }
         }
+        .coordinateSpace(name: K.CoordinateSpace.userProfile)
         .scrollIndicators(.hidden)
         .refreshable {
             if let userId = vm.user?.id {
@@ -336,6 +310,8 @@ struct UserProfileView: View {
         }
         .background(LinearGradient(stops: [.init(color: Color.themePrimary, location: 0.5), .init(color: Color.themeBG, location: 0.5)], startPoint: .top, endPoint: .bottom).ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Color.themePrimary, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
             if vm.blockStatus != .hasBlocked {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -368,6 +344,23 @@ struct UserProfileView: View {
                 }
             }
         }
+    }
+    
+    @ViewBuilder
+    private func BlockView(status: UserProfileVM.BlockStatus) -> some View {
+        VStack {
+            switch status {
+            case .isBlocked:
+                Text("You have blocked this user")
+                    .font(.custom(style: .headline))
+            case .hasBlocked:
+                Text("This user has blocked you")
+                    .font(.custom(style: .headline))
+            }
+        }
+        .foregroundStyle(.secondary)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(minHeight: mainWindowSize.height - mainWindowSafeAreaInsets.top - mainWindowSafeAreaInsets.bottom)
     }
 }
 

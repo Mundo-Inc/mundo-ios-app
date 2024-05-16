@@ -34,6 +34,25 @@ struct RootView: View {
                 .ignoresSafeArea(edges: .bottom)
         }
         .ignoresSafeArea(.keyboard)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if appData.activeTab == .myProfile {
+                ToolbarItem(placement: .topBarLeading) {
+                    Text("My Profile")
+                        .font(.custom(style: .title2))
+                        .fontWeight(.semibold)
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink(value: AppRoute.settings) {
+                        Image(systemName: "gear")
+                            .foregroundStyle(Color.primary)
+                    }
+                }
+            }
+        }
+        .toolbarBackground(appData.activeTab == .myProfile ? Color.themePrimary : Color.clear, for: .navigationBar)
+        .toolbarBackground(appData.activeTab == .myProfile ? .visible : .hidden, for: .navigationBar)
         .sheet(isPresented: $showActions) {
             QuickActionsView()
         }

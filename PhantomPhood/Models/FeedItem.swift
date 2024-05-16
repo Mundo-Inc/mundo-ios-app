@@ -12,8 +12,6 @@ enum FeedItemActivityType: String, Decodable, CaseIterable {
     case newCheckin = "NEW_CHECKIN"
     case newReview = "NEW_REVIEW"
     case newRecommend = "NEW_RECOMMEND"
-    case addPlace = "ADD_PLACE"
-    case gotBadge = "GOT_BADGE"
     case levelUp = "LEVEL_UP"
     case following = "FOLLOWING"
     case newHomemade = "NEW_HOMEMADE"
@@ -28,10 +26,6 @@ enum FeedItemActivityType: String, Decodable, CaseIterable {
             "Reviews"
         case .newRecommend:
             "Recommendations"
-        case .addPlace:
-            "Places Added"
-        case .gotBadge:
-            "New Badges"
         case .levelUp:
             "Level Ups!"
         case .following:

@@ -193,6 +193,9 @@
 		0B384FA92B2B5DE500C98245 /* UserActivityVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B384FA82B2B5DE500C98245 /* UserActivityVM.swift */; };
 		0B39A0C52B67E4A10091F246 /* ChecksDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B39A0C42B67E4A10091F246 /* ChecksDM.swift */; };
 		0B3B32DF2AF013DD00E1E0B0 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3B32DE2AF013DD00E1E0B0 /* Binding.swift */; };
+		0B3BAFCC2BF6286800E7A4F3 /* MyProfileVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3BAFCB2BF6286800E7A4F3 /* MyProfileVM.swift */; };
+		0B3BAFCF2BF63BE700E7A4F3 /* Sticky.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3BAFCE2BF63BE700E7A4F3 /* Sticky.swift */; };
+		0B3BAFD12BF6502B00E7A4F3 /* MyProfilePostsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3BAFD02BF6502B00E7A4F3 /* MyProfilePostsView.swift */; };
 		0B3E50AA2BA08AFF0082078B /* HomeMadeVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3E50A92BA08AFF0082078B /* HomeMadeVM.swift */; };
 		0B3E50AC2BA08B070082078B /* HomeMadeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3E50AB2BA08B070082078B /* HomeMadeView.swift */; };
 		0B4016702B045D56000F1263 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 0B40166F2B045D56000F1263 /* SwiftUIPager */; };
@@ -407,7 +410,6 @@
 		0BECB8E52B73F77C007B51A1 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BECB8E42B73F77C007B51A1 /* StoreKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		0BECB8E72B73F788007B51A1 /* LinkPresentation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BECB8E62B73F788007B51A1 /* LinkPresentation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		0BEE15262AB5028400DF7211 /* MyProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BEE15252AB5028400DF7211 /* MyProfileView.swift */; };
-		0BEE152A2AB50A8800DF7211 /* ProfileStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BEE15292AB50A8800DF7211 /* ProfileStats.swift */; };
 		0BEF7A382B0EB278001532E7 /* SignUpOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BEF7A372B0EB278001532E7 /* SignUpOptionsView.swift */; };
 		0BEF7A3C2B0EB2D4001532E7 /* OAuthVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BEF7A3B2B0EB2D4001532E7 /* OAuthVM.swift */; };
 		0BEF7A3E2B0EB60F001532E7 /* CompleteTheUserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BEF7A3D2B0EB60F001532E7 /* CompleteTheUserInfoView.swift */; };
@@ -630,6 +632,9 @@
 		0B384FA82B2B5DE500C98245 /* UserActivityVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityVM.swift; sourceTree = "<group>"; };
 		0B39A0C42B67E4A10091F246 /* ChecksDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecksDM.swift; sourceTree = "<group>"; };
 		0B3B32DE2AF013DD00E1E0B0 /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
+		0B3BAFCB2BF6286800E7A4F3 /* MyProfileVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileVM.swift; sourceTree = "<group>"; };
+		0B3BAFCE2BF63BE700E7A4F3 /* Sticky.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sticky.swift; sourceTree = "<group>"; };
+		0B3BAFD02BF6502B00E7A4F3 /* MyProfilePostsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfilePostsView.swift; sourceTree = "<group>"; };
 		0B3E50A92BA08AFF0082078B /* HomeMadeVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMadeVM.swift; sourceTree = "<group>"; };
 		0B3E50AB2BA08B070082078B /* HomeMadeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMadeView.swift; sourceTree = "<group>"; };
 		0B4016742B046AA5000F1263 /* HomeForYouView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeForYouView.swift; sourceTree = "<group>"; };
@@ -838,7 +843,6 @@
 		0BECB8E42B73F77C007B51A1 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		0BECB8E62B73F788007B51A1 /* LinkPresentation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LinkPresentation.framework; path = System/Library/Frameworks/LinkPresentation.framework; sourceTree = SDKROOT; };
 		0BEE15252AB5028400DF7211 /* MyProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileView.swift; sourceTree = "<group>"; };
-		0BEE15292AB50A8800DF7211 /* ProfileStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStats.swift; sourceTree = "<group>"; };
 		0BEF7A372B0EB278001532E7 /* SignUpOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpOptionsView.swift; sourceTree = "<group>"; };
 		0BEF7A3B2B0EB2D4001532E7 /* OAuthVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthVM.swift; sourceTree = "<group>"; };
 		0BEF7A3D2B0EB60F001532E7 /* CompleteTheUserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTheUserInfoView.swift; sourceTree = "<group>"; };
@@ -934,11 +938,11 @@
 		0B0183552AB3BF04008E887F /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				0BEE15252AB5028400DF7211 /* MyProfileView.swift */,
 				0B013EEF2AB78BA5003CB57F /* EditProfileView.swift */,
-				0BEE15292AB50A8800DF7211 /* ProfileStats.swift */,
-				0B226F662B33589C0036B8BE /* ProfileAchievements.swift */,
 				0B547D7F2B3F33AA002C6336 /* MyProfileListsView.swift */,
+				0B3BAFD02BF6502B00E7A4F3 /* MyProfilePostsView.swift */,
+				0BEE15252AB5028400DF7211 /* MyProfileView.swift */,
+				0B226F662B33589C0036B8BE /* ProfileAchievements.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1269,6 +1273,14 @@
 			path = Emojis;
 			sourceTree = "<group>";
 		};
+		0B3BAFCD2BF63BCC00E7A4F3 /* ViewModifiers */ = {
+			isa = PBXGroup;
+			children = (
+				0B3BAFCE2BF63BE700E7A4F3 /* Sticky.swift */,
+			);
+			path = ViewModifiers;
+			sourceTree = "<group>";
+		};
 		0B3E50A62BA08ADC0082078B /* HomeMade */ = {
 			isa = PBXGroup;
 			children = (
@@ -1518,6 +1530,7 @@
 				0B9EF27F2B302E070025F464 /* Services */,
 				0BCF5D6C2B5DEA7A00D729E2 /* SoundEffects */,
 				0B6495512AB0A4EF000E57AF /* Utils */,
+				0B3BAFCD2BF63BCC00E7A4F3 /* ViewModifiers */,
 			);
 			path = PhantomPhood;
 			sourceTree = "<group>";
@@ -1833,8 +1846,8 @@
 		0BB37E982ABA0CC2009E1272 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				0BE3F1422B5756A200D96EE8 /* ExploreVM.swift */,
 				0B29207B2B5587250026DDDE /* ExploreSearchVM.swift */,
+				0BE3F1422B5756A200D96EE8 /* ExploreVM.swift */,
 				0BCA62582BB62CBF0045F100 /* MapActivitySheetVM.swift */,
 			);
 			path = ViewModels;
@@ -1953,6 +1966,7 @@
 			children = (
 				0BEC8C852AB7B08600B94AFC /* EditProfileVM.swift */,
 				0B547D812B3F33BA002C6336 /* MyProfileListsVM.swift */,
+				0B3BAFCB2BF6286800E7A4F3 /* MyProfileVM.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -2317,6 +2331,7 @@
 				0B37ABFC2AD7408E00E8D4BC /* ToastVM.swift in Sources */,
 				0BC9BBEF2B922FE100477654 /* ReviewDM.swift in Sources */,
 				0B2920832B5590640026DDDE /* PlaceSelectorVM.swift in Sources */,
+				0B3BAFD12BF6502B00E7A4F3 /* MyProfilePostsView.swift in Sources */,
 				0BCD57DD2B28AE4600A1C914 /* UIApplication.swift in Sources */,
 				0B9950C72BBED7CA0060B6AF /* ConversationsCoreDataManager.swift in Sources */,
 				0BAD223E2BC043CB002F7C8F /* ConversationVM.swift in Sources */,
@@ -2414,7 +2429,6 @@
 				0B47FDA12B11060600F39527 /* AppRouter.swift in Sources */,
 				0BA5BDAA2BDFADDF00B4D35E /* PaymentsSettingVM.swift in Sources */,
 				0BBFFE242B9B6C2E003A05B1 /* EventView.swift in Sources */,
-				0BEE152A2AB50A8800DF7211 /* ProfileStats.swift in Sources */,
 				0B997B632AC70E1A00579C9C /* Notification.swift in Sources */,
 				0B9C02622B4468B3000C4774 /* UserSelectorVM.swift in Sources */,
 				0B6B4AB32B482D2D002C9FE0 /* QuickActionsView.swift in Sources */,
@@ -2455,6 +2469,7 @@
 				0B6A47C42ABC9806000CBDA3 /* FeedItem.swift in Sources */,
 				0B7A80B42BA1FB8A00192192 /* HomeMadeDM.swift in Sources */,
 				0BBFFE262B9B6C9C003A05B1 /* EventVM.swift in Sources */,
+				0B3BAFCF2BF63BE700E7A4F3 /* Sticky.swift in Sources */,
 				0B1610DF2B63267400DCAFA5 /* ReviewScores.swift in Sources */,
 				0BAD223B2BC04119002F7C8F /* ConversationView.swift in Sources */,
 				0BC84A652AD0339F00D723AA /* ReactionLabel.swift in Sources */,
@@ -2493,6 +2508,7 @@
 				0B1610D82B63245700DCAFA5 /* UserConnection.swift in Sources */,
 				0B9950D92BBEE4E80060B6AF /* ConversationsDM.swift in Sources */,
 				0B5070592BBC434900593C1B /* AppDelegate.swift in Sources */,
+				0B3BAFCC2BF6286800E7A4F3 /* MyProfileVM.swift in Sources */,
 				0B1E015B2BDBF27200FEE5C3 /* SettingsVM.swift in Sources */,
 				0BCA625B2BB6387B0045F100 /* CheckInCard.swift in Sources */,
 				0BC2E3162B2207EB0002649D /* TaskManager.swift in Sources */,
@@ -2747,7 +2763,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.71.0;
+				MARKETING_VERSION = 0.71.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2787,7 +2803,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.71.0;
+				MARKETING_VERSION = 0.71.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

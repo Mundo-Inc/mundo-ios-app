@@ -111,7 +111,7 @@ struct UserProfileListsView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal)
+        .padding()
         .padding(.bottom, 30)
         .font(.custom(style: .body))
         .onDisappear {

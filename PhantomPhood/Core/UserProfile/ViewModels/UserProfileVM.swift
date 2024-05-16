@@ -14,6 +14,8 @@ class UserProfileVM: LoadingSections, ObservableObject {
     
     @Published var loadingSections = Set<LoadingSection>()
     
+    @Published var activeTab: Tab = .posts
+    
     @Published private(set) var user: UserDetail?
     @Published private(set) var error: String?
     
@@ -253,6 +255,39 @@ class UserProfileVM: LoadingSections, ObservableObject {
     }
     
     // MARK: Enums
+    
+    enum Tab: Hashable, CaseIterable {
+        case posts
+        case achievements
+        case lists
+        case gifts
+        
+        var title: String {
+            switch self {
+            case .posts:
+                return "Posts"
+            case .achievements:
+                return "Achievements"
+            case .lists:
+                return "Lists"
+            case .gifts:
+                return "Gifts"
+            }
+        }
+        
+        var iconSystemName: String {
+            switch self {
+            case .posts:
+                return "app.connected.to.app.below.fill"
+            case .achievements:
+                return "crown"
+            case .lists:
+                return "list.star"
+            case .gifts:
+                return "gift"
+            }
+        }
+    }
     
     enum BlockStatus {
         case isBlocked

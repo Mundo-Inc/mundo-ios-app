@@ -39,5 +39,10 @@ struct K {
         private init() {}
     }
     
+    struct CoordinateSpace {
+        static let myProfile = "MyProfile"
+        static let userProfile = "UserProfile"
+    }
+    
     private init() {}
 }
