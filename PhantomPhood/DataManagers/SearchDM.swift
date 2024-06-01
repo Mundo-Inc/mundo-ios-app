@@ -16,10 +16,13 @@ final class SearchDM {
     
     // MARK: - Public methods
     
-    func searchUsers(q: String) async throws -> [UserEssentials] {
+    func searchUsers(q: String, limit: Int = 20) async throws -> [UserEssentials] {
         let token = await auth.getToken()
         
-        let resData: APIResponse<[UserEssentials]> = try await apiManager.requestData("/users\(q.isEmpty ? "" : "?q=\(q)")", token: token)
+        let resData: APIResponse<[UserEssentials]> = try await apiManager.requestData("/users", queryParams: [
+            "q": q.isEmpty ? nil : q,
+            "limit": String(limit)
+        ], token: token)
         
         return resData.data
     }

@@ -8,6 +8,9 @@
 import Foundation
 
 struct K {
+    static let appURLScheme = "phantom"
+    static let appDomain = "phantomphood.ai"
+    
     struct UserDefaults {
         static let isMute = "isMute"
         static let theme = "theme"

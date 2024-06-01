@@ -16,15 +16,24 @@ struct CommentsView: View {
         self._vm = StateObject(wrappedValue: CommentsVM(activityId: activityId))
     }
     
+    @Namespace private var namespace
+    
     var body: some View {
         VStack(spacing: 0) {
+            Text("Comments")
+                .font(.custom(style: .headline))
+                .fontWeight(.semibold)
+                .padding(.top)
+                .padding(.bottom, 8)
+            
+            Divider()
             if vm.comments.isEmpty && vm.loadingSections.contains(.gettingComments) {
-                List(RepeatItem.create(2)) { _ in
+                List(RepeatItem.create(8)) { _ in
                     HStack(alignment: .top) {
                         VStack(spacing: -14) {
                             ProfileImage(nil, size: 44)
                             
-                            LevelView(level: 20)
+                            Color.clear
                                 .frame(width: 20, height: 25)
                         }
                         .redacted(reason: .placeholder)
@@ -51,6 +60,7 @@ struct CommentsView: View {
                                     .multilineTextAlignment(.leading)
                             }
                             .frame(maxWidth: .infinity)
+                            .redacted(reason: .placeholder)
                             
                             VStack(spacing: 4) {
                                 Image(systemName: "heart")
@@ -84,77 +94,105 @@ struct CommentsView: View {
                     
                     Spacer()
                 } else {
-                    List(vm.comments) { comment in
+                    List($vm.comments) { cm in
+                        let comment = vm.getComment(cm.wrappedValue, cm.wrappedValue.depth)
+                        
                         HStack(alignment: .top, spacing: 12) {
-                            VStack(spacing: -14) {
-                                ProfileImage(comment.author.profileImage, size: 44)
+                            VStack {
+                                VStack(spacing: -14) {
+                                    ProfileImage(comment.author.profileImage, size: 44)
+                                    
+                                    LevelView(level: comment.author.progress.level)
+                                        .frame(width: 20, height: 25)
+                                }
+                                .onTapGesture {
+                                    dismiss()
+                                    AppData.shared.goToUser(comment.author.id)
+                                }
                                 
-                                LevelView(level: comment.author.progress.level)
-                                    .frame(width: 20, height: 25)
-                            }
-                            .onTapGesture {
-                                dismiss()
-                                AppData.shared.goToUser(comment.author.id)
+                                HStack(spacing: 3) {
+                                    if let depth = cm.wrappedValue.depth, !depth.isEmpty {
+                                        Rectangle()
+                                            .frame(width: 1)
+                                            .foregroundStyle(.secondary.opacity(0.2))
+                                        
+                                        ForEach(depth, id: \.self) { _ in
+                                            Rectangle()
+                                                .frame(width: 1)
+                                                .foregroundStyle(.secondary.opacity(0.2))
+                                        }
+                                    } else if let replies = comment.replies, !replies.isEmpty {
+                                        Rectangle()
+                                            .frame(width: 1)
+                                            .foregroundStyle(.secondary.opacity(0.2))
+                                    }
+                                }
+                                .frame(width: 44)
+                                .overlay(alignment: .leading) {
+                                    if let depth = cm.wrappedValue.depth, !depth.isEmpty {
+                                        Image(systemName: "chevron.left")
+                                            .foregroundStyle(.secondary)
+                                            .onTapGesture {
+                                                let _ = cm.wrappedValue.depth!.popLast()
+                                            }
+                                    }
+                                }
                             }
                             
-                            HStack(alignment: .top) {
-                                VStack(alignment: .leading) {
-                                    HStack(spacing: 4) {
-                                        Text(comment.author.name)
-                                            .font(.custom(style: .caption))
-                                            .fontWeight(.semibold)
-                                            .fontWidth(.compressed)
-                                            .foregroundStyle(.primary)
-                                        
-                                        Text(comment.createdAt.timeElapsed())
-                                            .font(.custom(style: .caption))
-                                            .foregroundStyle(.secondary)
-                                        
-                                        Spacer()
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    
-                                    Text(comment.content)
-                                        .font(.custom(style: .body))
-                                        .multilineTextAlignment(.leading)
-                                }
-                                .frame(maxWidth: .infinity)
+                            VStack {
+                                CommentHeader(comment)
+                                    .id(comment.id + "header")
+                                    .matchedGeometryEffect(id: comment.id + "header", in: namespace)
+                                    .transition(AnyTransition.asymmetric(insertion: .identity, removal: .opacity.animation(.easeOut(duration: 0))))
                                 
-                                VStack(spacing: 4) {
-                                    Image(systemName: comment.liked ? "heart.fill" : "heart")
-                                        .font(.system(size: 16))
-                                        .foregroundStyle(comment.liked ? Color.accentColor : Color.secondary)
-                                        .scaleEffect(comment.liked ? 1.1 : 0.9)
-                                        .animation(.bouncy, value: comment.liked)
+                                Text("Reply")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .foregroundStyle(.secondary)
+                                    .font(.custom(style: .caption))
+                                    .fontWeight(.semibold)
+                                    .onTapGesture {
+                                        withAnimation {
+                                            vm.replyTo = comment
+                                        }
+                                    }
+                                
+                                
+                                if let replies = comment.replies, !replies.isEmpty {
+                                    Color.clear
+                                        .frame(height: 10)
                                     
-                                    Text("\(comment.likes)")
-                                        .font(.custom(style: .caption2))
-                                        .foregroundStyle(.secondary)
-                                }
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    if !vm.loadingSections.contains(.submittingLike(comment.id)) {
-                                        Task {
-                                            await vm.updateCommentLike(for: comment.id, action: comment.liked ? .remove : .add)
+                                    ForEach(replies, id: \.self) { replyId in
+                                        if let reply = vm.repliesDict[replyId] {
+                                            Reply(reply, root: cm)
+                                                .padding(.leading, 10)
                                         }
                                     }
                                 }
-                                .padding(.top, 10)
+                                
+                                if let repliesCount = comment.repliesCount, repliesCount > (comment.replies?.count ?? 0) {
+                                    let moreReplies = repliesCount - (comment.replies?.count ?? 0)
+                                    Text("View \(moreReplies) more \(moreReplies > 1 ? "replies" : "reply")")
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .foregroundStyle(.secondary)
+                                        .font(.custom(style: .caption))
+                                        .fontWeight(.semibold)
+                                        .onTapGesture {
+                                            Task {
+                                                await vm.populateReplies(comment)
+                                            }
+                                            withAnimation {
+                                                cm.wrappedValue.showReply(comment.id)
+                                            }
+                                        }
+                                        .padding(.top)
+                                }
                             }
                             .frame(maxWidth: .infinity)
                         }
-                        .contentShape(Rectangle())
-                        .onTapGesture(count: 2, perform: {
-                            if !vm.loadingSections.contains(.submittingLike(comment.id)) {
-                                Task {
-                                    await vm.updateCommentLike(for: comment.id, action: comment.liked ? .remove : .add)
-                                }
-                            }
-                        })
                         .onAppear {
-                            if !vm.loadingSections.contains(.gettingComments) && vm.comments.count > 9 && (vm.comments.firstIndex(where: { cm in cm.id == comment.id }) ?? 0) + 4 >= vm.comments.count {
+                            if vm.comments.count >= CommentsVM.commentsPageLimit && (vm.comments.firstIndex(where: { cm in cm.id == comment.id }) ?? 0) + 4 >= vm.comments.count {
                                 Task {
-                                    await vm.getComments()
+                                    await vm.getComments(.new)
                                 }
                             }
                         }
@@ -168,6 +206,7 @@ struct CommentsView: View {
                         }
                         .listRowInsets(EdgeInsets(top: 12, leading: 10, bottom: 12, trailing: 10))
                     }
+                    .listStyle(.plain)
                     .scrollIndicators(.never)
                     .frame(maxHeight: .infinity)
                 }
@@ -175,14 +214,31 @@ struct CommentsView: View {
             
             Divider()
             
-            TextField("Add a comment", text: $vm.commentContent, axis: .vertical)
-                .lineLimit(1...4)
-                .padding(.all, 10)
-                .padding(.trailing, 37)
-                .background {
-                    RoundedRectangle(cornerRadius: 10)
-                        .foregroundStyle(Color.themePrimary)
+            if let replyTo = vm.replyTo {
+                HStack {
+                    ProfileImageBase(replyTo.author.profileImage, size: 28)
+                    
+                    Text("Replying to **\(replyTo.author.name)**")
+                        .font(.custom(style: .caption))
+                    
+                    Spacer()
+                    
+                    Button {
+                        withAnimation {
+                            vm.replyTo = nil
+                        }
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundStyle(.red)
+                    }
                 }
+                .padding(.horizontal)
+                .padding(.top, 8)
+            }
+            
+//            TextField("Add a comment", text: $vm.commentContent, axis: .vertical)
+//                .lineLimit(1...4)
+            MentionTextField(text: $vm.commentContent, size: 38, placeholder: "Add a comment", trailingPadding: 37)
                 .overlay(alignment: .bottomTrailing) {
                     Button {
                         Task {
@@ -194,17 +250,141 @@ struct CommentsView: View {
                     .opacity(vm.loadingSections.contains(.submittingComment) ? 0.6 : 1)
                     .disabled(vm.loadingSections.contains(.submittingComment))
                     .padding(.all, 11)
+                    .frame(height: 38)
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 8)
         }
         .task {
-            await vm.getComments()
+            await vm.getComments(.refresh)
         }
-        .presentationDetents([.medium, .fraction(0.99)])
+        .presentationDetents([.fraction(0.7), .fraction(0.99)])
+    }
+    
+    func makeAttributedString(_ comment: Comment) -> AttributedString {
+        let text = comment.content
+        var attributedString = AttributedString(text)
+        
+        do {
+            let mentionPattern = try NSRegularExpression(pattern: "(?:(?<=\\s)|^)@\\w+", options: [])
+            let matches = mentionPattern.matches(in: text, options: [], range: NSRange(location: 0, length: text.utf16.count))
+
+            for match in matches {
+                if let range = Range(match.range, in: text), let attributedRange = Range(match.range, in: attributedString),
+                   let mentions = comment.mentions,
+                   let user = mentions.first(where: { "@\($0.username.lowercased())".caseInsensitiveCompare(text[range]) == .orderedSame }),
+                   let url = URL(string: "\(K.appURLScheme)://user/\(user.user)") {
+                    attributedString[attributedRange].foregroundColor = .accentColor
+                    attributedString[attributedRange].link = url
+                }
+            }
+        } catch {
+            print("Failed to create regular expression: \(error)")
+        }
+
+        return attributedString
+    }
+    
+    private func CommentHeader(_ comment: Comment) -> some View {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading) {
+                HStack(spacing: 4) {
+                    Text(comment.author.name)
+                        .font(.custom(style: .caption))
+                        .fontWeight(.semibold)
+                        .fontWidth(.compressed)
+                        .foregroundStyle(.primary)
+                    
+                    Text(comment.createdAt.timeElapsed())
+                        .font(.custom(style: .caption))
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity)
+                
+                Text(makeAttributedString(comment))
+                    .font(.custom(style: .body))
+                    .multilineTextAlignment(.leading)
+            }
+            .frame(maxWidth: .infinity)
+            
+            VStack(spacing: 4) {
+                Image(systemName: comment.liked ? "heart.fill" : "heart")
+                    .font(.system(size: 16))
+                    .foregroundStyle(comment.liked ? Color.accentColor : Color.secondary)
+                    .scaleEffect(comment.liked ? 1.1 : 0.9)
+                    .animation(.bouncy, value: comment.liked)
+                
+                Text("\(comment.likes)")
+                    .font(.custom(style: .caption2))
+                    .foregroundStyle(.secondary)
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if !vm.loadingSections.contains(.submittingLike(comment.id)) {
+                    Task {
+                        await vm.updateCommentLike(for: comment.id, action: comment.liked ? .remove : .add)
+                    }
+                }
+            }
+            .padding(.top, 10)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture(count: 2, perform: {
+            Task {
+                await vm.updateCommentLike(for: comment.id, action: comment.liked ? .remove : .add)
+            }
+        })
+    }
+    
+    @ViewBuilder
+    private func Reply(_ comment: Comment, root: Binding<Comment>) -> some View {
+        CommentHeader(comment)
+            .id(comment.id + "header")
+            .matchedGeometryEffect(id: comment.id + "header", in: namespace)
+            .overlay(alignment: .topLeading) {
+                ProfileImage(comment.author.profileImage, size: 28)
+                    .offset(x: -34)
+            }
+            .transition(AnyTransition.asymmetric(insertion: .identity, removal: .opacity.animation(.easeOut(duration: 0.1))))
+        
+        HStack {
+            Text("Reply")
+                .onTapGesture {
+                    withAnimation {
+                        vm.replyTo = comment
+                    }
+                }
+            
+            if let repliesCount = comment.repliesCount, repliesCount > 0 {
+                Divider()
+                    .frame(height: 10)
+                
+                Text("See ^[\(repliesCount) reply](inflect: true)")
+                    .onTapGesture {
+                        Task {
+                            await vm.populateReplies(comment)
+                        }
+                        withAnimation {
+                            root.wrappedValue.showReply(comment.id)
+                        }
+                    }
+            }
+            
+            Spacer()
+        }
+        .foregroundStyle(.secondary)
+        .font(.custom(style: .caption))
+        .fontWeight(.semibold)
     }
 }
 
 #Preview {
-    CommentsView(for: "")
+    NavigationStack {
+        Color.themeBG
+            .sheet(isPresented: .constant(true), content: {
+                CommentsView(for: "")
+            })
+    }
 }

@@ -36,7 +36,7 @@ extension APIManager {
         _ endpoint: String,
         method: HTTPMethod = .get,
         body: Data? = nil,
-        queryParams: [String: String]? = nil,
+        queryParams: [String: String?]? = nil,
         token: String? = nil,
         contentType: ContentType = .applicationJson
     ) async throws -> T {
@@ -60,7 +60,7 @@ extension APIManager {
         _ endpoint: String,
         method: HTTPMethod = .get,
         body: Data? = nil,
-        queryParams: [String: String]? = nil,
+        queryParams: [String: String?]? = nil,
         token: String? = nil,
         contentType: ContentType = .applicationJson
     ) async throws -> HTTPURLResponse {
@@ -95,7 +95,7 @@ extension APIManager {
         endpoint: String,
         method: HTTPMethod,
         body: Data? = nil,
-        queryParams: [String: String]? = nil,
+        queryParams: [String: String?]? = nil,
         token: String? = nil,
         contentType: ContentType
     ) throws -> URLRequest {
@@ -105,7 +105,13 @@ extension APIManager {
         
         // Handle query parameters
         if let queryParams = queryParams {
-            components.queryItems = queryParams.map { URLQueryItem(name: $0.key, value: $0.value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)) }
+            components.queryItems = queryParams.compactMap {
+                return if let value = $0.value {
+                    URLQueryItem(name: $0.key, value: value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed))
+                } else {
+                    nil
+                }
+            }
         }
         
         guard let finalURL = components.url else {

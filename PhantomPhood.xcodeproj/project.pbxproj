@@ -207,6 +207,8 @@
 		0B46814F2AC5EB6B009C5EF9 /* CircleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */; };
 		0B4681512AC61D49009C5EF9 /* ProfileActivityCheckinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4681502AC61D49009C5EF9 /* ProfileActivityCheckinView.swift */; };
 		0B47FDA12B11060600F39527 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B47FDA02B11060600F39527 /* AppRouter.swift */; };
+		0B4C6FD02C060D2C00194305 /* MentionTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4C6FCF2C060D2C00194305 /* MentionTextField.swift */; };
+		0B4C6FD52C06123000194305 /* MentionTextFieldVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4C6FD42C06123000194305 /* MentionTextFieldVM.swift */; };
 		0B4DE48E2B4C4B540050E39D /* EditListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4DE48D2B4C4B540050E39D /* EditListView.swift */; };
 		0B4DE4902B4C4B600050E39D /* EditListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4DE48F2B4C4B600050E39D /* EditListVM.swift */; };
 		0B5070572BBC32DB00593C1B /* TwilioConversationsClient in Frameworks */ = {isa = PBXBuildFile; productRef = 0B5070562BBC32DB00593C1B /* TwilioConversationsClient */; };
@@ -220,8 +222,11 @@
 		0B547D822B3F33BA002C6336 /* MyProfileListsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B547D812B3F33BA002C6336 /* MyProfileListsVM.swift */; };
 		0B547D852B3F3D3B002C6336 /* CreateNewListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B547D842B3F3D3B002C6336 /* CreateNewListVM.swift */; };
 		0B547D872B3F3D52002C6336 /* CreateNewListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B547D862B3F3D52002C6336 /* CreateNewListView.swift */; };
+		0B5524962C0A2C8000857E08 /* MentionTextField2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5524952C0A2C8000857E08 /* MentionTextField2.swift */; };
+		0B5524982C0A2D2E00857E08 /* MentionTextFieldVM2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5524972C0A2D2E00857E08 /* MentionTextFieldVM2.swift */; };
 		0B5BD1EE2BD95FCE00DDCD28 /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = 0B5BD1ED2BD95FCE00DDCD28 /* StripeApplePay */; };
 		0B5BD1F02BD95FCE00DDCD28 /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 0B5BD1EF2BD95FCE00DDCD28 /* StripePaymentSheet */; };
+		0B5E88682BFB69020049AEDF /* MyProfileGiftsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5E88672BFB69020049AEDF /* MyProfileGiftsView.swift */; };
 		0B5EB1C02B56DB6A00497847 /* CustomMapMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5EB1BF2B56DB6A00497847 /* CustomMapMarker.swift */; };
 		0B62BE902B69A9A5004A3CFE /* HomeForYouView17.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B62BE8F2B69A9A5004A3CFE /* HomeForYouView17.swift */; };
 		0B6495532AB0A51F000E57AF /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6495522AB0A51F000E57AF /* Validator.swift */; };
@@ -645,6 +650,8 @@
 		0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleLabelView.swift; sourceTree = "<group>"; };
 		0B4681502AC61D49009C5EF9 /* ProfileActivityCheckinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileActivityCheckinView.swift; sourceTree = "<group>"; };
 		0B47FDA02B11060600F39527 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
+		0B4C6FCF2C060D2C00194305 /* MentionTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MentionTextField.swift; sourceTree = "<group>"; };
+		0B4C6FD42C06123000194305 /* MentionTextFieldVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MentionTextFieldVM.swift; sourceTree = "<group>"; };
 		0B4DE48D2B4C4B540050E39D /* EditListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditListView.swift; sourceTree = "<group>"; };
 		0B4DE48F2B4C4B600050E39D /* EditListVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditListVM.swift; sourceTree = "<group>"; };
 		0B5070582BBC434900593C1B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -657,6 +664,9 @@
 		0B547D812B3F33BA002C6336 /* MyProfileListsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileListsVM.swift; sourceTree = "<group>"; };
 		0B547D842B3F3D3B002C6336 /* CreateNewListVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewListVM.swift; sourceTree = "<group>"; };
 		0B547D862B3F3D52002C6336 /* CreateNewListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewListView.swift; sourceTree = "<group>"; };
+		0B5524952C0A2C8000857E08 /* MentionTextField2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MentionTextField2.swift; sourceTree = "<group>"; };
+		0B5524972C0A2D2E00857E08 /* MentionTextFieldVM2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MentionTextFieldVM2.swift; sourceTree = "<group>"; };
+		0B5E88672BFB69020049AEDF /* MyProfileGiftsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileGiftsView.swift; sourceTree = "<group>"; };
 		0B5EB1BF2B56DB6A00497847 /* CustomMapMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMapMarker.swift; sourceTree = "<group>"; };
 		0B62BE8F2B69A9A5004A3CFE /* HomeForYouView17.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeForYouView17.swift; sourceTree = "<group>"; };
 		0B6495522AB0A51F000E57AF /* Validator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validator.swift; sourceTree = "<group>"; };
@@ -939,6 +949,7 @@
 			isa = PBXGroup;
 			children = (
 				0B013EEF2AB78BA5003CB57F /* EditProfileView.swift */,
+				0B5E88672BFB69020049AEDF /* MyProfileGiftsView.swift */,
 				0B547D7F2B3F33AA002C6336 /* MyProfileListsView.swift */,
 				0B3BAFD02BF6502B00E7A4F3 /* MyProfilePostsView.swift */,
 				0BEE15252AB5028400DF7211 /* MyProfileView.swift */,
@@ -1315,6 +1326,17 @@
 			path = QuickActions;
 			sourceTree = "<group>";
 		};
+		0B4C6FD12C060E0200194305 /* MentionTextField */ = {
+			isa = PBXGroup;
+			children = (
+				0B4C6FCF2C060D2C00194305 /* MentionTextField.swift */,
+				0B5524952C0A2C8000857E08 /* MentionTextField2.swift */,
+				0B4C6FD42C06123000194305 /* MentionTextFieldVM.swift */,
+				0B5524972C0A2D2E00857E08 /* MentionTextFieldVM2.swift */,
+			);
+			path = MentionTextField;
+			sourceTree = "<group>";
+		};
 		0B547D832B3F3D1C002C6336 /* CreateNewList */ = {
 			isa = PBXGroup;
 			children = (
@@ -1599,6 +1621,7 @@
 				0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */,
 				0BC9A3952BE1059400C0EA4E /* Comments */,
 				0BC9A3972BE106AD00C0EA4E /* Gifting */,
+				0B4C6FD12C060E0200194305 /* MentionTextField */,
 				0B448E672B832DD100179D0E /* QuickActions */,
 				0BD9F9872B4DAF4A0040FCDA /* UserActivity */,
 			);
@@ -2316,6 +2339,7 @@
 				0BAAC8032B98CEFE00FFFC32 /* GoogleReview.swift in Sources */,
 				0B226F632B3325350036B8BE /* StarRating.swift in Sources */,
 				0B383CF32B87852200D68678 /* RepeatItem.swift in Sources */,
+				0B5524982C0A2D2E00857E08 /* MentionTextFieldVM2.swift in Sources */,
 				0B1610C42B62A14500DCAFA5 /* NewCheckinVM.swift in Sources */,
 				0B2920812B5590560026DDDE /* PlaceSelectorView.swift in Sources */,
 				0BBFFE2E2B9BDFE1003A05B1 /* EventMediaVM.swift in Sources */,
@@ -2345,6 +2369,7 @@
 				0B2694B62B8E90C4004FA5C8 /* ImageSaver.swift in Sources */,
 				0B9950DD2BBEF18E0060B6AF /* TwilioParticipant.swift in Sources */,
 				0BCBC1902ACDEDDE00992D8E /* PlaceReviewsVM.swift in Sources */,
+				0B4C6FD02C060D2C00194305 /* MentionTextField.swift in Sources */,
 				0B0E6D222ABB077B00EC62EE /* UserActivityItemTemplate.swift in Sources */,
 				0B4016752B046AA5000F1263 /* HomeForYouView.swift in Sources */,
 				0B9C026F2B45C267000C4774 /* AddToListView.swift in Sources */,
@@ -2514,6 +2539,7 @@
 				0BC2E3162B2207EB0002649D /* TaskManager.swift in Sources */,
 				0BB0C9592B30B3F00013DEAE /* Emoji.swift in Sources */,
 				0BF17BA92AF2FAA500D87812 /* ProfileCheckinsVM.swift in Sources */,
+				0B4C6FD52C06123000194305 /* MentionTextFieldVM.swift in Sources */,
 				0B0183582AB3BF16008E887F /* LeaderboardView.swift in Sources */,
 				0B4DE4902B4C4B600050E39D /* EditListVM.swift in Sources */,
 				0B2E98802AB907340013301D /* UIImage.swift in Sources */,
@@ -2556,6 +2582,7 @@
 				0B8B15D22BB5CF2900A955EA /* MapActivitySheet.swift in Sources */,
 				0BA5BDB92BDFEE9900B4D35E /* SheetsManager.swift in Sources */,
 				0BF5B4BC2AB37B8200DEC403 /* AppData.swift in Sources */,
+				0B5E88682BFB69020049AEDF /* MyProfileGiftsView.swift in Sources */,
 				0B9C026A2B45A1F0000C4774 /* PlacesListView.swift in Sources */,
 				0B0BB7822BB4B47B00DE3728 /* Double.swift in Sources */,
 				0B46814F2AC5EB6B009C5EF9 /* CircleLabelView.swift in Sources */,
@@ -2605,6 +2632,7 @@
 				0B547D822B3F33BA002C6336 /* MyProfileListsVM.swift in Sources */,
 				0BBFFE2C2B9BDF94003A05B1 /* EventMediaView.swift in Sources */,
 				0B0E6D342ABB872F00EC62EE /* Reaction.swift in Sources */,
+				0B5524962C0A2C8000857E08 /* MentionTextField2.swift in Sources */,
 				0BEF7A3E2B0EB60F001532E7 /* CompleteTheUserInfoView.swift in Sources */,
 				0B226F6B2B336B170036B8BE /* UserProfileAchievements.swift in Sources */,
 			);
@@ -2740,13 +2768,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PhantomPhood/PhantomPhood.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PhantomPhood/Preview Content\"";
 				DEVELOPMENT_TEAM = BNPN3KK5A7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PhantomPhood/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Phantom Phood";
+				INFOPLIST_KEY_CFBundleDisplayName = Mundo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to let you capture and upload photos/videos directly.";
 				INFOPLIST_KEY_NSContactsUsageDescription = "This helps you and others to find people to follow and helps you connect and interact with people you already follow. Your contacts will be synced and securely stored in Phantom Phood's servers.";
@@ -2780,13 +2808,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PhantomPhood/PhantomPhood.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PhantomPhood/Preview Content\"";
 				DEVELOPMENT_TEAM = BNPN3KK5A7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PhantomPhood/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Phantom Phood";
+				INFOPLIST_KEY_CFBundleDisplayName = Mundo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to let you capture and upload photos/videos directly.";
 				INFOPLIST_KEY_NSContactsUsageDescription = "This helps you and others to find people to follow and helps you connect and interact with people you already follow. Your contacts will be synced and securely stored in Phantom Phood's servers.";

@@ -29,22 +29,19 @@ final class NotificationsVM: LoadingSections, ObservableObject {
     
     func getNotifications(_ action: RefreshNewAction) async {
         guard !loadingSections.contains(.fetchingNotifications) else { return }
-
+        
         if action == .refresh {
             notificationsPagination = nil
-        } else if let notificationsPagination {
-            if notificationsPagination.page * notificationsPagination.limit >= notificationsPagination.totalCount {
-                return
-            }
+        } else if let notificationsPagination, !notificationsPagination.hasMore {
+            return
         }
-
+        
         setLoadingState(.fetchingNotifications, to: true)
         do {
-            let page: Int
-            if let notificationsPagination {
-                page = notificationsPagination.page + 1
+            let page = if let notificationsPagination {
+                notificationsPagination.page + 1
             } else {
-                page = 1
+                1
             }
             
             let data = try await notificationsDM.getNotifications(page: page)
@@ -66,22 +63,19 @@ final class NotificationsVM: LoadingSections, ObservableObject {
     
     func getFollowRequests(_ action: RefreshNewAction) async {
         guard !loadingSections.contains(.fetchingFollowRequests) else { return }
-
+        
         if action == .refresh {
             followRequestsPagination = nil
-        } else if let followRequestsPagination {
-            if followRequestsPagination.page * followRequestsPagination.limit >= followRequestsPagination.totalCount {
-                return
-            }
+        } else if let followRequestsPagination, !followRequestsPagination.hasMore {
+            return
         }
-
+        
         setLoadingState(.fetchingFollowRequests, to: true)
         do {
-            let page: Int
-            if let followRequestsPagination {
-                page = followRequestsPagination.page + 1
+            let page = if let followRequestsPagination {
+                followRequestsPagination.page + 1
             } else {
-                page = 1
+                1
             }
             
             let data = try await userProfileDM.getFollowRequests(page: page)

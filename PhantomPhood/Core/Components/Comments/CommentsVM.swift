@@ -6,8 +6,11 @@
 //
 
 import Foundation
+import SwiftUI
 
 final class CommentsVM: LoadingSections, ObservableObject {
+    static let commentsPageLimit = 30
+    
     private let userActivityDM = UserActivityDM()
     private let commentsDM = CommentsDM()
     
@@ -17,28 +20,51 @@ final class CommentsVM: LoadingSections, ObservableObject {
         self.activityId = activityId
     }
     
-    @Published var commentContent = ""
-    @Published var comments: [Comment] = []
     @Published var loadingSections = Set<LoadingSection>()
     
-    private var commentsPage = 1
+    @Published var commentContent = ""
+    @Published var replyTo: Comment? = nil
     
-    func getComments() async {
+    @Published var comments: [Comment] = []
+    
+    @Published var repliesDict = [String: Comment]()
+    
+    private var commentsPagination: Pagination? = nil
+    
+    func getComments(_ action: RefreshNewAction) async {
         guard !loadingSections.contains(.gettingComments) else { return }
+        
+        if action == .refresh {
+            commentsPagination = nil
+        } else if let commentsPagination, !commentsPagination.hasMore {
+            return
+        }
         
         setLoadingState(.gettingComments, to: true)
         do {
-            let data = try await userActivityDM.getActivityComments(for: activityId, page: commentsPage)
+            let page = if let commentsPagination {
+                commentsPagination.page + 1
+            } else {
+                1
+            }
+            
+            let data = try await userActivityDM.getActivityComments(for: activityId, page: page, limit: Self.commentsPageLimit)
             
             await MainActor.run {
-                if commentsPage == 1 {
-                    comments = data.data
+                if action == .refresh || comments.isEmpty {
+                    comments = data.data.comments
+                    repliesDict = Dictionary(uniqueKeysWithValues: data.data.replies.map { ($0.id, $0) })
                 } else {
-                    comments.append(contentsOf: data.data)
+                    for cm in data.data.comments {
+                        comments.append(cm)
+                    }
+                    for cm in data.data.replies {
+                        repliesDict.updateValue(cm, forKey: cm.id)
+                    }
                 }
             }
             
-            commentsPage += 1
+            commentsPagination = data.pagination
         } catch {
             presentErrorToast(error, function: #function)
         }
@@ -50,7 +76,7 @@ final class CommentsVM: LoadingSections, ObservableObject {
         
         setLoadingState(.submittingComment, to: true)
         do {
-            let data = try await commentsDM.submitComment(for: activityId, content: commentContent)
+            let data = try await commentsDM.submitComment(for: activityId, content: commentContent, parent: replyTo?.id)
             
             await MainActor.run {
                 commentContent = ""
@@ -70,21 +96,25 @@ final class CommentsVM: LoadingSections, ObservableObject {
         HapticManager.shared.impact(style: .light)
         
         await MainActor.run {
-            self.comments = self.comments.map({ comment in
-                if comment.id == commentId {
-                    var updatedComment = comment
-                    switch action {
-                    case .add:
-                        updatedComment.liked = true
-                        updatedComment.likes += 1
-                    case .remove:
-                        updatedComment.liked = false
-                        updatedComment.likes -= 1
-                    }
-                    return updatedComment
+            if repliesDict[commentId] != nil {
+                switch action {
+                case .add:
+                    repliesDict[commentId]!.liked = true
+                    repliesDict[commentId]!.likes += 1
+                case .remove:
+                    repliesDict[commentId]!.liked = false
+                    repliesDict[commentId]!.likes -= 1
                 }
-                return comment
-            })
+            } else if let index = self.comments.firstIndex(where: { $0.id == commentId }) {
+                switch action {
+                case .add:
+                    self.comments[index].liked = true
+                    self.comments[index].likes += 1
+                case .remove:
+                    self.comments[index].liked = false
+                    self.comments[index].likes -= 1
+                }
+            }
         }
         
         setLoadingState(.submittingLike(commentId), to: true)
@@ -92,32 +122,105 @@ final class CommentsVM: LoadingSections, ObservableObject {
             let data = try await commentsDM.updateCommentLike(for: commentId, action: action)
             
             await MainActor.run {
-                self.comments = self.comments.map({ comment in
-                    return comment.id == commentId ? data : comment
-                })
+                if repliesDict[commentId] != nil {
+                    repliesDict[commentId]!.liked = data.liked
+                    repliesDict[commentId]!.likes = data.likes
+                } else if let index = self.comments.firstIndex(where: { $0.id == commentId }) {
+                    self.comments[index].liked = data.liked
+                    self.comments[index].likes = data.likes
+                }
             }
         } catch {
             HapticManager.shared.impact(style: .heavy)
+            
             await MainActor.run {
-                self.comments = self.comments.map({ comment in
-                    if comment.id == commentId {
-                        var updatedComment = comment
-                        switch action {
-                        case .add:
-                            updatedComment.liked = false
-                            updatedComment.likes -= 1
-                        case .remove:
-                            updatedComment.liked = true
-                            updatedComment.likes += 1
-                        }
-                        return updatedComment
+                if repliesDict[commentId] != nil {
+                    switch action {
+                    case .add:
+                        repliesDict[commentId]!.liked = false
+                        repliesDict[commentId]!.likes -= 1
+                    case .remove:
+                        repliesDict[commentId]!.liked = true
+                        repliesDict[commentId]!.likes += 1
                     }
-                    return comment
-                })
+                } else if let index = self.comments.firstIndex(where: { $0.id == commentId }) {
+                    switch action {
+                    case .add:
+                        self.comments[index].liked = false
+                        self.comments[index].likes -= 1
+                    case .remove:
+                        self.comments[index].liked = true
+                        self.comments[index].likes += 1
+                    }
+                }
             }
             presentErrorToast(error, function: #function)
         }
         setLoadingState(.submittingLike(commentId), to: false)
+    }
+    
+    func getComment(_ comment: Comment, _ depth: [String]?) -> Comment {
+        var cm = comment
+        if let depth {
+            if let last = depth.last, let reply = repliesDict[last] {
+                cm = reply
+            }
+        }
+        return cm
+    }
+    
+    @MainActor
+    func populateReplies(_ comment: Comment) async {
+        guard let repliesCount = comment.repliesCount,
+              repliesCount > 0,
+              repliesCount > (comment.replies?.count ?? 0) else { return }
+        
+        do {
+            let page = if let replies = comment.replies {
+                Int(floor(Double(replies.count) / Double(Self.commentsPageLimit))) + 1
+            } else {
+                1
+            }
+            
+            let data = try await commentsDM.getReplies(for: comment.id, page: page, limit: Self.commentsPageLimit)
+            
+            for item in data {
+                repliesDict.updateValue(item, forKey: item.id)
+            }
+            
+            if let cm = repliesDict[comment.id] {
+                // In replies
+                
+                // Update reply ids
+                var newComment = cm
+                if let replies = newComment.replies {
+                    for item in data {
+                        if !replies.contains(where: { $0 == item.id }) {
+                            newComment.replies!.append(item.id)
+                        }
+                    }
+                } else {
+                    newComment.replies = data.map({ $0.id })
+                }
+                repliesDict.updateValue(newComment, forKey: comment.id)
+            } else if let cmIndex = comments.firstIndex(where: { $0.id == comment.id }) {
+                // In root comments
+                
+                var newComment = comments[cmIndex]
+                if let replies = newComment.replies {
+                    for item in data {
+                        if !replies.contains(where: { $0 == item.id }) {
+                            newComment.replies!.append(item.id)
+                        }
+                    }
+                } else {
+                    newComment.replies = data.map({ $0.id })
+                }
+                comments[cmIndex] = newComment
+            }
+        } catch {
+            print(error)
+        }
     }
     
     // MARK: Enums

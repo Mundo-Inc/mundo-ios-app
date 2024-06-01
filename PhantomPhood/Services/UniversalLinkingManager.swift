@@ -78,7 +78,18 @@ final class UniversalLinkingManager {
         }),
         "user": RouteScheme(pattern: ["id"], routeGetter: { components in
             if let first = components.first {
-                return AppRoute.userProfile(userId: first)
+                if let currentUser = Authentication.shared.currentUser, currentUser.id == first || "@\(currentUser.username)".caseInsensitiveCompare(first) == .orderedSame {
+                    if !AppData.shared.navStack.isEmpty {
+                        AppData.shared.navStack.removeAll()
+                    }
+                    AppData.shared.activeTab = .myProfile
+                    // Close sheets
+                    if SheetsManager.shared.presenting != nil {
+                        SheetsManager.shared.presenting = nil
+                    }
+                } else {
+                    return AppRoute.userProfile(userId: first)
+                }
             }
             
             throw LinkingError.missingParam
@@ -148,12 +159,17 @@ final class UniversalLinkingManager {
     }
     
     /// Handles incoming URL
-    /// - Note: e.g. `phantom://tab=home/nav=place/id=645c1d1ab41f8e12a0d166bc`
     func handleIncomingURL(_ url: URL) {
-        let stripeHandled = StripeAPI.handleURLCallback(with: url)
+        let stripeHandled = url.scheme != K.appURLScheme ? StripeAPI.handleURLCallback(with: url) : false
         
         if !stripeHandled {
-            var pathComponents = url.pathComponents
+            var pathComponents: [String]
+            
+            if url.scheme == K.appURLScheme, let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "\(K.appURLScheme)://", with: "https://\(K.appDomain)/")) {
+                pathComponents = newURL.pathComponents
+            } else {
+                pathComponents = url.pathComponents
+            }
             
             if let first = pathComponents.first, first == "/" {
                 pathComponents.removeFirst()
@@ -178,10 +194,20 @@ final class UniversalLinkingManager {
                 /// return if not signed in
                 guard auth.userSession != nil else { return }
                 appData.goTo(route)
+                
+                // Close sheets
+                if SheetsManager.shared.presenting != nil {
+                    SheetsManager.shared.presenting = nil
+                }
             case .auth:
                 guard let route = try? item.getAuthRoute(pathComponents), auth.userSession == nil else { return }
                 if appData.authNavStack.isEmpty {
                     appData.authNavStack.append(route)
+                    
+                    // Close sheets
+                    if SheetsManager.shared.presenting != nil {
+                        SheetsManager.shared.presenting = nil
+                    }
                 }
             }
         }

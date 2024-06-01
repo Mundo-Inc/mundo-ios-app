@@ -166,10 +166,8 @@ struct MyProfileView: View {
                                             .frame(height: 32)
                                             .padding(.horizontal)
                                             .foregroundStyle(vm.activeTab == tab ? Color.accentColor : Color.secondary)
-                                            .opacity(tab == .gifts ? 0.5 : 1)
                                         }
                                         .animation(.easeInOut(duration: 0), value: vm.activeTab)
-                                        .disabled(tab == .gifts)
                                         
                                         if tab != Array(MyProfileVM.Tab.allCases).last {
                                             Divider()
@@ -195,7 +193,7 @@ struct MyProfileView: View {
                         case .lists:
                             MyProfileListsView()
                         case .gifts:
-                            Text("Gifts")
+                            MyProfileGiftsView()
                         }
                         
                         Spacer()

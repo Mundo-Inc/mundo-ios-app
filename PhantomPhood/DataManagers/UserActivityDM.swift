@@ -26,7 +26,11 @@ final class UserActivityDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data: APIResponseWithPagination<[FeedItem]> = try await apiManager.requestData("/users/\(userId)/userActivities?page=\(page)&limit=\(limit)\(activityType == .all ? "" : "&type=\(activityType.rawValue)")", method: .get, token: token)
+        let data: APIResponseWithPagination<[FeedItem]> = try await apiManager.requestData("/users/\(userId)/userActivities", method: .get, queryParams: [
+            "page": String(page),
+            "limit": String(limit),
+            "type": activityType == .all ? nil : activityType.rawValue
+        ], token: token)
         
         return data
     }
@@ -37,18 +41,29 @@ final class UserActivityDM {
         }
         
         let types = activityTypes.map { $0.rawValue }.joined(separator: ",")
-        let data: APIResponseWithPagination<[FeedItem]> = try await apiManager.requestData("/users/\(userId)/userActivities?types=\(types)&page=\("\(page)")&limit=\(limit)", method: .get, token: token)
+        let data: APIResponseWithPagination<[FeedItem]> = try await apiManager.requestData("/users/\(userId)/userActivities?types=\(types)", method: .get, queryParams: [
+            "page": String(page),
+            "limit": String(limit)
+        ], token: token)
         
         return data
     }
     
-    func getActivityComments(for activityId: String, page: Int) async throws -> APIResponseWithPagination<[Comment]> {
+    func getActivityComments(for activityId: String, page: Int , limit: Int = 20) async throws -> APIResponseWithPagination<CommentsResponse> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data: APIResponseWithPagination<[Comment]> = try await apiManager.requestData("/feeds/\(activityId)/comments?page=\(page)", token: token)
+        let data: APIResponseWithPagination<CommentsResponse> = try await apiManager.requestData("/feeds/\(activityId)/comments", queryParams: [
+            "page": String(page),
+            "limit": String(limit)
+        ], token: token)
         
         return data
+    }
+    
+    struct CommentsResponse: Decodable {
+        let comments: [Comment]
+        let replies: [Comment]
     }
 }
