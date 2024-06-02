@@ -762,8 +762,6 @@
 		0BA5BDA92BDFADDF00B4D35E /* PaymentsSettingVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsSettingVM.swift; sourceTree = "<group>"; };
 		0BA5BDAB2BDFADF300B4D35E /* PaymentsSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsSettingView.swift; sourceTree = "<group>"; };
 		0BA5BDAD2BDFB7C700B4D35E /* LoadingSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingSections.swift; sourceTree = "<group>"; };
-		0BA5BDB22BDFE12C00B4D35E /* Environment.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Environment.xcconfig; sourceTree = "<group>"; };
-		0BA5BDB52BDFE30500B4D35E /* DevEnvironment.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DevEnvironment.xcconfig; sourceTree = "<group>"; };
 		0BA5BDB82BDFEE9900B4D35E /* SheetsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetsManager.swift; sourceTree = "<group>"; };
 		0BA5BDBA2BE0386A00B4D35E /* CommentsDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsDM.swift; sourceTree = "<group>"; };
 		0BAAC8022B98CEFE00FFFC32 /* GoogleReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleReview.swift; sourceTree = "<group>"; };
@@ -841,6 +839,8 @@
 		0BE3118D2AC4842700CF9BA5 /* ReviewVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewVideoView.swift; sourceTree = "<group>"; };
 		0BE3C8872B261DB40048F2A6 /* PhotosPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosPickerItem.swift; sourceTree = "<group>"; };
 		0BE3F1422B5756A200D96EE8 /* ExploreVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreVM.swift; sourceTree = "<group>"; };
+		0BE5877E2C0D0AAE00DD2936 /* Environment.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Environment.xcconfig; sourceTree = "<group>"; };
+		0BE587802C0D0AC000DD2936 /* DevEnvironment.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DevEnvironment.xcconfig; sourceTree = "<group>"; };
 		0BE8EC792ABCD3BA00512872 /* ProfileActivityFollowingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileActivityFollowingView.swift; sourceTree = "<group>"; };
 		0BEC8C852AB7B08600B94AFC /* EditProfileVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileVM.swift; sourceTree = "<group>"; };
 		0BECB8D62B73F741007B51A1 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
@@ -1537,8 +1537,8 @@
 				0B77EA3C2AAF855500C8DF87 /* ContentView.swift */,
 				0B77EA3A2AAF855500C8DF87 /* PhantomPhoodApp.swift */,
 				0B77EA3E2AAF855600C8DF87 /* Assets.xcassets */,
-				0BA5BDB52BDFE30500B4D35E /* DevEnvironment.xcconfig */,
-				0BA5BDB22BDFE12C00B4D35E /* Environment.xcconfig */,
+				0BE5877E2C0D0AAE00DD2936 /* Environment.xcconfig */,
+				0BE587802C0D0AC000DD2936 /* DevEnvironment.xcconfig */,
 				0B6495582AB1FD04000E57AF /* Core */,
 				0B9950BD2BBED5640060B6AF /* CoreDataModels */,
 				0BCD57E32B28B35700A1C914 /* DataManagers */,
@@ -2164,7 +2164,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1510;
+				LastUpgradeCheck = 1540;
 				TargetAttributes = {
 					0B77EA362AAF855500C8DF87 = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -2643,7 +2643,6 @@
 /* Begin XCBuildConfiguration section */
 		0B77EA432AAF855600C8DF87 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0BA5BDB52BDFE30500B4D35E /* DevEnvironment.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -2706,7 +2705,6 @@
 		};
 		0B77EA442AAF855600C8DF87 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0BA5BDB22BDFE12C00B4D35E /* Environment.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -2791,7 +2789,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.71.1;
+				MARKETING_VERSION = 0.71.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2831,7 +2829,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.71.1;
+				MARKETING_VERSION = 0.71.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3025,8 +3023,7 @@
 				0B6796C22BED059E00CC3DA1 /* DataContainer.xcdatamodel */,
 			);
 			currentVersion = 0B6796C72BED073C00CC3DA1 /* DataContainerWithUserPrivacyFlag.xcdatamodel */;
-			name = DataContainer.xcdatamodeld;
-			path = /Users/kia/Documents/xCode/PhantomPhood/PhantomPhood/CoreDataModels/DataContainer.xcdatamodeld;
+			path = DataContainer.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
@@ -3037,8 +3034,7 @@
 				0B6796C42BED059E00CC3DA1 /* UserDataContainer.xcdatamodel */,
 			);
 			currentVersion = 0B6796C82BED099000CC3DA1 /* UserDataContainerWithUserPrivacyFlag.xcdatamodel */;
-			name = UserDataContainer.xcdatamodeld;
-			path = /Users/kia/Documents/xCode/PhantomPhood/PhantomPhood/CoreDataModels/UserDataContainer.xcdatamodeld;
+			path = UserDataContainer.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
@@ -3048,8 +3044,7 @@
 				0B9950C22BBED5C40060B6AF /* ConversationsDataContainer.xcdatamodel */,
 			);
 			currentVersion = 0B9950C22BBED5C40060B6AF /* ConversationsDataContainer.xcdatamodel */;
-			name = ConversationsDataContainer.xcdatamodeld;
-			path = /Users/kia/Documents/xCode/PhantomPhood/PhantomPhood/CoreDataModels/ConversationsDataContainer.xcdatamodeld;
+			path = ConversationsDataContainer.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
