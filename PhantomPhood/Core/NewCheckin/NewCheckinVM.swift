@@ -114,7 +114,7 @@ final class NewCheckinVM: ObservableObject {
             
             self.loadingSections.remove(.submitting)
         }, onError: { error in
-            self.toastVM.toast(.init(type: .error, title: "Error", message: "Couldn't check in :("))
+            presentErrorToast(error)
             self.loadingSections.remove(.submitting)
         }))
     }

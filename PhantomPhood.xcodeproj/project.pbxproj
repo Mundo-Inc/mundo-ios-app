@@ -20,6 +20,7 @@
 		0B026CDC2B5AC7B5002DAD24 /* PhantomCoins.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CDB2B5AC7B5002DAD24 /* PhantomCoins.swift */; };
 		0B026CDE2B5AC863002DAD24 /* PhantomCoinsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */; };
 		0B026CE02B5AED32002DAD24 /* RewardsHubVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CDF2B5AED32002DAD24 /* RewardsHubVM.swift */; };
+		0B08C80F2C0E18D3009F328E /* ToastItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B08C80E2C0E18D3009F328E /* ToastItem.swift */; };
 		0B0A38CD2B90BED50088D684 /* PlaceIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0A38CC2B90BED50088D684 /* PlaceIdentifier.swift */; };
 		0B0BB7792BB460DE00DE3728 /* DataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0BB7782BB460DE00DE3728 /* DataStack.swift */; };
 		0B0BB77B2BB4610100DE3728 /* UserDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0BB77A2BB4610100DE3728 /* UserDataStack.swift */; };
@@ -467,6 +468,7 @@
 		0B026CDB2B5AC7B5002DAD24 /* PhantomCoins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomCoins.swift; sourceTree = "<group>"; };
 		0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomCoinsVM.swift; sourceTree = "<group>"; };
 		0B026CDF2B5AED32002DAD24 /* RewardsHubVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsHubVM.swift; sourceTree = "<group>"; };
+		0B08C80E2C0E18D3009F328E /* ToastItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastItem.swift; sourceTree = "<group>"; };
 		0B0A38CC2B90BED50088D684 /* PlaceIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceIdentifier.swift; sourceTree = "<group>"; };
 		0B0BB7782BB460DE00DE3728 /* DataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStack.swift; sourceTree = "<group>"; };
 		0B0BB77A2BB4610100DE3728 /* UserDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataStack.swift; sourceTree = "<group>"; };
@@ -1599,6 +1601,7 @@
 			isa = PBXGroup;
 			children = (
 				0B226F682B3359F40036B8BE /* Achievement.swift */,
+				0B08C80E2C0E18D3009F328E /* ToastItem.swift */,
 				0B76C9D22B712F120013CE3E /* AnimatedStarRating.swift */,
 				0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */,
 				0B7A80B12BA1EE6E00192192 /* CTAButton.swift */,
@@ -2352,6 +2355,7 @@
 				0BC84A712AD0A8B100D723AA /* PlaceMediaVM.swift in Sources */,
 				0B35B7B32B0DFCE000822BA6 /* SignInGoogleHelper.swift in Sources */,
 				0BABE9D62B59822B003EF70B /* RewardsHubView.swift in Sources */,
+				0B08C80F2C0E18D3009F328E /* ToastItem.swift in Sources */,
 				0B37ABFC2AD7408E00E8D4BC /* ToastVM.swift in Sources */,
 				0BC9BBEF2B922FE100477654 /* ReviewDM.swift in Sources */,
 				0B2920832B5590640026DDDE /* PlaceSelectorVM.swift in Sources */,
@@ -2643,6 +2647,7 @@
 /* Begin XCBuildConfiguration section */
 		0B77EA432AAF855600C8DF87 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0BE587802C0D0AC000DD2936 /* DevEnvironment.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -2705,6 +2710,7 @@
 		};
 		0B77EA442AAF855600C8DF87 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0BE5877E2C0D0AAE00DD2936 /* Environment.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -2772,7 +2778,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PhantomPhood/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Mundo;
+				INFOPLIST_KEY_CFBundleDisplayName = "Phantom Phood";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to let you capture and upload photos/videos directly.";
 				INFOPLIST_KEY_NSContactsUsageDescription = "This helps you and others to find people to follow and helps you connect and interact with people you already follow. Your contacts will be synced and securely stored in Phantom Phood's servers.";
@@ -2789,7 +2795,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.71.2;
+				MARKETING_VERSION = 0.72.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2812,7 +2818,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PhantomPhood/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Mundo;
+				INFOPLIST_KEY_CFBundleDisplayName = "Phantom Phood";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to let you capture and upload photos/videos directly.";
 				INFOPLIST_KEY_NSContactsUsageDescription = "This helps you and others to find people to follow and helps you connect and interact with people you already follow. Your contacts will be synced and securely stored in Phantom Phood's servers.";
@@ -2829,7 +2835,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.71.2;
+				MARKETING_VERSION = 0.72.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

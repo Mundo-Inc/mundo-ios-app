@@ -6,12 +6,53 @@
 //
 
 import Foundation
+import CryptoKit
 
 final class ReportDM {
     private let apiManager = APIManager.shared
     private let auth: Authentication = Authentication.shared
     
+    struct CrashReport: Encodable {
+        let function: String
+        let file: String
+        let line: Int
+        let message: String
+        
+        func encrypt(with: String) -> String? {
+            let encoder = JSONEncoder()
+            do {
+                let jsonData = try encoder.encode(self)
+                let keyData = SHA256.hash(data: Data(with.utf8))
+                let key = SymmetricKey(data: keyData)
+                let sealedBox = try AES.GCM.seal(jsonData, using: key)
+                return sealedBox.combined?.base64EncodedString()
+            } catch {
+                print("Encryption error: \(error)")
+                return nil
+            }
+        }
+    }
+    
     // MARK: - Public methods
+    
+    func reportBug(report: CrashReport) async throws {
+        if let userId = auth.currentUser?.id {
+            guard let token = await auth.getToken(),
+                  let reportString = report.encrypt(with: userId) else {
+                throw URLError(.userAuthenticationRequired)
+            }
+            
+            struct CrashReportBody: Encodable {
+                let body: String
+            }
+            
+            let body = try apiManager.createRequestBody(CrashReportBody(body: reportString))
+            try await apiManager.requestNoContent("/general/bug", method: .post, body: body, token: token)
+        } else {
+            let body = try apiManager.createRequestBody(report)
+            try await apiManager.requestNoContent("/general/bug", method: .post, body: body)
+        }
+    }
     
     func report(item: ReportType, flagType: FlagType, note: String) async throws {
         guard let token = await auth.getToken() else {

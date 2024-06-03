@@ -898,7 +898,7 @@ extension HomeActivityItem {
         let reviewDM = ReviewDM()
         do {
             try await reviewDM.remove(reviewId: id)
-            ToastVM.shared.toast(.init(type: .error, title: "Deleted", message: "Your review has been deleted"))
+            ToastVM.shared.toast(.init(type: .success, title: "Deleted", message: "Your review has been deleted"))
             switch forTab {
             case .following:
                 await vm.updateFollowingData(.refresh)
@@ -914,7 +914,7 @@ extension HomeActivityItem {
         let checkInDM = CheckInDM()
         do {
             try await checkInDM.deleteOne(byId: id)
-            ToastVM.shared.toast(.init(type: .error, title: "Deleted", message: "Your activity has been deleted"))
+            ToastVM.shared.toast(.init(type: .success, title: "Deleted", message: "Your activity has been deleted"))
             switch forTab {
             case .following:
                 await vm.updateFollowingData(.refresh)
@@ -930,7 +930,7 @@ extension HomeActivityItem {
         let homemadeDM = HomeMadeDM()
         do {
             try await homemadeDM.deleteOne(byId: id)
-            ToastVM.shared.toast(.init(type: .error, title: "Deleted", message: "Your activity has been deleted"))
+            ToastVM.shared.toast(.init(type: .success, title: "Deleted", message: "Your activity has been deleted"))
             switch forTab {
             case .following:
                 await vm.updateFollowingData(.refresh)

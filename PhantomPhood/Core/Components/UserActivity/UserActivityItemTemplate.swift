@@ -182,9 +182,9 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
                         progress: .init(level: 7, xp: 300),
                         connectionStatus: nil
                     ),
+                    mentions: [],
                     likes: 4,
-                    liked: true,
-                    mentions: []
+                    liked: true
                 )
             ]
         ) {
@@ -220,9 +220,9 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
                         progress: .init(level: 80, xp: 10000),
                         connectionStatus: nil
                     ),
+                    mentions: [],
                     likes: 4,
-                    liked: true,
-                    mentions: []
+                    liked: true
                 )
             ]
         ) {

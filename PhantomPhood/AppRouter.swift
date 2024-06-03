@@ -35,33 +35,12 @@ struct AppRouter: View {
                 AuthWelcomeView()
             }
             
-            VStack(spacing: 5) {
+            VStack(spacing: 8) {
                 ForEach(toastVM.toasts) { toast in
-                    VStack {
-                        Text(toast.title)
-                            .font(.custom(style: .headline))
-                            .fontWeight(.bold)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Text(toast.message)
-                            .font(.custom(style: .caption))
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .padding()
-                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
-                    .background(toast.type.color, in: RoundedRectangle(cornerRadius: 10))
-                    .onTapGesture {
-                        toastVM.remove(id: toast.id)
-                        if let redirect = toast.redirect {
-                            AppData.shared.goTo(redirect)
-                        }
-                    }
-                    .padding(.horizontal)
-                    .transition(.asymmetric(insertion: .push(from: .top), removal: .push(from: .bottom)))
-                    .animation(.bouncy, value: toastVM.toasts.count)
+                    ToastItem(toast)
                 }
             }
-            .animation(.bouncy, value: toastVM.toasts.count)
+            .animation(.linear(duration: 0.5), value: toastVM.toasts.count)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .padding(.top)
         }

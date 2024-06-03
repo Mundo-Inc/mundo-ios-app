@@ -358,7 +358,7 @@ extension ConversationVM {
                 transactionsDict[id] = data
             }
         } catch {
-            presentErrorToast(error, function: #function)
+            presentErrorToast(error)
         }
         setLoadingState(.loadingTransaction(id), to: false)
     }

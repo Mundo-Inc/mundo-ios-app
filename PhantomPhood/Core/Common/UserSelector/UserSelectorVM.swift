@@ -35,7 +35,7 @@ final class UserSelectorVM: ObservableObject {
             let data = try await self.searchDM.searchUsers(q: value)
             self.searchResults = data
         } catch {
-            presentErrorToast(error, silent: true, function: #function)
+            presentErrorToast(error, silent: true)
         }
         self.isLoading = false
     }

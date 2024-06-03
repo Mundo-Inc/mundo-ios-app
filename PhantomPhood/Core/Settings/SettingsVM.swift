@@ -36,7 +36,7 @@ final class SettingsVM: LoadingSections, ObservableObject {
             
             ToastVM.shared.toast(.init(type: .success, title: "Email Sent", message: "Email sent"))
         } catch {
-            presentErrorToast(error, function: #function)
+            presentErrorToast(error)
         }
         setLoadingState(.resetPassword, to: false)
     }
@@ -48,7 +48,7 @@ final class SettingsVM: LoadingSections, ObservableObject {
             await Authentication.shared.updateUserInfo()
             ToastVM.shared.toast(.init(type: .success, title: "Account Privacy Changed", message: "Your account is \(isPrivate ? "Private" : "Public") now"))
         } catch {
-            presentErrorToast(error, function: #function)
+            presentErrorToast(error)
         }
         setLoadingState(.accountPrivacyRequest, to: false)
     }

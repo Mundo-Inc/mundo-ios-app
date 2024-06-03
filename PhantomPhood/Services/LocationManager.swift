@@ -22,31 +22,32 @@ class LocationManager: NSObject, ObservableObject {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = kCLDistanceFilterNone
-        locationManager.requestAlwaysAuthorization()
-        locationManager.allowsBackgroundLocationUpdates = true
-        locationManager.pausesLocationUpdatesAutomatically = false
+//        locationManager.allowsBackgroundLocationUpdates = true
+//        locationManager.pausesLocationUpdatesAutomatically = false
         
         configureBackgroundLocationUpdates()
+        locationManager.requestAlwaysAuthorization()
     }
     
     private func configureBackgroundLocationUpdates() {
-        NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
     
     @objc private func appDidEnterBackground() {
         guard isAuthorized else { return }
-        DispatchQueue.main.async {
-            self.locationManager.stopUpdatingLocation()
-            self.locationManager.startMonitoringSignificantLocationChanges()
+        DispatchQueue.main.async { [weak self] in
+            self?.locationManager.stopUpdatingLocation()
+//            self?.locationManager.startMonitoringSignificantLocationChanges()
         }
     }
     
     @objc private func appDidBecomeActive() {
         guard isAuthorized else { return }
-        DispatchQueue.main.async {
-            self.locationManager.stopMonitoringSignificantLocationChanges()
-            self.locationManager.startUpdatingLocation()
+        DispatchQueue.main.async { [weak self] in
+//            self?.locationManager.stopMonitoringSignificantLocationChanges()
+            self?.locationManager.startUpdatingLocation()
         }
     }
     
@@ -59,24 +60,22 @@ extension LocationManager: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .notDetermined, .restricted, .denied:
-//            Location access denied or restricted
-            self.isAuthorized = false
+            isAuthorized = false
             locationManager.requestAlwaysAuthorization()
         case .authorizedWhenInUse, .authorizedAlways:
-            self.isAuthorized = true
+            isAuthorized = true
             locationManager.startUpdatingLocation()
         @unknown default:
-//            Unknown authorization status
             print("Unknown authorization status")
-            self.isAuthorized = false
+            isAuthorized = false
         }
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         
-        DispatchQueue.main.async {
-            self.location = location
+        DispatchQueue.main.async { [weak self] in
+            self?.location = location
         }
     }
 }

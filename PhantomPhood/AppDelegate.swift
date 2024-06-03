@@ -61,7 +61,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             do {
                 try DataStack.shared.deleteAll()
             } catch {
-                presentErrorToast(error, silent: true, function: #function)
+                presentErrorToast(error, silent: true)
             }
         }
         

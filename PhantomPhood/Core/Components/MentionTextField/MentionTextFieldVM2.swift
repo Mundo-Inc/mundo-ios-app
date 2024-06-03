@@ -99,7 +99,7 @@ final class MentionTextFieldVM2: LoadingSections, ObservableObject {
                 self.suggestions = data
             }
         } catch {
-            presentErrorToast(error, function: #function)
+            presentErrorToast(error)
         }
         setLoadingState(.userSearch, to: false)
         

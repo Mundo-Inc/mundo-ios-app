@@ -108,7 +108,7 @@ final class InviteFriendsVM: ObservableObject {
         do {
             try await userProfileDM.getReferredUsers()
         } catch {
-            presentErrorToast(error, silent: true, function: #function)
+            presentErrorToast(error, silent: true)
         }
     }
     

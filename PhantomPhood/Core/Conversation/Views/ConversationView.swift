@@ -407,9 +407,10 @@ struct ConversationView: View {
                 
                 if vm.participants.count == 1 {
                     Button {
-                        if let user = vm.usersDict.first?.value {
-                            SheetsManager.shared.presenting = .gifting(.data(user))
-                        }
+                        ToastVM.shared.toast(.init(type: .info, title: "Coming Soon", message: "This feature is under development"))
+//                        if let user = vm.usersDict.first?.value {
+//                            SheetsManager.shared.presenting = .gifting(.data(user))
+//                        }
                     } label: {
                         Image(systemName: "gift.fill")
                             .font(.system(size: 18))

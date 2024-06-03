@@ -41,9 +41,10 @@ final class UserActivityDM {
         }
         
         let types = activityTypes.map { $0.rawValue }.joined(separator: ",")
-        let data: APIResponseWithPagination<[FeedItem]> = try await apiManager.requestData("/users/\(userId)/userActivities?types=\(types)", method: .get, queryParams: [
+        let data: APIResponseWithPagination<[FeedItem]> = try await apiManager.requestData("/users/\(userId)/userActivities", method: .get, queryParams: [
             "page": String(page),
-            "limit": String(limit)
+            "limit": String(limit),
+            "types": types
         ], token: token)
         
         return data

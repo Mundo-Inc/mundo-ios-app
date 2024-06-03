@@ -66,7 +66,7 @@ final class CommentsVM: LoadingSections, ObservableObject {
             
             commentsPagination = data.pagination
         } catch {
-            presentErrorToast(error, function: #function)
+            presentErrorToast(error)
         }
         setLoadingState(.gettingComments, to: false)
     }
@@ -78,14 +78,27 @@ final class CommentsVM: LoadingSections, ObservableObject {
         do {
             let data = try await commentsDM.submitComment(for: activityId, content: commentContent, parent: replyTo?.id)
             
-            await MainActor.run {
-                commentContent = ""
-                self.comments.insert(data, at: 0)
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                
+                self.repliesDict.updateValue(data, forKey: data.id)
+                if let parentId = self.replyTo?.id {
+                    if let parentIndex = self.comments.firstIndex(where: { $0.id == parentId }) {
+                        self.comments[parentIndex].addReply(data.id)
+                    } else if self.repliesDict[parentId] != nil {
+                        self.repliesDict[parentId]!.addReply(data.id)
+                    }
+                } else {
+                    self.comments.insert(data, at: 0)
+                }
+                
+                self.commentContent = ""
+                self.replyTo = nil
             }
             
             HapticManager.shared.notification(type: .success)
         } catch {
-            presentErrorToast(error, title: "Couldn't add your comment", function: #function)
+            presentErrorToast(error, title: "Couldn't add your comment")
         }
         setLoadingState(.submittingComment, to: false)
     }
@@ -97,23 +110,9 @@ final class CommentsVM: LoadingSections, ObservableObject {
         
         await MainActor.run {
             if repliesDict[commentId] != nil {
-                switch action {
-                case .add:
-                    repliesDict[commentId]!.liked = true
-                    repliesDict[commentId]!.likes += 1
-                case .remove:
-                    repliesDict[commentId]!.liked = false
-                    repliesDict[commentId]!.likes -= 1
-                }
-            } else if let index = self.comments.firstIndex(where: { $0.id == commentId }) {
-                switch action {
-                case .add:
-                    self.comments[index].liked = true
-                    self.comments[index].likes += 1
-                case .remove:
-                    self.comments[index].liked = false
-                    self.comments[index].likes -= 1
-                }
+                repliesDict[commentId]!.setLike(to: action == .add)
+            } else if let index = comments.firstIndex(where: { $0.id == commentId }) {
+                self.comments[index].setLike(to: action == .add)
             }
         }
         
@@ -135,26 +134,12 @@ final class CommentsVM: LoadingSections, ObservableObject {
             
             await MainActor.run {
                 if repliesDict[commentId] != nil {
-                    switch action {
-                    case .add:
-                        repliesDict[commentId]!.liked = false
-                        repliesDict[commentId]!.likes -= 1
-                    case .remove:
-                        repliesDict[commentId]!.liked = true
-                        repliesDict[commentId]!.likes += 1
-                    }
+                    repliesDict[commentId]!.setLike(to: action == .remove)
                 } else if let index = self.comments.firstIndex(where: { $0.id == commentId }) {
-                    switch action {
-                    case .add:
-                        self.comments[index].liked = false
-                        self.comments[index].likes -= 1
-                    case .remove:
-                        self.comments[index].liked = true
-                        self.comments[index].likes += 1
-                    }
+                    self.comments[index].setLike(to: action == .remove)
                 }
             }
-            presentErrorToast(error, function: #function)
+            presentErrorToast(error)
         }
         setLoadingState(.submittingLike(commentId), to: false)
     }

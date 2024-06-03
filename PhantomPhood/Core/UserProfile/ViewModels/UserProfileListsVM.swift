@@ -32,7 +32,7 @@ final class UserProfileListsVM: ObservableObject {
             let data = try await listsDM.getUserLists(forUserId: self.userId)
             await setLists(data)
         } catch {
-            presentErrorToast(error, function: #function)
+            presentErrorToast(error)
         }
         await updateLoadingState(.fetchLists, to: false)
     }

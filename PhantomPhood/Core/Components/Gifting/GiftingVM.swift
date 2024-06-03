@@ -98,11 +98,11 @@ final class GiftingVM: LoadingSections, ObservableObject {
             } else {
                 callback(false)
                 HapticManager.shared.notification(type: .warning)
-                ToastVM.shared.toast(.init(type: .error, title: "Not Supported", message: "Selected payment method is not supported yet"))
+                ToastVM.shared.toast(.init(type: .userError, title: "Not Supported", message: "Selected payment method is not supported yet"))
             }
         } catch {
             callback(false)
-            presentErrorToast(error, function: #function)
+            presentErrorToast(error)
         }
         setLoadingState(.submitting, to: false)
     }
@@ -139,7 +139,7 @@ final class GiftingVM: LoadingSections, ObservableObject {
                 selectedPaymentOption = paymentOptionSelection
             }
         } catch {
-            presentErrorToast(error, function: #function)
+            presentErrorToast(error)
         }
         setLoadingState(.retrievePaymentOptionSelection, to: false)
     }
@@ -155,7 +155,7 @@ final class GiftingVM: LoadingSections, ObservableObject {
                 self.user = data
             }
         } catch {
-            presentErrorToast(error, function: #function)
+            presentErrorToast(error)
         }
         setLoadingState(.fetchingUser, to: false)
     }

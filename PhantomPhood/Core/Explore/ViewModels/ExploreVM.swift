@@ -231,7 +231,7 @@ final class ExploreVM17: ObservableObject {
                     try dataStack.viewContext.save()
                 }
             } catch {
-                presentErrorToast(error, debug: "Error saving new RequestedRegionEntity", silent: true, function: #function)
+                presentErrorToast(error, debug: "Error saving new RequestedRegionEntity", silent: true)
             }
         }
         

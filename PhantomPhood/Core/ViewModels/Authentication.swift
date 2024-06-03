@@ -292,7 +292,7 @@ final class Authentication: ObservableObject {
             do {
                 try DataStack.shared.deleteAll()
             } catch {
-                presentErrorToast(error, silent: true, function: #function)
+                presentErrorToast(error, silent: true)
             }
             
             let conversationsCoreDataManager = ConversationsCoreDataManager()

@@ -114,7 +114,7 @@ final class NotificationsVM: LoadingSections, ObservableObject {
                 })
             }
         } catch {
-            presentErrorToast(error, function: #function)
+            presentErrorToast(error)
         }
         setLoadingState(.acceptingRequest(requestId), to: false)
     }
@@ -137,7 +137,7 @@ final class NotificationsVM: LoadingSections, ObservableObject {
                 })
             }
         } catch {
-            presentErrorToast(error, function: #function)
+            presentErrorToast(error)
         }
         setLoadingState(.rejectingRequest(requestId), to: false)
     }
@@ -166,7 +166,7 @@ final class NotificationsVM: LoadingSections, ObservableObject {
                 })
             }
         } catch {
-            presentErrorToast(error, function: #function)
+            presentErrorToast(error)
         }
         setLoadingState(.followRequest(userId), to: false)
     }

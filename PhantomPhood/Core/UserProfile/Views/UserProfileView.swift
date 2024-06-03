@@ -133,9 +133,10 @@ struct UserProfileView: View {
                             .disabled(vm.loadingSections.contains(.startingConversation))
                             
                             Button {
-                                if let user = vm.user {
-                                    SheetsManager.shared.presenting = .gifting(.data(UserEssentials(userDetail: user)))
-                                }
+                                ToastVM.shared.toast(.init(type: .info, title: "Coming Soon", message: "This feature is under development"))
+//                                if let user = vm.user {
+//                                    SheetsManager.shared.presenting = .gifting(.data(UserEssentials(userDetail: user)))
+//                                }
                             } label: {
                                 Image(systemName: "gift.fill")
                                     .font(.system(size: 18))

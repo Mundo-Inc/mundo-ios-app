@@ -113,7 +113,7 @@ final class AddReviewVM: ObservableObject {
             }
             self.isSubmitting = false
         }, onError: { error in
-            self.toastVM.toast(.init(type: .error, title: "Review", message: "Couldn't submit your review :("))
+            presentErrorToast(error)
         }))
     }
 }

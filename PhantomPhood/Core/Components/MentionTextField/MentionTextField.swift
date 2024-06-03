@@ -32,7 +32,6 @@ struct MentionTextField: View {
                 if vm.isShowingSuggestions {
                     ScrollView {
                         VStack(spacing: 0) {
-                            Spacer()
                             ForEach(vm.suggestions) { user in
                                 Button {
                                     withAnimation {
@@ -65,12 +64,9 @@ struct MentionTextField: View {
                                                 .font(.custom(style: .caption2))
                                                 .foregroundStyle(.secondary)
                                         }
-                                        
-                                        Spacer()
                                     }
-                                    .frame(maxWidth: .infinity)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.horizontal)
-                                    .padding(.vertical, 4)
                                     .frame(height: 39)
                                     .background(Color.themePrimary)
                                 }
@@ -80,12 +76,11 @@ struct MentionTextField: View {
                                     .frame(height: 1)
                             }
                         }
-                        .frame(height: max(40 * 4, Double(vm.suggestions.count) * 40))
                     }
                     .scrollIndicators(.hidden)
+                    .frame(height: max(40, min(Double(vm.suggestions.count) * 40, 40 * 4)))
                     .background(Color.themePrimary)
                     .clipShape(.rect(cornerRadius: 10))
-                    .frame(height: 40 * 4)
                     .offset(y: -(size + 4))
                 }
             }
@@ -125,11 +120,13 @@ fileprivate struct MentionTextFieldRepresentable: UIViewRepresentable {
         }
         
         func textFieldDidChangeSelection(_ textField: UITextField) {
-            text = textField.text ?? ""
-            
-            if let selectedTextRange = textField.selectedTextRange {
-                let cursorPosition = textField.offset(from: textField.beginningOfDocument, to: selectedTextRange.start)
-                viewModel.handleMentionDetection(in: textField, at: cursorPosition)
+            DispatchQueue.main.async {
+                self.text = textField.text ?? ""
+                
+                if let selectedTextRange = textField.selectedTextRange {
+                    let cursorPosition = textField.offset(from: textField.beginningOfDocument, to: selectedTextRange.start)
+                    self.viewModel.handleMentionDetection(in: textField, at: cursorPosition)
+                }
             }
         }
         

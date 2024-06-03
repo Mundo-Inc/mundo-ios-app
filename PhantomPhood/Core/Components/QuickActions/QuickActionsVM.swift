@@ -57,7 +57,7 @@ final class QuickActionsVM: LoadingSections, ObservableObject {
                 }
             }
         } catch {
-            presentErrorToast(error, silent: true, function: #function)
+            presentErrorToast(error, silent: true)
         }
         setLoadingState(.nearestPlace, to: false)
     }
