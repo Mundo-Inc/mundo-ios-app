@@ -17,12 +17,9 @@ struct MessagesView: View {
                 HStack(alignment: .top) {
                     if let userId = conversation.targetUserId {
                         if let user = inboxVM.usersDict[userId] {
-                            ProfileImage(user.profileImage, size: 56, cornerRadius: 28)
+                            ProfileImage(user.profileImage, size: 56)
                         } else {
-                            ProfileImage(nil, size: 56, cornerRadius: 28)
-                                .task {
-                                    await inboxVM.getUser(id: userId)
-                                }
+                            ProfileImage(nil, size: 56)
                         }
                     } else {
                         RoundedRectangle(cornerRadius: 10)
@@ -92,6 +89,16 @@ struct MessagesView: View {
             }
         }
         .listStyle(.plain)
+        .task {
+            let users = conversationsManager.conversations.compactMap { $0.targetUserId }
+            await inboxVM.getUsers(ids: users)
+        }
+        .onChange(of: conversationsManager.conversations) { conversations in
+            let users = conversations.compactMap { $0.targetUserId }
+            Task {
+                await inboxVM.getUsers(ids: users)
+            }
+        }
         .overlay {
             switch conversationsManager.clientState {
             case .connecting:

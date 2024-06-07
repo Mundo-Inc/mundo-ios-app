@@ -14,17 +14,23 @@ final class InboxVM: ObservableObject {
     @Published var activeTab: Tab = .messages
     @Published var usersDict: [String:UserEssentials] = [:]
     
-    func getUser(id: String) async {
+    func getUsers(ids: [String]) async {
         do {
-            if let user = try await userProfileDM.getUserEssentialsAndUpdate(id: id, returnIfFound: true, coreDataCompletion: { [weak self] user in
+            let users = try await userProfileDM.getUserEssentialsAndUpdate(ids: Set(ids), updateAll: false, coreDataCompletion: { [weak self] users in
                 DispatchQueue.main.async {
-                    self?.usersDict.updateValue(user, forKey: user.id)
+                    for user in users {
+                        self?.usersDict.updateValue(user, forKey: user.id)
+                    }
                 }
-            }) {
-                self.usersDict.updateValue(user, forKey: user.id)
+            })
+            
+            DispatchQueue.main.async {
+                for user in users {
+                    self.usersDict.updateValue(user, forKey: user.id)
+                }
             }
         } catch {
-            presentErrorToast(error, debug: "Error fetching user info \(id)")
+            presentErrorToast(error)
         }
     }
     

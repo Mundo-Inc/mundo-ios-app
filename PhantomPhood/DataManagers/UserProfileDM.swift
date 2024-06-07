@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import CoreData
 
 final class UserProfileDM {
     private let apiManager = APIManager.shared
@@ -23,13 +22,13 @@ final class UserProfileDM {
         return data.data
     }
     
-    func getUserEssentialsAndUpdate(id: String, returnIfFound: Bool = false, coreDataCompletion: @escaping (UserEssentials) -> Void) async throws -> UserEssentials? {
+    func getUserEssentialsAndUpdate(
+        id: String,
+        returnIfFound: Bool = false,
+        coreDataCompletion: @escaping (UserEssentials) -> Void
+    ) async throws -> UserEssentials? {
         do {
-            let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-            request.predicate = NSPredicate(format: "id == %@", id)
-            request.fetchLimit = 1
-            
-            if let user = try dataManager.viewContext.fetch(request).first,
+            if let user = try dataManager.fetchUser(withID: id),
                let userEssentials = try? UserEssentials(entity: user),
                let savedAt = user.savedAt {
                 if Date().timeIntervalSince(savedAt) < 60 * 60 * 24 {
@@ -47,6 +46,51 @@ final class UserProfileDM {
         
         // update CoreData
         try? self.dataManager.saveUser(userEssentials: data.data)
+        
+        return data.data
+    }
+    
+    func getUserEssentialsAndUpdate(
+        ids: Set<String>,
+        updateAll: Bool = false,
+        coreDataCompletion: @escaping ([UserEssentials]) -> Void
+    ) async throws -> [UserEssentials] {
+        var toFetch = Set<String>()
+        do {
+            let users = try dataManager.fetchUsers(withIDs: ids).compactMap { uEntity in
+                if let uEssentials = try? UserEssentials(entity: uEntity), let savedAt = uEntity.savedAt {
+                    if updateAll || Date().timeIntervalSince(savedAt) > 60 * 60 * 24 {
+                        toFetch.insert(uEssentials.id)
+                    }
+                    
+                    return uEssentials
+                }
+                return nil
+            }
+            
+            ids.filter { id in
+                !users.contains { $0.id == id }
+            }.forEach { id in
+                toFetch.insert(id)
+            }
+            
+            coreDataCompletion(users)
+        } catch {
+            toFetch = ids
+            presentErrorToast(error, silent: true)
+        }
+        
+        guard !toFetch.isEmpty else { return [] }
+        
+        struct RequestBody: Encodable {
+            let ids: [String]
+        }
+        
+        let body = try apiManager.createRequestBody(RequestBody(ids: toFetch.sorted()))
+        let data: APIResponse<[UserEssentials]> = try await apiManager.requestData("/users/by-ids", method: .post, body: body)
+        
+        // update CoreData
+        try? self.dataManager.saveUsers(userEssentialsList: data.data)
         
         return data.data
     }

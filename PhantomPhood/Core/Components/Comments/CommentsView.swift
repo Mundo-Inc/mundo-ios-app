@@ -27,57 +27,12 @@ struct CommentsView: View {
                 .padding(.bottom, 8)
             
             Divider()
+            
             if vm.comments.isEmpty && vm.loadingSections.contains(.gettingComments) {
                 List(RepeatItem.create(8)) { _ in
-                    HStack(alignment: .top) {
-                        VStack(spacing: -14) {
-                            ProfileImage(nil, size: 44)
-                            
-                            Color.clear
-                                .frame(width: 20, height: 25)
-                        }
-                        .redacted(reason: .placeholder)
-                        
-                        HStack(alignment: .top) {
-                            VStack(alignment: .leading) {
-                                HStack(spacing: 4) {
-                                    Text("Name")
-                                        .font(.custom(style: .caption))
-                                        .fontWeight(.semibold)
-                                        .fontWidth(.compressed)
-                                        .foregroundStyle(.primary)
-                                    
-                                    Text("1h")
-                                        .font(.custom(style: .caption))
-                                        .foregroundStyle(.secondary)
-                                    
-                                    Spacer()
-                                }
-                                .frame(maxWidth: .infinity)
-                                
-                                Text("comment.content")
-                                    .font(.custom(style: .body))
-                                    .multilineTextAlignment(.leading)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .redacted(reason: .placeholder)
-                            
-                            VStack(spacing: 4) {
-                                Image(systemName: "heart")
-                                    .font(.system(size: 16))
-                                    .foregroundStyle(Color.secondary)
-                                    .scaleEffect(0.9)
-                                
-                                Text("\(1)")
-                                    .font(.custom(style: .caption2))
-                                    .foregroundStyle(.secondary)
-                            }
-                            .padding(.top, 10)
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .listRowInsets(EdgeInsets(top: 12, leading: 10, bottom: 12, trailing: 10))
+                    commentItemPlaceholder
                 }
+                .listStyle(.plain)
                 .scrollIndicators(.never)
                 .frame(maxHeight: .infinity)
             } else {
@@ -236,8 +191,6 @@ struct CommentsView: View {
                 .padding(.top, 8)
             }
             
-//            TextField("Add a comment", text: $vm.commentContent, axis: .vertical)
-//                .lineLimit(1...4)
             MentionTextField(text: $vm.commentContent, size: 38, placeholder: "Add a comment", trailingPadding: 37)
                 .overlay(alignment: .bottomTrailing) {
                     Button {
@@ -268,7 +221,7 @@ struct CommentsView: View {
         do {
             let mentionPattern = try NSRegularExpression(pattern: "(?:(?<=\\s)|^)@\\w+", options: [])
             let matches = mentionPattern.matches(in: text, options: [], range: NSRange(location: 0, length: text.utf16.count))
-
+            
             for match in matches {
                 if let range = Range(match.range, in: text), let attributedRange = Range(match.range, in: attributedString),
                    let mentions = comment.mentions,
@@ -281,10 +234,11 @@ struct CommentsView: View {
         } catch {
             print("Failed to create regular expression: \(error)")
         }
-
+        
         return attributedString
     }
     
+    @ViewBuilder
     private func CommentHeader(_ comment: Comment) -> some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading) {
@@ -377,6 +331,73 @@ struct CommentsView: View {
         .foregroundStyle(.secondary)
         .font(.custom(style: .caption))
         .fontWeight(.semibold)
+    }
+    
+    private var commentItemPlaceholder: some View {
+        HStack(alignment: .top, spacing: 12) {
+            VStack {
+                VStack(spacing: -14) {
+                    ProfileImage(nil, size: 44)
+                    
+                    Color.clear
+                        .frame(width: 20, height: 25)
+                }
+                
+                HStack(spacing: 3) {
+                    Rectangle()
+                        .frame(width: 1)
+                        .foregroundStyle(.secondary.opacity(0.2))
+                }
+                .frame(width: 44)
+            }
+            
+            VStack {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading) {
+                        HStack(spacing: 4) {
+                            Text("Name")
+                                .font(.custom(style: .caption))
+                                .fontWeight(.semibold)
+                                .fontWidth(.compressed)
+                                .foregroundStyle(.primary)
+                            
+                            Text("1d")
+                                .font(.custom(style: .caption))
+                                .foregroundStyle(.secondary)
+                            
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
+                        
+                        Text("Comment body placeholder")
+                            .font(.custom(style: .body))
+                            .multilineTextAlignment(.leading)
+                    }
+                    .frame(maxWidth: .infinity)
+                    
+                    VStack(spacing: 4) {
+                        Image(systemName: "heart")
+                            .font(.system(size: 16))
+                            .foregroundStyle(Color.secondary)
+                            .scaleEffect(0.9)
+                        
+                        Text("1")
+                            .font(.custom(style: .caption2))
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.top, 10)
+                }
+                
+                Text("Reply")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(.secondary)
+                    .font(.custom(style: .caption))
+                    .fontWeight(.semibold)
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .redacted(reason: .placeholder)
+        .listRowInsets(EdgeInsets(top: 12, leading: 10, bottom: 12, trailing: 10))
     }
 }
 

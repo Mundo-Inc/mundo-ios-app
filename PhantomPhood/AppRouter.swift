@@ -35,7 +35,7 @@ struct AppRouter: View {
                 AuthWelcomeView()
             }
             
-            VStack(spacing: 8) {
+            VStack(spacing: 10) {
                 ForEach(toastVM.toasts) { toast in
                     ToastItem(toast)
                 }

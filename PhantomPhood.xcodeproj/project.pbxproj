@@ -1601,7 +1601,6 @@
 			isa = PBXGroup;
 			children = (
 				0B226F682B3359F40036B8BE /* Achievement.swift */,
-				0B08C80E2C0E18D3009F328E /* ToastItem.swift */,
 				0B76C9D22B712F120013CE3E /* AnimatedStarRating.swift */,
 				0B46814E2AC5EB6B009C5EF9 /* CircleLabelView.swift */,
 				0B7A80B12BA1EE6E00192192 /* CTAButton.swift */,
@@ -1620,6 +1619,7 @@
 				0BE3118D2AC4842700CF9BA5 /* ReviewVideoView.swift */,
 				0BC84A6A2AD071EE00D723AA /* SelectReactionsView.swift */,
 				0B226F622B3325350036B8BE /* StarRating.swift */,
+				0B08C80E2C0E18D3009F328E /* ToastItem.swift */,
 				0BC84A682AD06F8200D723AA /* WrappingHStack.swift */,
 				0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */,
 				0BC9A3952BE1059400C0EA4E /* Comments */,
@@ -2795,7 +2795,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.72.0;
+				MARKETING_VERSION = 0.72.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2835,7 +2835,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.72.0;
+				MARKETING_VERSION = 0.72.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

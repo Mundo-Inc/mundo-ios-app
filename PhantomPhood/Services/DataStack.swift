@@ -76,8 +76,6 @@ final class DataStack {
                 try viewContext.save()
             }
         }
-    
-        
     }
     
     func removePlaces() throws {
@@ -150,20 +148,20 @@ final class DataStack {
         }
     }
     
-    // MARK: Private methods
-    
-    private func fetchUser(withID id: String) throws -> UserEntity? {
+    func fetchUser(withID id: String) throws -> UserEntity? {
         let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", id)
         request.fetchLimit = 1
         return try viewContext.fetch(request).first
     }
     
-    private func fetchUsers(withIDs ids: Set<String>) throws -> [UserEntity] {
+    func fetchUsers(withIDs ids: Set<String>) throws -> [UserEntity] {
         let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id IN %@", ids)
         return try viewContext.fetch(request)
     }
+    
+    // MARK: Private methods
     
     private func updateUserEntity(_ user: UserEntity, with essentials: UserEssentials) {
         user.id = essentials.id

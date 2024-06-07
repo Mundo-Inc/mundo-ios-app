@@ -42,18 +42,17 @@ final class ConversationsClientWrapper: NSObject, ObservableObject {
         }
     }
     
-    func updateToken() async {
-        guard let conversationsClient else {
-            print("DEBUG: Conversations Client Not Found")
-            return
+    func updateToken() async throws {
+        if conversationsClient == nil {
+            try await self.create()
         }
         
-        do {
-            let token = try await conversationsDM.getToken()
-            await conversationsClient.updateToken(token)
-        } catch {
-            presentErrorToast(error, debug: "Error getting conversations token", silent: true)
+        guard let conversationsClient else {
+            throw URLError(.unknown)
         }
+        
+        let token = try await conversationsDM.getToken()
+        await conversationsClient.updateToken(token)
     }
         
     func shutdown() {
@@ -64,13 +63,13 @@ final class ConversationsClientWrapper: NSObject, ObservableObject {
     // MARK: - Credentials Events
     func conversationsClientTokenWillExpire(_ client: TwilioConversationsClient) {
         Task {
-            await self.updateToken()
+            try? await self.updateToken()
         }
     }
     
     func conversationsClientTokenExpired(_ client: TwilioConversationsClient) {
         Task {
-            await self.updateToken()
+            try? await self.updateToken()
         }
     }
 }

@@ -120,10 +120,13 @@ final class ExploreSearchVM: ObservableObject {
     
     private var cancellable = Set<AnyCancellable>()
     
+    private var isInitialLoad = true
     init() {
         $text
             .debounce(for: .seconds(0.8), scheduler: RunLoop.main)
-            .sink { value in
+            .sink { [weak self] value in
+                guard let self, !self.isInitialLoad else { return }
+                
                 Task {
                     await self.search(self.text)
                 }
@@ -131,12 +134,16 @@ final class ExploreSearchVM: ObservableObject {
             .store(in: &cancellable)
         
         $scope
-            .sink { scope in
+            .sink { [weak self] scope in
+                guard let self, !self.isInitialLoad else { return }
+                
                 Task {
                     await self.search(self.text)
                 }
             }
             .store(in: &cancellable)
+        
+        isInitialLoad = false
     }
     
     func search(_ value: String, region: MKCoordinateRegion? = nil, categories: [MKPointOfInterestCategory]? = nil) async {

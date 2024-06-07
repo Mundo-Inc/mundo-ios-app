@@ -17,6 +17,7 @@ func presentErrorToast(
     line: Int = #line
 ) {
 #if DEBUG
+    print("\n# ERROR #\n")
     if let debug {
         print(debug)
         print(error)
@@ -37,7 +38,7 @@ func presentErrorToast(
         case .serverError(let serverError):
             ToastVM.shared.toast(Toast(
                 type: .userError,
-                title: title ?? serverError.statusCode.description,
+                title: title ?? serverError.title,
                 message: serverError.message
             ))
         case .decodingError(let error):
@@ -49,7 +50,7 @@ func presentErrorToast(
         case .unknown:
             ToastVM.shared.toast(Toast(
                 type: .systemError(errorMessage: error.localizedDescription, function: function, file: file, line: line),
-                title: title ?? "Unknown Error",
+                title: title ?? "Unknown API Error",
                 message: error.localizedDescription + "\n" + function + "\n" + "\(fileName) | \(line)"
             ))
         }

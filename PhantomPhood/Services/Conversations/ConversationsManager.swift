@@ -30,6 +30,8 @@ final class ConversationsManager: NSObject, ObservableObject {
     
     private var cancellables: Set<AnyCancellable> = []
     
+    private var isReconnecting = false
+    
     // MARK: Events
     
     var conversationEventPublisher = PassthroughSubject<ConversationEvent, Never>()
@@ -203,9 +205,40 @@ final class ConversationsManager: NSObject, ObservableObject {
 extension ConversationsManager: TwilioConversationsClientDelegate {
     // MARK: Client changes
     
+    func startReconnect() {
+        guard !isReconnecting else { return }
+        isReconnecting = true
+        tryReconnect()
+    }
+    
+    func tryReconnect() {
+        print("Attempting to reconnect...")
+        client.shutdown()
+        DispatchQueue.global().asyncAfter(deadline: .now() + 5.0) {
+            Task {
+                do {
+                    try await self.client.updateToken()
+                    self.isReconnecting = false
+                } catch {
+                    self.tryReconnect()
+                }
+            }
+        }
+    }
+    
     func conversationsClient(_ client: TwilioConversationsClient, connectionStateUpdated state: TCHClientConnectionState) {
         DispatchQueue.main.async {
             self.clientState = state
+        }
+        switch state {
+        case .connected:
+            print("Twilio client connected")
+            isReconnecting = false
+        case .disconnected:
+            print("Twilio client disconnected")
+            self.startReconnect()
+        default:
+            break
         }
     }
     

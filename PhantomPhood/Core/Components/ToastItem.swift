@@ -29,11 +29,11 @@ struct ToastItem: View {
     @Environment(\.mainWindowSize) private var mainWindowSize
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(toast.title)
                 .font(.custom(style: .body))
                 .foregroundStyle(toast.type.color)
-                .fontWeight(.bold)
+                .fontWeight(.semibold)
                 .padding(.leading, 16)
                 .offset(y: -8)
             
@@ -41,38 +41,38 @@ struct ToastItem: View {
                 .font(.custom(style: .caption))
                 .foregroundStyle(.primary)
             
-            
-                HStack {
-                    Spacer()
-                    
-                    if case .systemError(_, _, _, _) = toast.type {
-                        Button {
-                            Task {
-                                await toastVM.report(toast: toast)
-                            }
-                        } label: {
-                            Text("Report")
-                                .font(.custom(style: .caption2))
+            HStack {
+                Spacer()
+                
+                if case .systemError(_, _, _, _) = toast.type {
+                    Button {
+                        Task {
+                            await toastVM.report(toast: toast)
                         }
-                        .buttonStyle(.bordered)
+                    } label: {
+                        Text("Report")
+                            .font(.custom(style: .caption2))
                     }
-                    
-                    if let redirect = toast.redirect {
-                        Button {
-                            toastVM.remove(id: toast.id)
-                            AppData.shared.goTo(redirect)
-                        } label: {
-                            Text("View")
-                                .font(.custom(style: .caption2))
-                        }
-                        .buttonStyle(.bordered)
-                    }
+                    .buttonStyle(.bordered)
                 }
+                
+                if let redirect = toast.redirect {
+                    Button {
+                        toastVM.remove(id: toast.id)
+                        AppData.shared.goTo(redirect)
+                    } label: {
+                        Text("View")
+                            .font(.custom(style: .caption2))
+                    }
+                    .buttonStyle(.bordered)
+                }
+            }
         }
         .padding()
         .background(.bar, in: RoundedRectangle(cornerRadius: 10))
         .background(Color.themePrimary, in: RoundedRectangle(cornerRadius: 10))
         .clipShape(.rect(cornerRadius: 10))
+        .shadow(radius: 10)
         .overlay(alignment: .bottom) {
             if toast.expiresAt != nil {
                 GeometryReader { geometry in

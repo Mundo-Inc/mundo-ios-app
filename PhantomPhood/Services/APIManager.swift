@@ -150,6 +150,7 @@ extension APIManager {
         let error: ErrorData
         
         struct ErrorData: Codable {
+            let title: String?
             let message: String
         }
     }
@@ -158,9 +159,14 @@ extension APIManager {
         let success: Bool
         let error: ServerResponseError.ErrorData
         let statusCode: Int
+        
+        var title: String {
+            error.title ?? "\(statusCode)"
+        }
+        
         // Convenience property to get the main error message
         var message: String {
-            return error.message
+            error.message
         }
     }
     
