@@ -12,7 +12,7 @@ class ProfileCheckinsVM: ObservableObject {
     private let checkInDM = CheckInDM()
     
     @Published var isLoading = false
-    @Published var checkins: [Checkin]? = nil
+    @Published var checkIns: [Checkin]? = nil
     @Published var total: Int? = nil
     
     @Published var displayMode: DisplayModeEnum = .map
@@ -30,7 +30,7 @@ class ProfileCheckinsVM: ObservableObject {
         }
     }
     
-    var page = 1
+    private var checkInsPagination: Pagination? = nil
     
     private let userId: UserIdEnum?
     
@@ -43,47 +43,49 @@ class ProfileCheckinsVM: ObservableObject {
     }
     
     func getCheckins(type: RefreshNewAction) async {
-        var uid: String?
-        
-        switch userId {
+        let uid: String? = switch userId {
         case .currentUser:
-            uid = Authentication.shared.currentUser?.id
+            Authentication.shared.currentUser?.id
         case .withId(let theId):
-            uid = theId
+            theId
         case nil:
-            uid = nil
+            nil
         }
         
         guard let uid else { return }
         
         if type == .refresh {
-            self.page = 1
+            checkInsPagination = nil
             self.total = nil
-        } else {
-            if let checkins, let total, checkins.count >= total {
-                return
-            }
+        } else if let checkInsPagination, !checkInsPagination.hasMore {
+            return
         }
         
         self.isLoading = true
         
         do {
-            let data = try await checkInDM.getCheckins(user: uid, page: self.page, limit: 500)
+            let page = if let checkInsPagination {
+                checkInsPagination.page + 1
+            } else {
+                1
+            }
+            
+            let data = try await checkInDM.getCheckins(user: uid, page: page, limit: 500)
             
             switch type {
                 
             case .refresh:
-                self.checkins = data.data
+                self.checkIns = data.data
             case .new:
-                if self.checkins != nil {
-                    self.checkins!.append(contentsOf: data.data)
+                if self.checkIns != nil {
+                    self.checkIns!.append(contentsOf: data.data)
                 } else {
-                    self.checkins = data.data
+                    self.checkIns = data.data
                 }
             }
             
+            self.checkInsPagination = data.pagination
             self.total = data.pagination.totalCount
-            self.page += 1
         } catch {
             presentErrorToast(error)
         }

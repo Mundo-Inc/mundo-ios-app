@@ -108,7 +108,7 @@ struct NavigationDestinationViewModifier: ViewModifier {
                 case .userActivities(let userId, let activityType):
                     ProfileActivitiesView(userId: userId, activityType: activityType)
                 case .userCheckins(let userId):
-                    ProfileCheckins(userId: userId)
+                    ProfileCheckinsView(userId: userId)
                     
                 case .placesList(let listId):
                     PlacesListView(listId: listId)

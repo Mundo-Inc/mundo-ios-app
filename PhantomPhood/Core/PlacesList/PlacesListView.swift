@@ -275,26 +275,13 @@ fileprivate struct CheckinsMap17: View {
             ForEach(list.places) { place in
                 Annotation(place.place.name, coordinate: CLLocationCoordinate2D(latitude: place.place.location.geoLocation.lat, longitude: place.place.location.geoLocation.lng)) {
                     NavigationLink(value: AppRoute.place(id: place.place.id)) {
-                        Circle()
-                            .foregroundStyle(Color.accentColor)
-                            .frame(width: 30, height: 30)
-                            .overlay {
-                                ZStack {
-                                    Circle()
-                                        .stroke(Color.themePrimary)
-                                    
-                                    Image(systemName: "mappin")
-                                        .foregroundStyle(.white)
-                                }
-                            }
-                            .scaleEffect(scale)
+                        ScalableMapAnnotation(scale: scale)
                     }
                 }
             }
         }
-        .onMapCameraChange(frequency: .continuous, { mapCameraUpdateContext in
-            let scaleValue = 1.0 / mapCameraUpdateContext.region.span.latitudeDelta
-            scale = scaleValue > 1 ? 1 : scaleValue < 0.4 ? 0.4 : scaleValue
+        .onMapCameraChange(frequency: .onEnd, { mapCameraUpdateContext in
+            scale = mapCameraUpdateContext.scaleValue
         })
     }
 }
@@ -313,19 +300,7 @@ fileprivate struct CheckinsMap16: View {
             annotationContent: { place in
                 MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: place.place.location.geoLocation.lat, longitude: place.place.location.geoLocation.lng)) {
                     NavigationLink(value: AppRoute.place(id: place.place.id)) {
-                        Circle()
-                            .foregroundStyle(Color.accentColor)
-                            .frame(width: 30, height: 30)
-                            .overlay {
-                                ZStack {
-                                    Circle()
-                                        .stroke(Color.themePrimary)
-                                    
-                                    Image(systemName: "mappin")
-                                        .foregroundStyle(.white)
-                                }
-                            }
-                            .scaleEffect(scale)
+                        ScalableMapAnnotation(scale: scale)
                     }
                 }
             }

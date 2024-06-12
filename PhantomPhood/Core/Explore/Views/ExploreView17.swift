@@ -45,8 +45,7 @@ struct ExploreView17: View {
                 if let searchResults = vm.searchResults, !searchResults.isEmpty {
                     ForEach(searchResults, id: \.self) { item in
                         Annotation(item.name ?? "Unknown", coordinate: item.placemark.coordinate) {
-                            CustomMapMarker(image: item.pointOfInterestCategory?.image)
-                                .scaleEffect(vm.scale)
+                            ScalableMapAnnotation(scale: vm.scale, image: item.pointOfInterestCategory?.image)
                                 .onTapGesture {
                                     if let name = item.name {
                                         AppData.shared.goTo(.placeMapPlace(mapPlace: .init(coordinate: item.placemark.coordinate, title: name), action: nil))
@@ -60,7 +59,7 @@ struct ExploreView17: View {
             }
             .mapStyle(.standard(emphasis: .automatic, pointsOfInterest: .excludingAll))
             .mapControlVisibility(.hidden)
-            .onMapCameraChange(frequency: .continuous, vm.onMapCameraChangeHandler)
+            .onMapCameraChange(frequency: .continuous, vm.onMapCameraChangeContinuosHandler)
             .onMapCameraChange(frequency: .continuous, { mapCameraUpdateContext in
                 exploreSearchVM.mapRegion = mapCameraUpdateContext.region
             })

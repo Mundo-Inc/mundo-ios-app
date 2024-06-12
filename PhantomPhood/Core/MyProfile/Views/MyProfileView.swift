@@ -151,6 +151,7 @@ struct MyProfileView: View {
                     VStack(spacing: 0) {
                         VStack(spacing: 0) {
                             Divider()
+                            
                             ScrollView(.horizontal) {
                                 HStack(spacing: 12) {
                                     ForEach(MyProfileVM.Tab.allCases, id: \.self) { tab in
@@ -166,7 +167,9 @@ struct MyProfileView: View {
                                             .frame(height: 32)
                                             .padding(.horizontal)
                                             .foregroundStyle(vm.activeTab == tab ? Color.accentColor : Color.secondary)
+                                            .opacity(tab.disabled ? 0.5 : 1)
                                         }
+                                        .disabled(tab.disabled)
                                         .animation(.easeInOut(duration: 0), value: vm.activeTab)
                                         
                                         if tab != Array(MyProfileVM.Tab.allCases).last {
@@ -179,6 +182,7 @@ struct MyProfileView: View {
                                 .padding(.trailing)
                             }
                             .scrollIndicators(.never)
+                            
                             Divider()
                         }
                         .background(Color.themePrimary)
@@ -188,6 +192,8 @@ struct MyProfileView: View {
                         case .posts:
                             MyProfilePostsView(activeTab: $vm.activeTab)
                                 .environmentObject(vm)
+                        case .checkIns:
+                            UserProfileCheckInsView(.currentUser)
                         case .achievements:
                             ProfileAchievements()
                         case .lists:

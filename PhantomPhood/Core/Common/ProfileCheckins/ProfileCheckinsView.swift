@@ -1,5 +1,5 @@
 //
-//  ProfileCheckins.swift
+//  ProfileCheckinsView.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 12/22/23.
@@ -8,7 +8,7 @@
 import SwiftUI
 import MapKit
 
-struct ProfileCheckins: View {
+struct ProfileCheckinsView: View {
     @StateObject private var vm: ProfileCheckinsVM
     
     init(userId: UserIdEnum? = nil) {
@@ -16,19 +16,18 @@ struct ProfileCheckins: View {
     }
     
     var body: some View {
-        ZStack {
-            if let checkins = vm.checkins, !checkins.isEmpty {
+        Group {
+            if let checkIns = vm.checkIns, !checkIns.isEmpty {
                 if vm.displayMode == .map {
-                    Group {
-                        if #available(iOS 17.0, *) {
-                            CheckinsMap17(checkins: checkins)
-                        } else {
-                            CheckinsMap16(checkins: checkins)
-                        }
+                    if #available(iOS 17.0, *) {
+                        CheckinsMap17(checkIns: checkIns)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else {
+                        CheckinsMap16(checkIns: checkIns)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    List(checkins) { item in
+                    List(checkIns) { item in
                         NavigationLink(value: AppRoute.place(id: item.place.id)) {
                             VStack(spacing: 10) {
                                 HStack {
@@ -71,7 +70,7 @@ struct ProfileCheckins: View {
                 }
             } else {
                 if !vm.isLoading {
-                    Text("No check-ins")
+                    Text("No Check-Ins")
                 } else {
                     ZStack {
                         Color.themeBG
@@ -101,76 +100,90 @@ struct ProfileCheckins: View {
     }
 }
 
+fileprivate struct CheckInCluster: Identifiable {
+    let place: PlaceEssentials
+    let checkIns: [Checkin]
+    
+    init(checkIns: [Checkin]) throws {
+        guard !checkIns.isEmpty else {
+            throw InitializationError.emptyArray(description: "checkIns array must contain at least one item.")
+        }
+        self.place = checkIns.first!.place
+        self.checkIns = checkIns
+    }
+    
+    var id: String {
+        place.id
+    }
+    
+    static func create(from items: [Checkin]) -> [CheckInCluster] {
+        /// placeId, activity
+        var dict: [String: [Checkin]] = [:]
+        
+        for item in items {
+            if dict[item.place.id] == nil {
+                dict[item.place.id] = [item]
+            } else {
+                dict[item.place.id]!.append(item)
+            }
+        }
+        
+        return dict.values.compactMap { try? CheckInCluster(checkIns: $0) }
+    }
+}
+
 @available(iOS 17.0, *)
 fileprivate struct CheckinsMap17: View {
-    let checkins: [Checkin]
+    private let checkInCluster: [CheckInCluster]
     
-    @State var position: MapCameraPosition = .automatic
+    init(checkIns: [Checkin]) {
+        self.checkInCluster = CheckInCluster.create(from: checkIns)
+    }
     
-    @State var scale: CGFloat = 1
+    @State private var position: MapCameraPosition = .automatic
+    @State private var scale: CGFloat = 1
     
     var body: some View {
         Map(position: $position) {
-            ForEach(checkins) { checkin in
-                Annotation(checkin.place.name, coordinate: CLLocationCoordinate2D(latitude: checkin.place.location.geoLocation.lat, longitude: checkin.place.location.geoLocation.lng)) {
-                    NavigationLink(value: AppRoute.place(id: checkin.place.id)) {
-                        Circle()
-                            .foregroundStyle(Color.accentColor)
-                            .frame(width: 30, height: 30)
-                            .overlay {
-                                ZStack {
-                                    Circle()
-                                        .stroke(Color.themePrimary)
-                                    
-                                    Image(systemName: "mappin")
-                                        .foregroundStyle(.white)
-                                }
-                            }
-                            .scaleEffect(scale)
+            ForEach(checkInCluster) { checkInCluster in
+                Annotation(checkInCluster.place.name, coordinate: CLLocationCoordinate2D(latitude: checkInCluster.place.location.geoLocation.lat, longitude: checkInCluster.place.location.geoLocation.lng)) {
+                    NavigationLink(value: AppRoute.place(id: checkInCluster.place.id)) {
+                        ScalableMapAnnotation(scale: scale, count: checkInCluster.checkIns.count)
                     }
                 }
             }
         }
-        .onMapCameraChange(frequency: .continuous, { mapCameraUpdateContext in
-            let scaleValue = 1.0 / mapCameraUpdateContext.region.span.latitudeDelta
-            scale = scaleValue > 1 ? 1 : scaleValue < 0.4 ? 0.4 : scaleValue
+        .mapStyle(.standard(emphasis: .automatic, pointsOfInterest: .excludingAll))
+        .onMapCameraChange(frequency: .onEnd, { mapCameraUpdateContext in
+            scale = mapCameraUpdateContext.scaleValue
         })
     }
 }
 
 fileprivate struct CheckinsMap16: View {
-    let checkins: [Checkin]
+    private let checkInCluster: [CheckInCluster]
+    
+    init(checkIns: [Checkin]) {
+        self.checkInCluster = CheckInCluster.create(from: checkIns)
+    }
     
     @State private var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 0, longitude: 0), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
-    
-    @State var scale: CGFloat = 1
+    @State private var scale: CGFloat = 1
     
     var body: some View {
         Map(
             coordinateRegion: $mapRegion,
-            annotationItems: checkins,
-            annotationContent: { checkin in
-                MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: checkin.place.location.geoLocation.lat, longitude: checkin.place.location.geoLocation.lng)) {
-                    NavigationLink(value: AppRoute.place(id: checkin.place.id)) {
-                        Circle()
-                            .foregroundStyle(Color.accentColor)
-                            .frame(width: 30, height: 30)
-                            .overlay {
-                                ZStack {
-                                    Circle()
-                                        .stroke(Color.themePrimary)
-                                    
-                                    Image(systemName: "mappin")
-                                        .foregroundStyle(.white)
-                                }
-                            }
-                            .scaleEffect(scale)
+            annotationItems: checkInCluster,
+            annotationContent: { checkInCluster in
+                MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: checkInCluster.place.location.geoLocation.lat, longitude: checkInCluster.place.location.geoLocation.lng)) {
+                    NavigationLink(value: AppRoute.place(id: checkInCluster.place.id)) {
+                        ScalableMapAnnotation(scale: scale, count: checkInCluster.checkIns.count)
                     }
                 }
             }
         )
         .onAppear {
-            if let last = checkins.last {
+            if let last = checkInCluster.last {
                 mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: last.place.location.geoLocation.lat, longitude: last.place.location.geoLocation.lng), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
             }
         }
@@ -182,5 +195,5 @@ fileprivate struct CheckinsMap16: View {
 }
 
 #Preview {
-    ProfileCheckins()
+    ProfileCheckinsView()
 }

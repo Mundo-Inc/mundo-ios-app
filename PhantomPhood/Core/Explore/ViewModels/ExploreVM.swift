@@ -78,7 +78,7 @@ final class ExploreVM17: ObservableObject {
                 
                 self.getSavedData(startDate: self.startDate.getDate)
                 if let context = self.latestMapContext {
-                    self.onMapCameraChangeHandler(context)
+                    self.onMapCameraChangeContinuosHandler(context)
                 }
             }
             .store(in: &cancellables)
@@ -123,7 +123,7 @@ final class ExploreVM17: ObservableObject {
         }
     }
     
-    func onMapCameraChangeHandler(_ context: MapCameraUpdateContext) {
+    func onMapCameraChangeContinuosHandler(_ context: MapCameraUpdateContext) {
         if isInviteBannerPresented && position.positionedByUser {
             withAnimation {
                 isInviteBannerPresented = false
@@ -405,7 +405,7 @@ final class ExploreVM17: ObservableObject {
             }).compactMap { try? MapActivity($0) }
             originalItems = activities
             if let latestMapContext {
-                self.onMapCameraChangeHandler(latestMapContext)
+                self.onMapCameraChangeContinuosHandler(latestMapContext)
             }
         } catch {
             presentErrorToast(error, silent: true)

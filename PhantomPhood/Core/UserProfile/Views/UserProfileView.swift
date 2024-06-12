@@ -239,6 +239,7 @@ struct UserProfileView: View {
                             } else {
                                 VStack(spacing: 0) {
                                     Divider()
+                                    
                                     ScrollView(.horizontal) {
                                         HStack(spacing: 12) {
                                             ForEach(UserProfileVM.Tab.allCases, id: \.self) { tab in
@@ -254,10 +255,10 @@ struct UserProfileView: View {
                                                     .frame(height: 32)
                                                     .padding(.horizontal)
                                                     .foregroundStyle(vm.activeTab == tab ? Color.accentColor : Color.secondary)
-                                                    .opacity(tab == .gifts ? 0.5 : 1)
+                                                    .opacity(tab.disabled ? 0.5 : 1)
                                                 }
                                                 .animation(.easeInOut(duration: 0), value: vm.activeTab)
-                                                .disabled(tab == .gifts)
+                                                .disabled(tab.disabled)
                                                 
                                                 if tab != Array(UserProfileVM.Tab.allCases).last {
                                                     Divider()
@@ -269,6 +270,7 @@ struct UserProfileView: View {
                                         .padding(.trailing)
                                     }
                                     .scrollIndicators(.never)
+                                    
                                     Divider()
                                 }
                                 .background(Color.themePrimary)
@@ -278,6 +280,8 @@ struct UserProfileView: View {
                                 case .posts:
                                     UserProfilePostsView(user: vm.user, activeTab: $vm.activeTab)
                                         .environmentObject(vm)
+                                case .checkIns:
+                                    UserProfileCheckInsView(.withId(user.id))
                                 case .achievements:
                                     UserProfileAchievements(user: user)
                                 case .lists:

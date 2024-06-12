@@ -265,35 +265,13 @@ struct PlaceView: View {
                                 if #available(iOS 17.0, *) {
                                     Map(initialPosition: .region(MKCoordinateRegion(center: place.location.coordinates, latitudinalMeters: 8000, longitudinalMeters: 8000))) {
                                         Annotation(place.name, coordinate: place.location.coordinates) {
-                                            Circle()
-                                                .foregroundStyle(Color.accentColor)
-                                                .frame(width: 30, height: 30)
-                                                .overlay {
-                                                    ZStack {
-                                                        Circle()
-                                                            .stroke(Color.themePrimary)
-                                                        
-                                                        Image(systemName: "mappin")
-                                                            .foregroundStyle(.white)
-                                                    }
-                                                }
+                                            SimpleMapAnnotation()
                                         }
                                     }
                                 } else {
                                     Map(coordinateRegion: .constant(MKCoordinateRegion(center: place.location.coordinates, latitudinalMeters: 8000, longitudinalMeters: 8000)), annotationItems: [place]) { place in
                                         MapAnnotation(coordinate: place.location.coordinates) {
-                                            Circle()
-                                                .foregroundStyle(Color.accentColor)
-                                                .frame(width: 30, height: 30)
-                                                .overlay {
-                                                    ZStack {
-                                                        Circle()
-                                                            .stroke(Color.themePrimary)
-                                                        
-                                                        Image(systemName: "mappin")
-                                                            .foregroundStyle(.white)
-                                                    }
-                                                }
+                                            SimpleMapAnnotation()
                                         }
                                     }
                                 }

@@ -258,34 +258,43 @@ class UserProfileVM: LoadingSections, ObservableObject {
     
     enum Tab: Hashable, CaseIterable {
         case posts
+        case checkIns
         case achievements
         case lists
         case gifts
         
         var title: String {
-            switch self {
+            return switch self {
             case .posts:
-                return "Posts"
+                "Posts"
+            case .checkIns:
+                "Check Ins"
             case .achievements:
-                return "Achievements"
+                "Achievements"
             case .lists:
-                return "Lists"
+                "Lists"
             case .gifts:
-                return "Gifts"
+                "Gifts"
             }
         }
         
         var iconSystemName: String {
-            switch self {
+            return switch self {
             case .posts:
-                return "app.connected.to.app.below.fill"
+                "app.connected.to.app.below.fill"
+            case .checkIns:
+                "mappin.and.ellipse"
             case .achievements:
-                return "crown"
+                "crown"
             case .lists:
-                return "list.star"
+                "list.star"
             case .gifts:
-                return "gift"
+                "gift"
             }
+        }
+        
+        var disabled: Bool {
+            self == .gifts
         }
     }
     

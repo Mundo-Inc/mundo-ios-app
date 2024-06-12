@@ -37,7 +37,9 @@ final class ConversationsCoreDataManager {
                 
                 do {
                     let batchDeleteResult = try context.execute(batchDeleteRequest) as? NSBatchDeleteResult
+#if DEBUG
                     print("Deleted \(batchDeleteResult?.result ?? 0) records from \(entityName)")
+#endif
                 } catch {
                     presentErrorToast(error, debug: "Error deleting entity \(entityName): \(error)", silent: true)
                     context.rollback()  // Important to maintain integrity in case of failure
@@ -61,7 +63,7 @@ final class ConversationsCoreDataManager {
     var viewContext: NSManagedObjectContext {
         return persistentContainer.viewContext
     }
-        
+    
     func saveContext() async throws {
         try await viewContext.perform {
             if self.viewContext.hasChanges {
