@@ -47,10 +47,11 @@ struct HomeActivityItemPlaceholder: View {
         HStack {
             ProfileImage(nil, size: 54)
                 .overlay(alignment: .bottom) {
-                    LevelView(level: 50)
-                        .shadow(radius: 3)
-                        .frame(width: 26, height: 30)
+                    RoundedRectangle(cornerRadius: 8)
+                        .foregroundStyle(.tertiary)
+                        .frame(width: 26, height: 26)
                         .offset(y: 15)
+                        .shadow(radius: 3)
                 }
             
             VStack(spacing: 4) {
@@ -126,7 +127,7 @@ struct HomeActivityItemPlaceholder: View {
                 .foregroundStyle(.white)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.leading)
+        .padding(.horizontal)
         .padding(.bottom)
     }
     
@@ -180,7 +181,7 @@ struct HomeActivityItemPlaceholder: View {
                 .frame(width: 40, height: 40)
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 8)
+        .padding(.trailing, 8)
         .padding(.bottom)
     }
     

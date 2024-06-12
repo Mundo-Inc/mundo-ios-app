@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ToastItem: View {
+    static let dragRemoveThreshold: Double = 65
+    
     private let toast: Toast
     
     @State private var remainingTime: Double
@@ -71,7 +73,6 @@ struct ToastItem: View {
         .padding()
         .background(.bar, in: RoundedRectangle(cornerRadius: 10))
         .background(Color.themePrimary, in: RoundedRectangle(cornerRadius: 10))
-        .clipShape(.rect(cornerRadius: 10))
         .shadow(radius: 10)
         .overlay(alignment: .bottom) {
             if toast.expiresAt != nil {
@@ -110,24 +111,26 @@ struct ToastItem: View {
             }
             .offset(x: -6, y: -6)
         }
-        .opacity(toastVM.draggingToastId == toast.id && abs(toastVM.dragAmount) > 50 ? 0.5 : 1)
-        .offset(y: toastVM.draggingToastId == toast.id ? toastVM.dragAmount : 0)
+        .opacity(
+            toastVM.dragToast.id == toast.id && abs(toastVM.dragToast.amount) > 10
+            ? 1 - min(0.9, Double(abs(toastVM.dragToast.amount) / Self.dragRemoveThreshold))
+            : 1
+        )
+        .offset(y: toastVM.dragToast.id == toast.id ? toastVM.dragToast.amount : 0)
         .contentShape(Rectangle())
         .gesture(
             DragGesture()
                 .onChanged({ gesture in
-                    toastVM.draggingToastId = toast.id
-                    toastVM.dragAmount = min(gesture.translation.height, 0)
+                    toastVM.dragToast = (min(gesture.translation.height, 0), toast.id)
                     if toast.expiresAt != nil {
                         toastVM.persist(with: toast.id)
                     }
                 })
                 .onEnded({ gesture in
                     withAnimation {
-                        toastVM.dragAmount = .zero
-                        toastVM.draggingToastId = nil
+                        toastVM.dragToast = (.zero, nil)
                     }
-                    if gesture.translation.height < -50 {
+                    if gesture.translation.height < -Self.dragRemoveThreshold {
                         toastVM.remove(id: toast.id)
                     }
                 })
@@ -137,7 +140,7 @@ struct ToastItem: View {
                 toastVM.persist(with: toast.id)
             }
         }
-        .transition(AnyTransition.asymmetric(insertion: .push(from: .top), removal: .push(from: .bottom)))
+        .transition(AnyTransition.asymmetric(insertion: .push(from: .top), removal: .identity))
         .padding(.horizontal)
     }
     

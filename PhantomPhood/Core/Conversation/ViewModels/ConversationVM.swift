@@ -104,11 +104,8 @@ class ConversationVM: LoadingSections, ObservableObject {
         }
     }
     
+    /// Setting up Core Data update subscription for Messages in conversation (conversationSid)
     func subscribeMessages() {
-        #if DEBUG
-        print("Setting up Core Data update subscription for Messages in conversation \(conversationSid)")
-        #endif
-        
         let request = PersistentMessageDataItem.fetchRequest()
         request.predicate = NSPredicate(format: "conversationSid = %@", conversationSid)
         request.sortDescriptors = [NSSortDescriptor(key: "messageIndex", ascending: true)]

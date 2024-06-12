@@ -232,10 +232,14 @@ extension ConversationsManager: TwilioConversationsClientDelegate {
         }
         switch state {
         case .connected:
+#if DEBUG
             print("Twilio client connected")
+#endif
             isReconnecting = false
         case .disconnected:
+#if DEBUG
             print("Twilio client disconnected")
+#endif
             self.startReconnect()
         default:
             break

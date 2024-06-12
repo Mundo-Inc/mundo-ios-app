@@ -82,8 +82,7 @@ final class ToastVM: ObservableObject {
     
     @Published private(set) var toasts: [Toast] = []
     
-    @Published var dragAmount: CGFloat = .zero
-    var draggingToastId: UUID? = nil
+    @Published var dragToast: (amount: CGFloat, id: UUID?) = (.zero, nil)
     
     public func toast(_ item: Toast) {
         DispatchQueue.main.async {
