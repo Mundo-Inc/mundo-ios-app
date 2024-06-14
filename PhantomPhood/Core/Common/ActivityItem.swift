@@ -1,22 +1,44 @@
 //
-//  HomeActivityItem.swift
+//  ActivityItem.swift
 //  PhantomPhood
 //
-//  Created by Kia Abdi on 4/9/24.
+//  Created by Kia Abdi on 6/14/24.
 //
 
 import SwiftUI
-import CoreMedia
 
-struct HomeActivityItem: View {
-    static let sideBarWidth: CGFloat = 80
-    static let followsItemLimit: Int = 4
-    static let defaultReactions: [NewReaction] = [
-        .init(reaction: "🥳", type: .emoji),
-        .init(reaction: "❤️", type: .emoji),
-        .init(reaction: "🍻", type: .emoji)
-    ]
-    
+protocol ActivityItemVM: ObservableObject {
+    var activityLoadingSections: Set<ActivityLoadingSection> { get set }
+    var itemOnViewPort: String? { get set }
+    func getPosts(_ requestType: RefreshNewAction) async
+    func addReaction(_ reaction: GeneralReactionProtocol, to feedItem: FeedItem) async -> Result<FeedItem, Error>?
+    func removeReaction(_ reaction: UserReaction, from feedItem: FeedItem) async -> Result<FeedItem, Error>?
+    func followUser(_ userId: String) async -> Result<UserProfileDM.FollowRequestStatus, Error>?
+    func followResourceUser(_ userId: String) async -> Result<UserProfileDM.FollowRequestStatus, Error>?
+}
+
+extension ActivityItemVM {
+    func setActivityLoadingState(_ section: ActivityLoadingSection, to: Bool) {
+        if to {
+            DispatchQueue.main.async {
+                self.activityLoadingSections.insert(section)
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.activityLoadingSections.remove(section)
+            }
+        }
+    }
+}
+
+enum ActivityLoadingSection: Hashable {
+    case gettingPosts
+    case addingReaction(symbol: String, activityId: String)
+    case removeingReaction(reactionId: String)
+    case followRequest(String)
+}
+
+struct ActivityItem<ViewModel: ActivityItemVM>: View {
     @EnvironmentObject private var actionManager: ActionManager
     
     @ObservedObject private var appData = AppData.shared
@@ -24,16 +46,13 @@ struct HomeActivityItem: View {
     @AppStorage(K.UserDefaults.isMute) private var isMute = false
     
     @Binding private var item: FeedItem
-    @ObservedObject private var vm: HomeVM
+    @ObservedObject private var vm: ViewModel
     
     @State private var tabPage: String = ""
     
-    private let forTab: HomeTab
-    
-    init(item: Binding<FeedItem>, vm: HomeVM, forTab: HomeTab) {
+    init(item: Binding<FeedItem>, vm: ViewModel) {
         self._item = item
         self._vm = ObservedObject(wrappedValue: vm)
-        self.forTab = forTab
         
         switch item.wrappedValue.resource {
         case .review(let feedReview):
@@ -83,8 +102,8 @@ struct HomeActivityItem: View {
     }
     
     var body: some View {
-        ZStack {
-            if appData.navStack.isEmpty && appData.activeTab == .home && appData.homeActiveTab == forTab {
+        VStack(spacing: -15) {
+            ZStack {
                 BackgroundContent()
                     .onTapGesture(count: 2, perform: {
                         self.doubleTapCount += 1
@@ -107,45 +126,63 @@ struct HomeActivityItem: View {
                     .onTapGesture {
                         isMute.toggle()
                     }
-            }
-            
-            LinearGradient(
-                colors: shouldDisplayFooterBackground ? [.black.opacity(0.3), .clear, .clear, .black.opacity(0.2), .black.opacity(0.5)] : [.black.opacity(0.3), .clear, .clear],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .allowsHitTesting(false)
-            
-            VStack(spacing: 0) {
-                HeaderContent()
                 
-                if hasSidebar {
-                    HStack(spacing: 0) {
+                LinearGradient(
+                    colors: shouldDisplayFooterBackground ? [.black.opacity(0.3), .clear, .clear, .black.opacity(0.2), .black.opacity(0.5)] : [.black.opacity(0.3), .clear, .clear],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .allowsHitTesting(false)
+                
+                VStack(spacing: 0) {
+                    HeaderContent()
+                    
+                    if hasSidebar {
+                        HStack(spacing: 0) {
+                            Content()
+                                .frame(maxWidth: .infinity)
+                            
+                            SideBar()
+                                .frame(width: HomeActivityItem.sideBarWidth)
+                        }
+                        .frame(maxHeight: .infinity)
+                    } else {
                         Content()
-                            .frame(maxWidth: .infinity)
-                        
-                        SideBar()
-                            .frame(width: Self.sideBarWidth)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    .frame(maxHeight: .infinity)
-                } else {
-                    Content()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                .padding(.top, mainWindowSafeAreaInsets.top + HomeView.headerHeight)
+                .padding(.bottom) // Because of action button
+                
+                if doubleTapCount > 0 {
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 50))
+                        .foregroundStyle(.tertiary.shadow(.inner(color: Color.red, radius: 20)))
+                        .scaleEffect(1 + CGFloat(doubleTapCount) * 0.2)
+                        .rotationEffect(.degrees(doubleTapCount == 1 ? 0 : (doubleTapCount % 2 == 0 ? Double.random(in: 2...10) : -Double.random(in: 2...10))))
+                        .allowsHitTesting(false)
+                        .animation(.bouncy, value: doubleTapCount)
+                        .transition(AnyTransition.scale(scale: 2).combined(with: .opacity).animation(.bouncy))
                 }
             }
-            .padding(.top, mainWindowSafeAreaInsets.top + HomeView.headerHeight)
-            .padding(.bottom) // Because of action button
             
-            if doubleTapCount > 0 {
-                Image(systemName: "heart.fill")
-                    .font(.system(size: 50))
-                    .foregroundStyle(.tertiary.shadow(.inner(color: Color.red, radius: 20)))
-                    .scaleEffect(1 + CGFloat(doubleTapCount) * 0.2)
-                    .rotationEffect(.degrees(doubleTapCount == 1 ? 0 : (doubleTapCount % 2 == 0 ? Double.random(in: 2...10) : -Double.random(in: 2...10))))
-                    .allowsHitTesting(false)
-                    .animation(.bouncy, value: doubleTapCount)
-                    .transition(AnyTransition.scale(scale: 2).combined(with: .opacity).animation(.bouncy))
+            HStack {
+                Button {
+                    SheetsManager.shared.presenting = .comments(activityId: item.id)
+                } label: {
+                    Text("Add a comment...")
+                        .padding(.horizontal)
+                        .padding(.vertical, 9)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(.bar, in: Capsule())
+                        .background(Color.black.opacity(0.8), in: Capsule())
+                }
+                .foregroundStyle(Color.white.opacity(0.7))
             }
+            .padding(.horizontal)
+            .padding(.top)
+            .padding(.bottom, mainWindowSafeAreaInsets.bottom + 5)
+            .background(.bar)
         }
         .onChange(of: doubleTapCount) { newValue in
             if newValue > 0 {
@@ -189,14 +226,14 @@ struct HomeActivityItem: View {
                                 .font(.system(size: 12))
                                 .fontWeight(.bold)
                         }
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.6))
                         .onTapGesture {
                             AppData.shared.goTo(.place(id: feedCheckin.place.id, action: nil))
                         }
                         
                         Image(systemName: "mappin.square")
                             .font(.system(size: 100))
-                            .foregroundStyle(.tertiary.opacity(0.2))
+                            .foregroundStyle(Color.white.opacity(0.15))
                     }
                 }
             }
@@ -236,14 +273,14 @@ struct HomeActivityItem: View {
                                 .font(.system(size: 12))
                                 .fontWeight(.bold)
                         }
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.white.opacity(0.7))
                         .onTapGesture {
                             AppData.shared.goTo(.place(id: place.id, action: nil))
                         }
                         
                         Image(systemName: "pencil.and.list.clipboard")
                             .font(.system(size: 100))
-                            .foregroundStyle(.tertiary.opacity(0.2))
+                            .foregroundStyle(Color.white.opacity(0.15))
                     }
                 }
             }
@@ -291,7 +328,7 @@ struct HomeActivityItem: View {
                     .font(.custom(style: .headline))
                 Text("New features are coming. Please check for app update soon")
                     .font(.custom(style: .body))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.white.opacity(0.7))
                     .padding()
             }
         }
@@ -315,7 +352,7 @@ struct HomeActivityItem: View {
                 HStack {
                     Text(item.user.name)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.white)
                         .fontWeight(.semibold)
                         .onTapGesture {
                             AppData.shared.goToUser(item.user.id)
@@ -323,7 +360,7 @@ struct HomeActivityItem: View {
                     
                     if let connectionStatus = item.user.connectionStatus, connectionStatus.followingStatus == .notFollowing {
                         HStack {
-                            if vm.loadingSections.contains(.followRequest(item.user.id)) {
+                            if vm.activityLoadingSections.contains(.followRequest(item.user.id)) {
                                 ProgressView()
                                     .controlSize(.mini)
                             } else {
@@ -345,28 +382,6 @@ struct HomeActivityItem: View {
                                         item.user.setConnectionStatus(following: .requested)
                                     }
                                 }
-                            }
-                        }
-                    }
-                    
-                    if Authentication.shared.currentUser?.id != item.user.id {
-                        HStack {
-                            if vm.loadingSections.contains(.startingConversation(with: item.user.id)) {
-                                ProgressView()
-                                    .controlSize(.mini)
-                            } else {
-                                Text("Message")
-                            }
-                        }
-                        .frame(height: 25)
-                        .frame(maxWidth: 80)
-                        .font(.custom(style: .caption))
-                        .fontWeight(.regular)
-                        .foregroundStyle(Color.primary)
-                        .background(Color.accentColor, in: Capsule())
-                        .onTapGesture {
-                            Task {
-                                await self.vm.startConversation(with: item.user.id)
                             }
                         }
                     }
@@ -401,7 +416,7 @@ struct HomeActivityItem: View {
                                     .fontWeight(.bold)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(Color.white)
                             .fontWeight(.semibold)
                             .onTapGesture {
                                 AppData.shared.goTo(AppRoute.place(id: place.id))
@@ -410,7 +425,7 @@ struct HomeActivityItem: View {
                     case .levelUp, .following, .newHomemade:
                         Text("@\(item.user.username)")
                             .font(.custom(style: .caption))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.white.opacity(0.7))
                             .lineLimit(1)
                             .fontWeight(.medium)
                     default:
@@ -421,7 +436,7 @@ struct HomeActivityItem: View {
                     
                     Text(item.createdAt.timeElapsed())
                         .font(.custom(style: .caption))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.white.opacity(0.7))
                 }
             }
         }
@@ -554,7 +569,7 @@ struct HomeActivityItem: View {
                         
                         
                         HStack(spacing: 30) {
-                            ForEach(Self.defaultReactions) { r in
+                            ForEach(HomeActivityItem.defaultReactions) { r in
                                 let selectedIndex = item.reactions.user.firstIndex { $0.reaction == r.reaction && $0.type == r.type }
                                 ForYouReactionLabel(
                                     reaction: .init(reaction: r.reaction, type: r.type, count: item.reactions.total.filter({ $0.reaction == r.reaction && $0.type == r.type }).count),
@@ -601,7 +616,7 @@ struct HomeActivityItem: View {
                             .foregroundStyle(Color.white)
                         
                         VStack(spacing: 0) {
-                            let usersList = users.count > Self.followsItemLimit ? Array(users.prefix(Self.followsItemLimit)) : users
+                            let usersList = users.count > HomeActivityItem.followsItemLimit ? Array(users.prefix(HomeActivityItem.followsItemLimit)) : users
                             ForEach(usersList.indices, id: \.self) { index in
                                 HStack {
                                     ProfileImage(usersList[index].profileImage, size: 40)
@@ -610,12 +625,12 @@ struct HomeActivityItem: View {
                                         Text(usersList[index].name)
                                             .font(.custom(style: .headline))
                                             .fontWeight(.medium)
-                                            .foregroundStyle(.primary)
+                                            .foregroundStyle(Color.white)
                                             .lineLimit(1)
                                         
                                         Text("@\(usersList[index].username)")
                                             .font(.custom(style: .caption))
-                                            .foregroundStyle(.secondary)
+                                            .foregroundStyle(Color.white.opacity(0.7))
                                             .lineLimit(1)
                                     }
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -625,10 +640,10 @@ struct HomeActivityItem: View {
                                         case .following:
                                             Text("Following")
                                                 .font(.custom(style: .caption))
-                                                .foregroundStyle(.secondary)
+                                                .foregroundStyle(Color.white.opacity(0.7))
                                         case .notFollowing:
                                             HStack {
-                                                if vm.loadingSections.contains(.followRequest(usersList[index].id)) {
+                                                if vm.activityLoadingSections.contains(.followRequest(usersList[index].id)) {
                                                     ProgressView()
                                                         .controlSize(.mini)
                                                 } else {
@@ -638,10 +653,10 @@ struct HomeActivityItem: View {
                                             .frame(height: 20)
                                             .frame(minWidth: 60)
                                             .font(.custom(style: .caption))
-                                            .foregroundStyle(.secondary)
+                                            .foregroundStyle(Color.white.opacity(0.7))
                                             .padding(.horizontal, 8)
                                             .padding(.vertical, 4)
-                                            .background(RoundedRectangle(cornerRadius: 5).stroke(Color.secondary, lineWidth: 1))
+                                            .background(RoundedRectangle(cornerRadius: 5).stroke(Color.white.opacity(0.7), lineWidth: 1))
                                             .onTapGesture {
                                                 Task {
                                                     guard let res = await vm.followResourceUser(usersList[index].id) else { return }
@@ -651,11 +666,11 @@ struct HomeActivityItem: View {
                                                     }
                                                 }
                                             }
-                                            .foregroundStyle(.primary)
+                                            .foregroundStyle(Color.white)
                                         case .requested:
                                             Text("Requested")
                                                 .font(.custom(style: .caption))
-                                                .foregroundStyle(.secondary)
+                                                .foregroundStyle(Color.white.opacity(0.7))
                                             
                                         }
                                     }
@@ -670,11 +685,11 @@ struct HomeActivityItem: View {
                                 }
                             }
                             
-                            if users.count > Self.followsItemLimit {
+                            if users.count > HomeActivityItem.followsItemLimit {
                                 Divider()
                                 
-                                Text("+\(users.count - Self.followsItemLimit) more")
-                                    .foregroundStyle(.secondary)
+                                Text("+\(users.count - HomeActivityItem.followsItemLimit) more")
+                                    .foregroundStyle(Color.white.opacity(0.7))
                                     .padding(.vertical)
                                     .onTapGesture {
                                         HomeActivityInfoVM.shared.show(item) { reaction in
@@ -832,7 +847,7 @@ struct HomeActivityItem: View {
             switch item.activityType {
             case .newCheckin:
                 Image(systemName: "ellipsis")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.white.opacity(0.7))
                     .font(.system(size: 24))
                     .frame(width: 40, height: 40)
                     .contentShape(RoundedRectangle(cornerRadius: 10))
@@ -860,7 +875,7 @@ struct HomeActivityItem: View {
                     }
             case .newReview:
                 Image(systemName: "ellipsis")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.white.opacity(0.7))
                     .font(.system(size: 24))
                     .frame(width: 40, height: 40)
                     .contentShape(RoundedRectangle(cornerRadius: 10))
@@ -888,7 +903,7 @@ struct HomeActivityItem: View {
                     }
             case .newHomemade:
                 Image(systemName: "ellipsis")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.white.opacity(0.7))
                     .font(.system(size: 24))
                     .frame(width: 40, height: 40)
                     .contentShape(RoundedRectangle(cornerRadius: 10))
@@ -926,7 +941,7 @@ struct HomeActivityItem: View {
                 .overlay {
                     if isMute {
                         Image(systemName: "speaker.slash.fill")
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.white.opacity(0.7))
                             .font(.system(size: 24))
                             .transition(AnyTransition.opacity.animation(.easeIn))
                     }
@@ -938,7 +953,7 @@ struct HomeActivityItem: View {
     }
 }
 
-extension HomeActivityItem {
+extension ActivityItem {
     @ViewBuilder
     private func MediaItem(media: MediaItem) -> some View {
         if let url = media.src {
@@ -956,12 +971,7 @@ extension HomeActivityItem {
                 }
                 .contentShape(.rect)
             case .video:
-                switch forTab {
-                case .following:
-                    VideoPlayer(url: url, playing: vm.followingItemOnViewPort == self.item.id && tabPage == media.id, isMute: isMute)
-                case .forYou:
-                    VideoPlayer(url: url, playing: vm.forYouItemOnViewPort == self.item.id && tabPage == media.id, isMute: isMute)
-                }
+                VideoPlayer(url: url, playing: vm.itemOnViewPort == self.item.id && tabPage == media.id, isMute: isMute)
             }
         } else {
             Text("Something went wrong!")
@@ -1002,18 +1012,13 @@ extension HomeActivityItem {
     }
 }
 
-extension HomeActivityItem {
+extension ActivityItem {
     func deleteReview(id: String) async {
         let reviewDM = ReviewDM()
         do {
             try await reviewDM.remove(reviewId: id)
             ToastVM.shared.toast(.init(type: .success, title: "Deleted", message: "Your review has been deleted"))
-            switch forTab {
-            case .following:
-                await vm.updateFollowingData(.refresh)
-            case .forYou:
-                await vm.updateForYouData(.refresh)
-            }
+            await vm.getPosts(.refresh)
         } catch {
             presentErrorToast(error)
         }
@@ -1024,12 +1029,7 @@ extension HomeActivityItem {
         do {
             try await checkInDM.deleteOne(byId: id)
             ToastVM.shared.toast(.init(type: .success, title: "Deleted", message: "Your activity has been deleted"))
-            switch forTab {
-            case .following:
-                await vm.updateFollowingData(.refresh)
-            case .forYou:
-                await vm.updateForYouData(.refresh)
-            }
+            await vm.getPosts(.refresh)
         } catch {
             presentErrorToast(error)
         }
@@ -1040,12 +1040,7 @@ extension HomeActivityItem {
         do {
             try await homemadeDM.deleteOne(byId: id)
             ToastVM.shared.toast(.init(type: .success, title: "Deleted", message: "Your activity has been deleted"))
-            switch forTab {
-            case .following:
-                await vm.updateFollowingData(.refresh)
-            case .forYou:
-                await vm.updateForYouData(.refresh)
-            }
+            await vm.getPosts(.refresh)
         } catch {
             presentErrorToast(error)
         }

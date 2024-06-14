@@ -22,7 +22,7 @@ struct UserProfileCheckInsView: View {
                 VStack(spacing: 0) {
                     HStack {
                         if let total = vm.total {
-                            Text(total > 1 ? "\(total) Check-Ins" : "1 Check-In")
+                            Text(total > 1 ? "\(total) Check-Ins" : total == 0 ? "No Check-Ins" : "1 Check-In")
                                 .foregroundStyle(.secondary)
                         }
                         

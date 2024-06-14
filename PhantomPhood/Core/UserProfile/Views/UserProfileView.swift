@@ -134,9 +134,9 @@ struct UserProfileView: View {
                             
                             Button {
                                 ToastVM.shared.toast(.init(type: .info, title: "Coming Soon", message: "This feature is under development"))
-//                                if let user = vm.user {
-//                                    SheetsManager.shared.presenting = .gifting(.data(UserEssentials(userDetail: user)))
-//                                }
+                                //                                if let user = vm.user {
+                                //                                    SheetsManager.shared.presenting = .gifting(.data(UserEssentials(userDetail: user)))
+                                //                                }
                             } label: {
                                 Image(systemName: "gift.fill")
                                     .font(.system(size: 18))
@@ -173,9 +173,8 @@ struct UserProfileView: View {
                                         .foregroundStyle(.secondary)
                                 }
                                 .onTapGesture {
-                                    if let user = vm.user {
-                                        AppData.shared.goTo(AppRoute.userActivities(userId: UserIdEnum.withId(user.id), activityType: .newReview))
-                                    }
+                                    vm.activityType = .reviews
+                                    AppData.shared.goTo(AppRoute.userActivities(vm: vm, selected: nil))
                                 }
                                 
                                 VStack(spacing: 0) {

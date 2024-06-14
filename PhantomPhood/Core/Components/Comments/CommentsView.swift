@@ -23,8 +23,8 @@ struct CommentsView: View {
             Text("Comments")
                 .font(.custom(style: .headline))
                 .fontWeight(.semibold)
-                .padding(.top)
-                .padding(.bottom, 8)
+                .padding(.top, 15)
+                .padding(.bottom, 12)
             
             Divider()
             

@@ -21,7 +21,7 @@ final class UserActivityDM {
         return data.data
     }
     
-    func getUserActivities(_ userId: String, page: Int, activityType: FeedItemActivityType, limit: Int = 20) async throws -> APIResponseWithPagination<[FeedItem]> {
+    func getUserActivities(_ userId: String, page: Int, activityType: FeedItemActivityType?, limit: Int = 20) async throws -> APIResponseWithPagination<[FeedItem]> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
@@ -29,7 +29,7 @@ final class UserActivityDM {
         let data: APIResponseWithPagination<[FeedItem]> = try await apiManager.requestData("/users/\(userId)/userActivities", method: .get, queryParams: [
             "page": String(page),
             "limit": String(limit),
-            "type": activityType == .all ? nil : activityType.rawValue
+            "type": activityType?.rawValue
         ], token: token)
         
         return data

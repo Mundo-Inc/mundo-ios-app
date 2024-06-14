@@ -126,7 +126,7 @@ struct HomeForYouView: View {
             }
             
             // Updateing `forYouItemOnViewPort` on first data load
-            if !vm.forYouItems.isEmpty, vm.forYouItems.count >= page.index + 1 {
+            if vm.forYouItems.count >= page.index + 1 {
                 vm.forYouItemOnViewPort = vm.forYouItems[page.index].id
             }
         }

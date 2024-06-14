@@ -17,13 +17,14 @@ func presentErrorToast(
     line: Int = #line
 ) {
 #if DEBUG
-    print("\n# ERROR #\n")
     if let debug {
+        print("\n# ERROR #\n")
         print(debug)
         print(error)
         print(function)
         print(file, line)
     } else if error.localizedDescription != "cancelled" {
+        print("\n# ERROR #\n")
         print(error)
         print(function)
         print(file, line)

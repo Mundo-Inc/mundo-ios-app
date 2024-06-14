@@ -26,6 +26,7 @@ enum AppRoute: Hashable {
     case paymentsSetting
     case myConnections(initTab: UserConnectionsTab)
     case requests
+    case myActivities(vm: MyProfileVM, selected: FeedItem? = nil)
     
     // Place
     case place(id: String, action: PlaceAction? = nil)
@@ -37,7 +38,7 @@ enum AppRoute: Hashable {
     // User
     case userProfile(userId: String)
     case userConnections(userId: String, initTab: UserConnectionsTab)
-    case userActivities(userId: UserIdEnum, activityType: FeedItemActivityType = .all)
+    case userActivities(vm: UserProfileVM, selected: FeedItem? = nil)
     case userCheckins(userId: UserIdEnum)
     
     case placesList(listId: String)

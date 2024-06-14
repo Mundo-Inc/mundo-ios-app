@@ -2,10 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>StripeDefaultPublishableKey</key>
-	<string>$(STRIPE_DEFAULT_PUBLISHABLE_KEY)</string>
 	<key>APIBaseURL</key>
-	<string>https://$(API_BASE_URL)</string>
+	<string>$(API_PROTOCOL)://$(API_BASE_URL)</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -31,6 +29,8 @@
 	</array>
 	<key>GIDClientID</key>
 	<string>323069822782-cuk2poatn6g4mjhca6mjp8hfgclsdpe5.apps.googleusercontent.com</string>
+	<key>StripeDefaultPublishableKey</key>
+	<string>$(STRIPE_DEFAULT_PUBLISHABLE_KEY)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Poppins-Thin.ttf</string>

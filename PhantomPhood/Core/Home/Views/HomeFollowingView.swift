@@ -297,7 +297,7 @@ struct HomeFollowingView: View {
             }
             
             // Updateing `followingItemOnViewPort` on first data load
-            if !vm.followingItems.isEmpty, vm.followingItems.count >= page.index + 1 {
+            if vm.followingItems.count >= page.index + 1 {
                 vm.followingItemOnViewPort = vm.followingItems[page.index].id
             }
         }

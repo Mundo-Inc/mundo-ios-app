@@ -94,6 +94,8 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     MyConnections(activeTab: initTab)
                 case .requests:
                     RequestsView()
+                case .myActivities(let vm, let selected):
+                    MyActivitiesView(vm: vm, selected: selected?.id)
                     
                     // User
                     
@@ -105,8 +107,8 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     }
                 case .userConnections(let userId, let initTab):
                     UserConnectionsView(userId: userId, activeTab: initTab)
-                case .userActivities(let userId, let activityType):
-                    ProfileActivitiesView(userId: userId, activityType: activityType)
+                case .userActivities(let vm, let selected):
+                    UserProfileActivitiesView(vm: vm, selected: selected?.id)
                 case .userCheckins(let userId):
                     ProfileCheckinsView(userId: userId)
                     
@@ -114,6 +116,7 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     PlacesListView(listId: listId)
                     
                     // Conversation
+                    
                 case .conversation(let sid, let focusOnTextField):
                     ConversationView(sid, focusOnTextField: focusOnTextField)
                 }

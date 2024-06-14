@@ -8,8 +8,7 @@
 import Foundation
 import SwiftUI
 
-@MainActor
-class HomeVM: ObservableObject {
+class HomeVM: LoadingSections, ObservableObject {
     static let dragAmountToRefresh: Double = 200.0
     
     /// Used for pull to referesh - Percentage
@@ -44,88 +43,108 @@ class HomeVM: ObservableObject {
     // MARK: - General
     
     func startConversation(with userId: String) async {
-        self.loadingSections.insert(.startingConversation)
+        guard !loadingSections.contains(.startingConversation(with: userId)) else { return }
+        
+        setLoadingState(.startingConversation(with: userId), to: true)
+        
+        defer {
+            setLoadingState(.startingConversation(with: userId), to: false)
+        }
+        
         do {
             let conversation = try await conversationsDM.createConversation(with: userId)
             
-            HapticManager.shared.impact(style: .light)
-            
-            AppData.shared.goTo(.conversation(sid: conversation.sid, focusOnTextField: true))
+            await MainActor.run {
+                HapticManager.shared.impact(style: .light)
+                
+                AppData.shared.goTo(.conversation(sid: conversation.sid, focusOnTextField: true))
+            }
         } catch {
             presentErrorToast(error)
         }
-        self.loadingSections.remove(.startingConversation)
     }
     
     // MARK: - Following
     
     func updateFollowingData(_ action: RefreshNewAction) async {
-        guard !self.loadingSections.contains(.fetchingFollowingData) else { return }
+        guard !loadingSections.contains(.fetchingFollowingData) else { return }
         
         if action == .refresh {
             followingPage = 1
         }
         
-        self.loadingSections.insert(.fetchingFollowingData)
+        setLoadingState(.fetchingFollowingData, to: true)
+        
+        defer {
+            setLoadingState(.fetchingFollowingData, to: false)
+        }
+        
         do {
             let data = try await feedDM.getFeed(page: self.followingPage, type: .followings)
-                        
-            if action == .refresh || self.followingItems.isEmpty {
-                self.followingItems = getClusteredFeedItems(data)
-            } else {
-                self.followingItems.append(contentsOf: getClusteredFeedItems(data))
-            }
             
-            isFeedEmpty = self.followingItems.isEmpty
-            
-            followingPage += 1
-            
-            if action == .refresh {
-                self.lastFollowingRefereshTime = .now
-                if let first = self.followingItems.first {
-                    scrollFollowingToItem?(first.id)
+            await MainActor.run {
+                if action == .refresh || self.followingItems.isEmpty {
+                    self.followingItems = getClusteredFeedItems(data)
+                } else {
+                    self.followingItems.append(contentsOf: getClusteredFeedItems(data))
+                }
+                
+                isFeedEmpty = self.followingItems.isEmpty
+                
+                if action == .refresh {
+                    self.lastFollowingRefereshTime = .now
+                    if let first = self.followingItems.first {
+                        scrollFollowingToItem?(first.id)
+                    }
                 }
             }
+            
+            followingPage += 1
         } catch {
             presentErrorToast(error)
         }
-        self.loadingSections.remove(.fetchingFollowingData)
     }
     
     // MARK: - For You
     
     func updateForYouData(_ action: RefreshNewAction) async {
-        guard !self.loadingSections.contains(.fetchingForYouData) else { return }
+        guard !loadingSections.contains(.fetchingForYouData) else { return }
         
         if action == .refresh {
             forYouPage = 1
         }
         
-        self.loadingSections.insert(.fetchingForYouData)
+        setLoadingState(.fetchingForYouData, to: true)
+        
+        defer {
+            setLoadingState(.fetchingForYouData, to: false)
+        }
+        
         do {
             let data = try await feedDM.getFeed(page: self.forYouPage, type: .forYou)
             
-            if action == .refresh || self.forYouItems.isEmpty {
-                self.forYouItems = data
-            } else {
-                self.forYouItems.append(contentsOf: data)
+            await MainActor.run {
+                if action == .refresh || self.forYouItems.isEmpty {
+                    self.forYouItems = data
+                } else {
+                    self.forYouItems.append(contentsOf: data)
+                }
+                
+                if action == .refresh {
+                    self.lastForYouRefereshTime = .now
+                    if let first = self.forYouItems.first {
+                        scrollForYouToItem?(first.id)
+                    }
+                }
             }
             
             forYouPage += 1
-            
-            if action == .refresh {
-                self.lastForYouRefereshTime = .now
-                if let first = self.forYouItems.first {
-                    scrollForYouToItem?(first.id)
-                }
-            }
         } catch {
             presentErrorToast(error)
         }
-        self.loadingSections.remove(.fetchingForYouData)
     }
     
-    func getClusteredFeedItems(_ feedItems: [FeedItem]) -> [FeedItem] {
+    private func getClusteredFeedItems(_ feedItems: [FeedItem]) -> [FeedItem] {
         var result: [FeedItem] = []
         
         var skips = Set<String>()
@@ -154,33 +173,42 @@ class HomeVM: ObservableObject {
         return result
     }
     
-    func followResourceUser(item: Binding<FeedItem>, userId: String) async {
-        self.loadingSections.insert(.followRequest(userId))
+    func followResourceUser(_ userId: String) async -> Result<UserProfileDM.FollowRequestStatus, Error>? {
+        guard !loadingSections.contains(.followRequest(userId)) else { return nil }
+        
+        setLoadingState(.followRequest(userId), to: true)
+        
+        defer {
+            setLoadingState(.followRequest(userId), to: false)
+        }
+        
         do {
             let status = try await userProfileDM.follow(id: userId)
             
-            item.wrappedValue.followFromResourceUsers(userId: userId, response: status)
+            return .success(status)
         } catch {
             presentErrorToast(error)
+            return .failure(error)
         }
-        self.loadingSections.remove(.followRequest(userId))
     }
     
-    func followUser(item: Binding<FeedItem>) async {
-        self.loadingSections.insert(.followRequest(item.wrappedValue.user.id))
+    func followUser(_ userId: String) async -> Result<UserProfileDM.FollowRequestStatus, Error>? {
+        guard !loadingSections.contains(.followRequest(userId)) else { return nil }
+        
+        setLoadingState(.followRequest(userId), to: true)
+        
+        defer {
+            setLoadingState(.followRequest(userId), to: false)
+        }
+        
         do {
-            let status = try await userProfileDM.follow(id: item.wrappedValue.user.id)
+            let status = try await userProfileDM.follow(id: userId)
             
-            switch status {
-            case .following:
-                item.wrappedValue.user.setConnectionStatus(following: .following)
-            case .requested:
-                item.wrappedValue.user.setConnectionStatus(following: .requested)
-            }
+            return .success(status)
         } catch {
             presentErrorToast(error)
+            return .failure(error)
         }
-        self.loadingSections.remove(.followRequest(item.wrappedValue.user.id))
     }
     
     /// update if more than 15 minutes has passed
@@ -189,7 +217,7 @@ class HomeVM: ObservableObject {
             await self.updateFollowingData(.refresh)
         }
     }
-
+    
     /// update if more than 15 minutes has passed
     func updateForYouIfNeeded() async {
         if let lastRefereshTime = lastForYouRefereshTime, lastRefereshTime.addingTimeInterval(15 * 60) < .now {
@@ -197,66 +225,83 @@ class HomeVM: ObservableObject {
         }
     }
     
-    /// Add reaction to item
-    /// - Parameters:
-    ///   - reaction: NewReaction - aanything that conforms to GeneralReactionProtocol
-    ///   - item: FeedItem
-    func addReaction(_ reaction: GeneralReactionProtocol, to item: Binding<FeedItem>) async {
-        HapticManager.shared.impact(style: .light)
-        // add temporary reaction
-        let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: .now)
-        item.wrappedValue.addReaction(tempUserReaction)
+    func addReaction(_ reaction: GeneralReactionProtocol, to feedItem: FeedItem) async -> Result<FeedItem, Error>? {
+        guard !loadingSections.contains(.addingReaction(symbol: reaction.reaction, activityId: feedItem.id)) else { return nil }
         
-        // add reaction to server
+        HapticManager.shared.impact(style: .light)
+        
+        setLoadingState(.addingReaction(symbol: reaction.reaction, activityId: feedItem.id), to: true)
+        
+        defer {
+            setLoadingState(.addingReaction(symbol: reaction.reaction, activityId: feedItem.id), to: false)
+        }
+        
+        var updatedFeedItem = feedItem
         do {
-            let userReaction = try await reactionsDM.addReaction(type: reaction.type, reaction: reaction.reaction, for: item.id)
+            let userReaction = try await reactionsDM.addReaction(type: reaction.type, reaction: reaction.reaction, for: feedItem.id)
             
-            // replace temporary reaction with server reaction
-            item.wrappedValue.removeReaction(tempUserReaction)
-            item.wrappedValue.addReaction(userReaction)
+            updatedFeedItem.addReaction(userReaction)
+            return .success(updatedFeedItem)
         } catch {
-            HapticManager.shared.impact(style: .light)
-            // remove temp reaction
-            item.wrappedValue.removeReaction(tempUserReaction)
+            return .failure(error)
         }
     }
     
-    /// Remove reaction from item
-    /// - Parameters:
-    ///   - reaction: UserReaction
-    ///   - item: FeedItem
-    func removeReaction(_ reaction: UserReaction, from item: Binding<FeedItem>) async {
-        // remove temporary reaction
-        item.wrappedValue.removeReaction(reaction)
+    
+    func removeReaction(_ reaction: UserReaction, from feedItem: FeedItem) async -> Result<FeedItem, Error>? {
+        guard !loadingSections.contains(.removeingReaction(reactionId: reaction.id)) else { return nil }
         
-        // remove reaction from server
+        HapticManager.shared.impact(style: .light)
+        
+        setLoadingState(.removeingReaction(reactionId: reaction.id), to: true)
+        
+        defer {
+            setLoadingState(.removeingReaction(reactionId: reaction.id), to: false)
+        }
+        
+        var updatedFeedItem = feedItem
         do {
             try await reactionsDM.removeReaction(reactionId: reaction.id)
+            
+            updatedFeedItem.removeReaction(reaction)
+            return .success(updatedFeedItem)
         } catch {
-            // add temp reaction back
-            item.wrappedValue.addReaction(reaction)
+            return .failure(error)
         }
     }
     
     func getLeaderboardData() async {
         do {
-            self.leaderboard = try await leaderboardDM.fetchLeaderboard(page: 1)
+            let data = try await leaderboardDM.fetchLeaderboard(page: 1)
+            
+            await MainActor.run {
+                self.leaderboard = data
+            }
         } catch {
             presentErrorToast(error)
         }
     }
     
     func followLeaderboardUser(userId: String) async {
-        self.loadingSections.insert(.followRequest(userId))
+        guard !loadingSections.contains(.followRequest(userId)) else { return }
+        
+        setLoadingState(.followRequest(userId), to: true)
+        
+        defer {
+            setLoadingState(.followRequest(userId), to: false)
+        }
+        
         do {
             let status = try await userProfileDM.follow(id: userId)
             
-            if let leaderboard, let userIndex = leaderboard.firstIndex(where: { $0.id == userId }) {
-                switch status {
-                case .following:
-                    self.leaderboard![userIndex].setConnectionStatus(following: .following)
-                case .requested:
-                    self.leaderboard![userIndex].setConnectionStatus(following: .requested)
+            await MainActor.run {
+                if let leaderboard, let userIndex = leaderboard.firstIndex(where: { $0.id == userId }) {
+                    switch status {
+                    case .following:
+                        self.leaderboard![userIndex].setConnectionStatus(following: .following)
+                    case .requested:
+                        self.leaderboard![userIndex].setConnectionStatus(following: .requested)
+                    }
                 }
             }
             
@@ -268,7 +313,6 @@ class HomeVM: ObservableObject {
         } catch {
             presentErrorToast(error)
         }
-        self.loadingSections.remove(.followRequest(userId))
     }
     
     // MARK: Enums
@@ -276,7 +320,9 @@ class HomeVM: ObservableObject {
     enum LoadingSection: Hashable {
         case fetchingForYouData
         case fetchingFollowingData
-        case startingConversation
+        case startingConversation(with: String)
         case followRequest(String)
+        case addingReaction(symbol: String, activityId: String)
+        case removeingReaction(reactionId: String)
     }
 }

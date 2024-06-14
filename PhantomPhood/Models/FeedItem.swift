@@ -8,7 +8,6 @@
 import Foundation
 
 enum FeedItemActivityType: String, Decodable, CaseIterable {
-    case all = "ALL"
     case newCheckin = "NEW_CHECKIN"
     case newReview = "NEW_REVIEW"
     case newRecommend = "NEW_RECOMMEND"
@@ -18,8 +17,6 @@ enum FeedItemActivityType: String, Decodable, CaseIterable {
     
     var title: String {
         switch self {
-        case .all:
-            "All"
         case .newCheckin:
             "Check-ins"
         case .newReview:
@@ -80,9 +77,14 @@ struct ReactionsObject: Decodable {
     var user: [UserReaction]
 }
 
-struct FeedItem: Identifiable, Decodable, Equatable {
+struct FeedItem: Identifiable, Decodable, Equatable, Hashable {
     static func == (lhs: FeedItem, rhs: FeedItem) -> Bool {
         lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine("FeedItem")
+        hasher.combine(id)
     }
     
     let id: String

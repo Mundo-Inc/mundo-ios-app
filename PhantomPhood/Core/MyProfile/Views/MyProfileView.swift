@@ -106,9 +106,8 @@ struct MyProfileView: View {
                                         .foregroundStyle(.secondary)
                                 }
                                 .onTapGesture {
-                                    if let user = auth.currentUser {
-                                        AppData.shared.goTo(AppRoute.userActivities(userId: UserIdEnum.withId(user.id), activityType: .newReview))
-                                    }
+                                    vm.activityType = .reviews
+                                    AppData.shared.goTo(AppRoute.myActivities(vm: vm, selected: nil))
                                 }
                                 
                                 VStack(spacing: 0) {
