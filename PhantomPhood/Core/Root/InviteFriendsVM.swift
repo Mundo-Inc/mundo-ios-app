@@ -131,7 +131,7 @@ final class InviteFriendsVM: ObservableObject {
             if let profileImage = currentUser.profileImage {
                 buo.imageUrl = profileImage.absoluteString
             } else {
-                buo.imageUrl = "https://phantomphood.ai/img/NoProfileImage.jpg"
+                buo.imageUrl = "\(K.ENV.WebsiteURL)/images/NoProfileImage.jpg"
             }
             
             let lp: BranchLinkProperties = BranchLinkProperties()

@@ -143,6 +143,7 @@ struct OnboardingView: View {
                         handleNext()
                     } label: {
                         Text(vm.section.nextButtonTitle)
+                            .animation(.easeIn(duration: 0), value: vm.section.nextButtonTitle)
                             .foregroundStyle(Color.primary)
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)

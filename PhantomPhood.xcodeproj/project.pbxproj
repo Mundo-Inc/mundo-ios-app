@@ -178,7 +178,6 @@
 		0B3126E32B6A9FE30063FC0E /* OnboardingVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3126E22B6A9FE30063FC0E /* OnboardingVM.swift */; };
 		0B35B7A52B0D095A00822BA6 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 0B35B7A42B0D095A00822BA6 /* GoogleSignIn */; };
 		0B35B7A72B0D095A00822BA6 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B35B7A62B0D095A00822BA6 /* GoogleSignInSwift */; };
-		0B35B7A92B0D09EB00822BA6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0B35B7A82B0D09EB00822BA6 /* GoogleService-Info.plist */; };
 		0B35B7AB2B0D14CA00822BA6 /* SignInOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B35B7AA2B0D14CA00822BA6 /* SignInOptionsView.swift */; };
 		0B35B7AD2B0D14D500822BA6 /* SignInWithEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B35B7AC2B0D14D500822BA6 /* SignInWithEmailView.swift */; };
 		0B35B7B32B0DFCE000822BA6 /* SignInGoogleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B35B7B22B0DFCE000822BA6 /* SignInGoogleHelper.swift */; };
@@ -346,6 +345,7 @@
 		0BB37E9C2ABA52C7009E1272 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0BB37E9B2ABA52C7009E1272 /* Shaders.metal */; };
 		0BB37E9E2ABA6D84009E1272 /* HomeFollowingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB37E9D2ABA6D84009E1272 /* HomeFollowingView.swift */; };
 		0BB437292B7673DD002B57D1 /* AchievementsEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB437282B7673DD002B57D1 /* AchievementsEnum.swift */; };
+		0BB58CFF2C259BF700DB404A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0BB58CFE2C259BF700DB404A /* GoogleService-Info.plist */; };
 		0BBBE62A2C1B4140003F76E2 /* MyActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBBE6292C1B4140003F76E2 /* MyActivitiesView.swift */; };
 		0BBEFAF32B7E41E800A78FF0 /* Prize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBEFAF22B7E41E800A78FF0 /* Prize.swift */; };
 		0BBFFE1C2B9B57E9003A05B1 /* EventsDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BBFFE1B2B9B57E9003A05B1 /* EventsDM.swift */; };
@@ -422,7 +422,6 @@
 		0BF10B942B35DB2300522E60 /* ProfileCheckinsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF10B932B35DB2300522E60 /* ProfileCheckinsView.swift */; };
 		0BF17BA92AF2FAA500D87812 /* ProfileCheckinsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF17BA82AF2FAA500D87812 /* ProfileCheckinsVM.swift */; };
 		0BF17BAB2AF2FDE800D87812 /* GeneralTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF17BAA2AF2FDE800D87812 /* GeneralTypes.swift */; };
-		0BF5B49D2AB292D500DEC403 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF5B49C2AB292D500DEC403 /* KeychainHelper.swift */; };
 		0BF5B4A62AB353CB00DEC403 /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF5B4A52AB353CB00DEC403 /* TextField.swift */; };
 		0BF5B4A92AB3758000DEC403 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF5B4A82AB3758000DEC403 /* HomeView.swift */; };
 		0BF5B4B42AB3787200DEC403 /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF5B4B32AB3787200DEC403 /* Tab.swift */; };
@@ -622,7 +621,6 @@
 		0B3022462B32178300827889 /* emojis.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = emojis.json; sourceTree = "<group>"; };
 		0B3022482B32183100827889 /* 1f924.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = 1f924.gif; sourceTree = "<group>"; };
 		0B3126E22B6A9FE30063FC0E /* OnboardingVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingVM.swift; sourceTree = "<group>"; };
-		0B35B7A82B0D09EB00822BA6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0B35B7AA2B0D14CA00822BA6 /* SignInOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInOptionsView.swift; sourceTree = "<group>"; };
 		0B35B7AC2B0D14D500822BA6 /* SignInWithEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithEmailView.swift; sourceTree = "<group>"; };
 		0B35B7B22B0DFCE000822BA6 /* SignInGoogleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInGoogleHelper.swift; sourceTree = "<group>"; };
@@ -783,6 +781,7 @@
 		0BB37E9B2ABA52C7009E1272 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		0BB37E9D2ABA6D84009E1272 /* HomeFollowingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFollowingView.swift; sourceTree = "<group>"; };
 		0BB437282B7673DD002B57D1 /* AchievementsEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsEnum.swift; sourceTree = "<group>"; };
+		0BB58CFE2C259BF700DB404A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0BBBE6292C1B4140003F76E2 /* MyActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyActivitiesView.swift; sourceTree = "<group>"; };
 		0BBEFAF22B7E41E800A78FF0 /* Prize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prize.swift; sourceTree = "<group>"; };
 		0BBFFE1B2B9B57E9003A05B1 /* EventsDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsDM.swift; sourceTree = "<group>"; };
@@ -860,7 +859,6 @@
 		0BF10B932B35DB2300522E60 /* ProfileCheckinsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCheckinsView.swift; sourceTree = "<group>"; };
 		0BF17BA82AF2FAA500D87812 /* ProfileCheckinsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCheckinsVM.swift; sourceTree = "<group>"; };
 		0BF17BAA2AF2FDE800D87812 /* GeneralTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralTypes.swift; sourceTree = "<group>"; };
-		0BF5B49C2AB292D500DEC403 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		0BF5B4A52AB353CB00DEC403 /* TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
 		0BF5B4A82AB3758000DEC403 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		0BF5B4AF2AB377C600DEC403 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -1547,7 +1545,7 @@
 			children = (
 				0B77EA592AAFDA1A00C8DF87 /* PhantomPhood.entitlements */,
 				0BB37E9B2ABA52C7009E1272 /* Shaders.metal */,
-				0B35B7A82B0D09EB00822BA6 /* GoogleService-Info.plist */,
+				0BB58CFE2C259BF700DB404A /* GoogleService-Info.plist */,
 				0BF5B4AF2AB377C600DEC403 /* Info.plist */,
 				0B5070582BBC434900593C1B /* AppDelegate.swift */,
 				0B47FDA02B11060600F39527 /* AppRouter.swift */,
@@ -1555,8 +1553,8 @@
 				0B77EA3C2AAF855500C8DF87 /* ContentView.swift */,
 				0B77EA3A2AAF855500C8DF87 /* PhantomPhoodApp.swift */,
 				0B77EA3E2AAF855600C8DF87 /* Assets.xcassets */,
-				0BE5877E2C0D0AAE00DD2936 /* Environment.xcconfig */,
 				0BE587802C0D0AC000DD2936 /* DevEnvironment.xcconfig */,
+				0BE5877E2C0D0AAE00DD2936 /* Environment.xcconfig */,
 				0B6495582AB1FD04000E57AF /* Core */,
 				0B9950BD2BBED5640060B6AF /* CoreDataModels */,
 				0BCD57E32B28B35700A1C914 /* DataManagers */,
@@ -1947,7 +1945,6 @@
 				0B2BF8812B17AA8000C10A5E /* AppGeneralVM.swift */,
 				0B77EA5A2AAFE31300C8DF87 /* Authentication.swift */,
 				0B86F9362B4433CB00DD4C85 /* EmojisVM.swift */,
-				0BF5B49C2AB292D500DEC403 /* KeychainHelper.swift */,
 				0B51A8D32ACEC58400DA38DC /* MediasVM.swift */,
 				0B3126E22B6A9FE30063FC0E /* OnboardingVM.swift */,
 				0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */,
@@ -2286,6 +2283,7 @@
 				0B30221D2B32094500827889 /* 1f641.gif in Resources */,
 				0B3022062B32094400827889 /* 1f616.gif in Resources */,
 				0B77EA422AAF855600C8DF87 /* Preview Assets.xcassets in Resources */,
+				0BB58CFF2C259BF700DB404A /* GoogleService-Info.plist in Resources */,
 				0B3022342B32094500827889 /* 1f379.gif in Resources */,
 				0B3022152B32094500827889 /* 1f680.gif in Resources */,
 				0B3021F22B32094400827889 /* 1f37e.gif in Resources */,
@@ -2326,7 +2324,6 @@
 				0B3022112B32094500827889 /* 1f340.gif in Resources */,
 				0B30220F2B32094500827889 /* 1f609.gif in Resources */,
 				0B77EA562AAFCAA800C8DF87 /* Welcome.json in Resources */,
-				0B35B7A92B0D09EB00822BA6 /* GoogleService-Info.plist in Resources */,
 				0B30220D2B32094500827889 /* 1f92c.gif in Resources */,
 				0B30222F2B32094500827889 /* 1f625.gif in Resources */,
 				0B3022402B32094500827889 /* 1f911.gif in Resources */,
@@ -2537,7 +2534,6 @@
 				0BBFFE1C2B9B57E9003A05B1 /* EventsDM.swift in Sources */,
 				0B1E790B2B86C1E100549D71 /* YelpReviewItem.swift in Sources */,
 				0B226F612B331FF10036B8BE /* HomeActivityItemPlaceholder.swift in Sources */,
-				0BF5B49D2AB292D500DEC403 /* KeychainHelper.swift in Sources */,
 				0B937DF62BF27EC100CBDC79 /* FollowRequest.swift in Sources */,
 				0B0BB77E2BB4615000DE3728 /* AreaLevel.swift in Sources */,
 				0B1E79092B86C1D800549D71 /* GoogleReviewItem.swift in Sources */,
@@ -2790,7 +2786,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PhantomPhood/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Phantom Phood";
+				INFOPLIST_KEY_CFBundleDisplayName = Mundo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to let you capture and upload photos/videos directly.";
 				INFOPLIST_KEY_NSContactsUsageDescription = "This helps you and others to find people to follow and helps you connect and interact with people you already follow. Your contacts will be synced and securely stored in Phantom Phood's servers.";
@@ -2807,7 +2803,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.74.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2830,7 +2826,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PhantomPhood/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Phantom Phood";
+				INFOPLIST_KEY_CFBundleDisplayName = Mundo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to let you capture and upload photos/videos directly.";
 				INFOPLIST_KEY_NSContactsUsageDescription = "This helps you and others to find people to follow and helps you connect and interact with people you already follow. Your contacts will be synced and securely stored in Phantom Phood's servers.";
@@ -2847,7 +2843,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.74.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

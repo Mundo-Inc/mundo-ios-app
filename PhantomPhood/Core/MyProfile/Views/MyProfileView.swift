@@ -61,7 +61,7 @@ struct MyProfileView: View {
                                     .foregroundStyle(Color.primary)
                             }
                             
-                            if let currentUser = auth.currentUser, let url = URL(string: "https://phantomphood.ai/user/@\(currentUser.username)") {
+                            if let currentUser = auth.currentUser, let url = URL(string: "\(K.ENV.WebsiteURL)/user/@\(currentUser.username)") {
                                 ShareLink(item: url, message: Text("Join \(currentUser.name) on a journey of taste")) {
                                     Text("Share profile")
                                         .frame(height: 32)

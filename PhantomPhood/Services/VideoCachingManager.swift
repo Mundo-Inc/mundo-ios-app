@@ -18,7 +18,7 @@ final class VideoCachingManager {
     private let videoCacheDirectory: URL
     
     private var isCaching: Bool = false
-    private let queue = DispatchQueue(label: "ai.phantomphood.VideoCachingManager", attributes: .concurrent)
+    private let queue = DispatchQueue(label: "\(K.ENV.BundleIdentifier).VideoCachingManager", attributes: .concurrent)
     private var cachingQueue: [URL] = [] {
         didSet {
             if !isCaching, let first = cachingQueue.first {

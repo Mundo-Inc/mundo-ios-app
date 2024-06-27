@@ -8,8 +8,8 @@
 import Foundation
 
 struct K {
-    static let appURLScheme = "phantom"
-    static let appDomain = "phantomphood.ai"
+    static let appURLScheme = "mundo"
+    static let appDomain = "getmundo.ai"
     
     struct UserDefaults {
         static let isMute = "isMute"
@@ -45,6 +45,28 @@ struct K {
     struct CoordinateSpace {
         static let myProfile = "MyProfile"
         static let userProfile = "UserProfile"
+    }
+    
+    struct ENV {
+        static var APIBaseURL: String {
+            Bundle.main.object(forInfoDictionaryKey: "APIBaseURL") as! String
+        }
+        static var GIDClientID: String {
+            Bundle.main.object(forInfoDictionaryKey: "GIDClientID") as! String
+        }
+        static var StripeDefaultPublishableKey: String {
+            Bundle.main.object(forInfoDictionaryKey: "StripeDefaultPublishableKey") as! String
+        }
+        static var WebsiteURL: String {
+            Bundle.main.object(forInfoDictionaryKey: "WebsiteURL") as! String
+        }
+        static var SupportEmail: String {
+            Bundle.main.object(forInfoDictionaryKey: "SupportEmail") as! String
+        }
+        
+        static var BundleIdentifier: String {
+            Bundle.main.bundleIdentifier ?? "-"
+        }
     }
     
     private init() {}

@@ -4,6 +4,14 @@
 <dict>
 	<key>APIBaseURL</key>
 	<string>$(API_PROTOCOL)://$(API_BASE_URL)</string>
+	<key>WebsiteURL</key>
+	<string>$(WEBSITE_URL_PROTOCOL)://$(WEBSITE_URL)</string>
+	<key>SupportEmail</key>
+	<string>$(SUPPORT_EMAIL)</string>
+	<key>GIDClientID</key>
+	<string>$(GID_CLIENT_ID)</string>
+	<key>StripeDefaultPublishableKey</key>
+	<string>$(STRIPE_DEFAULT_PUBLISHABLE_KEY)</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -13,24 +21,20 @@
 			<string>ai.phantomphood.app</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>phantom</string>
+				<string>mundo</string>
 			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>Google Sign In</string>
+			<string>ai.phantomphood.app.google.signin</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.323069822782-cuk2poatn6g4mjhca6mjp8hfgclsdpe5</string>
+				<string>com.googleusercontent.apps.991037745050-0ohvqi6lg4ajomut72v2lv1rq5do4d6p</string>
 			</array>
 		</dict>
 	</array>
-	<key>GIDClientID</key>
-	<string>323069822782-cuk2poatn6g4mjhca6mjp8hfgclsdpe5.apps.googleusercontent.com</string>
-	<key>StripeDefaultPublishableKey</key>
-	<string>$(STRIPE_DEFAULT_PUBLISHABLE_KEY)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Poppins-Thin.ttf</string>

@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>323069822782-cuk2poatn6g4mjhca6mjp8hfgclsdpe5.apps.googleusercontent.com</string>
+	<string>991037745050-0ohvqi6lg4ajomut72v2lv1rq5do4d6p.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.323069822782-cuk2poatn6g4mjhca6mjp8hfgclsdpe5</string>
+	<string>com.googleusercontent.apps.991037745050-0ohvqi6lg4ajomut72v2lv1rq5do4d6p</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDcYo2Ljth25lJe3iWbUOLX68ry51XLYP4</string>
+	<string>AIzaSyB7x_83wqdeVaaNS4ife6RamFHHzuKMHSc</string>
 	<key>GCM_SENDER_ID</key>
-	<string>323069822782</string>
+	<string>991037745050</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>ai.phantomphood.app</string>
 	<key>PROJECT_ID</key>
-	<string>phantom-phood</string>
+	<string>the-mundo</string>
 	<key>STORAGE_BUCKET</key>
-	<string>phantom-phood.appspot.com</string>
+	<string>the-mundo.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:323069822782:ios:08e0c6779afab706de4e6f</string>
+	<string>1:991037745050:ios:cdef480e58a133e44a3c23</string>
 </dict>
 </plist>

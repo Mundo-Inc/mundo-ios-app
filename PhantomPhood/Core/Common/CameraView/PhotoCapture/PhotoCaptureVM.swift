@@ -11,7 +11,7 @@ import AVFoundation
 final class PhotoCaptureVM: NSObject, ObservableObject, HasCaptureSession {
     var session = AVCaptureSession()
     
-    private let sessionQueue = DispatchQueue(label: "com.phantomphood.AVCaptureSession")
+    private let sessionQueue = DispatchQueue(label: "\(K.ENV.BundleIdentifier).AVCaptureSession")
     private var status = Status.unconfigured
     private var photoOutput = AVCapturePhotoOutput()
     

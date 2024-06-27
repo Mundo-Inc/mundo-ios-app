@@ -131,7 +131,7 @@ final class VideoHelper {
                 assetWriter.startWriting()
                 assetWriter.startSession(atSourceTime: .zero)
                 
-                let queueLabel = "ai.phantomphood.videoCompressionQueue.\(UUID().uuidString)"
+                let queueLabel = "\(K.ENV.BundleIdentifier).videoCompressionQueue.\(UUID().uuidString)"
                 let processingQueue = DispatchQueue(label: queueLabel)
                 
                 if audioAssetWriterInput.canPerformMultiplePasses {
@@ -260,7 +260,7 @@ final class VideoHelper {
                 assetWriter.startWriting()
                 assetWriter.startSession(atSourceTime: .zero)
                 
-                let queueLabel = "ai.phantomphood.videoCompressionQueue.\(UUID().uuidString)"
+                let queueLabel = "\(K.ENV.BundleIdentifier).videoCompressionQueue.\(UUID().uuidString)"
                 let processingQueue = DispatchQueue(label: queueLabel)
                 
                 videoAssetWriterInput.requestMediaDataWhenReady(on: processingQueue) {

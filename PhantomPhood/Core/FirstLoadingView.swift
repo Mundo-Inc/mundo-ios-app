@@ -102,7 +102,7 @@ struct FirstLoadingView: View {
                         .frame(height: 30)
                 } else if retries >= 3 {
                     Button {
-                        if let url = URL(string: "mailto:dev@phantomphood.com") {
+                        if let url = URL(string: "mailto:\(K.ENV.SupportEmail)") {
                             openURL(url)
                         }
                     } label: {

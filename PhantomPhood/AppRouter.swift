@@ -77,7 +77,7 @@ struct AppRouter: View {
                         .alert("Update Required", isPresented: Binding(get: {
                             true
                         }, set: { _ in })) {
-                            if let url = URL(string: "https://apps.apple.com/app/phantom-phood/id6450897373") {
+                            if let url = URL(string: "https://apps.apple.com/app/id6450897373") {
                                 Link(destination: url) {
                                     Text("Update")
                                         .frame(maxWidth: .infinity)

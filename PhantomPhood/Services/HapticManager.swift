@@ -24,7 +24,7 @@ final class HapticManager {
     
     private var impactGenerators: [UIImpactFeedbackGenerator.FeedbackStyle: UIImpactFeedbackGenerator] = [:]
     
-    private let impactGeneratorQueue = DispatchQueue(label: "com.phantomphood.hapticManager.impactGeneratorQueue", attributes: .concurrent)
+    private let impactGeneratorQueue = DispatchQueue(label: "\(K.ENV.BundleIdentifier).hapticManager.impactGeneratorQueue", attributes: .concurrent)
     
     private init() {}
     

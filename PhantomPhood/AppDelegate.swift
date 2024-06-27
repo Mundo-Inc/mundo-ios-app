@@ -17,7 +17,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
         
-        StripeAPI.defaultPublishableKey = (Bundle.main.object(forInfoDictionaryKey: "StripeDefaultPublishableKey") as! String)
+        StripeAPI.defaultPublishableKey = K.ENV.StripeDefaultPublishableKey
         
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
             guard let data = params as? [String: AnyObject] else { return }
@@ -26,7 +26,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                 let universalLinkingManager = UniversalLinkingManager()
                 universalLinkingManager.handleIncomingURL(url)
             }
-            if let canonicalIdentifier = data["$canonical_identifier"] as? String, let url = URL(string: "https://phantomphood.com/\(canonicalIdentifier)") {
+            if let canonicalIdentifier = data["$canonical_identifier"] as? String, let url = URL(string: "\(K.ENV.WebsiteURL)/\(canonicalIdentifier)") {
                 let universalLinkingManager = UniversalLinkingManager()
                 universalLinkingManager.handleIncomingURL(url)
             }
@@ -143,7 +143,7 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         
         for (key, value) in userInfo {
             if let stringKey = key as? String {
-                if stringKey == "link", let url = URL(string: "https://phantomphood.ai/\(value)") {
+                if stringKey == "link", let url = URL(string: "\(K.ENV.WebsiteURL)/\(value)") {
                     let universalLinkingManager = UniversalLinkingManager()
                     universalLinkingManager.handleIncomingURL(url)
                 }

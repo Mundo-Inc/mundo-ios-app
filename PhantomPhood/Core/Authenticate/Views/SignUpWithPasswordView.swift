@@ -509,10 +509,10 @@ struct SignUpWithPasswordView: View {
                         Toggle(isOn: $vm.eula) {
                             VStack(alignment: .leading) {
                                 Text("I have read and agree to the")
-                                Link("End User License Agreement", destination: URL(string: "https://phantomphood.ai/eula")!)
+                                Link("End User License Agreement", destination: URL(string: "\(K.ENV.WebsiteURL)/eula")!)
                                 HStack {
                                     Text("and")
-                                    Link("Privacy Policy", destination: URL(string: "https://phantomphood.ai/privacy-policy")!)
+                                    Link("Privacy Policy", destination: URL(string: "\(K.ENV.WebsiteURL)/privacy-policy")!)
                                 }
                             }
                             .font(.custom(style: .body))

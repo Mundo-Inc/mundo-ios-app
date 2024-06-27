@@ -9,7 +9,7 @@ import Foundation
 
 final class APIManager {
     static let shared = APIManager()
-    static let baseURL = Bundle.main.object(forInfoDictionaryKey: "APIBaseURL") as! String
+    static let baseURL = K.ENV.APIBaseURL
     private let session: URLSession
     
     private init() {
