@@ -34,6 +34,22 @@ struct PlaceLocation: Decodable {
         let lng: Double
         let lat: Double
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case geoLocation, address, city, state, country, zip
+    }
+}
+
+extension PlaceLocation {
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        geoLocation = try container.decode(GeoLocation.self, forKey: .geoLocation)
+        address = try container.decodeOptionalString(forKey: .address)
+        city = try container.decodeOptionalString(forKey: .city)
+        state = try container.decodeOptionalString(forKey: .state)
+        country = try container.decodeOptionalString(forKey: .country)
+        zip = try container.decodeOptionalString(forKey: .zip)
+    }
 }
 
 struct PlaceDetail: Identifiable, Decodable {

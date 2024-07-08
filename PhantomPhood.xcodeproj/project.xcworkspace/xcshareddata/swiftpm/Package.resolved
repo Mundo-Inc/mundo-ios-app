@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SDWebImage/SDWebImage.git",
       "state" : {
-        "revision" : "b8523c1642f3c142b06dd98443ea7c48343a4dfd",
-        "version" : "5.19.3"
+        "revision" : "be0bcd7823ce56629948491f2eaeaa19979514f7",
+        "version" : "5.19.4"
       }
     },
     {
@@ -222,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/twilio/twilsock-ios",
       "state" : {
-        "revision" : "b643e5bbe4131615cb9b950ba549091f0e366441",
-        "version" : "2.0.4"
+        "revision" : "0a128c07da3cdadc4fce258f4b86a700379630f0",
+        "version" : "2.1.1"
       }
     }
   ],

@@ -774,6 +774,8 @@
 		0BAD223D2BC043CB002F7C8F /* ConversationVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationVM.swift; sourceTree = "<group>"; };
 		0BAE472F2ACC68FD001FBDAF /* YelpRatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpRatingView.swift; sourceTree = "<group>"; };
 		0BAE47312ACC91DF001FBDAF /* PlaceReviewsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceReviewsView.swift; sourceTree = "<group>"; };
+		0BB00AED2C2DCE70003C9CE2 /* DevEnvironment.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DevEnvironment.xcconfig; sourceTree = "<group>"; };
+		0BB00AEF2C2DCEA1003C9CE2 /* Environment.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Environment.xcconfig; sourceTree = "<group>"; };
 		0BB02DA32AD34B9E00F65822 /* AddReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReviewView.swift; sourceTree = "<group>"; };
 		0BB0C9582B30B3EF0013DEAE /* Emoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emoji.swift; sourceTree = "<group>"; };
 		0BB2440C2BCD823000A136CB /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
@@ -840,8 +842,6 @@
 		0BE3118D2AC4842700CF9BA5 /* ReviewVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewVideoView.swift; sourceTree = "<group>"; };
 		0BE3C8872B261DB40048F2A6 /* PhotosPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosPickerItem.swift; sourceTree = "<group>"; };
 		0BE3F1422B5756A200D96EE8 /* ExploreVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreVM.swift; sourceTree = "<group>"; };
-		0BE5877E2C0D0AAE00DD2936 /* Environment.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Environment.xcconfig; sourceTree = "<group>"; };
-		0BE587802C0D0AC000DD2936 /* DevEnvironment.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DevEnvironment.xcconfig; sourceTree = "<group>"; };
 		0BEC8C852AB7B08600B94AFC /* EditProfileVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileVM.swift; sourceTree = "<group>"; };
 		0BECB8D62B73F741007B51A1 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		0BECB8D82B73F748007B51A1 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -1553,8 +1553,8 @@
 				0B77EA3C2AAF855500C8DF87 /* ContentView.swift */,
 				0B77EA3A2AAF855500C8DF87 /* PhantomPhoodApp.swift */,
 				0B77EA3E2AAF855600C8DF87 /* Assets.xcassets */,
-				0BE587802C0D0AC000DD2936 /* DevEnvironment.xcconfig */,
-				0BE5877E2C0D0AAE00DD2936 /* Environment.xcconfig */,
+				0BB00AED2C2DCE70003C9CE2 /* DevEnvironment.xcconfig */,
+				0BB00AEF2C2DCEA1003C9CE2 /* Environment.xcconfig */,
 				0B6495582AB1FD04000E57AF /* Core */,
 				0B9950BD2BBED5640060B6AF /* CoreDataModels */,
 				0BCD57E32B28B35700A1C914 /* DataManagers */,
@@ -2655,7 +2655,7 @@
 /* Begin XCBuildConfiguration section */
 		0B77EA432AAF855600C8DF87 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0BE587802C0D0AC000DD2936 /* DevEnvironment.xcconfig */;
+			baseConfigurationReference = 0BB00AED2C2DCE70003C9CE2 /* DevEnvironment.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -2718,7 +2718,7 @@
 		};
 		0B77EA442AAF855600C8DF87 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0BE5877E2C0D0AAE00DD2936 /* Environment.xcconfig */;
+			baseConfigurationReference = 0BB00AEF2C2DCEA1003C9CE2 /* Environment.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

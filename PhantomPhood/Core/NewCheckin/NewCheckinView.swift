@@ -31,34 +31,13 @@ struct NewCheckinView: View {
                 VStack (spacing: 0) {
                     VStack(spacing: 5) {
                         HStack {
-                            if let thumbnail = vm.place?.thumbnail {
-                                ImageLoader(thumbnail, contentMode: .fill) { _ in
+                            if let event = vm.event, let logo = event.logo {
+                                ImageLoader(logo, contentMode: .fit) { _ in
                                     Image(systemName: "arrow.down.circle.dotted")
                                         .foregroundStyle(Color.white.opacity(0.5))
                                 }
                                 .frame(width: 50, height: 50)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .overlay(alignment: .topTrailing) {
-                                    if let event = vm.event, let logo = event.logo {
-                                        ZStack {
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .foregroundStyle(Color.themePrimary)
-                                            
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .frame(width: 24, height: 24)
-                                                .foregroundStyle(Color.themeBG)
-                                            
-                                            ImageLoader(logo, contentMode: .fit) { _ in
-                                                Image(systemName: "arrow.down.circle.dotted")
-                                                    .foregroundStyle(Color.white.opacity(0.5))
-                                            }
-                                            .frame(width: 24, height: 24)
-                                            .clipShape(RoundedRectangle(cornerRadius: 5))
-                                        }
-                                        .frame(width: 30, height: 30)
-                                        .offset(x: 5, y: -5)
-                                    }
-                                }
                             }
                             
                             VStack(spacing: 10) {
@@ -68,20 +47,32 @@ struct NewCheckinView: View {
                                         .fontWeight(.bold)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .lineLimit(1)
+                                        .padding(.vertical, vm.place?.location.address == nil && vm.place?.thumbnail != nil ? 8 : 0)
                                 } else {
                                     Text(vm.place?.name ?? "Name Placeholder")
                                         .font(.custom(style: .body))
                                         .fontWeight(.bold)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .lineLimit(1)
+                                        .padding(.vertical, vm.place?.location.address == nil && vm.place?.thumbnail != nil ? 8 : 0)
                                 }
-                                Text(vm.place?.location.address ?? "Address Placeholder")
-                                    .lineLimit(1)
-                                    .foregroundStyle(.secondary)
-                                    .font(.custom(style: .caption))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                if let address = vm.place?.location.address {
+                                    Text(address)
+                                        .lineLimit(1)
+                                        .font(.custom(style: .caption))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .foregroundStyle(vm.place?.thumbnail != nil ? Color.white.opacity(0.7) : Color.secondary)
+                                } else if vm.place == nil {
+                                    Text("Address placeholder")
+                                        .lineLimit(1)
+                                        .font(.custom(style: .caption))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .foregroundStyle(vm.place?.thumbnail != nil ? Color.white.opacity(0.7) : Color.secondary)
+                                }
+                                
                             }
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(vm.place?.thumbnail != nil ? Color.white : Color.primary)
                             
                             Spacer()
                         }
@@ -90,6 +81,18 @@ struct NewCheckinView: View {
                         .redacted(reason: vm.place == nil ? .placeholder : [])
                         
                         Divider()
+                    }
+                    .background {
+                        if let thumbnail = vm.place?.thumbnail {
+                            ImageLoader(thumbnail, contentMode: .fill) { _ in
+                                Image(systemName: "arrow.down.circle.dotted")
+                                    .foregroundStyle(Color.white.opacity(0.5))
+                            }
+                            .ignoresSafeArea()
+                            
+                            Color.black.opacity(0.6)
+                                .ignoresSafeArea()
+                        }
                     }
                     .background(Color.themePrimary)
                     
@@ -314,24 +317,28 @@ struct NewCheckinView: View {
                                 .padding(.vertical)
                             }
                         } header: {
-                            Button {
-                                withAnimation {
-                                    vm.isAdvancedSettingsVisible.toggle()
-                                }
-                            } label: {
-                                HStack {
-                                    Text("Privacy")
-                                        .foregroundStyle(Color.secondary)
-                                    
-                                    Spacer()
-                                    
+                            HStack {
+                                Text("Privacy")
+                                    .foregroundStyle(Color.secondary)
+                                
+                                Spacer()
+                                
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        vm.isAdvancedSettingsVisible.toggle()
+                                    }
+                                } label: {
                                     Text(vm.isAdvancedSettingsVisible ? "Hide" : "Show")
-                                    Image(systemName: vm.isAdvancedSettingsVisible ? "chevron.down" : "chevron.right")
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .rotationEffect(.degrees(vm.isAdvancedSettingsVisible ? 90 : 00))
                                 }
                             }
                         }
                         .padding(.horizontal)
-                        .padding(.bottom, 60)
+                        
+                        Color.clear
+                            .frame(height: 50)
                     }
                     .scrollDismissesKeyboard(.immediately)
                     .scrollIndicators(.never)
@@ -381,7 +388,13 @@ struct NewCheckinView: View {
                 .font(.custom(style: .body))
             }
         }
-        .navigationTitle("Checking in")
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Checking In")
+                    .fontWeight(.semibold)
+                    .foregroundStyle(vm.place?.thumbnail != nil ? Color.white : Color.primary)
+            }
+        }
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -410,15 +423,23 @@ fileprivate struct MentionItem: View {
 }
 
 #Preview {
-    NavigationStack {
-        NewCheckinView(.data(
-            PlaceEssentials(
-                id: "645c1d1ab41f8e12a0d166bc",
-                name: "Eleven Madison Park",
-                location: PlaceLocation(geoLocation: .init(lng: 40.7416519, lat: -73.9898102), address: "11 Madison Ave", city: "New York", state: "New York", country: "US", zip: "NY 10010"),
-                thumbnail: nil,
-                categories: ["food"]
-            )
-        ))
+    let placeEssentials = PlaceEssentials(
+        id: "645c1d1ab41f8e12a0d166bc",
+        name: "Eleven Madison Park",
+        location: PlaceLocation(geoLocation: .init(lng: 40.7416519, lat: -73.9898102), address: "11 Madison Ave", city: "New York", state: "New York", country: "US", zip: "NY 10010"),
+        thumbnail: URL(string: "https://lh3.googleusercontent.com/p/AF1QipORpCE38GEBjvmFeP2fO3yrHfKLjVb_wswX-Y_N=s680-w680-h510"),
+        categories: ["food"]
+    )
+
+    let event = Event(id: "TEST_ID", name: "AEPi", description: nil, logo: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/events/AEPi-Banner.jpeg"), place: PlaceEssentials(
+        id: "645c1d1ab41f8e12a0d166bc",
+        name: "Eleven Madison Park",
+        location: PlaceLocation(geoLocation: .init(lng: 40.7416519, lat: -73.9898102), address: "11 Madison Ave", city: "New York", state: "New York", country: "US", zip: "NY 10010"),
+        thumbnail: URL(string: "https://lh3.googleusercontent.com/p/AF1QipORpCE38GEBjvmFeP2fO3yrHfKLjVb_wswX-Y_N=s680-w680-h510"),
+        categories: ["food"]
+    ))
+    
+    return NavigationStack {
+        NewCheckinView(.data(placeEssentials), event: event)
     }
 }
