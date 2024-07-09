@@ -241,7 +241,7 @@ final class Authentication: ObservableObject {
                                 }
                             }
                         }
-                        return (false, "You are not signed up with Phantom Phood", 404)
+                        return (false, "You are not signed up with \(K.appName)", 404)
                     }
                 case .decodingError(let error):
                     print("DEBUG: Couldn't decode user info | Error: \(error.localizedDescription)")
@@ -295,16 +295,14 @@ final class Authentication: ObservableObject {
                 presentErrorToast(error, silent: true)
             }
             
-            let conversationsCoreDataManager = ConversationsCoreDataManager()
-            conversationsCoreDataManager.deleteAll { status in
-                print("Deleting ConversationsCoreDataManager status: \(status)")
-            }
-            
-            ConversationsManager.shared.logOutHandler()
+            ConversationsManager.shared.reset()
             
             UserSettings.shared.logoutCleanup()
             
-            appData.reset()
+            await MainActor.run {
+                currentUser = nil
+                appData.reset()
+            }
         } catch {
             print("DEBUG: Failed to sign out | Error: \(error.localizedDescription)")
         }

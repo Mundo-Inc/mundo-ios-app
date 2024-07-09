@@ -125,8 +125,8 @@ final class InviteFriendsVM: ObservableObject {
             HapticManager.shared.impact(style: .light)
             
             let buo: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "signup/\(currentUser.id)")
-            buo.title = "Join \(currentUser.name) on Phantom Phood"
-            buo.contentDescription = "You've been invited by \(currentUser.name) to Phantom Phood. Join friends in your dining experiences."
+            buo.title = "Join \(currentUser.name) on \(K.appName)"
+            buo.contentDescription = "You've been invited by \(currentUser.name) to \(K.appName). Join friends in your dining experiences."
             
             if let profileImage = currentUser.profileImage {
                 buo.imageUrl = profileImage.absoluteString
@@ -139,7 +139,7 @@ final class InviteFriendsVM: ObservableObject {
             lp.stage = "ref-\(inviteLinks.count + 1)"
             
             if let topViewController = UIApplication.shared.topViewController() {
-                buo.showShareSheet(with: lp, andShareText: "Join \(currentUser.name) on Phantom Phood", from: topViewController) { (activityType, completed, error) in
+                buo.showShareSheet(with: lp, andShareText: "Join \(currentUser.name) on \(K.appName)", from: topViewController) { (activityType, completed, error) in
                     if let error {
                         print(error)
                     } else {

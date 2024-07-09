@@ -406,7 +406,7 @@ struct PlaceView: View {
             if vm.expandedMedia == nil {
                 if let place = vm.place, let url = URL(string: "\(K.ENV.WebsiteURL)/place/\(place.id)") {
                     ToolbarItem(placement: .topBarTrailing) {
-                        ShareLink(item: url, subject: Text(place.name), message: Text("Check out \(place.name) on Phantom Phood"))
+                        ShareLink(item: url, subject: Text(place.name), message: Text("Check out \(place.name) on \(K.appName)"))
                     }
                 }
             } else {

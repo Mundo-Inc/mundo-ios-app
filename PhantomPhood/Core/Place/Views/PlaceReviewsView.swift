@@ -22,12 +22,12 @@ struct PlaceReviewsView: View {
                 Group {
                     if let total = vm.total {
                         if total == 0 {
-                            Text("No Phantom Review")
+                            Text("No \(K.appName) Review")
                         } else {
-                            Text(total > 1 ? "\(total.formattedWithSuffix()) Phantom Reviews" : "1 Phantom Review")
+                            Text(total > 1 ? "\(total.formattedWithSuffix()) \(K.appName) Reviews" : "1 \(K.appName) Review")
                         }
                     } else {
-                        Text("10 Phantom Reviews")
+                        Text("10 \(K.appName) Reviews")
                             .redacted(reason: .placeholder)
                     }
                 }
@@ -78,7 +78,7 @@ struct PlaceReviewsView: View {
                     await vm.fetch(.refresh)
                 }
             } else {
-                Text("10 Phantom Reviews")
+                Text("10 \(K.appName) Reviews")
                     .font(.custom(style: .caption))
                     .foregroundStyle(.secondary)
                     .redacted(reason: .placeholder)

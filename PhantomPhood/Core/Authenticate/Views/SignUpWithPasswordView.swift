@@ -626,7 +626,7 @@ struct SignUpWithPasswordView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
-            Image("HangingPhantom")
+            Image(.hangingPhantom)
                 .resizable()
                 .frame(width: 100, height: 191)
                 .padding(.trailing)

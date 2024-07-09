@@ -229,6 +229,8 @@ struct ConversationView: View {
                     .scrollIndicators(.never)
                     .scrollDismissesKeyboard(.interactively)
                     .onChange(of: vm.messages.count) { value in
+                        guard value > 0 else { return }
+                        
                         withAnimation {
                             proxy.scrollTo("bottom")
                         }
@@ -503,6 +505,8 @@ struct ConversationView: View {
             await vm.loadLastMessages()
         }
         .task {
+            guard !vm.messages.isEmpty else { return }
+            
             await vm.markAllMessagesAsRead()
         }
     }

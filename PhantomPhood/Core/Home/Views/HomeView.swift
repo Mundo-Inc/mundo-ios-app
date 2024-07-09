@@ -155,9 +155,11 @@ struct HomeView: View {
                 }
                 .foregroundStyle(.white)
                 .task {
+                    guard Authentication.shared.currentUser != nil else { return }
                     await notificationsVM.updateUnreadNotificationsCount()
                 }
                 .task {
+                    guard Authentication.shared.currentUser != nil else { return }
                     await notificationsVM.getFollowRequests(.refresh)
                 }
             }

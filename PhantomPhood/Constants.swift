@@ -8,6 +8,7 @@
 import Foundation
 
 struct K {
+    static let appName = "Mundo"
     static let appURLScheme = "mundo"
     static let appDomain = "getmundo.ai"
     

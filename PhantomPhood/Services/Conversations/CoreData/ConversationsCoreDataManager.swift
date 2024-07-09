@@ -9,25 +9,34 @@ import Foundation
 import CoreData
 
 final class ConversationsCoreDataManager {
-    let persistentContainer: NSPersistentContainer
+    static let shared = ConversationsCoreDataManager()
     
-    init() {
-        persistentContainer = NSPersistentContainer(name: "ConversationsDataContainer")
+    lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "ConversationsDataContainer")
         
-        persistentContainer.loadPersistentStores { _, error in
+        container.loadPersistentStores { storeDescription, error in
             if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                print("Error loading store: \(error), \(error.userInfo)")
             }
+            
+            storeDescription.shouldMigrateStoreAutomatically = true
+            storeDescription.shouldInferMappingModelAutomatically = true
+            
+            container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
         }
         
-        persistentContainer.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        return container
+    }()
+    
+    var viewContext: NSManagedObjectContext {
+        return persistentContainer.viewContext
     }
     
     /// Deletes: PersistentConversationDataItem, PersistentMediaDataItem, PersistentMessageDataItem, PersistentParticipantDataItem
-    func deleteAll(completion: @escaping (Bool) -> Void) {
+    func deleteAll() throws {
         let context = viewContext
         
-        context.perform {
+        try context.performAndWait {
             let entityNames = ["PersistentConversationDataItem", "PersistentMediaDataItem", "PersistentMessageDataItem", "PersistentParticipantDataItem"]
             
             for entityName in entityNames {
@@ -43,25 +52,19 @@ final class ConversationsCoreDataManager {
                 } catch {
                     presentErrorToast(error, debug: "Error deleting entity \(entityName): \(error)", silent: true)
                     context.rollback()  // Important to maintain integrity in case of failure
-                    completion(false)
-                    return
+                    throw error
                 }
             }
             
             // Save context to persist changes
             do {
                 try context.save()
-                completion(true)
             } catch {
                 presentErrorToast(error, debug: "Failed to save context", silent: true)
                 context.rollback()
-                completion(false)
+                throw error
             }
         }
-    }
-    
-    var viewContext: NSManagedObjectContext {
-        return persistentContainer.viewContext
     }
     
     func saveContext() async throws {

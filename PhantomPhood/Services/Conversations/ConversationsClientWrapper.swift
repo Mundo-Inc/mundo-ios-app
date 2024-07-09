@@ -13,16 +13,30 @@ final class ConversationsClientWrapper: NSObject, ObservableObject {
     
     private(set) var conversationsClient: TwilioConversationsClient?
     
+    private var initSetting = false
+    
     func create() async throws {
         do {
+            if conversationsClient != nil {
+                ToastVM.shared.toast(.init(type: .info, title: "App Restart Required", message: "Closing the app. Please open it again"))
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                    exit(0)
+                }
+                return
+            }
+            
+            if !initSetting {
+                TwilioConversationsClient.setLogLevel(.silent)
+            }
+            
             let token = try await conversationsDM.getToken()
             
             // Create conversations client with token
-            TwilioConversationsClient.setLogLevel(.silent)
-            
             let properties = TwilioConversationsClientProperties()
             properties.dispatchQueue = DispatchQueue(label: "TwilioConversationsDispatchQueue")
+            
             let (result, client) = await TwilioConversationsClient.conversationsClient(withToken: token, properties: properties, delegate: ConversationsManager.shared)
+            
             if result.isSuccessful, let client {
                 DispatchQueue.main.async {
                     self.conversationsClient = client
@@ -33,8 +47,10 @@ final class ConversationsClientWrapper: NSObject, ObservableObject {
                     // Populating conversations
                     ConversationsManager.shared.subscribeConversations(onRefresh: false)
                 }
+            } else if let error = result.error {
+                throw error
             } else {
-                throw result.error!
+                print("Unable to create Twilio client")
             }
         } catch {
             presentErrorToast(error, debug: "Error getting conversations token", silent: true)
@@ -54,12 +70,7 @@ final class ConversationsClientWrapper: NSObject, ObservableObject {
         let token = try await conversationsDM.getToken()
         await conversationsClient.updateToken(token)
     }
-        
-    func shutdown() {
-        conversationsClient?.shutdown()
-        conversationsClient = nil
-    }
-        
+            
     // MARK: - Credentials Events
     func conversationsClientTokenWillExpire(_ client: TwilioConversationsClient) {
         Task {

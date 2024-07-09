@@ -151,7 +151,7 @@ struct SettingsView: View {
             }
             
             VStack(alignment: .leading) {
-                Text("Phantom Phood Inc.")
+                Text("\(K.appName) Inc.")
                 if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                     Text("App version: " + appVersion)
                 }

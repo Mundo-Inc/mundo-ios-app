@@ -58,8 +58,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         } else {
             // The app did not terminate gracefully last time
             // Perform necessary cleanup or reset operations here
+            
             do {
                 try DataStack.shared.deleteAll()
+            } catch {
+                presentErrorToast(error, silent: true)
+            }
+            
+            do {
+                try ConversationsManager.shared.coreDataManager.deleteAll()
             } catch {
                 presentErrorToast(error, silent: true)
             }

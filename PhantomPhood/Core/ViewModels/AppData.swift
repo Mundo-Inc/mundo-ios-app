@@ -38,13 +38,12 @@ final class AppData: ObservableObject {
         }
     }
     
+    @MainActor
     func reset() {
-        DispatchQueue.main.async {
-            self.activeTab = .home
-            
-            self.navStack.removeAll()
-            self.authNavStack.removeAll()
-        }
+        self.navStack.removeAll()
+        self.authNavStack.removeAll()
+                
+        self.activeTab = .home
     }
     
     func goTo(_ route: AppRoute) {

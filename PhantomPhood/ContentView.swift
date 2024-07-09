@@ -78,7 +78,9 @@ struct ContentView: View {
             OnboardingView(vm: onboardingVM)
         }
         .task {
-            if ConversationsManager.shared.client.conversationsClient == nil {
+            guard auth.currentUser != nil else { return }
+            
+            if ConversationsManager.shared.client.conversationsClient == nil || ConversationsManager.shared.myUser == nil {
                 do {
                     try await ConversationsManager.shared.client.create()
                     ConversationsManager.shared.registerForTyping()

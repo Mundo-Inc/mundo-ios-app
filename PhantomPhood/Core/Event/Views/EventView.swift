@@ -345,7 +345,7 @@ struct EventView: View {
     @ViewBuilder
     private func ShareButton() -> some View {
         if let event = vm.event, let url = URL(string: "\(K.ENV.WebsiteURL)/event/\(event.id)") {
-            ShareLink(item: url, subject: Text(event.name), message: Text("Check out \(event.name) on Phantom Phood")) {
+            ShareLink(item: url, subject: Text(event.name), message: Text("Check out \(event.name) on \(K.appName)")) {
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundStyle(Color.themePrimary)
                     .aspectRatio(1, contentMode: .fit)

@@ -22,7 +22,7 @@ final class ConversationsManager: NSObject, ObservableObject {
     @Published var conversationsError: TCHError? = nil
     
     @Published var clientState: TCHClientConnectionState = .unknown
-    private(set) var client: ConversationsClientWrapper = ConversationsClientWrapper()
+    private(set) var client = ConversationsClientWrapper()
     
     var coreDataManager = ConversationsCoreDataManager()
     
@@ -56,13 +56,14 @@ final class ConversationsManager: NSObject, ObservableObject {
             .sink(
                 receiveCompletion: { _ in },
                 receiveValue: { [weak self] items in
-                    let sortedItems = items.sorted(by: self!.sorterForConversations)
-                    self?.conversations = sortedItems
+                    guard let self else { return }
+                    
+                    self.conversations = items.sorted(by: self.sorterForConversations)
                     
                     if (onRefresh) {
-                        self?.isConversationsRefreshing = false
+                        self.isConversationsRefreshing = false
                     } else {
-                        self?.isConversationsLoading = false
+                        self.isConversationsLoading = false
                     }
                 }
             )
@@ -71,17 +72,17 @@ final class ConversationsManager: NSObject, ObservableObject {
     
     func sorterForConversations(this: PersistentConversationDataItem, that: PersistentConversationDataItem) -> Bool {
         // Some conversations have null values so excluding from sorting
-        if (this.dateCreated == nil){
+        let thisDate = this.lastMessageDate ?? this.dateCreated
+        let thatDate = that.lastMessageDate ?? that.dateCreated
+        
+        switch (thisDate, thatDate) {
+        case (let date1?, let date2?):
+            return date1 > date2
+        case (nil, _):
             return false
-        }
-        if (that.dateCreated == nil){
+        case (_, nil):
             return true
         }
-        
-        let thisDate = this.lastMessageDate == nil ? this.dateCreated : this.lastMessageDate
-        let thatDate = that.lastMessageDate == nil ? that.dateCreated : that.lastMessageDate
-        
-        return thisDate! > thatDate!
     }
     
     func loadAllConversations() async {
@@ -213,7 +214,6 @@ extension ConversationsManager: TwilioConversationsClientDelegate {
     
     func tryReconnect() {
         print("Attempting to reconnect...")
-        client.shutdown()
         DispatchQueue.global().asyncAfter(deadline: .now() + 5.0) {
             Task {
                 do {
@@ -292,13 +292,15 @@ extension ConversationsManager: TwilioConversationsClientDelegate {
     // MARK: Typing changes
     
     func conversationsClient(_ client: TwilioConversationsClient, typingStartedOn conversation: TCHConversation, participant: TCHParticipant) {
+        guard let sid = conversation.sid else { return }
         let participant =  TCHAdapter.transform(from: participant)
-        typingPublisher.send(.startedTyping(conversationSid: conversation.sid!, participant: participant))
+        typingPublisher.send(.startedTyping(conversationSid: sid, participant: participant))
     }
     
     func conversationsClient(_ client: TwilioConversationsClient, typingEndedOn conversation: TCHConversation, participant: TCHParticipant) {
+        guard let sid = conversation.sid else { return }
         let participant =  TCHAdapter.transform(from: participant)
-        typingPublisher.send(.stoppedTyping(conversationSid: conversation.sid!, participant: participant))
+        typingPublisher.send(.stoppedTyping(conversationSid: sid, participant: participant))
     }
     
     // MARK: User changes
@@ -435,10 +437,22 @@ extension ConversationsManager: TCHConversationDelegate {
         }
     }
     
-    func logOutHandler() {
+    func reset() {
         DispatchQueue.main.async {
             self.myUser = nil
+            self.cancellables.forEach { $0.cancel() }
+            self.cancellables.removeAll()
+            self.conversations = []
+            self.isConversationsLoading = false
+            self.isConversationsRefreshing = false
+            
+            do {
+                try ConversationsManager.shared.coreDataManager.deleteAll()
+            } catch {
+                presentErrorToast(error, silent: true)
+            }
+            
+            NotificationCenter.default.removeObserver(self)
         }
-        self.client.shutdown()
     }
 }
