@@ -135,24 +135,24 @@ class CompleteTheUserInfoVM: ObservableObject {
 }
 
 struct CompleteTheUserInfoView: View {
-    @ObservedObject private var auth = Authentication.shared
-    @StateObject private var vm = CompleteTheUserInfoVM()
-    
     enum Field: Hashable {
         case name
         case username
         case userSearch
     }
     
-    @FocusState private var focusedField: Field?
+    @AppStorage(K.UserDefaults.referredBy) private var referredBy: String = ""
     
-    @AppStorage(K.UserDefaults.referredBy) var referredBy: String = ""
+    @ObservedObject private var auth = Authentication.shared
+    @StateObject private var vm = CompleteTheUserInfoVM()
+    
+    @FocusState private var focusedField: Field?
     
     var body: some View {
         VStack {
             if let error = vm.error {
                 Text(error)
-                    .font(.custom(style: .headline))
+                    .cfont(.headline)
                     .foregroundColor(.red)
                     .onTapGesture {
                         vm.error = nil
@@ -167,11 +167,11 @@ struct CompleteTheUserInfoView: View {
                         VStack(alignment: .leading) {
                             Image(.thinking)
                             Text("What's your name")
-                                .font(.custom(style: .title2))
+                                .cfont(.title2)
                                 .fontWeight(.semibold)
                                 .padding(.bottom, 3)
                             Text("Imagine a cheering crowd after your epic achievement. What name are they chanting?")
-                                .font(.custom(style: .subheadline))
+                                .cfont(.subheadline)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.leading)
                         }
@@ -179,7 +179,7 @@ struct CompleteTheUserInfoView: View {
                         .padding(.bottom)
                         
                         TextField("Full Name", text: $vm.name)
-                            .font(.custom(style: .title2))
+                            .cfont(.title2)
                             .keyboardType(.namePhonePad)
                             .focused($focusedField, equals: .name)
                             .textContentType(.name)
@@ -199,11 +199,11 @@ struct CompleteTheUserInfoView: View {
                         VStack(alignment: .leading) {
                             Image(.cool)
                             Text("Choose a username")
-                                .font(.custom(style: .title2))
+                                .cfont(.title2)
                                 .fontWeight(.semibold)
                                 .padding(.bottom, 3)
                             Text("Craft a username as iconic as your latest dance move")
-                                .font(.custom(style: .subheadline))
+                                .cfont(.subheadline)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.leading)
                         }
@@ -212,7 +212,7 @@ struct CompleteTheUserInfoView: View {
                         
                         VStack {
                             TextField("Username", text: $vm.username)
-                                .font(.custom(style: .title2))
+                                .cfont(.title2)
                                 .keyboardType(.default)
                                 .autocorrectionDisabled(true)
                                 .focused($focusedField, equals: .username)
@@ -242,13 +242,13 @@ struct CompleteTheUserInfoView: View {
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .foregroundStyle(Color.accentColor)
                             }
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                         }
                         
                         if vm.username.count > 0, let error = vm.usernameError, !vm.isUsernameValid {
                             Text(error)
                                 .foregroundStyle(.red)
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .transition(AnyTransition.opacity.animation(.spring))
                         }
@@ -291,15 +291,15 @@ struct CompleteTheUserInfoView: View {
                                                             .frame(maxWidth: .infinity, alignment: .leading)
                                                         } else {
                                                             Text(user.name)
-                                                                .font(.custom(style: .body))
+                                                                .cfont(.body)
                                                             
                                                         }
                                                     }
-                                                    .font(.custom(style: .body))
+                                                    .cfont(.body)
                                                     .fontWeight(.semibold)
                                                     
                                                     Text("@\(user.username)")
-                                                        .font(.custom(style: .caption))
+                                                        .cfont(.caption)
                                                         .foregroundStyle(.secondary)
                                                 }
                                                 
@@ -324,15 +324,15 @@ struct CompleteTheUserInfoView: View {
                             VStack(alignment: .leading) {
                                 Image(.friends)
                                 Text("Joining Us Through a Friend?")
-                                    .font(.custom(style: .title2))
+                                    .cfont(.title2)
                                     .fontWeight(.semibold)
                                     .padding(.bottom, 3)
                                 Text("Got a friend here? Enter their username and unlock rewards!")
-                                    .font(.custom(style: .subheadline))
+                                    .cfont(.subheadline)
                                     .foregroundColor(.secondary)
                                     .multilineTextAlignment(.leading)
                                 Text("(Optional)")
-                                    .font(.custom(style: .subheadline))
+                                    .cfont(.subheadline)
                                     .foregroundColor(.secondary)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -345,11 +345,11 @@ struct CompleteTheUserInfoView: View {
                                 
                                 VStack(alignment: .leading) {
                                     Text(referredBy.name)
-                                        .font(.custom(style: .title3))
+                                        .cfont(.title3)
                                         .fontWeight(.semibold)
                                     Text("@\(referredBy.username)")
                                         .foregroundStyle(.secondary)
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                 }
                                 
                                 Spacer()
@@ -368,7 +368,7 @@ struct CompleteTheUserInfoView: View {
                         } else if vm.showPasteButton && referredBy.isEmpty {
                             HStack {
                                 Text("Tap 'Paste' to apply your referral link automatically after copying it.")
-                                    .font(.custom(style: .caption2))
+                                    .cfont(.caption2)
                                     .foregroundStyle(.secondary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
@@ -384,11 +384,11 @@ struct CompleteTheUserInfoView: View {
                                 
                                 VStack(alignment: .leading) {
                                     Text("Name")
-                                        .font(.custom(style: .title3))
+                                        .cfont(.title3)
                                         .fontWeight(.semibold)
                                     Text("@username")
                                         .foregroundStyle(.secondary)
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                 }
                                 .redacted(reason: .placeholder)
                                 
@@ -403,7 +403,7 @@ struct CompleteTheUserInfoView: View {
                             }
                         } else {
                             TextField("Search Your Friend...", text: $vm.userSearch)
-                                .font(.custom(style: .title2))
+                                .cfont(.title2)
                                 .keyboardType(.default)
                                 .autocorrectionDisabled(true)
                                 .focused($focusedField, equals: .userSearch)
@@ -420,11 +420,11 @@ struct CompleteTheUserInfoView: View {
                         VStack(alignment: .leading) {
                             Image(.handshake)
                             Text("Last Step")
-                                .font(.custom(style: .title2))
+                                .cfont(.title2)
                                 .fontWeight(.semibold)
                                 .padding(.bottom, 3)
                             Text("One tiny hurdle before the fun begins! Let's leap over the legal bit.")
-                                .font(.custom(style: .subheadline))
+                                .cfont(.subheadline)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.leading)
                         }
@@ -440,7 +440,7 @@ struct CompleteTheUserInfoView: View {
                                     Link("Privacy Policy", destination: URL(string: "\(K.ENV.WebsiteURL)/privacy-policy")!)
                                 }
                             }
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                         }
                         
                         Spacer()
@@ -448,7 +448,7 @@ struct CompleteTheUserInfoView: View {
                     
                 default:
                     Text("Error")
-                        .font(.custom(style: .body))
+                        .cfont(.body)
                 }
             }
             .padding(.horizontal)
@@ -477,7 +477,7 @@ struct CompleteTheUserInfoView: View {
                     }
                 } label: {
                     Text(vm.step == 0 ? "Cancel" : "Back")
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderless)
@@ -518,7 +518,7 @@ struct CompleteTheUserInfoView: View {
                         }
                         Text(vm.step == 3 ? "Finish Sign Up" : "Next")
                     }
-                    .font(.custom(style: .subheadline))
+                    .cfont(.subheadline)
                     .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -545,14 +545,15 @@ struct CompleteTheUserInfoView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(
-            Image("HangingPhantom")
+        .background(alignment: .topTrailing) {
+            Image(.Logo.tpLogo)
                 .resizable()
-                .frame(width: 100, height: 191)
-                .padding(.trailing)
-                .ignoresSafeArea(),
-            alignment: .topTrailing
-        )
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 120)
+                .rotationEffect(.degrees(-90))
+                .offset(x: 55, y: 20)
+                .ignoresSafeArea()
+        }
     }
 }
 

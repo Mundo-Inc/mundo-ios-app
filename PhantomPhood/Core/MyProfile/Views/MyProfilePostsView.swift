@@ -60,14 +60,14 @@ struct MyProfilePostsView: View {
                             }
                         }
                         .pickerStyle(.wheel)
-                        .font(.custom(style: .body))
+                        .cfont(.body)
                     }
                     .padding(.top)
                     .padding(.horizontal)
                     .presentationDetents([.height(200)])
                 }
             }
-            .font(.custom(style: .caption))
+            .cfont(.caption)
             .fontWeight(.medium)
             .padding()
             
@@ -122,7 +122,7 @@ struct MyProfilePostsView: View {
                                                 
                                                 Text(feedCheckin.place.name)
                                                     .lineLimit(1)
-                                                    .font(.custom(style: .caption))
+                                                    .cfont(.caption)
                                                     .fontWeight(.semibold)
                                                     .shadow(radius: 2)
                                                     .foregroundStyle(Color.white)
@@ -133,7 +133,7 @@ struct MyProfilePostsView: View {
                                                     .lineLimit(3)
                                                     .foregroundStyle(Color.white)
                                                     .multilineTextAlignment(.leading)
-                                                    .font(.custom(style: .caption))
+                                                    .cfont(.caption)
                                                     .shadow(radius: 2)
                                             }
                                             
@@ -203,7 +203,7 @@ struct MyProfilePostsView: View {
                                                             .frame(height: 22)
                                                             .foregroundStyle(Color.white)
                                                     }
-                                                    .font(.custom(style: .caption))
+                                                    .cfont(.caption)
                                                     .fontWeight(.semibold)
                                                 } else {
                                                     Image(systemName: "pencil.and.list.clipboard")
@@ -215,7 +215,7 @@ struct MyProfilePostsView: View {
                                                     if let place = item.place {
                                                         Text(place.name)
                                                             .lineLimit(1)
-                                                            .font(.custom(style: .caption))
+                                                            .cfont(.caption)
                                                             .fontWeight(.semibold)
                                                             .shadow(radius: 2)
                                                             .foregroundStyle(Color.white)
@@ -228,7 +228,7 @@ struct MyProfilePostsView: View {
                                                     .lineLimit(3)
                                                     .foregroundStyle(Color.white)
                                                     .multilineTextAlignment(.leading)
-                                                    .font(.custom(style: .caption))
+                                                    .cfont(.caption)
                                                     .shadow(radius: 2)
                                             }
                                             
@@ -273,7 +273,7 @@ struct MyProfilePostsView: View {
                                                     .lineLimit(3)
                                                     .foregroundStyle(Color.white)
                                                     .multilineTextAlignment(.leading)
-                                                    .font(.custom(style: .caption))
+                                                    .cfont(.caption)
                                                     .shadow(radius: 2)
                                             }
                                             
@@ -295,7 +295,7 @@ struct MyProfilePostsView: View {
                                             Text(item.activityType.rawValue)
                                             Text("Not Supported")
                                         }
-                                        .font(.custom(style: .caption2))
+                                        .cfont(.caption2)
                                         .foregroundStyle(.secondary)
                                     }
                             }

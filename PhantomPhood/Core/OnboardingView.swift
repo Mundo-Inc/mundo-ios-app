@@ -67,7 +67,7 @@ struct OnboardingView: View {
                 .ignoresSafeArea()
             
             VStack {
-                Image(.newPhantom)
+                Image(.Logo.tpLogo)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 200)
@@ -82,19 +82,19 @@ struct OnboardingView: View {
                             Text("Capture your\n*experiences* with\nyour friends.")
                                 .multilineTextAlignment(.center)
                                 .shadow(radius: 20)
-                                .font(.custom(style: .title))
+                                .cfont(.title)
                                 .fontWeight(.bold)
                         case .share:
                             VStack(spacing: 40) {
                                 Text("Share your taste")
                                     .multilineTextAlignment(.center)
                                     .shadow(radius: 20)
-                                    .font(.custom(style: .title))
+                                    .cfont(.title)
                                     .fontWeight(.bold)
                                 
                                 Text("Write reviews and post delicious images and videos. Share your experiences with friends and family and inspire foodies like you around the world.")
                                     .multilineTextAlignment(.leading)
-                                    .font(.custom(style: .body))
+                                    .cfont(.body)
                                     .foregroundStyle(.secondary)
                             }
                             .padding(.horizontal)
@@ -103,12 +103,12 @@ struct OnboardingView: View {
                                 Text("Connect with *friends*")
                                     .multilineTextAlignment(.center)
                                     .shadow(radius: 20)
-                                    .font(.custom(style: .title))
+                                    .cfont(.title)
                                     .fontWeight(.bold)
                                 
                                 Text("See where your friends are dining and what they recommend. Connect over shared tastes and plan your next food adventure together.")
                                     .multilineTextAlignment(.leading)
-                                    .font(.custom(style: .body))
+                                    .cfont(.body)
                                     .foregroundStyle(.secondary)
                             }
                             .padding(.horizontal)
@@ -117,12 +117,12 @@ struct OnboardingView: View {
                                 Text("Earn tasty rewards")
                                     .multilineTextAlignment(.center)
                                     .shadow(radius: 20)
-                                    .font(.custom(style: .title))
+                                    .cfont(.title)
                                     .fontWeight(.bold)
                                 
                                 Text("Join our Rewards Hub! Earn points for every check-in and review, and redeem them for exciting prizes. Turn your food explorations into rewarding experiences.")
                                     .multilineTextAlignment(.leading)
-                                    .font(.custom(style: .body))
+                                    .cfont(.body)
                                     .foregroundStyle(.secondary)
                             }
                             .padding(.horizontal)
@@ -159,7 +159,7 @@ struct OnboardingView: View {
                 
                 if vm.section == .journey {
                     Text("An app about your moments")
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .foregroundStyle(.secondary)
                         .frame(height: 52)
                         .transition(AnyTransition.fade.animation(.bouncy(duration: 0.3)))

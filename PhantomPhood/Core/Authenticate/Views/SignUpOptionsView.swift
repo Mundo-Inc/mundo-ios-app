@@ -9,8 +9,7 @@ import SwiftUI
 
 struct SignUpOptionsView: View {
     @StateObject private var vm = OAuthVM()
-    
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         ZStack {
@@ -19,10 +18,10 @@ struct SignUpOptionsView: View {
                 
                 VStack(alignment: .leading) {
                     Text("Create an account")
-                        .font(.custom(style: .title2))
+                        .cfont(.title2)
                         .fontWeight(.semibold)
                     Text("Please choose how you want to sign up")
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.leading)
                         .alert("Error", isPresented: Binding(optionalValue: $vm.error)) {
@@ -35,9 +34,7 @@ struct SignUpOptionsView: View {
                             Text(vm.error ?? "")
                         }
                     
-                    
                     VStack {
-                        
                         HStack(spacing: 20) {
                             Button {
                                 Task {
@@ -60,7 +57,7 @@ struct SignUpOptionsView: View {
                         }
                         
                         Text("-- Or --")
-                            .font(.custom(style: .subheadline))
+                            .cfont(.subheadline)
                             .foregroundStyle(.tertiary)
                             .padding(.vertical, 10)
                         
@@ -69,7 +66,7 @@ struct SignUpOptionsView: View {
                                 title: { Text("Using Email and Password") },
                                 icon: { Image(systemName: "envelope.fill") }
                             )
-                            .font(.custom(style: .footnote))
+                            .cfont(.footnote)
                             .fontWeight(.semibold)
                             .padding(.horizontal)
                             .frame(maxWidth: .infinity)
@@ -104,14 +101,15 @@ struct SignUpOptionsView: View {
                     }
             }
         }
-        .background(
-            Image(.hangingPhantom)
+        .background(alignment: .topTrailing) {
+            Image(.Logo.tpLogo)
                 .resizable()
-                .frame(width: 100, height: 191)
-                .padding(.trailing)
-                .ignoresSafeArea(),
-            alignment: .topTrailing
-        )
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 120)
+                .rotationEffect(.degrees(-90))
+                .offset(x: 55, y: 20)
+                .ignoresSafeArea()
+        }
     }
 }
 

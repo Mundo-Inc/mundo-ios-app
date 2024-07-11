@@ -18,12 +18,12 @@ struct GoogleReviewItem: View {
                 VStack(spacing: 2) {
                     HStack {
                         Text(review.authorAttribution.displayName)
-                            .font(.custom(style: .headline))
+                            .cfont(.headline)
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         Text(review.relativePublishTimeDescription)
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundStyle(.secondary)
                     }
                     HStack {
@@ -41,7 +41,7 @@ struct GoogleReviewItem: View {
             .padding(.horizontal)
             
             Text(review.text.text)
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .foregroundStyle(Color.primary.opacity(0.8))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)

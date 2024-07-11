@@ -27,7 +27,7 @@ struct UserConnectionsView: View {
                     }
                 } label: {
                     Text("Followers")
-                        .font(.custom(style: .footnote))
+                        .cfont(.footnote)
                         .bold()
                         .textCase(.uppercase)
                         .padding(.vertical, 5)
@@ -47,7 +47,7 @@ struct UserConnectionsView: View {
                     }
                 } label: {
                     Text("Followings")
-                        .font(.custom(style: .footnote))
+                        .cfont(.footnote)
                         .bold()
                         .textCase(.uppercase)
                         .padding(.vertical, 5)
@@ -140,11 +140,11 @@ fileprivate struct UserCard: View {
                         .frame(width: 20, height: 26)
                     
                     Text(connection.user.name)
-                        .font(.custom(style: .headline))
+                        .cfont(.headline)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 Text("@" + connection.user.username)
-                    .font(.custom(style: .subheadline))
+                    .cfont(.subheadline)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

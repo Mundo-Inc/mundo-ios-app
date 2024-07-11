@@ -178,12 +178,12 @@ struct HomeActivityItem: View {
                     
                     VStack(spacing: 30) {
                         Text("Checked In")
-                            .font(.custom(style: .title))
+                            .cfont(.title)
                             .foregroundStyle(Color.white)
                         
                         HStack(spacing: 5) {
                             Text(feedCheckin.place.name)
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                             
                             Image(systemName: "chevron.forward")
                                 .font(.system(size: 12))
@@ -225,12 +225,12 @@ struct HomeActivityItem: View {
                     
                     VStack(spacing: 30) {
                         Text("Reviewd")
-                            .font(.custom(style: .title))
+                            .cfont(.title)
                             .foregroundStyle(Color.white)
                         
                         HStack(spacing: 5) {
                             Text(place.name)
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                             
                             Image(systemName: "chevron.forward")
                                 .font(.system(size: 12))
@@ -288,9 +288,9 @@ struct HomeActivityItem: View {
         default:
             VStack {
                 Text("Unable to load\nPlease Skip this")
-                    .font(.custom(style: .headline))
+                    .cfont(.headline)
                 Text("New features are coming. Please check for app update soon")
-                    .font(.custom(style: .body))
+                    .cfont(.body)
                     .foregroundStyle(.secondary)
                     .padding()
             }
@@ -360,7 +360,7 @@ struct HomeActivityItem: View {
                         }
                         .frame(height: 25)
                         .frame(maxWidth: 80)
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .fontWeight(.regular)
                         .foregroundStyle(Color.primary)
                         .background(Color.accentColor, in: Capsule())
@@ -409,7 +409,7 @@ struct HomeActivityItem: View {
                         }
                     case .levelUp, .following, .newHomemade:
                         Text("@\(item.user.username)")
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                             .fontWeight(.medium)
@@ -420,7 +420,7 @@ struct HomeActivityItem: View {
                     Spacer()
                     
                     Text(item.createdAt.timeElapsed())
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -495,7 +495,7 @@ struct HomeActivityItem: View {
                             StarRating(score: overallScore, activeColor: Color.gold)
                             
                             Text("(\(String(format: "%.0f", overallScore))/5)")
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .foregroundStyle(.white)
                             
                             Spacer()
@@ -544,7 +544,7 @@ struct HomeActivityItem: View {
                 if case .user(let user) = item.resource {
                     VStack {
                         Text("Leveled Up")
-                            .font(.custom(style: .title))
+                            .cfont(.title)
                             .foregroundStyle(Color.white)
                         
                         LevelView(level: user.progress.level)
@@ -597,7 +597,7 @@ struct HomeActivityItem: View {
                 if case .users(let users) = item.resource {
                     VStack {
                         Text("Recently Followed")
-                            .font(.custom(style: .title))
+                            .cfont(.title)
                             .foregroundStyle(Color.white)
                         
                         VStack(spacing: 0) {
@@ -608,13 +608,13 @@ struct HomeActivityItem: View {
                                     
                                     VStack(alignment: .leading) {
                                         Text(usersList[index].name)
-                                            .font(.custom(style: .headline))
+                                            .cfont(.headline)
                                             .fontWeight(.medium)
                                             .foregroundStyle(.primary)
                                             .lineLimit(1)
                                         
                                         Text("@\(usersList[index].username)")
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                             .foregroundStyle(.secondary)
                                             .lineLimit(1)
                                     }
@@ -624,7 +624,7 @@ struct HomeActivityItem: View {
                                         switch connectionStatus.followingStatus {
                                         case .following:
                                             Text("Following")
-                                                .font(.custom(style: .caption))
+                                                .cfont(.caption)
                                                 .foregroundStyle(.secondary)
                                         case .notFollowing:
                                             HStack {
@@ -637,7 +637,7 @@ struct HomeActivityItem: View {
                                             }
                                             .frame(height: 20)
                                             .frame(minWidth: 60)
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                             .foregroundStyle(.secondary)
                                             .padding(.horizontal, 8)
                                             .padding(.vertical, 4)
@@ -654,7 +654,7 @@ struct HomeActivityItem: View {
                                             .foregroundStyle(.primary)
                                         case .requested:
                                             Text("Requested")
-                                                .font(.custom(style: .caption))
+                                                .cfont(.caption)
                                                 .foregroundStyle(.secondary)
                                             
                                         }
@@ -783,7 +783,7 @@ struct HomeActivityItem: View {
             
             if item.reactions.total.count > 5 {
                 Text("+ \(item.reactions.total.count - 5)")
-                    .font(.custom(style: .caption))
+                    .cfont(.caption)
             }
             
             Image(.Icons.addReaction)
@@ -818,7 +818,7 @@ struct HomeActivityItem: View {
                     .frame(height: item.commentsCount > 0 ? 26 : 28)
                 if item.commentsCount > 0 {
                     Text("\(item.commentsCount)")
-                        .font(.custom(style: .caption2))
+                        .cfont(.caption2)
                 }
             }
             .frame(width: 52, height: 52)
@@ -971,7 +971,7 @@ extension HomeActivityItem {
     @ViewBuilder
     private func ContentTypeChip(text: String, color: Color) -> some View {
         Text(text)
-            .font(.custom(style: .caption))
+            .cfont(.caption)
             .fontWeight(.medium)
             .foregroundStyle(.black)
             .padding(.horizontal, 6)
@@ -986,7 +986,7 @@ extension HomeActivityItem {
             ProfileImage(user.profileImage, size: 28)
             
             Text(user.username)
-                .font(.custom(style: .caption))
+                .cfont(.caption)
                 .foregroundStyle(.white)
                 .fontWeight(.medium)
             

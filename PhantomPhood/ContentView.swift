@@ -77,20 +77,20 @@ struct ContentView: View {
         })) {
             OnboardingView(vm: onboardingVM)
         }
-        .task {
-            guard auth.currentUser != nil else { return }
-            
-            if ConversationsManager.shared.client.conversationsClient == nil || ConversationsManager.shared.myUser == nil {
-                do {
-                    try await ConversationsManager.shared.client.create()
-                    ConversationsManager.shared.registerForTyping()
-                } catch {
-                    presentErrorToast(error, debug: "Error creating twilio client")
-                }
-            }
-            
-//            ContactsService.shared.tryToSyncContacts()
-        }
+//        .task {
+//            guard auth.currentUser != nil else { return }
+//            
+//            if ConversationsManager.shared.client.conversationsClient == nil || ConversationsManager.shared.myUser == nil {
+//                do {
+//                    try await ConversationsManager.shared.client.create()
+//                    ConversationsManager.shared.registerForTyping()
+//                } catch {
+//                    presentErrorToast(error, debug: "Error creating twilio client")
+//                }
+//            }
+//            
+////            ContactsService.shared.tryToSyncContacts()
+//        }
     }
 }
 

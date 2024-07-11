@@ -54,7 +54,7 @@ struct QuickActionsView: View {
             } else {
                 Text("Choose Check-in or Review, then search to select your location.")
                     .foregroundStyle(.secondary)
-                    .font(.custom(style: .caption))
+                    .cfont(.caption)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             
@@ -71,7 +71,7 @@ struct QuickActionsView: View {
                     
                     VStack {
                         Text("Check-in")
-                            .font(.custom(style: .headline))
+                            .cfont(.headline)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         Group {
                             if let nearestPlace = vm.nearestPlace, let name = nearestPlace.name, vm.isNearestPlace {
@@ -81,7 +81,7 @@ struct QuickActionsView: View {
                             }
                         }
                         .multilineTextAlignment(.leading)
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -103,7 +103,7 @@ struct QuickActionsView: View {
                     
                     VStack {
                         Text("Review")
-                            .font(.custom(style: .headline))
+                            .cfont(.headline)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         Group {
@@ -113,7 +113,7 @@ struct QuickActionsView: View {
                                 Text("Add a review to a place that you’ve been")
                             }
                         }
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .multilineTextAlignment(.leading)
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -136,13 +136,13 @@ struct QuickActionsView: View {
                     
                     VStack {
                         Text("Homemade Moments")
-                            .font(.custom(style: .headline))
+                            .cfont(.headline)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         Group {
                             Text("Share your home cooking experience")
                         }
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .multilineTextAlignment(.leading)
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -154,7 +154,7 @@ struct QuickActionsView: View {
             }
             .foregroundStyle(.primary)
         }
-        .font(.custom(style: .body))
+        .cfont(.body)
         .padding(.horizontal)
         .padding(.bottom)
         .presentationDetents([.height(340), .fraction(0.8)])

@@ -39,7 +39,7 @@ struct RootView: View {
             if appData.activeTab == .myProfile {
                 ToolbarItem(placement: .topBarLeading) {
                     Text("My Profile")
-                        .font(.custom(style: .title2))
+                        .cfont(.title2)
                         .fontWeight(.semibold)
                 }
                 

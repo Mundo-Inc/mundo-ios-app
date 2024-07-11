@@ -46,7 +46,7 @@ struct MissionItem: View {
                                     .multilineTextAlignment(.leading)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .foregroundStyle(Color.secondary)
-                                    .font(.custom(style: .subheadline))
+                                    .cfont(.subheadline)
                             }
                             
                             Spacer()
@@ -59,7 +59,7 @@ struct MissionItem: View {
                         VStack(alignment: .trailing, spacing: 0) {
                             if mission.isClaimed {
                                 Text("CLAIMED")
-                                    .font(.custom(style: .headline))
+                                    .cfont(.headline)
                                     .foregroundStyle(Color.secondary)
                                     .padding(.all, 8)
                                     .background(Color.themeBorder)
@@ -74,10 +74,10 @@ struct MissionItem: View {
                                     } label: {
                                         HStack(spacing: 5) {
                                             Text("CLAIM \(mission.rewardAmount)")
-                                                .font(.custom(style: .headline))
+                                                .cfont(.headline)
                                                 .foregroundStyle(Color.white.opacity(0.9))
                                                 .fontWidth(.compressed)
-                                            Image(.Icons.phantomCoin)
+                                            Image(.Icons.coin)
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
                                                 .frame(width: 20, height: 20)
@@ -93,9 +93,9 @@ struct MissionItem: View {
                                 } else {
                                     HStack(spacing: 5) {
                                         Text(mission.rewardAmount.description)
-                                            .font(.custom(style: .headline))
+                                            .cfont(.headline)
                                             .foregroundStyle(Color.primary)
-                                        Image(.Icons.phantomCoin)
+                                        Image(.Icons.coin)
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
                                             .frame(width: 20, height: 20)
@@ -111,7 +111,7 @@ struct MissionItem: View {
                             Spacer()
                             
                             Text("\(mission.progress.completed.description)/\(mission.progress.total.description)")
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                                 .foregroundStyle(Color.secondary)
                                 .padding(.trailing, 8)
                         }
@@ -130,7 +130,7 @@ struct MissionItem: View {
                     Text(remaining + " remaining")
                         .foregroundStyle(.tertiary)
                         .monospaced()
-                        .font(.custom(style: .caption2))
+                        .cfont(.caption2)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
@@ -155,7 +155,7 @@ extension MissionItem {
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(Color.secondary)
-                    .font(.custom(style: .subheadline))
+                    .cfont(.subheadline)
             }
             .fontWeight(.medium)
             
@@ -166,9 +166,9 @@ extension MissionItem {
                     Spacer()
                     
                     Text("50")
-                        .font(.custom(style: .headline))
+                        .cfont(.headline)
                         .foregroundStyle(Color.primary)
-                    Image(.Icons.phantomCoin)
+                    Image(.Icons.coin)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 20, height: 20)
@@ -176,7 +176,7 @@ extension MissionItem {
                 
                 VStack(spacing: 0) {
                     Text("0/16")
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .foregroundStyle(Color.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     ProgressView()

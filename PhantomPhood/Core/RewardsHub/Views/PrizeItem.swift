@@ -40,25 +40,25 @@ struct PrizeItem: View {
                         .foregroundStyle(Color.black.opacity(0.75))
                     
                     Text("Redeemed".uppercased())
-                        .font(.custom(style: .headline))
+                        .cfont(.headline)
                         .foregroundStyle(Color.white.opacity(0.7))
                 }
             }
             
             Text(data.title)
                 .lineLimit(2, reservesSpace: true)
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .fontWeight(.semibold)
                 .multilineTextAlignment(.leading)
             
             HStack(spacing: 5) {
-                Image(.Icons.phantomCoin)
+                Image(.Icons.coin)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)
                 
                 Text(data.amount.formattedWithSuffix())
-                    .font(.custom(style: .headline))
+                    .cfont(.headline)
                     .foregroundStyle(Color.secondary)
             }
         }
@@ -79,16 +79,16 @@ struct PrizeItem: View {
                 .frame(width: 135, height: 180)
             
             Text("Prize Title")
-                .font(.custom(style: .headline))
+                .cfont(.headline)
                 .multilineTextAlignment(.leading)
             
             Spacer()
             
             HStack(spacing: 5) {
                 Text("1000")
-                    .font(.custom(style: .headline))
+                    .cfont(.headline)
                     .foregroundStyle(Color.secondary)
-                Image(.Icons.phantomCoin)
+                Image(.Icons.coin)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)

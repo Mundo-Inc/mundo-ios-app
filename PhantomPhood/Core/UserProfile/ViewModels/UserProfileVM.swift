@@ -224,25 +224,26 @@ final class UserProfileVM: LoadingSections, Equatable, Hashable {
     }
     
     func startConversation() async {
-        guard let id = self.user?.id, !loadingSections.contains(.startingConversation) else { return }
-        
-        setLoadingState(.startingConversation, to: true)
-        
-        defer {
-            setLoadingState(.startingConversation, to: false)
-        }
-        
-        do {
-            let conversation = try await conversationsDM.createConversation(with: id)
-            
-            await MainActor.run {
-                HapticManager.shared.impact(style: .light)
-                
-                AppData.shared.goTo(.conversation(sid: conversation.sid, focusOnTextField: true))
-            }
-        } catch {
-            presentErrorToast(error)
-        }
+        ToastVM.shared.toast(Toast(type: .info, title: "Messaging is disabled", message: "We're improving messaging system and it's temporarily disabled"))
+//        guard let id = self.user?.id, !loadingSections.contains(.startingConversation) else { return }
+//        
+//        setLoadingState(.startingConversation, to: true)
+//        
+//        defer {
+//            setLoadingState(.startingConversation, to: false)
+//        }
+//        
+//        do {
+//            let conversation = try await conversationsDM.createConversation(with: id)
+//            
+//            await MainActor.run {
+//                HapticManager.shared.impact(style: .light)
+//                
+//                AppData.shared.goTo(.conversation(sid: conversation.sid, focusOnTextField: true))
+//            }
+//        } catch {
+//            presentErrorToast(error)
+//        }
     }
     
     private var userPostsPagination: Pagination? = nil

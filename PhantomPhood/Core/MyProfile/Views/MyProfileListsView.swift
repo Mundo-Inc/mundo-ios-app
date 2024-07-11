@@ -21,7 +21,7 @@ struct MyProfileListsView: View {
                     Image(systemName: "plus")
                         .font(.system(size: 24))
                     Text("Create a new list")
-                        .font(.custom(style: .headline))
+                        .cfont(.headline)
                 }
                 .foregroundStyle(Color.accentColor)
                 .frame(height: 86)
@@ -48,7 +48,7 @@ struct MyProfileListsView: View {
             } else {
                 if vm.lists.isEmpty {
                     Text("- No Lists -")
-                        .font(.custom(style: .headline))
+                        .cfont(.headline)
                         .foregroundStyle(.secondary)
                         .padding(.top)
                 } else {
@@ -69,7 +69,7 @@ struct MyProfileListsView: View {
                                         }
                                         
                                         Text(list.name)
-                                            .font(.custom(style: .headline))
+                                            .cfont(.headline)
                                             .lineLimit(1)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                     }
@@ -78,7 +78,7 @@ struct MyProfileListsView: View {
                                         Image(systemName: "person.2")
                                         
                                         Text(list.collaboratorsCount.description)
-                                            .font(.custom(style: .body))
+                                            .cfont(.body)
                                         
                                         Spacer()
                                     }
@@ -87,7 +87,7 @@ struct MyProfileListsView: View {
                                 
                                 Label {
                                     Text(list.placesCount.description)
-                                        .font(.custom(style: .title2))
+                                        .cfont(.title2)
                                 } icon: {
                                     Image(systemName: "mappin.circle")
                                         .font(.system(size: 20))
@@ -134,7 +134,7 @@ fileprivate struct ListItemPlaceholder: View {
             
             VStack {
                 Text("List Name")
-                    .font(.custom(style: .headline))
+                    .cfont(.headline)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .redacted(reason: .placeholder)
@@ -157,13 +157,13 @@ fileprivate struct ListItemPlaceholder: View {
                     
                     Spacer()
                 }
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .foregroundStyle(.secondary)
             }
             
             Label {
                 Text("1")
-                    .font(.custom(style: .title2))
+                    .cfont(.title2)
                     .redacted(reason: .placeholder)
             } icon: {
                 Image(systemName: "mappin.circle")

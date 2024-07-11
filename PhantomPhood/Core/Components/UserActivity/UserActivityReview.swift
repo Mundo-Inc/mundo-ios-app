@@ -35,17 +35,17 @@ struct UserActivityReview: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text(data.user.name)
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                             .fontWeight(.bold)
                         Spacer()
                         Text(data.createdAt.timeElapsed(suffix: " ago"))
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundStyle(.secondary)
                     }.frame(maxWidth: .infinity)
                     
                     HStack {
                         Text("Reviewed")
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .fontWeight(.medium)
                             .foregroundStyle(.black)
                             .padding(.horizontal, 6)
@@ -56,7 +56,7 @@ struct UserActivityReview: View {
                         if let place = data.place {
                             NavigationLink(value: AppRoute.place(id: place.id)) {
                                 Text(place.name)
-                                    .font(.custom(style: .body))
+                                    .cfont(.body)
                                     .bold()
                                     .lineLimit(1)
                             }
@@ -124,11 +124,11 @@ struct UserActivityReview: View {
                             if let overallScore = review.scores.overall {
                                 HStack {
                                     Text("Rated")
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                         .foregroundStyle(.secondary)
                                     
                                     Text(String(format: "%.1f", overallScore))
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                         .foregroundStyle(.primary)
                                     
                                     StarRating(score: overallScore, activeColor: .yellow)
@@ -138,7 +138,7 @@ struct UserActivityReview: View {
                             }
                             
                             Text(review.content)
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .multilineTextAlignment(.leading)
                             
@@ -150,7 +150,7 @@ struct UserActivityReview: View {
                                         }
                                     }
                                 }
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                                 .foregroundStyle(.secondary)
                             }
                         }

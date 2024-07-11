@@ -25,7 +25,7 @@ struct InviteFriendsBanner: View {
             VStack(alignment: .leading) {
                 HStack {
                     Text("Invite More Friends!")
-                        .font(.custom(style: .title2))
+                        .cfont(.title2)
                         .fontWeight(.bold)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
@@ -54,7 +54,7 @@ struct InviteFriendsBanner: View {
                                 ProfileImage(URL(string: user.profileImage ?? ""), size: 42, cornerRadius: 21)
                                 Text(user.name ?? "-")
                                     .lineLimit(1)
-                                    .font(.custom(style: .caption2))
+                                    .cfont(.caption2)
                                     .foregroundStyle(.secondary)
                             }
                             .frame(maxWidth: 42)
@@ -76,7 +76,7 @@ struct InviteFriendsBanner: View {
                             
                             Text("Add")
                                 .lineLimit(1)
-                                .font(.custom(style: .caption2))
+                                .cfont(.caption2)
                         }
                     }
                     

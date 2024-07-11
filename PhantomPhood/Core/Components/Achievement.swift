@@ -34,7 +34,7 @@ struct Achievement: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                .font(.custom(style: .caption))
+                .cfont(.caption)
                 
                 VStack {
                     Image(achievement.rawValue)
@@ -43,13 +43,13 @@ struct Achievement: View {
                     
                     Text((data.count > 1 ? "\(data.count)x " : "") + achievement.title)
                         .multilineTextAlignment(.center)
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                         .foregroundStyle(.primary)
                         .opacity(0.85)
                     
                     Text(achievement.description)
                         .multilineTextAlignment(.center)
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .foregroundStyle(.secondary)
                 }
             } else {
@@ -60,13 +60,13 @@ struct Achievement: View {
                     
                     Text(achievement.title)
                         .multilineTextAlignment(.center)
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                         .foregroundStyle(.primary)
                         .opacity(0.85)
                     
                     Text(achievement.description)
                         .multilineTextAlignment(.center)
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .foregroundStyle(.secondary)
                 }
             }

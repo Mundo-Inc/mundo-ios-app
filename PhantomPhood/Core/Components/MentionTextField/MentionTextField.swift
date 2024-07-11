@@ -46,7 +46,7 @@ struct MentionTextField: View {
                                                 if user.verified {
                                                     HStack(spacing: 3) {
                                                         Text(user.name)
-                                                            .font(.custom(style: .caption))
+                                                            .cfont(.caption)
                                                         Image(systemName: "checkmark.seal")
                                                             .font(.system(size: 12))
                                                             .foregroundStyle(.blue)
@@ -54,14 +54,14 @@ struct MentionTextField: View {
                                                     .frame(maxWidth: .infinity, alignment: .leading)
                                                 } else {
                                                     Text(user.name)
-                                                        .font(.custom(style: .caption))
+                                                        .cfont(.caption)
                                                 }
                                             }
-                                            .font(.custom(style: .body))
+                                            .cfont(.body)
                                             .fontWeight(.semibold)
                                             
                                             Text("@\(user.username)")
-                                                .font(.custom(style: .caption2))
+                                                .cfont(.caption2)
                                                 .foregroundStyle(.secondary)
                                         }
                                     }

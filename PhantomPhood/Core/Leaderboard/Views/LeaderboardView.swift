@@ -25,7 +25,7 @@ struct LeaderboardView: View {
                     
                     VStack(spacing: 8) {
                         Text(auth.currentUser?.name ?? "User Name")
-                            .font(.custom(style: .title2))
+                            .cfont(.title2)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         ProgressView(value: auth.currentUser == nil ? 0 : Double(auth.currentUser!.progress.xp) / Double(auth.currentUser!.progress.xp + auth.currentUser!.remainingXp))
@@ -34,12 +34,12 @@ struct LeaderboardView: View {
                         
                         HStack {
                             Text("\(auth.currentUser?.progress.xp ?? 100) XP")
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
                             Text("#\(auth.currentUser?.rank ?? 10) Global")
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -59,7 +59,7 @@ struct LeaderboardView: View {
                             List(RepeatItem.create(20)) { item in
                                 HStack {
                                     Text("#\(item.index + 1)")
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                         .foregroundStyle(item.index == 0 ? Color.gold : item.index == 1 ? Color.silver : item.index == 2 ? Color.bronze : Color.secondary.opacity(0.7))
                                         .frame(minWidth: 40)
                                     
@@ -71,13 +71,13 @@ struct LeaderboardView: View {
                                         .redacted(reason: .placeholder)
                                     
                                     Text("User name")
-                                        .font(.custom(style: .subheadline))
+                                        .cfont(.subheadline)
                                         .bold()
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .redacted(reason: .placeholder)
                                     
                                     Text("9999")
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .foregroundStyle(.secondary)
                                         .redacted(reason: .placeholder)
                                 }
@@ -88,7 +88,7 @@ struct LeaderboardView: View {
                                 NavigationLink(value: AppRoute.userProfile(userId: vm.list[index].id)) {
                                     HStack {
                                         Text("#\(index + 1)")
-                                            .font(.custom(style: .headline))
+                                            .cfont(.headline)
                                             .foregroundStyle(index == 0 ? Color.gold : index == 1 ? Color.silver : index == 2 ? Color.bronze : Color.secondary.opacity(0.7))
                                             .frame(minWidth: 40)
                                         
@@ -98,12 +98,12 @@ struct LeaderboardView: View {
                                             .frame(width: 28, height: 36)
                                         
                                         Text(vm.list[index].name)
-                                            .font(.custom(style: .subheadline))
+                                            .cfont(.subheadline)
                                             .bold()
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                         
                                         Text("\(vm.list[index].progress.xp)")
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                             .foregroundStyle(.secondary)
                                     }
                                     .onAppear {

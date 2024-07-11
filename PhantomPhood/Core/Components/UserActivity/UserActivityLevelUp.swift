@@ -20,14 +20,14 @@ struct UserActivityLevelUp: View {
                     switch data.resource {
                     case .user(let resourceUser):
                         Text(resourceUser.name)
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                             .fontWeight(.bold)
                     default:
                         EmptyView()
                     }
                     
                     Text("Leveled Up!")
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .fontWeight(.medium)
                         .foregroundStyle(.black)
                         .padding(.horizontal, 6)
@@ -38,7 +38,7 @@ struct UserActivityLevelUp: View {
                     Spacer()
                     
                     Text(data.createdAt.timeElapsed(suffix: " ago"))
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .foregroundStyle(.secondary)
                 }
                 .padding(.bottom)
@@ -52,7 +52,7 @@ struct UserActivityLevelUp: View {
                             Spacer()
                             
                             Text(user.name)
-                                .font(.custom(style: .subheadline))
+                                .cfont(.subheadline)
                                 .fontWeight(.bold)
                                 .foregroundStyle(Color.white)
                             

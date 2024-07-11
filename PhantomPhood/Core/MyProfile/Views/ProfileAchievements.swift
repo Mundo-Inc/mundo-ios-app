@@ -37,7 +37,7 @@ struct ProfileAchievements: View {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("To Next Level".uppercased())
                             .multilineTextAlignment(.leading)
-                            .font(.custom(style: .subheadline))
+                            .cfont(.subheadline)
                             .foregroundStyle(.primary.opacity(0.4))
                             .fontWeight(.medium)
                         
@@ -54,7 +54,7 @@ struct ProfileAchievements: View {
                             
                             Spacer()
                         }
-                        .font(.custom(style: .footnote))
+                        .cfont(.footnote)
                     }
                 }
                 .padding(.all, 10)
@@ -72,7 +72,7 @@ struct ProfileAchievements: View {
                 VStack {
                     ZStack {
                         Text("#\(user.rank)")
-                            .font(.custom(CustomFonts.poppinsSemiBold.rawValue, fixedSize: 48))
+                            .font(.custom(K.Fonts.satoshi, fixedSize: 48))
                             .minimumScaleFactor(0.5)
                             .fontWeight(.semibold)
                             .foregroundStyle(Color(hue: 329 / 360, saturation: 0.49, brightness: 1).opacity(0.8))
@@ -81,7 +81,7 @@ struct ProfileAchievements: View {
                     
                     Text("GLOBAL\nRANKING")
                         .multilineTextAlignment(.center)
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                         .foregroundStyle(.primary.opacity(0.4))
                         .fontWeight(.medium)
                 }
@@ -108,16 +108,16 @@ struct ProfileAchievements: View {
                     } header: {
                         HStack(spacing: 0) {
                             Text("Earned Badges".uppercased())
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .fontWeight(.semibold)
                             
                             Text("\(user.progress.achievements.count)")
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .foregroundStyle(.secondary)
                             Text("/\(AchievementsEnum.allCases.count)")
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .foregroundStyle(.tertiary)
                         }
                     }
@@ -129,7 +129,7 @@ struct ProfileAchievements: View {
                     }
                 } header: {
                     Text("Locked".uppercased())
-                        .font(.custom(style: .headline))
+                        .cfont(.headline)
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }

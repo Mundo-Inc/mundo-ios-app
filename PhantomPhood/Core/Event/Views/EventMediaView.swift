@@ -30,7 +30,7 @@ struct EventMediaView: View {
             if let medias = vm.medias {
                 if medias.isEmpty {
                     Text("No media")
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                         .foregroundStyle(.secondary)
                         .padding(.vertical)
                         .padding(.horizontal)
@@ -89,7 +89,7 @@ struct EventMediaView: View {
                                             ProfileImage(user.profileImage, size: 24, cornerRadius: 12)
                                             
                                             Text(user.name)
-                                                .font(.custom(style: .caption2))
+                                                .cfont(.caption2)
                                                 .lineLimit(1)
                                                 .frame(maxWidth: .infinity, alignment: .leading)
                                         }

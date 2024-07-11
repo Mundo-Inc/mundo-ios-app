@@ -50,13 +50,13 @@ struct HomeFollowingView17: View {
                                 
                                 VStack(alignment: .leading) {
                                     Text("Hi \(currentUser.name) 👋")
-                                        .font(.custom(style: .title))
+                                        .cfont(.title)
                                         .fontWeight(.semibold)
                                         .foregroundStyle(.primary)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                     
                                     Text("Welcome aboard!")
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                         .fontWeight(.regular)
                                 }
                             }
@@ -75,13 +75,13 @@ struct HomeFollowingView17: View {
                                             
                                             VStack(alignment: .leading) {
                                                 Text(user.name)
-                                                    .font(.custom(style: .headline))
+                                                    .cfont(.headline)
                                                     .fontWeight(.medium)
                                                     .foregroundStyle(.primary)
                                                     .lineLimit(1)
                                                 
                                                 Text("@\(user.username)")
-                                                    .font(.custom(style: .caption))
+                                                    .cfont(.caption)
                                                     .foregroundStyle(.secondary)
                                                     .lineLimit(1)
                                             }
@@ -91,7 +91,7 @@ struct HomeFollowingView17: View {
                                                 switch connectionStatus.followingStatus {
                                                 case .following:
                                                     Text("Following")
-                                                        .font(.custom(style: .caption))
+                                                        .cfont(.caption)
                                                         .foregroundStyle(.secondary)
                                                 case .notFollowing:
                                                     HStack {
@@ -104,7 +104,7 @@ struct HomeFollowingView17: View {
                                                     }
                                                     .frame(height: 20)
                                                     .frame(minWidth: 60)
-                                                    .font(.custom(style: .caption))
+                                                    .cfont(.caption)
                                                     .foregroundStyle(.secondary)
                                                     .padding(.horizontal, 8)
                                                     .padding(.vertical, 4)
@@ -117,7 +117,7 @@ struct HomeFollowingView17: View {
                                                     .foregroundStyle(.primary)
                                                 case .requested:
                                                     Text("Requested")
-                                                        .font(.custom(style: .caption))
+                                                        .cfont(.caption)
                                                         .foregroundStyle(.secondary)
                                                 }
                                                 
@@ -140,13 +140,13 @@ struct HomeFollowingView17: View {
                                         
                                         VStack(alignment: .leading) {
                                             Text("Name")
-                                                .font(.custom(style: .headline))
+                                                .cfont(.headline)
                                                 .fontWeight(.medium)
                                                 .foregroundStyle(.primary)
                                                 .lineLimit(1)
                                             
                                             Text("@username")
-                                                .font(.custom(style: .caption))
+                                                .cfont(.caption)
                                                 .foregroundStyle(.secondary)
                                                 .lineLimit(1)
                                         }
@@ -157,7 +157,7 @@ struct HomeFollowingView17: View {
                                         }
                                         .frame(height: 20)
                                         .frame(minWidth: 60)
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .foregroundStyle(.secondary)
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 4)
@@ -179,7 +179,7 @@ struct HomeFollowingView17: View {
                         Text("Why not start by following our Top users?")
                             .shadow(radius: 3)
                             .foregroundStyle(.secondary)
-                            .font(.custom(style: .subheadline))
+                            .cfont(.subheadline)
                             .padding(.horizontal)
                             .padding(.top, 5)
                         

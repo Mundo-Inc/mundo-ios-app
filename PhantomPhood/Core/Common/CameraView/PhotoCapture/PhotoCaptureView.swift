@@ -33,7 +33,7 @@ struct PhotoCaptureView: View {
                         }
                     }
                 }
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 if vm.isTaken, let picData = vm.picData, let uiImage = UIImage(data: picData) {
@@ -156,7 +156,7 @@ struct PhotoCaptureView: View {
                     .font(.system(size: 22))
                 }
             }
-            .font(.custom(style: .headline))
+            .cfont(.headline)
             .fontWeight(.medium)
             .padding(.horizontal)
             

@@ -25,7 +25,7 @@ struct CTAButton<Content>: View where Content: View {
                 .background(Color.accentColor)
                 .clipShape(.rect(cornerRadius: 10))
         }
-        .font(.custom(style: .body))
+        .cfont(.body)
         .fontWeight(.medium)
         .controlSize(.large)
     }

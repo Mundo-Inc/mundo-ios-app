@@ -39,10 +39,10 @@ struct GoogleRatingView: View {
                             Text("(\(count > 1000 ? String(format: "%.1f", Double(count) / 1000) + "K" : String(count)))")
                                 .padding(.leading, 5)
                                 .foregroundStyle(.secondary)
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                         }
                     }
-                    .font(.custom(style: .headline))
+                    .cfont(.headline)
                 }
                 .redacted(reason: isLoading ? .placeholder : [])
                 .frame(maxWidth: .infinity, alignment: .leading)

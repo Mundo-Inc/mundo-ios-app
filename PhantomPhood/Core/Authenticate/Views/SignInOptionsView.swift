@@ -9,8 +9,7 @@ import SwiftUI
 
 struct SignInOptionsView: View {
     @StateObject private var vm = OAuthVM()
-    
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         ZStack {
@@ -19,10 +18,10 @@ struct SignInOptionsView: View {
                 
                 VStack(alignment: .leading) {
                     Text("Welcome Back")
-                        .font(.custom(style: .title2))
+                        .cfont(.title2)
                         .fontWeight(.semibold)
                     Text("Please choose how you want to sign in")
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.leading)
                         .alert("Error", isPresented: Binding(optionalValue: $vm.error)) {
@@ -60,7 +59,7 @@ struct SignInOptionsView: View {
                         }
                         
                         Text("-- Or --")
-                            .font(.custom(style: .subheadline))
+                            .cfont(.subheadline)
                             .foregroundStyle(.tertiary)
                             .padding(.vertical, 10)
                         
@@ -69,7 +68,7 @@ struct SignInOptionsView: View {
                                 title: { Text("Using Email and Password") },
                                 icon: { Image(systemName: "envelope.fill") }
                             )
-                            .font(.custom(style: .footnote))
+                            .cfont(.footnote)
                             .fontWeight(.semibold)
                             .padding(.horizontal)
                             .frame(maxWidth: .infinity)
@@ -104,14 +103,15 @@ struct SignInOptionsView: View {
                     }
             }
         }
-        .background(
-            Image(.hangingPhantom)
+        .background(alignment: .topTrailing) {
+            Image(.Logo.tpLogo)
                 .resizable()
-                .frame(width: 100, height: 191)
-                .padding(.trailing)
-                .ignoresSafeArea(),
-            alignment: .topTrailing
-        )
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 120)
+                .rotationEffect(.degrees(-90))
+                .offset(x: 55, y: 20)
+                .ignoresSafeArea()
+        }
     }
 }
 

@@ -33,7 +33,7 @@ struct UserProfileCheckInsView: View {
                         }
                         .buttonStyle(BorderlessButtonStyle())
                     }
-                    .font(.custom(style: .caption))
+                    .cfont(.caption)
                     .fontWeight(.medium)
                     .padding()
                     
@@ -45,13 +45,13 @@ struct UserProfileCheckInsView: View {
                         VStack(spacing: 10) {
                             HStack {
                                 Text(item.place.name)
-                                    .font(.custom(style: .subheadline))
+                                    .cfont(.subheadline)
                                     .bold()
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .multilineTextAlignment(.leading)
                                 
                                 Text(DateFormatter.dateToShortString(date: item.createdAt))
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .foregroundStyle(.secondary)
                             }
                             
@@ -75,7 +75,7 @@ struct UserProfileCheckInsView: View {
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundStyle(.secondary)
                         }
                     }

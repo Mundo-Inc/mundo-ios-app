@@ -67,7 +67,7 @@ struct ExploreView16: View {
                             VStack {
                                 Text(item.name ?? "Unknown")
                                     .lineLimit(1)
-                                    .font(.custom(style: .headline))
+                                    .cfont(.headline)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.top)
                                 
@@ -79,7 +79,7 @@ struct ExploreView16: View {
                                     }
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                             }
                             
                         }
@@ -113,7 +113,7 @@ struct ExploreView16: View {
                                         Text(String(repeating: "$", count: priceRange))
                                     }
                                 }
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 
                                 if !place.media.isEmpty {
@@ -166,7 +166,7 @@ struct ExploreView16: View {
                                         .frame(maxHeight: 10)
                                     Text("Price")
                                 }
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .redacted(reason: .placeholder)
                                 
@@ -217,7 +217,7 @@ struct ExploreView16: View {
                         .padding(.vertical, 10)
                         .background(Color.themePrimary)
                     }
-                    .font(.custom(style: .subheadline))
+                    .cfont(.subheadline)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .offset(y: 6)
                 }

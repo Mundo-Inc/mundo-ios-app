@@ -66,7 +66,7 @@ struct HomeActivityItemPlaceholder: View {
                     }
                     .frame(height: 25)
                     .frame(maxWidth: 80)
-                    .font(.custom(style: .caption))
+                    .cfont(.caption)
                     .fontWeight(.regular)
                     .background(Color.accentColor)
                     .clipShape(.rect(cornerRadius: 15))
@@ -98,7 +98,7 @@ struct HomeActivityItemPlaceholder: View {
                     Spacer()
                     
                     Text("1h")
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -188,7 +188,7 @@ struct HomeActivityItemPlaceholder: View {
     @ViewBuilder
     private func ContentTypeChip(text: String, color: Color) -> some View {
         Text(text)
-            .font(.custom(style: .caption))
+            .cfont(.caption)
             .fontWeight(.medium)
             .foregroundStyle(.black)
             .padding(.horizontal, 6)
@@ -203,7 +203,7 @@ struct HomeActivityItemPlaceholder: View {
             ProfileImage(nil, size: 28)
             
             Text("user.username")
-                .font(.custom(style: .caption))
+                .cfont(.caption)
                 .foregroundStyle(.white)
                 .fontWeight(.medium)
             

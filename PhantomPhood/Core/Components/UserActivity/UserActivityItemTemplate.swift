@@ -59,7 +59,7 @@ fileprivate struct CommentView: View {
                 }
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
-                .font(.custom(style: .callout))
+                .cfont(.callout)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
             }

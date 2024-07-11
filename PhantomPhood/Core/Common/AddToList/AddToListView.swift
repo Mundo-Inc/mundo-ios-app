@@ -37,7 +37,7 @@ struct AddToListView: View {
                     Image(systemName: "mappin.and.ellipse")
                         .font(.system(size: 12))
                 }
-                .font(.custom(style: .caption))
+                .cfont(.caption)
                 .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -66,11 +66,11 @@ struct AddToListView: View {
             VStack(spacing: 0) {
                 VStack {
                     Text("Lists")
-                        .font(.custom(style: .title2))
+                        .cfont(.title2)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     Text("Add/Remove **\(placeVM.place?.name ?? "Place Name")** from Your Lists")
                         .foregroundStyle(.secondary)
-                        .font(.custom(style: .body))
+                        .cfont(.body)
                         .fontWeight(.regular)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
@@ -81,7 +81,7 @@ struct AddToListView: View {
                             Image(systemName: "plus.app")
                                 .font(.system(size: 22))
                             Text("Create a new list")
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                             
                             Spacer()
                         }
@@ -137,7 +137,7 @@ struct AddToListView: View {
                                                 Image(systemName: "mappin.and.ellipse")
                                                     .font(.system(size: 12))
                                             }
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                             .foregroundStyle(.secondary)
                                         }
                                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -215,7 +215,7 @@ struct AddToListView: View {
             .clipShape(.rect(cornerRadius: 16))
             .padding(.horizontal)
         }
-        .font(.custom(style: .body))
+        .cfont(.body)
         .redacted(reason: placeVM.place == nil ? .placeholder : [])
         .frame(maxHeight: .infinity)
         .onDisappear {

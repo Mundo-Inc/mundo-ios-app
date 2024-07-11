@@ -21,30 +21,30 @@ struct SettingsView: View {
                 VStack(alignment: .leading) {
                     HStack {
                         Text("Email")
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                         if let user = auth.currentUser {
                             HStack(spacing: 2) {
                                 Image(systemName: user.email.verified ? "checkmark.seal" : "xmark.square")
                                     .font(.system(size: 14))
                                 Text(user.email.verified ? "Verified" : "Not Verified")
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                             }
                             .foregroundColor(user.email.verified ? .accentColor : .secondary)
                         }
                     }
                     
                     Text(auth.currentUser?.email.address ?? "user@domain.com")
-                        .font(.custom(style: .callout))
+                        .cfont(.callout)
                         .foregroundStyle(.secondary)
                 }
                 
                 VStack(alignment: .leading) {
                     HStack {
                         Text("Phone Number")
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                     }
                     Text("Not Set")
-                        .font(.custom(style: .callout))
+                        .cfont(.callout)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -86,10 +86,10 @@ struct SettingsView: View {
                     Label {
                         Text("Admin")
                     } icon: {
-                        Image(.fullPhantom)
+                        Image(.Logo.tpLogo)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 24)
+                            .frame(height: 20)
                     }
                 }
             }
@@ -156,11 +156,11 @@ struct SettingsView: View {
                     Text("App version: " + appVersion)
                 }
             }
-            .font(.custom(style: .caption))
+            .cfont(.caption)
             .foregroundStyle(Color.secondary)
             .listRowBackground(Color.clear)
         }
-        .font(.custom(style: .body))
+        .cfont(.body)
         .listStyle(.insetGrouped)
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)

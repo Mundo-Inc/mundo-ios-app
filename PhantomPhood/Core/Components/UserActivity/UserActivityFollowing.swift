@@ -16,17 +16,17 @@ struct UserActivityFollowing: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text(data.user.name)
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                             .fontWeight(.bold)
                         Spacer()
                         Text(data.createdAt.timeElapsed(suffix: " ago"))
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundStyle(.secondary)
                     }.frame(maxWidth: .infinity)
                     
                     HStack {
                         Text("Followed")
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .fontWeight(.medium)
                             .foregroundStyle(.black)
                             .padding(.horizontal, 6)
@@ -37,7 +37,7 @@ struct UserActivityFollowing: View {
                         switch data.resource {
                         case .user(let resourceUser):
                             Text(resourceUser.name)
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                                 .fontWeight(.bold)
                         default:
                             EmptyView()
@@ -55,7 +55,7 @@ struct UserActivityFollowing: View {
                             Spacer()
                             
                             Text(user.name)
-                                .font(.custom(style: .subheadline))
+                                .cfont(.subheadline)
                                 .fontWeight(.bold)
                                 .foregroundStyle(Color.white)
                         }

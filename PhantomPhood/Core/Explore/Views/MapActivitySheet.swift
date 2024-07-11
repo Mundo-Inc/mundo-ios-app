@@ -45,7 +45,7 @@ struct MapActivitySheet: View {
                                     Text(clusteredMapActivity.items[index].user.name)
                                     
                                     Text("@\(clusteredMapActivity.items[index].user.username)")
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .foregroundStyle(.secondary)
                                 }
                                 .padding(.trailing, 15)
@@ -102,7 +102,7 @@ struct MapActivitySheet: View {
                 Spacer()
             }
             .padding(.horizontal)
-            .font(.custom(style: .footnote))
+            .cfont(.footnote)
             
             Spacer()
             
@@ -110,7 +110,7 @@ struct MapActivitySheet: View {
                 VStack(alignment: .leading) {
                     HStack {
                         Text(first.place.name)
-                            .font(.custom(style: .title2))
+                            .cfont(.title2)
                             .fontWeight(.semibold)
                         
                         Image(systemName: "chevron.forward")
@@ -119,7 +119,7 @@ struct MapActivitySheet: View {
                     if let address = first.place.location.address {
                         Text(address)
                             .foregroundStyle(.secondary)
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -152,7 +152,7 @@ struct MapActivitySheet: View {
                                                             HStack(spacing: 3) {
                                                                 ProfileImage(user.profileImage, size: 22)
                                                                 Text("@\(user.username)")
-                                                                    .font(.custom(style: .caption))
+                                                                    .cfont(.caption)
                                                                     .frame(maxWidth: .infinity, alignment: .leading)
                                                                     .foregroundStyle(.white)
                                                             }
@@ -161,7 +161,7 @@ struct MapActivitySheet: View {
                                                     
                                                     if let caption = checkin.caption, !caption.isEmpty {
                                                         Text(caption)
-                                                            .font(.custom(style: .caption))
+                                                            .cfont(.caption)
                                                             .multilineTextAlignment(.leading)
                                                             .lineLimit(6)
                                                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -182,7 +182,7 @@ struct MapActivitySheet: View {
                                             Spacer()
                                             
                                             Text(checkin.createdAt.timeElapsed(suffix: " ago"))
-                                                .font(.custom(style: .caption))
+                                                .cfont(.caption)
                                                 .foregroundStyle(.tertiary)
                                                 .fontWeight(.regular)
                                         }
@@ -191,7 +191,7 @@ struct MapActivitySheet: View {
                                             .foregroundStyle(LinearGradient(colors: [Color.green, Color.accentColor], startPoint: .topLeading, endPoint: .trailing))
                                     }
                                     .foregroundStyle(.primary)
-                                    .font(.custom(style: .subheadline))
+                                    .cfont(.subheadline)
                                     .fontWeight(.semibold)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     
@@ -202,7 +202,7 @@ struct MapActivitySheet: View {
                                             Image(systemName: "pencil")
                                         }
                                         .foregroundStyle(.tertiary)
-                                        .font(.custom(style: .subheadline))
+                                        .cfont(.subheadline)
                                         .fontWeight(.semibold)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .padding(.top)
@@ -213,7 +213,7 @@ struct MapActivitySheet: View {
                                             .lineLimit(8)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                             .foregroundStyle(.primary)
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                     }
                                     
                                     if let tags = checkin.tags, !tags.isEmpty {
@@ -223,7 +223,7 @@ struct MapActivitySheet: View {
                                             Image(systemName: "at.circle")
                                         }
                                         .foregroundStyle(.tertiary)
-                                        .font(.custom(style: .subheadline))
+                                        .cfont(.subheadline)
                                         .fontWeight(.semibold)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .padding(.top)
@@ -232,7 +232,7 @@ struct MapActivitySheet: View {
                                             HStack(spacing: 8) {
                                                 ProfileImage(user.profileImage, size: 28)
                                                 Text(user.name)
-                                                    .font(.custom(style: .caption))
+                                                    .cfont(.caption)
                                                     .frame(maxWidth: .infinity, alignment: .leading)
                                             }
                                             .onTapGesture {
@@ -252,7 +252,7 @@ struct MapActivitySheet: View {
                                                 Spacer()
                                                 
                                                 Text(review.createdAt.timeElapsed(suffix: " ago"))
-                                                    .font(.custom(style: .caption))
+                                                    .cfont(.caption)
                                                     .foregroundStyle(.tertiary)
                                                     .fontWeight(.regular)
                                             }
@@ -261,7 +261,7 @@ struct MapActivitySheet: View {
                                                 .foregroundStyle(LinearGradient(colors: [Color.green, Color.accentColor], startPoint: .topLeading, endPoint: .trailing))
                                         }
                                         .foregroundStyle(.primary)
-                                        .font(.custom(style: .subheadline))
+                                        .cfont(.subheadline)
                                         .fontWeight(.semibold)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         
@@ -281,7 +281,7 @@ struct MapActivitySheet: View {
                                                 Image(systemName: "pencil")
                                             }
                                             .foregroundStyle(.tertiary)
-                                            .font(.custom(style: .subheadline))
+                                            .cfont(.subheadline)
                                             .fontWeight(.semibold)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                             .padding(.top)
@@ -292,7 +292,7 @@ struct MapActivitySheet: View {
                                                 .lineLimit(8)
                                                 .frame(maxWidth: .infinity, alignment: .leading)
                                                 .foregroundStyle(.primary)
-                                                .font(.custom(style: .caption))
+                                                .cfont(.caption)
                                             
                                             if let tags = review.tags, !tags.isEmpty {
                                                 ScrollView(.horizontal) {
@@ -303,7 +303,7 @@ struct MapActivitySheet: View {
                                                     }
                                                 }
                                                 .scrollIndicators(.never)
-                                                .font(.custom(style: .caption))
+                                                .cfont(.caption)
                                                 .foregroundStyle(.secondary)
                                             }
                                         }
@@ -315,7 +315,7 @@ struct MapActivitySheet: View {
                                                 Image(systemName: "photo.on.rectangle")
                                             }
                                             .foregroundStyle(.tertiary)
-                                            .font(.custom(style: .subheadline))
+                                            .cfont(.subheadline)
                                             .fontWeight(.semibold)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                             .padding(.top)
@@ -362,7 +362,7 @@ struct MapActivitySheet: View {
                                                 Image(systemName: "star")
                                             }
                                             .foregroundStyle(.tertiary)
-                                            .font(.custom(style: .subheadline))
+                                            .cfont(.subheadline)
                                             .fontWeight(.semibold)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                             .padding(.top)
@@ -399,7 +399,7 @@ struct MapActivitySheet: View {
                                 } icon: {
                                     Image(systemName: "exclamationmark.triangle")
                                 }
-                                .font(.custom(style: .caption2))
+                                .cfont(.caption2)
                                 .foregroundStyle(.tertiary)
                             }
                         } else {
@@ -408,7 +408,7 @@ struct MapActivitySheet: View {
                             } icon: {
                                 Image(systemName: "arrow.down.circle.dotted")
                             }
-                            .font(.custom(style: .caption2))
+                            .cfont(.caption2)
                             .foregroundStyle(.tertiary)
                         }
                         
@@ -454,7 +454,7 @@ private struct ScoreItem: View {
         HStack {
             Text(title)
                 .frame(width: 140, alignment: .leading)
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .fontWeight(.medium)
                 .onAppear {
                     withAnimation {

@@ -22,7 +22,7 @@ struct NotificationsView: View {
                 
                 VStack(alignment: .leading) {
                     Text("Follow Requests")
-                        .font(.custom(style: .headline))
+                        .cfont(.headline)
                         .fontWeight(.bold)
                     
                     Group {
@@ -36,7 +36,7 @@ struct NotificationsView: View {
                             Text("No new request")
                         }
                     }
-                    .font(.custom(style: .subheadline))
+                    .cfont(.subheadline)
                     .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -92,12 +92,12 @@ struct NotificationsView: View {
                         VStack(spacing: 8) {
                             if let title = data.title {
                                 Text(title)
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             if let content = data.content {
                                 Text(content)
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .padding(.leading, data.title != nil ? 15 : 0)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .foregroundStyle(.secondary)
@@ -105,7 +105,7 @@ struct NotificationsView: View {
                         }
                         
                         Text(data.createdAt.timeElapsed())
-                            .font(.custom(style: .caption2))
+                            .cfont(.caption2)
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -128,7 +128,7 @@ struct NotificationsView: View {
                                 .foregroundStyle(.primary)
                             
                             Text("@\(user.username)")
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }

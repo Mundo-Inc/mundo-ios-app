@@ -39,12 +39,12 @@ struct DataCard: View {
                         Text("Value")
                     }
                 }
-                .font(.custom(style: .headline))
+                .cfont(.headline)
                 .frame(maxWidth: .infinity, maxHeight: 18, alignment: .leading)
                 .redacted(reason: value == nil ? .placeholder : [])
                 
                 Text(title)
-                    .font(.custom(style: .caption))
+                    .cfont(.caption)
                     .foregroundStyle(Color.secondary)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
                     

@@ -7,35 +7,37 @@
 
 import SwiftUI
 
-extension Font {
-    static func custom(style: CustomFontStyles, italic: Bool = false) -> Font {
-        switch style {
-        case .extraLargeTitle:
-            return Font.custom(italic ? CustomFonts.poppinsBoldItalic.rawValue : CustomFonts.poppinsBold.rawValue, size: style.rawValue, relativeTo: .largeTitle)
-        case .extraLargeTitle2:
-            return Font.custom(italic ? CustomFonts.poppinsBoldItalic.rawValue : CustomFonts.poppinsBold.rawValue, size: style.rawValue, relativeTo: .largeTitle)
-        case .title:
-            return Font.custom(italic ? CustomFonts.poppinsItalic.rawValue : CustomFonts.poppinsRegular.rawValue, size: style.rawValue, relativeTo: .title)
+extension Font.TextStyle {
+    var size: CGFloat {
+        return switch self {
         case .largeTitle:
-            return Font.custom(italic ? CustomFonts.poppinsItalic.rawValue : CustomFonts.poppinsRegular.rawValue, size: style.rawValue, relativeTo: .largeTitle)
+            34
+        case .title:
+            28
         case .title2:
-            return Font.custom(italic ? CustomFonts.poppinsItalic.rawValue : CustomFonts.poppinsRegular.rawValue, size: style.rawValue, relativeTo: .title2)
+            22
         case .title3:
-            return Font.custom(italic ? CustomFonts.poppinsItalic.rawValue : CustomFonts.poppinsRegular.rawValue, size: style.rawValue, relativeTo: .title3)
+            20
         case .headline:
-            return Font.custom(italic ? CustomFonts.poppinsSemiBoldItalic.rawValue : CustomFonts.poppinsSemiBold.rawValue, size: style.rawValue, relativeTo: .headline)
-        case .body:
-            return Font.custom(italic ? CustomFonts.poppinsItalic.rawValue : CustomFonts.poppinsRegular.rawValue, size: style.rawValue, relativeTo: .body)
-        case .callout:
-            return Font.custom(italic ? CustomFonts.poppinsItalic.rawValue : CustomFonts.poppinsRegular.rawValue, size: style.rawValue, relativeTo: .callout)
+            17
         case .subheadline:
-            return Font.custom(italic ? CustomFonts.poppinsItalic.rawValue : CustomFonts.poppinsRegular.rawValue, size: style.rawValue, relativeTo: .subheadline)
+            14
+        case .body:
+            16
+        case .callout:
+            15
         case .footnote:
-            return Font.custom(italic ? CustomFonts.poppinsItalic.rawValue : CustomFonts.poppinsRegular.rawValue, size: style.rawValue, relativeTo: .footnote)
+            13
         case .caption:
-            return Font.custom(italic ? CustomFonts.poppinsItalic.rawValue : CustomFonts.poppinsRegular.rawValue, size: style.rawValue, relativeTo: .caption)
+            12
         case .caption2:
-            return Font.custom(italic ? CustomFonts.poppinsItalic.rawValue : CustomFonts.poppinsRegular.rawValue, size: style.rawValue, relativeTo: .caption2)
+            11
+        case .extraLargeTitle:
+            32
+        case .extraLargeTitle2:
+            26
+        @unknown default:
+            14
         }
     }
 }

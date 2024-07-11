@@ -21,7 +21,7 @@ enum Tab: String, CaseIterable {
         case .explore:
             return Image(.Icons.explore)
         case .rewardsHub:
-            return Image(.Icons.phantomCoin)
+            return Image(.Icons.coin)
         case .myProfile:
             return Image(.Icons.profile)
         }

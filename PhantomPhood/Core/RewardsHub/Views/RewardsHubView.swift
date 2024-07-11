@@ -49,7 +49,7 @@ struct RewardsHubView: View {
                     
                     inviteFriendsVM.addRemoveInviteLinks(inviteFriendsVM.inviteLinks)
                 }
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .scrollIndicators(.never)
             }
             
@@ -87,20 +87,20 @@ struct RewardsHubView: View {
                             
                             VStack {
                                 Text(selectedPrize.title)
-                                    .font(.custom(style: .body))
+                                    .cfont(.body)
                                     .fontWeight(.semibold)
                                     .multilineTextAlignment(.leading)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
                                 Text("Our support team will contact you shortly to arrange delivery.")
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .foregroundStyle(.secondary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
                                 Spacer()
                                 
                                 Text("Tap 'Redeem' to claim your prize!")
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .foregroundStyle(.secondary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
@@ -113,18 +113,18 @@ struct RewardsHubView: View {
                                         ZStack {
                                             VStack(spacing: 0) {
                                                 Text(balance >= selectedPrize.amount ? "Redeem".uppercased() : "Not Enough Coin".uppercased())
-                                                    .font(.custom(style: .subheadline))
+                                                    .cfont(.subheadline)
                                                     .fontWeight(.semibold)
                                                 
                                                 HStack(spacing: 3) {
-                                                    Image(.Icons.phantomCoin)
+                                                    Image(.Icons.coin)
                                                         .resizable()
                                                         .aspectRatio(contentMode: .fit)
                                                         .frame(width: 18, height: 18)
                                                         .shadow(color: Color.themeBG.opacity(0.15), radius: 3)
                                                     
                                                     Text(selectedPrize.amount.formattedWithSuffix())
-                                                        .font(.custom(style: .subheadline))
+                                                        .cfont(.subheadline)
                                                         .fontWeight(.semibold)
                                                 }
                                             }
@@ -171,7 +171,7 @@ struct RewardsHubView: View {
             HStack {
                 Text("Rewards Hub")
                     .fontWeight(.semibold)
-                    .font(.custom(style: .title2))
+                    .cfont(.title2)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 NavigationLink(value: AppRoute.leaderboard) {
@@ -179,7 +179,7 @@ struct RewardsHubView: View {
                         Image(.Icons.leaderboard)
                             .foregroundStyle(Color.accentColor)
                         Text("#\(auth.currentUser?.rank ?? 1)")
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .redacted(reason: auth.currentUser == nil ? .placeholder : [])
                     }
                 }
@@ -187,7 +187,7 @@ struct RewardsHubView: View {
             }
             
             HStack {
-                Image(.Icons.phantomCoin)
+                Image(.Icons.coin)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 36, height: 36)
@@ -215,7 +215,7 @@ struct RewardsHubView: View {
                     .padding(.trailing, 5)
                 
                 HStack(spacing: 3) {
-                    Image(.Icons.phantomCoin)
+                    Image(.Icons.coin)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 20, height: 20)
@@ -229,10 +229,10 @@ struct RewardsHubView: View {
                 Image(systemName: "person.2.fill")
             }
             .padding(.horizontal)
-            .font(.custom(style: .headline))
+            .cfont(.headline)
             
             Text("Invite your friends to the app and get rewarded as soon as they get into the app")
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .padding(.horizontal)
                 .padding(.bottom, 6)
             
@@ -244,7 +244,7 @@ struct RewardsHubView: View {
                                 ProfileImage(URL(string: user.profileImage ?? ""), size: 50, cornerRadius: 25)
                                 Text(user.name ?? "-")
                                     .lineLimit(1)
-                                    .font(.custom(style: .caption2))
+                                    .cfont(.caption2)
                                     .foregroundStyle(.secondary)
                             }
                             .frame(maxWidth: 50)
@@ -271,7 +271,7 @@ struct RewardsHubView: View {
                                         }
                                     Text(expiresIn)
                                         .lineLimit(1)
-                                        .font(.custom(style: .caption2))
+                                        .cfont(.caption2)
                                         .foregroundStyle(.secondary)
                                 }
                                 .frame(maxWidth: 50)
@@ -299,10 +299,10 @@ struct RewardsHubView: View {
                         Text("Invite Friend")
                     }
                     .frame(maxWidth: .infinity)
-                    .font(.custom(style: .headline))
+                    .cfont(.headline)
                 } else {
                     Text("Out of Invites")
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                 }
@@ -326,7 +326,7 @@ struct RewardsHubView: View {
                     if let dailyRewards = pcVM.dailyRewards, let streaks = pcVM.streaks {
                         ForEach(dailyRewards.indices, id: \.self) { index in
                             VStack {
-                                Image(.Icons.phantomCoin)
+                                Image(.Icons.coin)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .grayscale(pcVM.hasClaimedToday || index > streaks ? 1 : 0)
@@ -354,7 +354,7 @@ struct RewardsHubView: View {
                                 
                                 Text(dailyRewards[index].description)
                                     .foregroundStyle(streaks == index && !pcVM.hasClaimedToday ? Color.primary : Color.secondary)
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .fontWeight(streaks == index && !pcVM.hasClaimedToday ? .bold : .regular)
                             }
                             .frame(maxWidth: .infinity)
@@ -404,7 +404,7 @@ struct RewardsHubView: View {
                                         }
                                     }
                                     .foregroundStyle(Color.secondary)
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .onDisappear {
                                         Task {
                                             await pcVM.refresh()
@@ -427,7 +427,7 @@ struct RewardsHubView: View {
             }
         } header: {
             Text("Daily Check-in Rewards")
-                .font(.custom(style: .headline))
+                .cfont(.headline)
                 .foregroundStyle(Color.primary.opacity(0.7))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top)
@@ -441,7 +441,7 @@ struct RewardsHubView: View {
                 if let missions = vm.missions {
                     if missions.isEmpty {
                         Text("No missions available")
-                            .font(.custom(style: .headline))
+                            .cfont(.headline)
                             .foregroundStyle(Color.secondary)
                             .padding(.top)
                     } else {
@@ -461,7 +461,7 @@ struct RewardsHubView: View {
         } header: {
             HStack {
                 Text("Weekly Missions")
-                    .font(.custom(style: .headline))
+                    .cfont(.headline)
                     .foregroundStyle(Color.primary.opacity(0.7))
                 
                 Spacer()
@@ -482,7 +482,7 @@ struct RewardsHubView: View {
                     if let prizes = vm.prizes {
                         if prizes.isEmpty {
                             Text("No prize available")
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .foregroundStyle(Color.secondary)
                                 .padding(.top)
                         } else {
@@ -511,7 +511,7 @@ struct RewardsHubView: View {
             .padding(.bottom, 40)
         } header: {
             Text("Redeem")
-                .font(.custom(style: .headline))
+                .cfont(.headline)
                 .foregroundStyle(Color.primary.opacity(0.7))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top)

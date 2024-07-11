@@ -48,7 +48,7 @@ struct CheckInCard: View {
                                         Text(place.name)
                                             .foregroundStyle(Color.white)
                                             .lineLimit(1)
-                                            .font(.custom(style: .subheadline))
+                                            .cfont(.subheadline)
                                             .foregroundStyle(.primary)
                                             .bold()
                                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -70,7 +70,7 @@ struct CheckInCard: View {
                                                 Text(String(repeating: "$", count: priceRange))
                                             }
                                         }
-                                        .font(.custom(style: .subheadline))
+                                        .cfont(.subheadline)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                     }
                                     .frame(maxWidth: .infinity)
@@ -82,7 +82,7 @@ struct CheckInCard: View {
                                             HStack(spacing: 3) {
                                                 ProfileImage(user.profileImage, size: 22)
                                                 Text("@\(user.username)")
-                                                    .font(.custom(style: .caption))
+                                                    .cfont(.caption)
                                                     .frame(maxWidth: .infinity, alignment: .leading)
                                                     .foregroundStyle(.white)
                                             }
@@ -91,7 +91,7 @@ struct CheckInCard: View {
                                     
                                     if let caption = checkin.caption, !caption.isEmpty {
                                         Text(caption)
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                             .multilineTextAlignment(.leading)
                                             .lineLimit(6)
                                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -117,7 +117,7 @@ struct CheckInCard: View {
                                 VStack {
                                     Text(place.name)
                                         .lineLimit(1)
-                                        .font(.custom(style: .subheadline))
+                                        .cfont(.subheadline)
                                         .foregroundStyle(.primary)
                                         .bold()
                                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -139,7 +139,7 @@ struct CheckInCard: View {
                                             Text(String(repeating: "$", count: priceRange))
                                         }
                                     }
-                                    .font(.custom(style: .subheadline))
+                                    .cfont(.subheadline)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                                 .frame(maxWidth: .infinity)
@@ -150,7 +150,7 @@ struct CheckInCard: View {
                                     HStack(spacing: 3) {
                                         ProfileImage(user.profileImage, size: 22)
                                         Text("@\(user.username)")
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                             .foregroundStyle(.white)
                                     }
@@ -163,7 +163,7 @@ struct CheckInCard: View {
                                     .lineLimit(8)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .foregroundStyle(.primary)
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -176,7 +176,7 @@ struct CheckInCard: View {
                 
                 Text("\(checkin.totalCheckins) total checkins")
                     .foregroundStyle(.secondary)
-                    .font(.custom(style: .caption))
+                    .cfont(.caption)
                     .frame(maxWidth: .infinity, alignment: .trailing)
             }
         } else {

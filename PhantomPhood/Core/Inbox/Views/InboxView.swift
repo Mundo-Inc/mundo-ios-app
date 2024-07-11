@@ -26,13 +26,13 @@ struct InboxView: View {
                     } label: {
                         HStack(spacing: 10) {
                             Text(InboxVM.Tab.messages.rawValue)
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .fontWeight(.semibold)
                             
                             let unreadCount = conversationsManager.conversations.filter({ $0.unreadMessagesCount > 0 }).count
                             if unreadCount > 0 {
                                 Text("\(unreadCount)")
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .fontWeight(.bold)
                                     .foregroundStyle(Color.black)
                                     .padding(.horizontal, 5)
@@ -62,12 +62,12 @@ struct InboxView: View {
                     } label: {
                         HStack {
                             Text(InboxVM.Tab.notifications.rawValue)
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .fontWeight(.semibold)
                             
                             if let unreadCount = notificationsVM.unreadCount, unreadCount > 0 {
                                 Text("\(unreadCount)")
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .fontWeight(.bold)
                                     .foregroundStyle(Color.black)
                                     .padding(.horizontal, 5)

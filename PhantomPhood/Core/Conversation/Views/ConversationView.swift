@@ -43,13 +43,13 @@ struct ConversationView: View {
                                 if let createdAt = message.dateCreated {
                                     if index == 0 {
                                         Text(createdAt.formatted(date: .abbreviated, time: .omitted))
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                             .foregroundStyle(.secondary)
                                             .padding(.vertical, 5)
                                     } else {
                                         if let prevMessageCreatedAt = vm.messages[index - 1].dateCreated, !Calendar.current.isDate(prevMessageCreatedAt, inSameDayAs: createdAt) {
                                             Text(createdAt.formatted(date: .abbreviated, time: .omitted))
-                                                .font(.custom(style: .caption))
+                                                .cfont(.caption)
                                                 .foregroundStyle(.secondary)
                                                 .padding(.vertical, 5)
                                         }
@@ -71,7 +71,7 @@ struct ConversationView: View {
                                                                 Text("\(transaction.sender.name) Gifted")
                                                             }
                                                         }
-                                                        .font(.custom(style: .title3))
+                                                        .cfont(.title3)
                                                         .fontWeight(.semibold)
                                                         .foregroundStyle(Color.white)
                                                         .padding(.vertical, 3)
@@ -83,7 +83,7 @@ struct ConversationView: View {
                                                                 .foregroundStyle(Color.white.opacity(0.4))
                                                             
                                                             Text(transaction.amount.formatted())
-                                                                .font(.custom(style: .largeTitle))
+                                                                .cfont(.largeTitle)
                                                                 .fontWeight(.semibold)
                                                                 .foregroundStyle(Color.white)
                                                         }
@@ -118,7 +118,7 @@ struct ConversationView: View {
                                         .overlay(alignment: .bottomTrailing) {
                                             if let createdAt = message.dateCreated {
                                                 Text(createdAt.formattedTime())
-                                                    .font(.custom(style: .caption2))
+                                                    .cfont(.caption2)
                                                     .foregroundStyle(Color.white.opacity(0.4))
                                                     .padding(.bottom, 3)
                                                     .padding(.trailing, 8)
@@ -142,7 +142,7 @@ struct ConversationView: View {
                                                     .overlay(alignment: .bottomTrailing) {
                                                         if let createdAt = message.dateCreated {
                                                             Text(createdAt.formattedTime())
-                                                                .font(.custom(style: .caption2))
+                                                                .cfont(.caption2)
                                                                 .foregroundStyle(.secondary)
                                                                 .padding(.bottom, 3)
                                                                 .padding(.trailing, 8)
@@ -159,7 +159,7 @@ struct ConversationView: View {
                                                 .overlay(alignment: .bottomTrailing) {
                                                     if let createdAt = message.dateCreated {
                                                         Text(createdAt.formattedTime())
-                                                            .font(.custom(style: .caption2))
+                                                            .cfont(.caption2)
                                                             .foregroundStyle(.secondary)
                                                             .padding(.bottom, 3)
                                                             .padding(.trailing, 8)
@@ -432,17 +432,17 @@ struct ConversationView: View {
                 if vm.participants.count > 1 {
                     Text(vm.friendlyName ?? "Name")
                         .fontWeight(.semibold)
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                 } else {
                     let user = vm.usersDict.first?.value
                     
                     NavigationLink(value: AppRoute.userProfile(userId: user?.id ?? "-")) {
                         VStack {
                             Text(user?.name ?? "Name")
-                                .font(.custom(style: .subheadline))
+                                .cfont(.subheadline)
                             
                             Text("@\(user?.username ?? "username")")
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                                 .foregroundStyle(.secondary)
                         }
                         .redacted(reason: vm.usersDict.isEmpty ? .placeholder : [])
@@ -465,7 +465,7 @@ struct ConversationView: View {
                     }
                     .overlay(alignment: .topTrailing) {
                         Text("+\(vm.participants.count - 3)")
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundStyle(.secondary)
                             .padding(.all, 2)
                             .background(Color.themePrimary, in: Circle())

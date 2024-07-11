@@ -36,7 +36,7 @@ struct PlaceSelectorView: View {
                 } icon: {
                     Image(systemName: locationManager.location != nil ? "location.fill" : "globe")
                 }
-                .font(.custom(style: .caption))
+                .cfont(.caption)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(.trailing, 10)
@@ -86,7 +86,7 @@ fileprivate struct PlaceCard: View {
                 
                 VStack {
                     Text(place.name ?? place.placemark.name ?? "Unknown")
-                        .font(.custom(style: .body))
+                        .cfont(.body)
                         .fontWeight(.medium)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .frame(minHeight: 18)
@@ -94,11 +94,11 @@ fileprivate struct PlaceCard: View {
                     if let distance = distanceFromMe(lat: place.placemark.coordinate.latitude, lng: place.placemark.coordinate.longitude, unit: .miles) {
                         Text(String(format: "%.1f", distance) + " Miles away")
                             .foregroundStyle(.secondary)
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     } else {
                         Text("\(place.placemark.postalAddress?.city ?? "-"), \(place.placemark.postalAddress?.street ?? "-")")
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }

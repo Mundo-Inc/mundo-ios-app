@@ -72,7 +72,7 @@ fileprivate struct UserCard: View {
                     if (user.verified) {
                         HStack {
                             Text(user.name)
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                                 .bold()
                             Image(systemName: "checkmark.seal")
                                 .font(.system(size: 12))
@@ -82,13 +82,13 @@ fileprivate struct UserCard: View {
                         
                     } else {
                         Text(user.name)
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     
                     Text("@" + user.username)
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .foregroundStyle(.secondary)
                     
@@ -109,12 +109,12 @@ extension UserCard {
             
             VStack {
                 Text("Name")
-                    .font(.custom(style: .body))
+                    .cfont(.body)
                     .bold()
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 Text("@username")
-                    .font(.custom(style: .caption))
+                    .cfont(.caption)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(.secondary)
                 

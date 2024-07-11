@@ -47,13 +47,13 @@ struct AddReviewView: View {
                             
                             VStack(spacing: 10) {
                                 Text(place.name)
-                                    .font(.custom(style: .body))
+                                    .cfont(.body)
                                     .bold()
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
                                 Text(place.location.address ?? "-")
                                     .lineLimit(1)
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             .foregroundStyle(.secondary)
@@ -71,7 +71,7 @@ struct AddReviewView: View {
                     case .recommendation:
                         VStack {
                             Text("Do you recommend this place?")
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.top)
                             
@@ -150,7 +150,7 @@ struct AddReviewView: View {
                                     }
                                 } header: {
                                     Text("Overall Score")
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                                 
@@ -181,7 +181,7 @@ struct AddReviewView: View {
                                     }
                                 } header: {
                                     Text("Food Quality")
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                                 
@@ -212,7 +212,7 @@ struct AddReviewView: View {
                                     }
                                 } header: {
                                     Text("Drink Quality")
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                                 
@@ -243,7 +243,7 @@ struct AddReviewView: View {
                                     }
                                 } header: {
                                     Text("Service")
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                                 
@@ -274,7 +274,7 @@ struct AddReviewView: View {
                                     }
                                 } header: {
                                     Text("Atmosphere")
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                                 
@@ -338,7 +338,7 @@ struct AddReviewView: View {
                                                     .frame(width: 110, height: 140)
                                                     .overlay {
                                                         Text("Loading")
-                                                            .font(.custom(style: .caption))
+                                                            .cfont(.caption)
                                                     }
                                                 
                                                 Circle()
@@ -353,7 +353,7 @@ struct AddReviewView: View {
                                                     .frame(width: 110, height: 140)
                                                     .overlay {
                                                         Text("Loading")
-                                                            .font(.custom(style: .caption))
+                                                            .cfont(.caption)
                                                     }
                                                 
                                                 Circle()
@@ -410,7 +410,7 @@ struct AddReviewView: View {
                                         }
                                     }
                                 }
-                                .font(.custom(style: .subheadline))
+                                .cfont(.subheadline)
                                 .padding(.horizontal)
                             }
                             .scrollIndicators(.never)
@@ -524,7 +524,7 @@ struct AddReviewView: View {
                     Spacer()
                 }
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .padding(.horizontal)
                 .background(Color.themeBG.ignoresSafeArea())
             }

@@ -39,7 +39,7 @@ struct UserProfileView: View {
                                         .frame(height: 28)
                                     
                                     Text(vm.user?.name ?? "User Name")
-                                        .font(.custom(style: .title2))
+                                        .cfont(.title2)
                                         .fontWeight(.bold)
                                     
                                     if let user = vm.user, user.verified {
@@ -50,7 +50,7 @@ struct UserProfileView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 
                                 Text("@\(vm.user?.username ?? "Loading")")
-                                    .font(.custom(style: .footnote))
+                                    .cfont(.footnote)
                                     .foregroundStyle(.secondary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
@@ -149,13 +149,13 @@ struct UserProfileView: View {
                             .disabled(vm.user == nil)
                         }
                         .padding(.horizontal)
-                        .font(.custom(style: .footnote))
+                        .cfont(.footnote)
                         
                         
                         if let bio = vm.user?.bio {
                             Text(bio)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .font(.custom(style: .footnote))
+                                .cfont(.footnote)
                                 .multilineTextAlignment(.leading)
                                 .padding(.horizontal)
                                 .foregroundStyle(.secondary)
@@ -166,10 +166,10 @@ struct UserProfileView: View {
                             Group {
                                 VStack(spacing: 0) {
                                     Text((vm.user?.reviewsCount ?? 10).formattedWithSuffix())
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                     
                                     Text("Reviews")
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .foregroundStyle(.secondary)
                                 }
                                 .onTapGesture {
@@ -179,10 +179,10 @@ struct UserProfileView: View {
                                 
                                 VStack(spacing: 0) {
                                     Text((vm.user?.followersCount ?? 10).formattedWithSuffix())
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                     
                                     Text("Followers")
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .foregroundStyle(.secondary)
                                 }
                                 .onTapGesture {
@@ -193,10 +193,10 @@ struct UserProfileView: View {
                                 
                                 VStack(spacing: 0) {
                                     Text((vm.user?.followingCount ?? 10).formattedWithSuffix())
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                     
                                     Text("Followings")
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .foregroundStyle(.secondary)
                                 }
                                 .onTapGesture {
@@ -227,10 +227,10 @@ struct UserProfileView: View {
                                         .padding(.bottom, 8)
                                     
                                     Text("Private Account")
-                                        .font(.custom(style: .title3))
+                                        .cfont(.title3)
                                     
                                     Text("You need to follow \(user.name)\nto see their content")
-                                        .font(.custom(style: .body))
+                                        .cfont(.body)
                                         .foregroundStyle(.secondary)
                                         .multilineTextAlignment(.center)
                                 }
@@ -356,10 +356,10 @@ struct UserProfileView: View {
             switch status {
             case .isBlocked:
                 Text("You have blocked this user")
-                    .font(.custom(style: .headline))
+                    .cfont(.headline)
             case .hasBlocked:
                 Text("This user has blocked you")
-                    .font(.custom(style: .headline))
+                    .cfont(.headline)
             }
         }
         .foregroundStyle(.secondary)

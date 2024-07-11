@@ -43,7 +43,7 @@ struct SelectReactionsView: View {
                         }
                     }
                 }
-                .font(.custom(style: .subheadline))
+                .cfont(.subheadline)
                 .fontWeight(.semibold)
                 
                 Divider()

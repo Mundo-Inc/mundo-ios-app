@@ -16,16 +16,16 @@ struct UserActivityCheckin: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text(data.user.name)
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                             .fontWeight(.bold)
                         Spacer()
                         Text(data.createdAt.timeElapsed(suffix: " ago"))
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundStyle(.secondary)
                     }.frame(maxWidth: .infinity)
                     
                     Text("Checked-in")
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .fontWeight(.medium)
                         .foregroundStyle(.black)
                         .padding(.horizontal, 6)

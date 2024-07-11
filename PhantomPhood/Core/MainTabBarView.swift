@@ -59,7 +59,7 @@ extension MainTabBarView {
                 .frame(width: 30, height: 30)
             
             Text(tab.title)
-                .font(.custom(style: .caption2))
+                .cfont(.caption2)
                 .fontWeight(.medium)
         }
         .foregroundStyle(self.selection == tab ? Color.accentColor : Color.secondary)
@@ -84,7 +84,7 @@ extension MainTabBarView {
             
             Text("\((pcVM.balance ?? 0).formattedWithSuffix()) Coins")
                 .lineLimit(1)
-                .font(.custom(style: .caption2))
+                .cfont(.caption2)
                 .fontWeight(.medium)
                 .redacted(reason: pcVM.balance == nil ? .placeholder : [])
         }
@@ -106,7 +106,7 @@ extension MainTabBarView {
                     .frame(width: 30, height: 30)
             }
             Text(Tab.myProfile.title)
-                .font(.custom(style: .caption2))
+                .cfont(.caption2)
                 .fontWeight(.medium)
         }
         .foregroundStyle(self.selection == Tab.myProfile ? Color.accentColor : Color.secondary)

@@ -31,7 +31,7 @@ struct PlaceReviewsView: View {
                             .redacted(reason: .placeholder)
                     }
                 }
-                .font(.custom(style: .caption))
+                .cfont(.caption)
                 .foregroundStyle(.secondary)
                 
                 LazyVStack {
@@ -79,7 +79,7 @@ struct PlaceReviewsView: View {
                 }
             } else {
                 Text("10 \(K.appName) Reviews")
-                    .font(.custom(style: .caption))
+                    .cfont(.caption)
                     .foregroundStyle(.secondary)
                     .redacted(reason: .placeholder)
                 

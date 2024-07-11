@@ -54,7 +54,7 @@ struct ExploreSearchView: View {
                         TextField("Search", text: $exploreSearchVM.text)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled(true)
-                            .font(.custom(style: .title2))
+                            .cfont(.title2)
                             .keyboardType(.default)
                             .textContentType(UITextContentType.location)
                             .focused($isFocused)
@@ -122,7 +122,7 @@ struct ExploreSearchView: View {
                                     title: { Text("Show results on Map") },
                                     icon: { Image(systemName: "map.fill") }
                                 )
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .padding(.vertical, 10)
                                 .frame(maxWidth: .infinity)
                                 .background(Color.themePrimary)
@@ -195,17 +195,17 @@ fileprivate struct PlaceCard: View {
                     
                     VStack {
                         Text(place.name ?? place.placemark.name ?? "Unknown")
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .leading)
                         if let distance = distanceFromMe(lat: place.placemark.coordinate.latitude, lng: place.placemark.coordinate.longitude, unit: .miles) {
                             Text(String(format: "%.1f", distance) + " Miles away")
                                 .foregroundStyle(.secondary)
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         } else {
                             Text("\(place.placemark.postalAddress?.city ?? "-"), \(place.placemark.postalAddress?.street ?? "-")")
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
@@ -229,7 +229,7 @@ fileprivate struct UserCard: View {
                     if (user.verified) {
                         HStack {
                             Text(user.name)
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                                 .bold()
                             Image(systemName: "checkmark.seal")
                                 .font(.system(size: 12))
@@ -239,13 +239,13 @@ fileprivate struct UserCard: View {
                         
                     } else {
                         Text(user.name)
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     
                     Text("@" + user.username)
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .foregroundStyle(.secondary)
                     
@@ -271,13 +271,13 @@ fileprivate struct EventCard: View {
                 
                 VStack {
                     Text(event.name)
-                        .font(.custom(style: .body))
+                        .cfont(.body)
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     if let address = event.place.location.address {
                         Text(address)
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .foregroundStyle(.secondary)
                     }

@@ -18,12 +18,12 @@ struct YelpReviewItem: View {
                 VStack(spacing: 2) {
                     HStack {
                         Text(review.user.name)
-                            .font(.custom(style: .headline))
+                            .cfont(.headline)
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         Text(review.timeCreated)
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundStyle(.secondary)
                     }
                     HStack {
@@ -42,7 +42,7 @@ struct YelpReviewItem: View {
             .padding(.horizontal)
             
             Text(review.text)
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .foregroundStyle(Color.primary.opacity(0.8))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)

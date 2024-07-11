@@ -51,7 +51,7 @@ struct HomeMadeView: View {
                     Spacer()
                 }
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .padding(.horizontal)
                 .background(Color.themeBG.ignoresSafeArea())
             } else {
@@ -75,7 +75,7 @@ struct HomeMadeView: View {
                                                     .frame(width: 110, height: 140)
                                                     .overlay {
                                                         Text("Loading")
-                                                            .font(.custom(style: .caption))
+                                                            .cfont(.caption)
                                                     }
                                                 
                                                 Circle()
@@ -90,7 +90,7 @@ struct HomeMadeView: View {
                                                     .frame(width: 110, height: 140)
                                                     .overlay {
                                                         Text("Loading")
-                                                            .font(.custom(style: .caption))
+                                                            .cfont(.caption)
                                                     }
                                                 
                                                 Circle()
@@ -147,7 +147,7 @@ struct HomeMadeView: View {
                                     }
                                 }
                                 .frame(height: 190)
-                                .font(.custom(style: .subheadline))
+                                .cfont(.subheadline)
                                 .padding(.horizontal)
                             }
                             .scrollIndicators(.never)
@@ -155,7 +155,7 @@ struct HomeMadeView: View {
                         
                         VStack(alignment: .leading) {
                             Text("Add Images/Videos of Your Homemade Food&Drinks")
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .fontWeight(.bold)
                                 .foregroundStyle(Color.primary)
                         }
@@ -194,7 +194,7 @@ struct HomeMadeView: View {
                             if vm.tags.isEmpty {
                                 Text("Tag People (Find your fellow friends on the app and tag them!)")
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .foregroundStyle(Color.secondary)
                                     .padding(.bottom, 8)
                             } else {
@@ -308,5 +308,5 @@ fileprivate struct MentionItem: View {
     NavigationStack {
         HomeMadeView()
     }
-    .font(.custom(style: .body))
+    .cfont(.body)
 }

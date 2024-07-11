@@ -23,12 +23,12 @@ struct HomeActivityInfoView: View {
                                 
                                 VStack {
                                     Text(place.name)
-                                        .font(.custom(style: .body))
+                                        .cfont(.body)
                                         .fontWeight(.medium)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                     if let address = place.location.address {
                                         Text(address)
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                             .foregroundStyle(.secondary)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                     }
@@ -51,7 +51,7 @@ struct HomeActivityInfoView: View {
                             VStack(spacing: 3) {
                                 HStack {
                                     Text(data.user.name)
-                                        .font(.custom(style: .body))
+                                        .cfont(.body)
                                     
                                     LevelView(level: data.user.progress.level)
                                         .frame(width: 24, height: 24)
@@ -60,7 +60,7 @@ struct HomeActivityInfoView: View {
                                 }
                                 
                                 Text("@\(data.user.username)")
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .foregroundStyle(.secondary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
@@ -91,7 +91,7 @@ struct HomeActivityInfoView: View {
                                 .frame(height: 26)
                             
                             Text("\(data.reactions.total.reduce(0) { $0 + $1.count })")
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                         }
                     }
                     .foregroundStyle(.primary)
@@ -107,7 +107,7 @@ struct HomeActivityInfoView: View {
                                 .frame(height: 22)
                             
                             Text("\(data.commentsCount)")
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                         }
                     }
                     .foregroundStyle(.primary)
@@ -131,7 +131,7 @@ struct HomeActivityInfoView: View {
                             .foregroundStyle(.secondary)
                             .padding()
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                     }
                 }
             case .newReview:
@@ -169,7 +169,7 @@ struct HomeActivityInfoView: View {
                                 Image(.recommendIcon)
                                 Text("I Recommend This Place")
                                     .frame(maxWidth: .infinity, alignment: .center)
-                                    .font(.custom(style: .body))
+                                    .cfont(.body)
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -184,7 +184,7 @@ struct HomeActivityInfoView: View {
                             .foregroundStyle(.secondary)
                             .padding()
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                     }
                 }
             case .following:
@@ -198,13 +198,13 @@ struct HomeActivityInfoView: View {
                                 
                                 VStack(alignment: .leading) {
                                     Text(user.name)
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                         .fontWeight(.medium)
                                         .foregroundStyle(.primary)
                                         .lineLimit(1)
                                     
                                     Text("@\(user.username)")
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .foregroundStyle(.secondary)
                                         .lineLimit(1)
                                 }
@@ -214,12 +214,12 @@ struct HomeActivityInfoView: View {
                                     switch connectionStatus.followingStatus {
                                     case .following:
                                         Text("Following")
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                             .foregroundStyle(.secondary)
                                     case .notFollowing:
                                         Text("Show Profile")
                                             .frame(height: 20)
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                             .foregroundStyle(.secondary)
                                             .padding(.horizontal, 8)
                                             .padding(.vertical, 4)
@@ -227,7 +227,7 @@ struct HomeActivityInfoView: View {
                                             .foregroundStyle(.primary)
                                     case .requested:
                                         Text("Requested")
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                             .foregroundStyle(.secondary)
                                     }
                                 }
@@ -255,7 +255,7 @@ struct HomeActivityInfoView: View {
                             .foregroundStyle(.secondary)
                             .padding()
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                     }
                 }
             default:
@@ -275,7 +275,7 @@ private struct ScoreItem: View {
         HStack {
             Text(title)
                 .frame(maxWidth: 140, alignment: .leading)
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .fontWeight(.medium)
                 .onAppear {
                     withAnimation {

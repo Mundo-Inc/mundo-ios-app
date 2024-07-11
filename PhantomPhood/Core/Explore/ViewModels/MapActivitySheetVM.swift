@@ -36,22 +36,23 @@ final class MapActivitySheetVM: ObservableObject {
     }
     
     func startConversation(with userId: String) async {
-        DispatchQueue.main.async {
-            self.loadingSections.insert(.startingConversation)
-        }
-        do {
-            let conversation = try await conversationsDM.createConversation(with: userId)
-            
-            HapticManager.shared.impact(style: .light)
-            
-            AppData.shared.goTo(.conversation(sid: conversation.sid, focusOnTextField: true))
-        } catch {
-            presentErrorToast(error)
-            HapticManager.shared.notification(type: .error)
-        }
-        
-        DispatchQueue.main.async {
-            self.loadingSections.remove(.startingConversation)
-        }
+        ToastVM.shared.toast(Toast(type: .info, title: "Messaging is disabled", message: "We're improving messaging system and it's temporarily disabled"))
+//        DispatchQueue.main.async {
+//            self.loadingSections.insert(.startingConversation)
+//        }
+//        do {
+//            let conversation = try await conversationsDM.createConversation(with: userId)
+//            
+//            HapticManager.shared.impact(style: .light)
+//            
+//            AppData.shared.goTo(.conversation(sid: conversation.sid, focusOnTextField: true))
+//        } catch {
+//            presentErrorToast(error)
+//            HapticManager.shared.notification(type: .error)
+//        }
+//        
+//        DispatchQueue.main.async {
+//            self.loadingSections.remove(.startingConversation)
+//        }
     }
 }

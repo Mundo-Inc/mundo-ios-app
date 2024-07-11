@@ -32,13 +32,13 @@ struct ProfileCheckinsView: View {
                             VStack(spacing: 10) {
                                 HStack {
                                     Text(item.place.name)
-                                        .font(.custom(style: .subheadline))
+                                        .cfont(.subheadline)
                                         .bold()
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .multilineTextAlignment(.leading)
                                     
                                     Text(DateFormatter.dateToShortString(date: item.createdAt))
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .foregroundStyle(.secondary)
                                 }
                                 
@@ -62,7 +62,7 @@ struct ProfileCheckinsView: View {
                                     }
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 }
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                                 .foregroundStyle(.secondary)
                             }
                         }
@@ -152,6 +152,8 @@ fileprivate struct CheckinsMap17: View {
                     }
                 }
             }
+            
+            UserAnnotation()
         }
         .mapStyle(.standard(emphasis: .automatic, pointsOfInterest: .excludingAll))
         .onMapCameraChange(frequency: .onEnd, { mapCameraUpdateContext in

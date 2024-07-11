@@ -42,7 +42,7 @@ struct ReportView: View {
                 }
                 .scrollIndicators(.hidden)
                 .padding(.horizontal)
-                .font(.custom(style: .body))
+                .cfont(.body)
             } else if vm.step == 1 {
                 VStack {
                     TextField("Any notes on this (Optional)", text: $vm.note, axis: .vertical)
@@ -52,7 +52,7 @@ struct ReportView: View {
                         .overlay {
                             if vm.note.count > 0 {
                                 Text("\(vm.note.count)/250")
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .foregroundStyle(vm.note.count > 250 ? .red : Color.secondary)
                                     .padding(.bottom, 8)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
@@ -81,7 +81,7 @@ struct ReportView: View {
                     }
                 } label: {
                     Text(vm.step == 0 ? "Next" : "Submit")
-                        .font(.custom(style: .body))
+                        .cfont(.body)
                 }
                 .buttonStyle(.bordered)
             }

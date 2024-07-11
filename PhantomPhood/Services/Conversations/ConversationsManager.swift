@@ -28,9 +28,7 @@ final class ConversationsManager: NSObject, ObservableObject {
     
     public var typingPublisher = PassthroughSubject<TypingActivity, Never>()
     
-    private var cancellables: Set<AnyCancellable> = []
-    
-    private var isReconnecting = false
+    private var cancellables = Set<AnyCancellable>()
     
     // MARK: Events
     
@@ -206,43 +204,9 @@ final class ConversationsManager: NSObject, ObservableObject {
 extension ConversationsManager: TwilioConversationsClientDelegate {
     // MARK: Client changes
     
-    func startReconnect() {
-        guard !isReconnecting else { return }
-        isReconnecting = true
-        tryReconnect()
-    }
-    
-    func tryReconnect() {
-        print("Attempting to reconnect...")
-        DispatchQueue.global().asyncAfter(deadline: .now() + 5.0) {
-            Task {
-                do {
-                    try await self.client.updateToken()
-                    self.isReconnecting = false
-                } catch {
-                    self.tryReconnect()
-                }
-            }
-        }
-    }
-    
     func conversationsClient(_ client: TwilioConversationsClient, connectionStateUpdated state: TCHClientConnectionState) {
         DispatchQueue.main.async {
             self.clientState = state
-        }
-        switch state {
-        case .connected:
-#if DEBUG
-            print("Twilio client connected")
-#endif
-            isReconnecting = false
-        case .disconnected:
-#if DEBUG
-            print("Twilio client disconnected")
-#endif
-            self.startReconnect()
-        default:
-            break
         }
     }
     
@@ -254,9 +218,9 @@ extension ConversationsManager: TwilioConversationsClientDelegate {
         self.client.conversationsClientTokenExpired(client)
     }
     
-    func conversationsClient(_ client: TwilioConversationsClient, conversationsError errorReceived: TCHError) {
+    func conversationsClient(_ client: TwilioConversationsClient, errorReceived error: TCHError) {
         DispatchQueue.main.async {
-            self.conversationsError = errorReceived
+            self.conversationsError = error
         }
     }
     
@@ -305,11 +269,13 @@ extension ConversationsManager: TwilioConversationsClientDelegate {
     
     // MARK: User changes
     
-    //    func conversationsClient(_ client: TwilioConversationsClient, user: TCHUser, updated update: TCHUserUpdate) {
-    //        if user.identity == myIdentity {
-    //            myUser = user
-    //        }
-    //    }
+    func conversationsClient(_ client: TwilioConversationsClient, user: TCHUser, updated update: TCHUserUpdate) {
+        if let myUserIdentity = myUser?.identity {
+            if user.identity == myUserIdentity {
+                self.myUser = user
+            }
+        }
+    }
 }
 
 extension ConversationsManager: TCHConversationDelegate {

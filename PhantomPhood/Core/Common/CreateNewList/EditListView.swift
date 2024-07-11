@@ -21,7 +21,7 @@ struct EditListView: View {
             HStack {
                 Text("Editing \(vm.originalList.name)")
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .font(.custom(style: .headline))
+                    .cfont(.headline)
                 
                 Button {
                     vm.onCancel()
@@ -41,10 +41,10 @@ struct EditListView: View {
                             VStack {
                                 Text("Name your list")
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .font(.custom(style: .headline))
+                                    .cfont(.headline)
                                 Text("Choose a name for your list")
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .font(.custom(style: .body))
+                                    .cfont(.body)
                                     .foregroundStyle(.secondary)
                                 
                                 HStack {
@@ -65,7 +65,7 @@ struct EditListView: View {
                                         .withFilledStyle(size: .large)
                                         .overlay(alignment: .bottomTrailing) {
                                             Text("\(vm.name.count)/16")
-                                                .font(.custom(style: .caption))
+                                                .cfont(.caption)
                                                 .padding(.trailing, 8)
                                                 .padding(.bottom, 4)
                                                 .foregroundStyle(vm.name.count <= 16 ? Color.secondary : Color.red)
@@ -78,11 +78,11 @@ struct EditListView: View {
                                 VStack {
                                     Text(vm.isPrivate ? "Private" : "Public")
                                         .frame(maxWidth: .infinity, alignment: .leading)
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                     Text(vm.isPrivate ? "Only collaborators can view" : "Everyone can view")
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .multilineTextAlignment(.leading)
-                                        .font(.custom(style: .body))
+                                        .cfont(.body)
                                         .foregroundStyle(.secondary)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -101,10 +101,10 @@ struct EditListView: View {
                         VStack {
                             Text("Members")
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                             Text("Collaborate with others!")
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                                 .foregroundStyle(.secondary)
                         }
                         .frame(maxWidth: .infinity)
@@ -114,11 +114,11 @@ struct EditListView: View {
                             HStack {
                                 ProfileImage(vm.originalList.owner.profileImage, size: 36, cornerRadius: 18)
                                 Text(vm.originalList.owner.name)
-                                    .font(.custom(style: .headline))
+                                    .cfont(.headline)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
                                 Text("Owner")
-                                    .font(.custom(style: .body))
+                                    .cfont(.body)
                                     .foregroundStyle(.secondary)
                                     .padding(.trailing)
                             }
@@ -128,7 +128,7 @@ struct EditListView: View {
                                 HStack {
                                     ProfileImage(collaborator.user.profileImage, size: 36, cornerRadius: 18)
                                     Text(collaborator.user.name)
-                                        .font(.custom(style: .subheadline))
+                                        .cfont(.subheadline)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                     
                                     Picker(selection: Binding(get: {
@@ -196,7 +196,7 @@ struct EditListView: View {
                             }
                         } label: {
                             Text(vm.step == .general ? "Cancel" : "Back")
-                                .font(.custom(style: .subheadline))
+                                .cfont(.subheadline)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 32)
                         }
@@ -223,7 +223,7 @@ struct EditListView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .frame(height: 32)
-                            .font(.custom(style: .subheadline))
+                            .cfont(.subheadline)
                         }
                         .buttonStyle(.borderedProminent)
                         .opacity(vm.isReadyToSubmit ? 1 : 0.6)

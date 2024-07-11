@@ -42,7 +42,7 @@ struct UserProfileActivitiesView: View {
                     }
                 }
                 .pickerStyle(.wheel)
-                .font(.custom(style: .body))
+                .cfont(.body)
             }
             .padding(.top)
             .padding(.horizontal)

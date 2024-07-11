@@ -22,14 +22,14 @@ struct PlaceReviewItem: View {
                     HStack {
                         NavigationLink(value: AppRoute.userProfile(userId: review.writer.id)) {
                             Text(review.writer.name)
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .fontWeight(.bold)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .foregroundStyle(Color.primary)
                         
                         Text(review.createdAt.timeElapsed(suffix: " ago"))
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundStyle(.secondary)
                     }
                     HStack {
@@ -44,12 +44,11 @@ struct PlaceReviewItem: View {
                         
                         Spacer()
                         
-                        Image(.phantomPortrait)
+                        Image(.Logo.tpLogo)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 22)
-                            .clipShape(Circle())
-                            .background(Circle().foregroundStyle(.black))
+                            .background(Color.black, in: Circle())
                     }
                 }
             }
@@ -157,7 +156,7 @@ struct PlaceReviewItem: View {
             }
             
             Text(review.content)
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .foregroundStyle(Color.primary.opacity(0.8))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
@@ -177,12 +176,12 @@ extension PlaceReviewItem {
                 VStack(spacing: 2) {
                     HStack {
                         Text("Writer Name")
-                            .font(.custom(style: .headline))
+                            .cfont(.headline)
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         Text("just now")
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundStyle(.secondary)
                     }
                     HStack {
@@ -191,19 +190,18 @@ extension PlaceReviewItem {
                         
                         Spacer()
                         
-                        Image(.phantomPortrait)
+                        Image(.Logo.tpLogo)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 22)
-                            .clipShape(Circle())
-                            .background(Circle().foregroundStyle(.black))
+                            .background(Color.black, in: Circle())
                     }
                 }
             }
             .padding(.horizontal)
             
             Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eu nibh sed nunc venenatis lobortis. Donec at porttitor nunc, ut pellentesque odio.")
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .foregroundStyle(Color.primary.opacity(0.8))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)

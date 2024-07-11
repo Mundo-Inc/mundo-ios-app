@@ -43,14 +43,14 @@ struct NewCheckinView: View {
                             VStack(spacing: 10) {
                                 if let event = vm.event {
                                     Text(event.name)
-                                        .font(.custom(style: .body))
+                                        .cfont(.body)
                                         .fontWeight(.bold)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .lineLimit(1)
                                         .padding(.vertical, vm.place?.location.address == nil && vm.place?.thumbnail != nil ? 8 : 0)
                                 } else {
                                     Text(vm.place?.name ?? "Name Placeholder")
-                                        .font(.custom(style: .body))
+                                        .cfont(.body)
                                         .fontWeight(.bold)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .lineLimit(1)
@@ -60,13 +60,13 @@ struct NewCheckinView: View {
                                 if let address = vm.place?.location.address {
                                     Text(address)
                                         .lineLimit(1)
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .foregroundStyle(vm.place?.thumbnail != nil ? Color.white.opacity(0.7) : Color.secondary)
                                 } else if vm.place == nil {
                                     Text("Address placeholder")
                                         .lineLimit(1)
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .foregroundStyle(vm.place?.thumbnail != nil ? Color.white.opacity(0.7) : Color.secondary)
                                 }
@@ -99,7 +99,7 @@ struct NewCheckinView: View {
                     ScrollView {
                         VStack {
                             Text("No filters allowed - take a fun pic of you and your friends!")
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .fontWeight(.bold)
                                 .foregroundStyle(Color.primary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -154,7 +154,7 @@ struct NewCheckinView: View {
                                                 case .empty:
                                                     VStack {
                                                         Text("Loading")
-                                                            .font(.custom(style: .caption))
+                                                            .cfont(.caption)
                                                         
                                                         ProgressView()
                                                             .controlSize(.regular)
@@ -162,7 +162,7 @@ struct NewCheckinView: View {
                                                 case .loading:
                                                     VStack {
                                                         Text("Loading")
-                                                            .font(.custom(style: .caption))
+                                                            .cfont(.caption)
                                                         
                                                         ProgressView()
                                                             .controlSize(.regular)
@@ -239,7 +239,7 @@ struct NewCheckinView: View {
                                 }
                             }
                         }
-                        .font(.custom(style: .body))
+                        .cfont(.body)
                         .padding()
                         .photosPicker(isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: NewCheckinVM.Sheets.photosPicker), selection: $pickerVM.selection, maxSelectionCount: 1, matching: .any(of: [.images]), photoLibrary: .shared())
                         .fullScreenCover(isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: NewCheckinVM.Sheets.camera)) {
@@ -266,7 +266,7 @@ struct NewCheckinView: View {
                             if vm.mentions.isEmpty {
                                 Text("Tag People (Find your fellow friends on the app and tag them!)")
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .foregroundStyle(Color.primary)
                                     .padding(.bottom, 8)
                             } else {
@@ -385,7 +385,7 @@ struct NewCheckinView: View {
                     }
                 }
                 .ignoresSafeArea(.keyboard, edges: .bottom)
-                .font(.custom(style: .body))
+                .cfont(.body)
             }
         }
         .toolbar {

@@ -21,7 +21,7 @@ struct CommentsView: View {
     var body: some View {
         VStack(spacing: 0) {
             Text("Comments")
-                .font(.custom(style: .headline))
+                .cfont(.headline)
                 .fontWeight(.semibold)
                 .padding(.top, 15)
                 .padding(.bottom, 12)
@@ -39,10 +39,10 @@ struct CommentsView: View {
                 if vm.comments.isEmpty {
                     VStack {
                         Text("No Comments yet")
-                            .font(.custom(style: .title2))
+                            .cfont(.title2)
                         
                         Text("Be the first")
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundStyle(.secondary)
                     }
                     .padding(.top, 60)
@@ -103,7 +103,7 @@ struct CommentsView: View {
                                 Text("Reply")
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .foregroundStyle(.secondary)
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .fontWeight(.semibold)
                                     .onTapGesture {
                                         withAnimation {
@@ -129,7 +129,7 @@ struct CommentsView: View {
                                     Text("View \(moreReplies) more \(moreReplies > 1 ? "replies" : "reply")")
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .foregroundStyle(.secondary)
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .fontWeight(.semibold)
                                         .onTapGesture {
                                             Task {
@@ -174,7 +174,7 @@ struct CommentsView: View {
                     ProfileImageBase(replyTo.author.profileImage, size: 28)
                     
                     Text("Replying to **\(replyTo.author.name)**")
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                     
                     Spacer()
                     
@@ -244,13 +244,13 @@ struct CommentsView: View {
             VStack(alignment: .leading) {
                 HStack(spacing: 4) {
                     Text(comment.author.name)
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .fontWeight(.semibold)
                         .fontWidth(.compressed)
                         .foregroundStyle(.primary)
                     
                     Text(comment.createdAt.timeElapsed())
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .foregroundStyle(.secondary)
                     
                     Spacer()
@@ -258,7 +258,7 @@ struct CommentsView: View {
                 .frame(maxWidth: .infinity)
                 
                 Text(makeAttributedString(comment))
-                    .font(.custom(style: .body))
+                    .cfont(.body)
                     .multilineTextAlignment(.leading)
             }
             .frame(maxWidth: .infinity)
@@ -271,7 +271,7 @@ struct CommentsView: View {
                     .animation(.bouncy, value: comment.liked)
                 
                 Text("\(comment.likes)")
-                    .font(.custom(style: .caption2))
+                    .cfont(.caption2)
                     .foregroundStyle(.secondary)
             }
             .contentShape(Rectangle())
@@ -329,7 +329,7 @@ struct CommentsView: View {
             Spacer()
         }
         .foregroundStyle(.secondary)
-        .font(.custom(style: .caption))
+        .cfont(.caption)
         .fontWeight(.semibold)
     }
     
@@ -356,13 +356,13 @@ struct CommentsView: View {
                     VStack(alignment: .leading) {
                         HStack(spacing: 4) {
                             Text("Name")
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                                 .fontWeight(.semibold)
                                 .fontWidth(.compressed)
                                 .foregroundStyle(.primary)
                             
                             Text("1d")
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                                 .foregroundStyle(.secondary)
                             
                             Spacer()
@@ -370,7 +370,7 @@ struct CommentsView: View {
                         .frame(maxWidth: .infinity)
                         
                         Text("Comment body placeholder")
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                             .multilineTextAlignment(.leading)
                     }
                     .frame(maxWidth: .infinity)
@@ -382,7 +382,7 @@ struct CommentsView: View {
                             .scaleEffect(0.9)
                         
                         Text("1")
-                            .font(.custom(style: .caption2))
+                            .cfont(.caption2)
                             .foregroundStyle(.secondary)
                     }
                     .padding(.top, 10)
@@ -391,7 +391,7 @@ struct CommentsView: View {
                 Text("Reply")
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(.secondary)
-                    .font(.custom(style: .caption))
+                    .cfont(.caption)
                     .fontWeight(.semibold)
             }
             .frame(maxWidth: .infinity)

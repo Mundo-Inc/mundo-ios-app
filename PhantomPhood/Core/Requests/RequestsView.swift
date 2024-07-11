@@ -25,7 +25,7 @@ struct RequestsView: View {
                                 .fontWeight(.semibold)
                             
                             Text("@\(request.user.username)")
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                                 .foregroundStyle(.secondary)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -116,7 +116,7 @@ struct RequestsView: View {
                                 }
                             }
                         }
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                     }
                     .padding(.horizontal)
                     .padding(.vertical, 8)

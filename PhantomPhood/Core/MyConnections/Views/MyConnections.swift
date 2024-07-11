@@ -28,7 +28,7 @@ struct MyConnections: View {
                         }
                     } label: {
                         Text("Followers".uppercased())
-                            .font(.custom(style: .footnote))
+                            .cfont(.footnote)
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.vertical)
@@ -44,7 +44,7 @@ struct MyConnections: View {
                         }
                     } label: {
                         Text("Followings".uppercased())
-                            .font(.custom(style: .footnote))
+                            .cfont(.footnote)
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.vertical)
@@ -158,12 +158,12 @@ fileprivate struct UserCard: View {
                         .frame(width: 20, height: 24)
                     
                     Text(connection.user.name)
-                        .font(.custom(style: .body))
+                        .cfont(.body)
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 Text("@" + connection.user.username)
-                    .font(.custom(style: .caption))
+                    .cfont(.caption)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

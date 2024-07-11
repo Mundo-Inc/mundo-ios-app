@@ -129,3 +129,9 @@ extension View {
         modifier(NavigationDestinationViewModifier())
     }
 }
+
+extension View {
+    func cfont(_ textStyle: Font.TextStyle) -> some View {
+        modifier(CustomFontViewModifier(textStyle: textStyle))
+    }
+}

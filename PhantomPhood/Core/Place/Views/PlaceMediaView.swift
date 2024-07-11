@@ -57,7 +57,7 @@ struct PlaceMediaView: View {
             } else if let place = placeVM.place {
                 if vm.medias.isEmpty {
                     Text("No media")
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                         .foregroundStyle(.secondary)
                         .padding(.vertical)
                         .padding(.horizontal)
@@ -159,7 +159,7 @@ struct PlaceMediaView: View {
                                             ProfileImage(user.profileImage, size: 24, cornerRadius: 12)
                                             
                                             Text(user.name)
-                                                .font(.custom(style: .caption2))
+                                                .cfont(.caption2)
                                                 .lineLimit(1)
                                                 .frame(maxWidth: .infinity, alignment: .leading)
                                         }

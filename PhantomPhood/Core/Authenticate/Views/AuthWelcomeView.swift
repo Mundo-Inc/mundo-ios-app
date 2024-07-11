@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AuthWelcomeView: View {
-    @ObservedObject var appData = AppData.shared
+    @ObservedObject private var appData = AppData.shared
     
     var body: some View {
         ZStack {
@@ -18,12 +18,11 @@ struct AuthWelcomeView: View {
                 VStack {
                     Spacer()
                     
-                    Image(.textLogo)
-                        .resizable()
-                        .foregroundColor(.primary)
-                        .scaledToFit()
+                    Text("MUNDO")
+                        .opacity(0.8)
+                        .fontWeight(.bold)
+                        .cfont(.title)
                         .frame(width: 120)
-                    
                     
                     Spacer()
                     
@@ -34,7 +33,7 @@ struct AuthWelcomeView: View {
                     
                     NavigationLink(value: AuthRoute.signUpOptions) {
                         Text("Create an Account")
-                            .font(.custom(style: .headline))
+                            .cfont(.headline)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
@@ -43,7 +42,7 @@ struct AuthWelcomeView: View {
                     
                     NavigationLink(value: AuthRoute.signInOptions) {
                         Text("I already have an account")
-                            .font(.custom(style: .headline))
+                            .cfont(.headline)
                             .padding(.vertical, 5)
                             .frame(maxWidth: .infinity)
                     }

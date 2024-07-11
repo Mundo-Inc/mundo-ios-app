@@ -84,7 +84,7 @@ struct EventView: View {
                         
                         VStack(spacing: 5) {
                             Text(vm.event?.name ?? "Event Name")
-                                .font(.custom(style: .title2))
+                                .cfont(.title2)
                                 .fontWeight(.bold)
                                 .redacted(reason: vm.event == nil ? .placeholder : [])
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -96,7 +96,7 @@ struct EventView: View {
                     if let description = vm.event?.description {
                         Text(description)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                             .foregroundStyle(.primary.opacity(0.8))
                             .padding(.horizontal)
                     }
@@ -111,7 +111,7 @@ struct EventView: View {
                     }
                     .redacted(reason: (vm.event?.place.location.city == nil || vm.event?.place.location.address == nil) ? .placeholder : [])
                     .foregroundStyle(.secondary)
-                    .font(.custom(style: .body))
+                    .cfont(.body)
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     
@@ -128,7 +128,7 @@ struct EventView: View {
                     }
                     .frame(height: 80)
                     .symbolRenderingMode(.hierarchical)
-                    .font(.custom(style: .subheadline))
+                    .cfont(.subheadline)
                     .fontWeight(.semibold)
                     .padding(.horizontal)
                     .padding(.bottom)
@@ -154,7 +154,7 @@ struct EventView: View {
                             }
                             .foregroundStyle(vm.activeTab == .checkIns ? Color.accentColor : Color.secondary)
                         }
-                        .font(.custom(style: .headline))
+                        .cfont(.headline)
                         .fontWeight(.medium)
                         
                         VStack(spacing: 0) {
@@ -223,7 +223,7 @@ struct EventView: View {
                             ProfileImage(user.profileImage, size: 24, cornerRadius: 12)
                             
                             Text(user.name)
-                                .font(.custom(style: .caption2))
+                                .cfont(.caption2)
                                 .lineLimit(1)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }

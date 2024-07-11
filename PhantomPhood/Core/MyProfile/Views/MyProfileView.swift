@@ -30,7 +30,7 @@ struct MyProfileView: View {
                                         .frame(height: 28)
                                     
                                     Text(auth.currentUser?.name ?? "User Name")
-                                        .font(.custom(style: .title2))
+                                        .cfont(.title2)
                                         .fontWeight(.bold)
                                     
                                     if let user = auth.currentUser, user.verified {
@@ -41,7 +41,7 @@ struct MyProfileView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 
                                 Text("@\(auth.currentUser?.username ?? "Loading")")
-                                    .font(.custom(style: .footnote))
+                                    .cfont(.footnote)
                                     .foregroundStyle(.secondary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
@@ -82,13 +82,13 @@ struct MyProfileView: View {
                             }
                         }
                         .padding(.horizontal)
-                        .font(.custom(style: .footnote))
+                        .cfont(.footnote)
                         
                         
                         if let bio = auth.currentUser?.bio {
                             Text(bio)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .font(.custom(style: .footnote))
+                                .cfont(.footnote)
                                 .multilineTextAlignment(.leading)
                                 .padding(.horizontal)
                                 .foregroundStyle(.secondary)
@@ -99,10 +99,10 @@ struct MyProfileView: View {
                             Group {
                                 VStack(spacing: 0) {
                                     Text((auth.currentUser?.reviewsCount ?? 10).formattedWithSuffix())
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                     
                                     Text("Reviews")
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .foregroundStyle(.secondary)
                                 }
                                 .onTapGesture {
@@ -112,10 +112,10 @@ struct MyProfileView: View {
                                 
                                 VStack(spacing: 0) {
                                     Text((auth.currentUser?.followersCount ?? 10).formattedWithSuffix())
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                     
                                     Text("Followers")
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .foregroundStyle(.secondary)
                                 }
                                 .onTapGesture {
@@ -126,10 +126,10 @@ struct MyProfileView: View {
                                 
                                 VStack(spacing: 0) {
                                     Text((auth.currentUser?.followingCount ?? 10).formattedWithSuffix())
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                     
                                     Text("Followings")
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .foregroundStyle(.secondary)
                                 }
                                 .onTapGesture {

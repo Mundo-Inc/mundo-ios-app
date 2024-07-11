@@ -44,7 +44,7 @@ struct EditProfileView: View {
                                 ProgressView()
                             }
                             Text("Save")
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                         }
                         .animation(.none, value: vm.isSubmitting)
                     }
@@ -56,7 +56,7 @@ struct EditProfileView: View {
                 
                 ScrollView {
                     Text("Profile Picture")
-                        .font(.custom(style: .headline))
+                        .cfont(.headline)
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
@@ -178,7 +178,7 @@ struct EditProfileView: View {
                             
                             if let user = auth.currentUser {
                                 Text(user.profileImage == nil ? "Add" : vm.isDeleting ? "Removing" : "Edit")
-                                    .font(.custom(style: .caption))
+                                    .cfont(.caption)
                                     .foregroundStyle(Color.accentColor)
 
                             }
@@ -207,7 +207,7 @@ struct EditProfileView: View {
                                         }
                                     
                                     Text(vm.isDeleting ? "Undo" : "Remove")
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .foregroundStyle(vm.isDeleting ? Color.accentColor : .secondary)
                                 }
                                 .scaleEffect(vm.isDeleting ? 1.2 : 1)
@@ -225,7 +225,7 @@ struct EditProfileView: View {
                     VStack {
                         HStack(alignment: .top) {
                             Text("Name")
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 90, alignment: .leading)
                             
@@ -236,7 +236,7 @@ struct EditProfileView: View {
                         }
                         HStack(alignment: .top) {
                             Text("Username")
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 90, alignment: .leading)
                             
@@ -263,7 +263,7 @@ struct EditProfileView: View {
                         }
                         HStack(alignment: .top) {
                             Text("Bio")
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 90, alignment: .leading)
                             

@@ -8,16 +8,15 @@
 import SwiftUI
 
 struct SignInWithEmailView: View {
-    @Environment(\.dismiss) private var dismiss
-    
-    @StateObject private var vm = SignInVM()
-    
     enum TextFields: Hashable {
         case email
         case password
         case resetEmail
     }
     
+    @Environment(\.dismiss) private var dismiss
+    
+    @StateObject private var vm = SignInVM()
     @FocusState private var focusedField: TextFields?
     
     var body: some View {
@@ -27,10 +26,10 @@ struct SignInWithEmailView: View {
             VStack(alignment: .leading) {
                 Image(.lock)
                 Text("Welcome Back")
-                    .font(.custom(style: .title2))
+                    .cfont(.title2)
                     .fontWeight(.semibold)
                 Text("Sign in to continue")
-                    .font(.custom(style: .subheadline))
+                    .cfont(.subheadline)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.leading)
             }
@@ -66,7 +65,7 @@ struct SignInWithEmailView: View {
             if vm.email.count > 0 && !vm.isValidEmail {
                 Text("Invalid email address")
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .font(.custom(style: .caption))
+                    .cfont(.caption)
                     .foregroundColor(.red)
             }
             
@@ -80,7 +79,7 @@ struct SignInWithEmailView: View {
             } label: {
                 Text("Recover my password")
                     .frame(maxWidth: .infinity, alignment: .trailing)
-                    .font(.custom(style: .caption))
+                    .cfont(.caption)
             }
             .sheet(isPresented: $vm.showResetPassword) {
                 VStack {
@@ -88,11 +87,11 @@ struct SignInWithEmailView: View {
                         Image(.lock)
                         Text("Reset Password")
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.custom(style: .title2))
+                            .cfont(.title2)
                             .fontWeight(.semibold)
                         Text("We will send you an email containing a link to reset your password.")
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.custom(style: .subheadline))
+                            .cfont(.subheadline)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.leading)
                     }
@@ -118,7 +117,7 @@ struct SignInWithEmailView: View {
                     if vm.email.count > 0 && !vm.isValidEmail {
                         Text("Invalid email address")
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundColor(.red)
                     }
                     
@@ -146,7 +145,7 @@ struct SignInWithEmailView: View {
                             }
                             Text("Send")
                         }
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                         .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
@@ -188,7 +187,7 @@ struct SignInWithEmailView: View {
                     }
                     Text("Sign In")
                 }
-                .font(.custom(style: .subheadline))
+                .cfont(.subheadline)
                 .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
@@ -211,14 +210,15 @@ struct SignInWithEmailView: View {
         }
         .padding(.horizontal)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(
-            Image(.hangingPhantom)
+        .background(alignment: .topTrailing) {
+            Image(.Logo.tpLogo)
                 .resizable()
-                .frame(width: 100, height: 191)
-                .padding(.trailing)
-                .ignoresSafeArea(),
-            alignment: .topTrailing
-        )
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 120)
+                .rotationEffect(.degrees(-90))
+                .offset(x: 55, y: 20)
+                .ignoresSafeArea()
+        }
     }
 }
 

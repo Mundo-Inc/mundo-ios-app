@@ -70,5 +70,9 @@ struct K {
         }
     }
     
+    struct Fonts {
+        static let satoshi = "Satoshi Variable"
+    }
+    
     private init() {}
 }

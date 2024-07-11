@@ -26,7 +26,7 @@ struct SimpleMapAnnotation: View {
                 
                 if let count, count > 1 {
                     Text(count > 99 ? "99+" : "\(count)")
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .fontWeight(.medium)
                         .foregroundStyle(.white)
                 } else {
@@ -34,6 +34,7 @@ struct SimpleMapAnnotation: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .foregroundStyle(.white)
+                        .frame(width: 21, height: 21)
                 }
             }
     }

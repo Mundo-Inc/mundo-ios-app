@@ -41,7 +41,7 @@ struct PlacesListView: View {
                             }
                             
                             Text(vm.list?.name ?? "List name")
-                                .font(.custom(style: .headline))
+                                .cfont(.headline)
                                 .lineLimit(1)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
@@ -50,7 +50,7 @@ struct PlacesListView: View {
                             Image(systemName: "person.2")
                             
                             Text(vm.list?.collaborators.count.description ?? "1")
-                                .font(.custom(style: .body))
+                                .cfont(.body)
                             
                             Spacer()
                         }
@@ -109,7 +109,7 @@ struct PlacesListView: View {
                     }
                     .foregroundStyle(vm.tabViewSelection == .map ? Color.accentColor : Color.secondary)
                 }
-                .font(.custom(style: .headline))
+                .cfont(.headline)
             }
             .redacted(reason: vm.list == nil ? .placeholder : [])
             
@@ -202,7 +202,7 @@ fileprivate struct PlaceItem: View {
             VStack {
                 HStack {
                     Text(place.place.name)
-                        .font(.custom(style: .headline))
+                        .cfont(.headline)
                         .lineLimit(1)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
@@ -251,7 +251,7 @@ fileprivate struct PlaceItem: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .overlay {
                             Text("No Image")
-                                .font(.custom(style: .title2))
+                                .cfont(.title2)
                                 .foregroundStyle(.white.opacity(0.5))
                         }
                 }
@@ -279,6 +279,8 @@ fileprivate struct CheckinsMap17: View {
                     }
                 }
             }
+            
+            UserAnnotation()
         }
         .onMapCameraChange(frequency: .onEnd, { mapCameraUpdateContext in
             scale = mapCameraUpdateContext.scaleValue

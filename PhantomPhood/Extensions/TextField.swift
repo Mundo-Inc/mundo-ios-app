@@ -29,7 +29,7 @@ struct FilledTextFieldViewModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .font(.custom(style: .headline))
+            .cfont(.headline)
             .fontWeight(.regular)
             .padding(.leading, paddingLeading)
             .padding(.trailing, paddingTrailing)

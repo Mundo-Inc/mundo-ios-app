@@ -21,7 +21,7 @@ struct EventCheckInsView: View {
             if let checkIns = vm.checkIns {
                 if checkIns.isEmpty {
                     Text("No Check-ins Yet!")
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                         .foregroundStyle(.secondary)
                         .padding(.vertical)
                         .padding(.horizontal)
@@ -35,7 +35,7 @@ struct EventCheckInsView: View {
                                 .fontWeight(.semibold)
                             
                             Text(checkIn.createdAt.timeElapsed(suffix: " ago"))
-                                .font(.custom(style: .caption2))
+                                .cfont(.caption2)
                                 .foregroundStyle(.secondary)
                         }
                         .padding(.horizontal)

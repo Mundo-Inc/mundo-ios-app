@@ -75,7 +75,7 @@ struct PlaceView: View {
                                                     .font(.system(size: 28))
                                                 
                                                 Text("No Thumbnail")
-                                                    .font(.custom(style: .caption2))
+                                                    .cfont(.caption2)
                                                     .foregroundStyle(.tertiary)
                                             }
                                         }
@@ -86,7 +86,7 @@ struct PlaceView: View {
                         .clipShape(.rect(cornerRadius: 15))
                         
                         Text(vm.place?.name ?? "Name placeholder")
-                            .font(.custom(style: .title2))
+                            .cfont(.title2)
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .multilineTextAlignment(.leading)
@@ -112,7 +112,7 @@ struct PlaceView: View {
                             }
                         }
                         .foregroundStyle(.secondary)
-                        .font(.custom(style: .body))
+                        .cfont(.body)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
                         VStack(alignment: .leading, spacing: 15) {
@@ -169,7 +169,7 @@ struct PlaceView: View {
                                 .redacted(reason: .placeholder)
                             }
                         }
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                         .fontWeight(.medium)
                     }
                     .padding(.horizontal)
@@ -207,9 +207,9 @@ struct PlaceView: View {
                                         Text("TBD")
                                     }
                                 }
-                                .foregroundStyle(.phantom)
+                                .foregroundStyle(.mundo)
                                 .frame(height: 24)
-                                .font(.custom(style: .title2))
+                                .cfont(.title2)
                                 .fontWeight(.medium)
                                 .redacted(reason: vm.place == nil ? .placeholder : [])
                                 
@@ -223,10 +223,9 @@ struct PlaceView: View {
                                 }
                                 .foregroundStyle(.secondary)
                                 
-                                Image(.phantomPortrait)
+                                Image(.Logo.tpLogo)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-                                    .foregroundStyle(.phantom)
                                     .frame(height: 30)
                             }
                             .frame(maxWidth: .infinity)
@@ -254,7 +253,7 @@ struct PlaceView: View {
                             .frame(maxWidth: .infinity)
                         }
                         .padding(.vertical)
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .tag(PlaceVM.ScoresTab.googlePhantomYelp)
                         
                         ScoresView()
@@ -291,7 +290,7 @@ struct PlaceView: View {
                                             .padding(.vertical, 8)
                                             .padding(.horizontal, 12)
                                             .background(Color.black.opacity(0.8), in: RoundedRectangle(cornerRadius: 8))
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                     }
                                     .foregroundStyle(Color.white)
                                     .padding(.bottom, 8)
@@ -307,7 +306,7 @@ struct PlaceView: View {
                                         } icon: {
                                             Image(systemName: "hand.tap.fill")
                                         }
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                         .foregroundStyle(Color.white)
                                         .padding(.bottom)
                                     }
@@ -341,8 +340,8 @@ struct PlaceView: View {
                         SaveButton
                     }
                     .symbolRenderingMode(.hierarchical)
-                    .font(.custom(style: .subheadline))
-                    .fontWeight(.semibold)
+                    .cfont(.subheadline)
+                    .fontWeight(.bold)
                     .padding(.horizontal)
                     .padding(.bottom)
                     .disabled(vm.place == nil)
@@ -367,7 +366,7 @@ struct PlaceView: View {
                             }
                             .foregroundStyle(vm.activeTab == .reviews ? Color.accentColor : Color.secondary)
                         }
-                        .font(.custom(style: .headline))
+                        .cfont(.headline)
                         .fontWeight(.medium)
                         
                         VStack(spacing: 0) {
@@ -444,7 +443,7 @@ struct PlaceView: View {
                         Text(hour)
                     }
                 }
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .padding()
                 .background(Color.themePrimary)
                 .clipShape(.rect(cornerRadius: 10))
@@ -494,7 +493,7 @@ struct PlaceView: View {
                                     ProfileImage(user.profileImage, size: 24, cornerRadius: 12)
                                     
                                     Text(user.name)
-                                        .font(.custom(style: .caption2))
+                                        .cfont(.caption2)
                                         .lineLimit(1)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
@@ -576,7 +575,7 @@ struct PlaceView: View {
                     }
                 } else {
                     Text("No Ratings Yet")
-                        .font(.custom(style: .headline))
+                        .cfont(.headline)
                         .foregroundStyle(.secondary)
                 }
             } else {
@@ -784,7 +783,7 @@ private struct ScoreItem: View {
         HStack {
             Text(title)
                 .frame(maxWidth: 140, alignment: .leading)
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .foregroundStyle(.secondary)
                 .fontWeight(.medium)
                 .onAppear {

@@ -11,7 +11,7 @@ import Foundation
 final class InboxVM: ObservableObject {
     private let userProfileDM = UserProfileDM()
     
-    @Published var activeTab: Tab = .messages
+    @Published var activeTab: Tab = .notifications
     @Published var usersDict: [String:UserEssentials] = [:]
     
     func getUsers(ids: [String]) async {

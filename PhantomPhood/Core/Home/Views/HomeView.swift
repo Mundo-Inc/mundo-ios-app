@@ -103,7 +103,7 @@ struct HomeView: View {
                         .offset(x: appData.homeActiveTab == .following ? 0 : 100)
                 }
                 .background(Capsule().foregroundStyle(.black).opacity(0.3))
-                .font(.custom(style: .headline))
+                .cfont(.headline)
                 .fontWeight(.semibold)
                 .frame(maxHeight: Self.headerHeight)
                 .foregroundStyle(.primary)
@@ -114,7 +114,7 @@ struct HomeView: View {
                         Text("Drag down to referesh")
                         Image(systemName: "menubar.arrow.down.rectangle")
                     }
-                    .font(.custom(style: .caption))
+                    .cfont(.caption)
                     .opacity(vm.draggedAmount <= 1/3 ? 0 : abs((vm.draggedAmount - 1/3) * 3/2))
                 }
                 .offset(y: vm.draggedAmount * 20)
@@ -134,7 +134,7 @@ struct HomeView: View {
                         .overlay(alignment: .topTrailing) {
                             if unreadDms > 0 {
                                 Text(unreadDms > 99 ? "99+" : "\(unreadDms)")
-                                    .font(.custom(style: .caption2))
+                                    .cfont(.caption2)
                                     .foregroundStyle(Color.white)
                                     .frame(height: 16)
                                     .frame(minWidth: 12)
@@ -143,7 +143,7 @@ struct HomeView: View {
                                     .transition(AnyTransition.scale.combined(with: .opacity).animation(.spring))
                             } else if unreadNotifications > 0 {
                                 Text(unreadNotifications > 99 ? "99+" : "\(unreadNotifications)")
-                                    .font(.custom(style: .caption2))
+                                    .cfont(.caption2)
                                     .foregroundStyle(Color.black)
                                     .frame(height: 16)
                                     .frame(minWidth: 12)

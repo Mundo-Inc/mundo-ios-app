@@ -72,7 +72,7 @@ struct AppRouter: View {
                                 Text(appInfo.latestAppVersion)
                             }
                         }
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .foregroundStyle(.secondary)
                         .alert("Update Required", isPresented: Binding(get: {
                             true
@@ -81,7 +81,7 @@ struct AppRouter: View {
                                 Link(destination: url) {
                                     Text("Update")
                                         .frame(maxWidth: .infinity)
-                                        .font(.custom(style: .headline))
+                                        .cfont(.headline)
                                 }
                                 .buttonStyle(.borderedProminent)
                                 .controlSize(.large)
@@ -93,13 +93,15 @@ struct AppRouter: View {
                     .padding(.horizontal)
                 }
             }
-            .font(.custom(style: .body))
+            .cfont(.body)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(alignment: .topTrailing) {
-                Image(.hangingPhantom)
+                Image(.Logo.tpLogo)
                     .resizable()
-                    .frame(width: 100, height: 191)
-                    .padding(.trailing)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 120)
+                    .rotationEffect(.degrees(-90))
+                    .offset(x: 55, y: 20)
                     .ignoresSafeArea()
             }
         }

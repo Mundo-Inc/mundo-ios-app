@@ -45,7 +45,7 @@ class SignUpWithPasswordVM: ObservableObject {
     @Published var suggestedUsersList: [UserEssentials] = []
     @Published var userSearch: String = ""
     
-    private var cancellables: Set<AnyCancellable> = []
+    private var cancellables = Set<AnyCancellable>()
     
     init() {
         $username
@@ -126,10 +126,6 @@ class SignUpWithPasswordVM: ObservableObject {
 // MARK: - View
 
 struct SignUpWithPasswordView: View {
-    @Environment(\.dismiss) var dismiss
-    
-    @StateObject private var vm = SignUpWithPasswordVM()
-    
     enum Field: Hashable {
         case email
         case name
@@ -138,15 +134,17 @@ struct SignUpWithPasswordView: View {
         case userSearch
     }
     
-    @FocusState private var focusedField: Field?
+    @Environment(\.dismiss) private var dismiss
+    @AppStorage(K.UserDefaults.referredBy) private var referredBy: String = ""
     
-    @AppStorage(K.UserDefaults.referredBy) var referredBy: String = ""
+    @StateObject private var vm = SignUpWithPasswordVM()
+    @FocusState private var focusedField: Field?
     
     var body: some View {
         VStack {
             if let error = vm.error {
                 Text(error)
-                    .font(.custom(style: .headline))
+                    .cfont(.headline)
                     .foregroundColor(.red)
                     .onTapGesture {
                         vm.error = nil
@@ -162,11 +160,11 @@ struct SignUpWithPasswordView: View {
                         HStack {
                             VStack(alignment: .leading) {
                                 Text("Create an account")
-                                    .font(.custom(style: .title2))
+                                    .cfont(.title2)
                                     .fontWeight(.semibold)
                                     .padding(.bottom)
                                 Text("Sign up to explore, socialize, and review thousands of dining spots!")
-                                    .font(.custom(style: .subheadline))
+                                    .cfont(.subheadline)
                                     .foregroundColor(.secondary)
                                     .multilineTextAlignment(.leading)
                             }.frame(minHeight: 140)
@@ -180,7 +178,7 @@ struct SignUpWithPasswordView: View {
                         TextField("Email", text: $vm.email)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled(true)
-                            .font(.custom(style: .title2))
+                            .cfont(.title2)
                             .keyboardType(.emailAddress)
                             .textContentType(UITextContentType.emailAddress)
                             .focused($focusedField, equals: .email)
@@ -195,12 +193,12 @@ struct SignUpWithPasswordView: View {
                             }
                         if vm.email.count > 0 && !vm.isValidEmail {
                             Text("Invalid email address")
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                                 .foregroundColor(.red)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         Text("In the digital realm, pigeons are passé. We use emails. Yours, please?")
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundColor(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
@@ -220,11 +218,11 @@ struct SignUpWithPasswordView: View {
                         VStack(alignment: .leading) {
                             Image(.thinking)
                             Text("What's your name")
-                                .font(.custom(style: .title2))
+                                .cfont(.title2)
                                 .fontWeight(.semibold)
                                 .padding(.bottom, 3)
                             Text("Imagine a cheering crowd after your epic achievement. What name are they chanting?")
-                                .font(.custom(style: .subheadline))
+                                .cfont(.subheadline)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.leading)
                         }
@@ -232,7 +230,7 @@ struct SignUpWithPasswordView: View {
                         .padding(.bottom)
                         
                         TextField("Full Name", text: $vm.name)
-                            .font(.custom(style: .title2))
+                            .cfont(.title2)
                             .keyboardType(.namePhonePad)
                             .focused($focusedField, equals: .name)
                             .textContentType(.name)
@@ -253,11 +251,11 @@ struct SignUpWithPasswordView: View {
                         VStack(alignment: .leading) {
                             Image(.cool)
                             Text("Choose a username")
-                                .font(.custom(style: .title2))
+                                .cfont(.title2)
                                 .fontWeight(.semibold)
                                 .padding(.bottom, 3)
                             Text("Craft a username as iconic as your latest dance move")
-                                .font(.custom(style: .subheadline))
+                                .cfont(.subheadline)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.leading)
                         }
@@ -265,7 +263,7 @@ struct SignUpWithPasswordView: View {
                         .padding(.bottom)
                         
                         TextField("Username", text: $vm.username)
-                            .font(.custom(style: .title2))
+                            .cfont(.title2)
                             .keyboardType(.default)
                             .autocorrectionDisabled(true)
                             .focused($focusedField, equals: .username)
@@ -290,7 +288,7 @@ struct SignUpWithPasswordView: View {
                         if vm.username.count > 0, let error = vm.usernameError, !vm.isUsernameValid {
                             Text(error)
                                 .foregroundStyle(.red)
-                                .font(.custom(style: .caption))
+                                .cfont(.caption)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .transition(AnyTransition.opacity.animation(.spring))
                         }
@@ -311,11 +309,11 @@ struct SignUpWithPasswordView: View {
                         VStack(alignment: .leading) {
                             Image(.lock)
                             Text("Choose a password")
-                                .font(.custom(style: .title2))
+                                .cfont(.title2)
                                 .fontWeight(.semibold)
                                 .padding(.bottom, 3)
                             Text("Tip: Something memorable but not 'password123' memorable.")
-                                .font(.custom(style: .subheadline))
+                                .cfont(.subheadline)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.leading)
                         }
@@ -323,7 +321,7 @@ struct SignUpWithPasswordView: View {
                         .padding(.bottom)
                         
                         SecureField("Password", text: $vm.password)
-                            .font(.custom(style: .title2))
+                            .cfont(.title2)
                             .textContentType(.password)
                             .focused($focusedField, equals: .password)
                         
@@ -366,15 +364,15 @@ struct SignUpWithPasswordView: View {
                                                             .frame(maxWidth: .infinity, alignment: .leading)
                                                         } else {
                                                             Text(user.name)
-                                                                .font(.custom(style: .body))
+                                                                .cfont(.body)
                                                             
                                                         }
                                                     }
-                                                    .font(.custom(style: .body))
+                                                    .cfont(.body)
                                                     .fontWeight(.semibold)
                                                     
                                                     Text("@\(user.username)")
-                                                        .font(.custom(style: .caption))
+                                                        .cfont(.caption)
                                                         .foregroundStyle(.secondary)
                                                 }
                                                 
@@ -399,15 +397,15 @@ struct SignUpWithPasswordView: View {
                             VStack(alignment: .leading) {
                                 Image(.friends)
                                 Text("Joining Us Through a Friend?")
-                                    .font(.custom(style: .title2))
+                                    .cfont(.title2)
                                     .fontWeight(.semibold)
                                     .padding(.bottom, 3)
                                 Text("Got a friend here? Enter their username and unlock rewards!")
-                                    .font(.custom(style: .subheadline))
+                                    .cfont(.subheadline)
                                     .foregroundColor(.secondary)
                                     .multilineTextAlignment(.leading)
                                 Text("(Optional)")
-                                    .font(.custom(style: .subheadline))
+                                    .cfont(.subheadline)
                                     .foregroundColor(.secondary)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -420,11 +418,11 @@ struct SignUpWithPasswordView: View {
                                 
                                 VStack(alignment: .leading) {
                                     Text(referredBy.name)
-                                        .font(.custom(style: .title3))
+                                        .cfont(.title3)
                                         .fontWeight(.semibold)
                                     Text("@\(referredBy.username)")
                                         .foregroundStyle(.secondary)
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                 }
                                 
                                 Spacer()
@@ -443,7 +441,7 @@ struct SignUpWithPasswordView: View {
                         } else if vm.showPasteButton && referredBy.isEmpty {
                             HStack {
                                 Text("Tap 'Paste' to apply your referral link automatically after copying it.")
-                                    .font(.custom(style: .caption2))
+                                    .cfont(.caption2)
                                     .foregroundStyle(.secondary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
@@ -459,11 +457,11 @@ struct SignUpWithPasswordView: View {
                                 
                                 VStack(alignment: .leading) {
                                     Text("Name")
-                                        .font(.custom(style: .title3))
+                                        .cfont(.title3)
                                         .fontWeight(.semibold)
                                     Text("@username")
                                         .foregroundStyle(.secondary)
-                                        .font(.custom(style: .caption))
+                                        .cfont(.caption)
                                 }
                                 .redacted(reason: .placeholder)
                                 
@@ -478,7 +476,7 @@ struct SignUpWithPasswordView: View {
                             }
                         } else {
                             TextField("Search Your Friend...", text: $vm.userSearch)
-                                .font(.custom(style: .title2))
+                                .cfont(.title2)
                                 .keyboardType(.default)
                                 .autocorrectionDisabled(true)
                                 .focused($focusedField, equals: .userSearch)
@@ -495,11 +493,11 @@ struct SignUpWithPasswordView: View {
                         VStack(alignment: .leading) {
                             Image(.handshake)
                             Text("Last Step")
-                                .font(.custom(style: .title2))
+                                .cfont(.title2)
                                 .fontWeight(.semibold)
                                 .padding(.bottom, 3)
                             Text("One tiny hurdle before the fun begins! Let's leap over the legal bit.")
-                                .font(.custom(style: .subheadline))
+                                .cfont(.subheadline)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.leading)
                         }
@@ -515,7 +513,7 @@ struct SignUpWithPasswordView: View {
                                     Link("Privacy Policy", destination: URL(string: "\(K.ENV.WebsiteURL)/privacy-policy")!)
                                 }
                             }
-                            .font(.custom(style: .body))
+                            .cfont(.body)
                         }
                         
                         Spacer()
@@ -524,7 +522,7 @@ struct SignUpWithPasswordView: View {
                     
                 default:
                     Text("Error")
-                        .font(.custom(style: .body))
+                        .cfont(.body)
                 }
             }
             .padding(.horizontal)
@@ -550,7 +548,7 @@ struct SignUpWithPasswordView: View {
                     }
                 } label: {
                     Text(vm.step == 0 ? "Cancel" : "Back")
-                        .font(.custom(style: .subheadline))
+                        .cfont(.subheadline)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderless)
@@ -604,7 +602,7 @@ struct SignUpWithPasswordView: View {
                         Text(vm.step == 5 ? "Sign Up" : "Next")
                     }
                     .animation(.easeInOut, value: vm.loadingSections.isEmpty)
-                    .font(.custom(style: .subheadline))
+                    .cfont(.subheadline)
                     .frame(maxWidth: .infinity)
                 }
                 .transition(AnyTransition.scale.combined(with: .opacity).animation(.spring))
@@ -625,14 +623,15 @@ struct SignUpWithPasswordView: View {
             .padding(.bottom)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(
-            Image(.hangingPhantom)
+        .background(alignment: .topTrailing) {
+            Image(.Logo.tpLogo)
                 .resizable()
-                .frame(width: 100, height: 191)
-                .padding(.trailing)
-                .ignoresSafeArea(),
-            alignment: .topTrailing
-        )
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 120)
+                .rotationEffect(.degrees(-90))
+                .offset(x: 55, y: 20)
+                .ignoresSafeArea()
+        }
     }
 }
 

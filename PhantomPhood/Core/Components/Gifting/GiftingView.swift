@@ -26,7 +26,7 @@ struct GiftingView: View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(spacing: 15) {
                 Text("You are gifting")
-                    .font(.custom(style: .title2))
+                    .cfont(.title2)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack {
@@ -34,11 +34,11 @@ struct GiftingView: View {
                     
                     VStack(alignment: .leading) {
                         Text(vm.user?.name ?? "Name")
-                            .font(.custom(style: .headline))
+                            .cfont(.headline)
                             .fontWeight(.bold)
                         
                         Text("@\(vm.user?.username ?? "username")")
-                            .font(.custom(style: .caption))
+                            .cfont(.caption)
                             .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -75,7 +75,7 @@ struct GiftingView: View {
                                                 .foregroundStyle(vm.selectionIndex == index ? Color.black : Color.secondary)
                                             
                                             Text(GiftingVM.defaultOptions[index].formatted())
-                                                .font(.custom(style: .title3))
+                                                .cfont(.title3)
                                                 .foregroundStyle(vm.selectionIndex == index ? Color.black : Color.primary)
                                         }
                                     }
@@ -87,7 +87,7 @@ struct GiftingView: View {
                     
                     TextField("Custom Amount", text: $vm.customAmount)
                         .focused($isCustomAmountFocused)
-                        .font(.custom(style: .title3))
+                        .cfont(.title3)
                         .withFilledStyle(size: .large, color: Color.themeBorder, paddingLeading: 50)
                         .keyboardType(.decimalPad)
                         .textContentType(.none)
@@ -126,7 +126,7 @@ struct GiftingView: View {
                                         Spacer()
                                         
                                         Text("CHANGE")
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                             .foregroundStyle(Color.accentColor)
                                     }
                                 case .paymentMethod(_, let paymentOptionDisplayData):
@@ -139,7 +139,7 @@ struct GiftingView: View {
                                         Spacer()
                                         
                                         Text("CHANGE")
-                                            .font(.custom(style: .caption))
+                                            .cfont(.caption)
                                             .foregroundStyle(Color.accentColor)
                                     }
                                 }
@@ -153,7 +153,7 @@ struct GiftingView: View {
                                 .foregroundStyle(Color.accentColor)
                             }
                         }
-                        .font(.custom(style: .body))
+                        .cfont(.body)
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Color.themeBorder, in: RoundedRectangle(cornerRadius: 12))

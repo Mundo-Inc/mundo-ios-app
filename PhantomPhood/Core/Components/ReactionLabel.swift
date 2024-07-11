@@ -24,7 +24,7 @@ struct ReactionLabel: View {
         } label: {
             Label {
                 Text(String(reaction.count))
-                    .font(.custom(style: .body))
+                    .cfont(.body)
             } icon: {
                 Emoji(reaction: reaction, isAnimating: Binding(get: {
                     isSelected
@@ -76,7 +76,7 @@ struct ForYouReactionLabel: View {
                     
                     Text(String(reaction.count))
                         .foregroundStyle(Color.white)
-                        .font(.custom(style: .caption2))
+                        .cfont(.caption2)
                         .frame(height: 20)
                         .frame(minWidth: 20)
                         .background(.ultraThinMaterial.opacity(0.65), in: RoundedRectangle(cornerRadius: 5))
@@ -90,7 +90,7 @@ struct ForYouReactionLabel: View {
                     
                     Text(String(reaction.count))
                         .foregroundStyle(Color.white)
-                        .font(.custom(style: .caption2))
+                        .cfont(.caption2)
                         .frame(height: 20)
                         .frame(minWidth: 20)
                         .background(.ultraThinMaterial.opacity(0.65), in: RoundedRectangle(cornerRadius: 5))

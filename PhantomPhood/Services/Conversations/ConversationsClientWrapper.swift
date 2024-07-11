@@ -17,14 +17,6 @@ final class ConversationsClientWrapper: NSObject, ObservableObject {
     
     func create() async throws {
         do {
-            if conversationsClient != nil {
-                ToastVM.shared.toast(.init(type: .info, title: "App Restart Required", message: "Closing the app. Please open it again"))
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                    exit(0)
-                }
-                return
-            }
-            
             if !initSetting {
                 TwilioConversationsClient.setLogLevel(.silent)
             }
@@ -59,10 +51,6 @@ final class ConversationsClientWrapper: NSObject, ObservableObject {
     }
     
     func updateToken() async throws {
-        if conversationsClient == nil {
-            try await self.create()
-        }
-        
         guard let conversationsClient else {
             throw URLError(.unknown)
         }

@@ -100,7 +100,7 @@ struct ExploreView17: View {
                                     if vm.activities.isEmpty {
                                         Text("Invite friends")
                                             .padding(.leading, 8)
-                                            .font(.custom(style: .subheadline))
+                                            .cfont(.subheadline)
                                             .frame(maxWidth: .infinity)
                                     }
                                     

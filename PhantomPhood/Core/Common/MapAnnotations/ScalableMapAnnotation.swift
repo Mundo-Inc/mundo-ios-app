@@ -28,7 +28,7 @@ struct ScalableMapAnnotation: View {
                 
                 if let count, count > 1 {
                     Text(count > 99 ? "99+" : "\(count)")
-                        .font(.custom(style: .caption))
+                        .cfont(.caption)
                         .fontWeight(.medium)
                         .foregroundStyle(.white)
                 } else if scale > 0.5 {

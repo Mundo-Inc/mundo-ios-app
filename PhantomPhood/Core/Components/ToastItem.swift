@@ -33,14 +33,14 @@ struct ToastItem: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(toast.title)
-                .font(.custom(style: .body))
+                .cfont(.body)
                 .foregroundStyle(toast.type.color)
                 .fontWeight(.semibold)
                 .padding(.leading, 16)
                 .offset(y: -8)
             
             Text(toast.message)
-                .font(.custom(style: .caption))
+                .cfont(.caption)
                 .foregroundStyle(.primary)
             
             HStack {
@@ -53,7 +53,7 @@ struct ToastItem: View {
                         }
                     } label: {
                         Text("Report")
-                            .font(.custom(style: .caption2))
+                            .cfont(.caption2)
                     }
                     .buttonStyle(.bordered)
                 }
@@ -64,7 +64,7 @@ struct ToastItem: View {
                         AppData.shared.goTo(redirect)
                     } label: {
                         Text("View")
-                            .font(.custom(style: .caption2))
+                            .cfont(.caption2)
                     }
                     .buttonStyle(.bordered)
                 }

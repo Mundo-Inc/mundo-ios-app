@@ -30,7 +30,7 @@ struct UserActivityMapAnnotation: MapContent {
                             Text("\(item.items.count)")
                                 .foregroundStyle(Color.white.opacity(0.7))
                         }
-                        .font(.custom(style: .caption2))
+                        .cfont(.caption2)
                         .offset(x: 5, y: -5)
                 }
                 .contentShape(Rectangle())
@@ -69,7 +69,7 @@ struct UserActivityMapAnnotation: MapContent {
                                     
                                     Text(item.items.count >= 100 ? "99+" : "+\(item.items.count - 1)")
                                         .fontWeight(.semibold)
-                                        .font(.custom(style: .caption2))
+                                        .cfont(.caption2)
                                         .foregroundStyle(Color.white)
                                         .frame(height: 16.5)
                                 }
