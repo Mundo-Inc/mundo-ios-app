@@ -34,7 +34,7 @@ final class AddReviewVM: ObservableObject {
     @Published var reviewContent = ""
     
     @Published var isSubmitting = false
-
+    
     @Published var isPresented: Bool = false
     @Published var place: PlaceEssentials? = nil
     @Published var error: String? = nil
@@ -75,36 +75,32 @@ final class AddReviewVM: ObservableObject {
     var haveAnyScore: Bool {
         [overallScore, foodQuality, drinkQuality, service, atmosphere].contains(where: { $0 != nil })
     }
-
+    
     var haveAllScores: Bool {
         [overallScore, foodQuality, drinkQuality, service, atmosphere].allSatisfy({ $0 != nil })
     }
-
+    
     func submit(mediaItems: [PickerMediaItem]) async {
         guard let place, !isSubmitting else { return }
         
         self.isSubmitting = true
         
-        taskManager.newTask(.init(title: "Add Review", medias: mediaItems.compactMap({ mediaItem in
+        taskManager.newTask(.init(title: "Add Review", mediaItems: mediaItems.compactMap({ mediaItem in
             switch mediaItem.state {
             case .loaded(let mediaData):
                 return TasksMedia.uncompressed(mediaItemData: .init(id: mediaItem.id, state: mediaData))
             default:
                 return nil
             }
-        }), mediasUsecase: .placeReview, onReadyToSubmit: { medias in
-            let images: [UploadManager.MediaIds]
-            let videos: [UploadManager.MediaIds]
-            if let medias {
-                images = UploadManager.getMediaIds(from: medias, type: .image)
-                videos = UploadManager.getMediaIds(from: medias, type: .video)
+        }), mediaUsecase: .placeReview, onReadyToSubmit: { mediaItems in
+            let media: [UploadManager.MediaIds] = if let mediaItems {
+                UploadManager.getMediaIds(from: mediaItems)
             } else {
-                images = []
-                videos = []
+                []
             }
-                        
+            
             do {
-                try await self.reviewDM.addReview(.init(place: place.id, scores: .init(overall: self.overallScore, drinkQuality: self.drinkQuality, foodQuality: self.foodQuality, service: self.service, atmosphere: self.atmosphere, value: nil), content: self.reviewContent, recommend: self.isRecommended, images: images, videos: videos))
+                try await self.reviewDM.addReview(.init(place: place.id, scores: .init(overall: self.overallScore, drinkQuality: self.drinkQuality, foodQuality: self.foodQuality, service: self.service, atmosphere: self.atmosphere, value: nil), content: self.reviewContent, recommend: self.isRecommended, media: media))
                 
                 self.toastVM.toast(.init(type: .success, title: "Review", message: "We got your review 🙌🏻 Thanks!"))
                 self.place = nil

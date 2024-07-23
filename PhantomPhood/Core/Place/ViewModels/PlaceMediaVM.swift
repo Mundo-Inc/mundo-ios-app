@@ -18,7 +18,7 @@ class PlaceMediaVM: ObservableObject {
     }
     
     @Published var isLoading: Bool = false
-    @Published var medias: [MediaWithUser] = []
+    @Published var mediaItems: [MediaWithUser] = []
     @Published var initialCall = false
     
     var page = 1
@@ -34,9 +34,9 @@ class PlaceMediaVM: ObservableObject {
             let data = try await placeDM.getMedias(id: placeId, page: page)
             self.initialCall = true
             if page == 1 {
-                medias = data.data
+                mediaItems = data.data
             } else {
-                medias.append(contentsOf: data.data)
+                mediaItems.append(contentsOf: data.data)
             }
             page += 1
         } catch {

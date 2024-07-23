@@ -54,10 +54,10 @@ struct PlaceReviewItem: View {
             }
             .padding(.horizontal)
             
-            if !review.videos.isEmpty || !review.images.isEmpty {
+            if !review.media.isEmpty {
                 Group {
-                    if review.images.count + review.videos.count == 1 {
-                        if let first = review.videos.first ?? review.images.first {
+                    if review.media.count == 1 {
+                        if let first = review.media.first {
                             Group {
                                 switch first.type {
                                 case .image:
@@ -99,9 +99,10 @@ struct PlaceReviewItem: View {
                     } else {
                         ZStack {
                             TabView {
-                                if !review.videos.isEmpty {
-                                    ForEach(review.videos) { video in
-                                        ReviewVideoView(url: video.src, mute: true)
+                                ForEach(review.media) { media in
+                                    switch media.type {
+                                    case .video:
+                                        ReviewVideoView(url: media.src, mute: true)
                                             .frame(height: 300)
                                             .frame(maxWidth: UIScreen.main.bounds.width)
                                             .clipShape(.rect(cornerRadius: 8))
@@ -112,35 +113,30 @@ struct PlaceReviewItem: View {
                                             }
                                             .onTapGesture {
                                                 withAnimation {
-                                                    placeVM.expandedMedia = .phantom(.init(id: video.id, src: video.src, caption: video.caption, type: video.type, user: nil))
+                                                    placeVM.expandedMedia = .phantom(.init(id: media.id, src: media.src, caption: media.caption, type: media.type, user: nil))
                                                 }
                                             }
-                                    }
-                                }
-                                if !review.images.isEmpty {
-                                    ForEach(review.images) { image in
-                                        if let url = image.src {
-                                            ImageLoader(url, contentMode: .fill) { progress in
-                                                Rectangle()
-                                                    .foregroundStyle(.clear)
-                                                    .frame(maxWidth: 150)
-                                                    .overlay {
-                                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                            .progressViewStyle(LinearProgressViewStyle())
-                                                            .padding(.horizontal)
-                                                    }
-                                            }
-                                            .frame(height: 300)
-                                            .clipShape(.rect(cornerRadius: 10))
-                                            .overlay(alignment: .topTrailing) {
-                                                Image(systemName: "photo")
-                                                    .padding(.top, 8)
-                                                    .padding(.trailing, 5)
-                                            }
-                                            .onTapGesture {
-                                                withAnimation {
-                                                    placeVM.expandedMedia = .phantom(.init(id: image.id, src: image.src, caption: image.caption, type: image.type, user: nil))
+                                    case .image:
+                                        ImageLoader(media.src, contentMode: .fill) { progress in
+                                            Rectangle()
+                                                .foregroundStyle(.clear)
+                                                .frame(maxWidth: 150)
+                                                .overlay {
+                                                    ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                        .progressViewStyle(LinearProgressViewStyle())
+                                                        .padding(.horizontal)
                                                 }
+                                        }
+                                        .frame(height: 300)
+                                        .clipShape(.rect(cornerRadius: 10))
+                                        .overlay(alignment: .topTrailing) {
+                                            Image(systemName: "photo")
+                                                .padding(.top, 8)
+                                                .padding(.trailing, 5)
+                                        }
+                                        .onTapGesture {
+                                            withAnimation {
+                                                placeVM.expandedMedia = .phantom(.init(id: media.id, src: media.src, caption: media.caption, type: media.type, user: nil))
                                             }
                                         }
                                     }
@@ -220,8 +216,7 @@ extension PlaceReviewItem {
                 id: "TESTID",
                 scores: .init(overall: 4, drinkQuality: nil, foodQuality: nil, atmosphere: nil, service: nil, value: nil),
                 content: "This is the content",
-                images: [],
-                videos: [],
+                media: [],
                 tags: nil,
                 recommend: true,
                 language: nil,

@@ -53,8 +53,7 @@ final class ReviewDM {
         let scores: ScoresBody
         let content: String
         let recommend: Bool?
-        let images: [UploadManager.MediaIds]
-        let videos: [UploadManager.MediaIds]
+        let media: [UploadManager.MediaIds]
         
         struct ScoresBody: Encodable {
             let overall: Int?

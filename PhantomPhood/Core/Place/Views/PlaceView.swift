@@ -207,10 +207,10 @@ struct PlaceView: View {
                                         Text("TBD")
                                     }
                                 }
-                                .foregroundStyle(.mundo)
+                                .foregroundStyle(Color.accentColor)
                                 .frame(height: 24)
                                 .cfont(.title2)
-                                .fontWeight(.medium)
+                                .fontWeight(.semibold)
                                 .redacted(reason: vm.place == nil ? .placeholder : [])
                                 
                                 Group {

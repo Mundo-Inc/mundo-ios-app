@@ -11,15 +11,12 @@ struct QuickActionsView: View {
     @StateObject private var vm = QuickActionsVM()
     
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.mainWindowSafeAreaInsets) private var mainWindowSafeAreaInsets
+    
+    @State private var height: CGFloat = 500
     
     var body: some View {
-        VStack {
-            RoundedRectangle(cornerRadius: 3)
-                .frame(width: 36, height: 5)
-                .padding(.top, 5)
-                .padding(.bottom)
-                .foregroundStyle(.tertiary)
-            
+        VStack(spacing: 20) {
             if vm.loadingSections.contains(.nearestPlace) {
                 ProgressView("Searching Area")
             } else if let nearestPlace = vm.nearestPlace, let name = nearestPlace.name, vm.isNearestPlace {
@@ -57,8 +54,6 @@ struct QuickActionsView: View {
                     .cfont(.caption)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            
-            Spacer()
             
             Button {
                 vm.handleCheckin()
@@ -124,40 +119,18 @@ struct QuickActionsView: View {
                 .clipShape(.rect(cornerRadius: 15))
             }
             .foregroundStyle(.primary)
-            
-            Button {
-                AppData.shared.goTo(AppRoute.homemadeContent)
-                dismiss()
-            } label: {
-                HStack {
-                    Image(systemName: "house.fill")
-                        .font(.system(size: 28))
-                        .frame(width: 36 , height: 36)
-                    
-                    VStack {
-                        Text("Homemade Moments")
-                            .cfont(.headline)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        Group {
-                            Text("Share your home cooking experience")
-                        }
-                        .cfont(.caption)
-                        .multilineTextAlignment(.leading)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .background {
+            GeometryReader { proxy in
+                Color.clear
+                    .onChange(of: proxy.size) { newValue in
+                        self.height = newValue.height + mainWindowSafeAreaInsets.bottom
                     }
-                }
-                .padding()
-                .background(Color.themePrimary)
-                .clipShape(.rect(cornerRadius: 15))
             }
-            .foregroundStyle(.primary)
         }
         .cfont(.body)
-        .padding(.horizontal)
-        .padding(.bottom)
-        .presentationDetents([.height(340), .fraction(0.8)])
+        .padding()
+        .presentationDetents([.height(height), .fraction(0.8)])
         .task {
             await vm.updateNearestPlace()
         }

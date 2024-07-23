@@ -11,7 +11,7 @@ struct UserActivityView: View {
     private let id: String
     
     @StateObject private var vm = UserActivityVM()
-    @StateObject private var mediasViewModel = MediasVM()
+    @StateObject private var mediaItemsVM = MediaItemsVM()
     
     @Environment(\.dismiss) private var dismiss
     
@@ -35,9 +35,9 @@ struct UserActivityView: View {
                     case .following:
                         UserActivityFollowing(vm: vm)
                     case .newReview:
-                        UserActivityReview(vm: vm, mediasViewModel: mediasViewModel)
+                        UserActivityReview(vm: vm, mediaItemsVM: mediaItemsVM)
                     case .newCheckin:
-                        UserActivityCheckin(vm: vm)
+                        UserActivityCheckin(vm: vm, mediaItemsVM: mediaItemsVM)
                     default:
                         Text(item.activityType.rawValue)
                     }
@@ -53,8 +53,8 @@ struct UserActivityView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $mediasViewModel.show, content: {
-            MediasView(vm: mediasViewModel)
+        .fullScreenCover(isPresented: $mediaItemsVM.show, content: {
+            MediaItemsView(vm: mediaItemsVM)
         })
         .alert("Error", isPresented: Binding(optionalValue: $vm.error)) {
             Button("OK", role: .cancel) {

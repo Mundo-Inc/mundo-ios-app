@@ -13,12 +13,12 @@ enum RefreshNewAction {
 }
 
 struct APIResponse<T: Decodable>: Decodable {
-    let success: Bool
+    let status: String
     let data: T
 }
 
 struct APIResponseWithPagination<T: Decodable>: Decodable {
-    let success: Bool
+    let status: String
     let data: T
     let pagination: Pagination
 }

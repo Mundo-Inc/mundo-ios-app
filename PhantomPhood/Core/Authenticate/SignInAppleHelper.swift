@@ -13,13 +13,13 @@ import UIKit
 struct SignInWithAppleResult {
     let token: String
     let nonce: String
-    let user: AppleUserInfo
-    
-    struct AppleUserInfo {
-        let givenName: String?
-        let familyName: String?
-        let email: String?
-    }
+    let email: String?
+    let fullName: PersonNameComponents?
+}
+
+enum OAuthAppleResult {
+    case token(SignInWithAppleResult)
+    case credentials(username: String, password: String)
 }
 
 // Usage
@@ -29,14 +29,14 @@ final class SignInWithAppleHelper: NSObject {
     static let shared = SignInWithAppleHelper()
     private override init() { }
     
-    private var completionHandler: ((Result<SignInWithAppleResult, Error>) -> Void)? = nil
+    private var completionHandler: ((Result<OAuthAppleResult, Error>) -> Void)? = nil
     private var currentNonce: String? = nil
     
     /// Start Sign In With Apple and present OS modal.
     ///
     /// - Parameter viewController: ViewController to present OS modal on. If nil, function will attempt to find the top-most ViewController. Throws an error if no ViewController is found.
     @MainActor
-    func startSignInWithAppleFlow(viewController: UIViewController? = nil) async throws -> SignInWithAppleResult {
+    func startSignInWithAppleFlow(viewController: UIViewController? = nil) async throws -> OAuthAppleResult {
         return try await withCheckedThrowingContinuation { continuation in
             startSignInWithAppleFlow { result in
                 switch result {
@@ -52,12 +52,12 @@ final class SignInWithAppleHelper: NSObject {
     }
     
     @MainActor
-    func startSignInWithAppleFlow(viewController: UIViewController? = nil, completion: @escaping (Result<SignInWithAppleResult, Error>) -> Void) {
+    func startSignInWithAppleFlow(viewController: UIViewController? = nil, completion: @escaping (Result<OAuthAppleResult, Error>) -> Void) {
         guard let topVC = viewController ?? UIApplication.shared.topViewController() else {
             completion(.failure(URLError(.cannotConnectToHost)))
             return
         }
-
+        
         let nonce = randomNonceString()
         currentNonce = nonce
         completionHandler = completion
@@ -68,7 +68,7 @@ final class SignInWithAppleHelper: NSObject {
 
 // MARK: PRIVATE
 private extension SignInWithAppleHelper {
-        
+    
     // Adapted from https://auth0.com/docs/api-auth/tutorials/nonce#generate-a-cryptographically-random-nonce
     private func randomNonceString(length: Int = 32) -> String {
         precondition(length > 0)
@@ -114,7 +114,7 @@ private extension SignInWithAppleHelper {
         return hashString
     }
     
-    private func showOSPrompt(nonce: String, on viewController: UIViewController) {
+    private func showOSPrompt(nonce: String, on viewController: ASAuthorizationControllerPresentationContextProviding) {
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
@@ -123,7 +123,6 @@ private extension SignInWithAppleHelper {
         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = viewController
-
         authorizationController.performRequests()
     }
     
@@ -150,11 +149,11 @@ private extension SignInWithAppleHelper {
         }
     }
     
-    private func getInfoFromAuthorization(authorization: ASAuthorization) throws -> (token: String, user: SignInWithAppleResult.AppleUserInfo) {
+    private func getInfoFromAuthorization(authorization: ASAuthorization) throws -> (token: String, email: String?, fullName: PersonNameComponents?) {
         guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential else {
             throw SignInWithAppleError.invalidCredential
         }
-
+        
         guard let appleIDToken = appleIDCredential.identityToken else {
             throw SignInWithAppleError.unableToFetchToken
         }
@@ -163,7 +162,7 @@ private extension SignInWithAppleHelper {
             throw SignInWithAppleError.unableToSerializeToken
         }
         
-        return (idTokenString, .init(givenName: appleIDCredential.fullName?.givenName, familyName: appleIDCredential.fullName?.familyName, email: appleIDCredential.email))
+        return (idTokenString, appleIDCredential.email, appleIDCredential.fullName)
     }
     
     private func getCurrentNonce() throws -> String {
@@ -176,16 +175,21 @@ private extension SignInWithAppleHelper {
 
 extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-        do {
-            let info = try getInfoFromAuthorization(authorization: authorization)
-            let nonce = try getCurrentNonce()
-            let result = SignInWithAppleResult(token: info.token, nonce: nonce, user: info.user)
-            completionHandler?(.success(result))
-        } catch {
-            completionHandler?(.failure(error))
-            return
+        if let passwordCredential = authorization.credential as? ASPasswordCredential {
+            completionHandler?(.success(OAuthAppleResult.credentials(username: passwordCredential.user, password: passwordCredential.password)))
+        } else {
+            do {
+                let info = try getInfoFromAuthorization(authorization: authorization)
+                let nonce = try getCurrentNonce()
+                let result = SignInWithAppleResult(token: info.token, nonce: nonce, email: info.email, fullName: info.fullName)
+                completionHandler?(.success(OAuthAppleResult.token(result)))
+            } catch {
+                completionHandler?(.failure(error))
+                return
+            }
         }
     }
+    
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         completionHandler?(.failure(error))
         return

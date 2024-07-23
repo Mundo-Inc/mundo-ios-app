@@ -16,7 +16,11 @@ final class CheckInDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data: APIResponseWithPagination<[Checkin]> = try await apiManager.requestData("/checkins?event=\(event)&page=\(page)&limit=\(limit)", token: token)
+        let data: APIResponseWithPagination<[Checkin]> = try await apiManager.requestData("/checkins", queryParams: [
+            "event": event,
+            "page": page.description,
+            "limit": limit.description
+        ], token: token)
         
         return data
     }
@@ -26,7 +30,11 @@ final class CheckInDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data: APIResponseWithPagination<[Checkin]> = try await apiManager.requestData("/checkins?user=\(user)&page=\(page)&limit=\(limit)", token: token)
+        let data: APIResponseWithPagination<[Checkin]> = try await apiManager.requestData("/checkins", queryParams: [
+            "user": user,
+            "page": page.description,
+            "limit": limit.description
+        ], token: token)
         
         return data
     }
@@ -36,7 +44,11 @@ final class CheckInDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data: APIResponseWithPagination<[Checkin]> = try await apiManager.requestData("/checkins?place=\(place)&page=\(page)&limit=\(limit)", token: token)
+        let data: APIResponseWithPagination<[Checkin]> = try await apiManager.requestData("/checkins", queryParams: [
+            "place": place,
+            "page": page.description,
+            "limit": limit.description
+        ], token: token)
         
         return data
     }
@@ -79,24 +91,24 @@ final class CheckInDM {
         let privacyType: PrivacyType?
         let tags: [String]?
         let caption: String?
-        let image: String?
+        let media: [String]?
         
-        init(place: String, privacyType: PrivacyType?, tags: [String]?, caption: String?, image: String?) {
+        init(place: String, privacyType: PrivacyType?, tags: [String]?, caption: String?, media: [String]?) {
             self.place = place
             self.event = nil
             self.privacyType = privacyType
             self.tags = tags
             self.caption = caption
-            self.image = image
+            self.media = media
         }
         
-        init(event: String, privacyType: PrivacyType?, tags: [String]?, caption: String?, image: String?) {
+        init(event: String, privacyType: PrivacyType?, tags: [String]?, caption: String?, media: [String]?) {
             self.place = nil
             self.event = event
             self.privacyType = privacyType
             self.tags = tags
             self.caption = caption
-            self.image = image
+            self.media = media
         }
     }
 }

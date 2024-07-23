@@ -18,7 +18,7 @@ final class EventMediaVM: ObservableObject {
     }
     
     @Published var isLoading: Bool = false
-    @Published var medias: [MediaWithUser]? = nil
+    @Published var mediaItems: [MediaWithUser]? = nil
     
     var page = 1
     func fetch(type: RefreshNewAction) async {
@@ -32,11 +32,11 @@ final class EventMediaVM: ObservableObject {
         do {
             let data = try await mediaDM.getMedia(event: eventId, page: page)
             if page == 1 {
-                medias = data
-            } else if medias != nil {
-                medias!.append(contentsOf: data)
+                mediaItems = data
+            } else if mediaItems != nil {
+                mediaItems!.append(contentsOf: data)
             } else {
-                medias = data
+                mediaItems = data
             }
             page += 1
         } catch {

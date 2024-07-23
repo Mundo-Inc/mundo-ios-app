@@ -39,9 +39,9 @@ final class UploadManager {
     }
     
     /// Returns MediaIds that can be used to send requests with media to server
-    static func getMediaIds(from medias: [TasksMedia], type: MediaType? = nil) -> [MediaIds] {
+    static func getMediaIds(from mediaItems: [TasksMedia], type: MediaType? = nil) -> [MediaIds] {
         if let type {
-            return medias.compactMap { tasksMedia in
+            return mediaItems.compactMap { tasksMedia in
                 switch tasksMedia {
                 case .uploaded(let response, _, _):
                     if response.type == type.rawValue {
@@ -54,7 +54,7 @@ final class UploadManager {
                 }
             }
         } else {
-            return medias.compactMap { tasksMedia in
+            return mediaItems.compactMap { tasksMedia in
                 switch tasksMedia {
                 case .uploaded(let response, _, _):
                     return MediaIds(uploadId: response.id , caption: "")

@@ -27,15 +27,15 @@ struct EventMediaView: View {
     
     var body: some View {
         LazyVGrid(columns: gridColumns, spacing: 0) {
-            if let medias = vm.medias {
-                if medias.isEmpty {
+            if let items = vm.mediaItems {
+                if items.isEmpty {
                     Text("No media")
                         .cfont(.subheadline)
                         .foregroundStyle(.secondary)
                         .padding(.vertical)
                         .padding(.horizontal)
                 } else {
-                    ForEach(medias) { media in
+                    ForEach(items) { media in
                         ZStack {
                             if let expandedMedia = eventVM.expandedMedia, media.id == expandedMedia.id {
                                 Rectangle()

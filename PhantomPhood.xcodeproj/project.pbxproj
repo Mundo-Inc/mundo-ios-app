@@ -213,8 +213,8 @@
 		0B5070572BBC32DB00593C1B /* TwilioConversationsClient in Frameworks */ = {isa = PBXBuildFile; productRef = 0B5070562BBC32DB00593C1B /* TwilioConversationsClient */; };
 		0B5070592BBC434900593C1B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5070582BBC434900593C1B /* AppDelegate.swift */; };
 		0B50705B2BBC4ABA00593C1B /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B50705A2BBC4ABA00593C1B /* LoadingView.swift */; };
-		0B51A8D42ACEC58400DA38DC /* MediasVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B51A8D32ACEC58400DA38DC /* MediasVM.swift */; };
-		0B51A8D62ACEC61000DA38DC /* MediasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B51A8D52ACEC61000DA38DC /* MediasView.swift */; };
+		0B51A8D42ACEC58400DA38DC /* MediaItemsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B51A8D32ACEC58400DA38DC /* MediaItemsVM.swift */; };
+		0B51A8D62ACEC61000DA38DC /* MediaItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B51A8D52ACEC61000DA38DC /* MediaItemsView.swift */; };
 		0B547D7C2B3EEA9B002C6336 /* ListsDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B547D7B2B3EEA9B002C6336 /* ListsDM.swift */; };
 		0B547D7E2B3EEC61002C6336 /* UserPlacesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B547D7D2B3EEC61002C6336 /* UserPlacesList.swift */; };
 		0B547D802B3F33AA002C6336 /* MyProfileListsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B547D7F2B3F33AA002C6336 /* MyProfileListsView.swift */; };
@@ -380,7 +380,6 @@
 		0BC9BBF62B92495900477654 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC9BBF52B92495900477654 /* AlertManager.swift */; };
 		0BC9BBFC2B924B1A00477654 /* ActionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC9BBFB2B924B1A00477654 /* ActionManager.swift */; };
 		0BCA62592BB62CBF0045F100 /* MapActivitySheetVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA62582BB62CBF0045F100 /* MapActivitySheetVM.swift */; };
-		0BCA625B2BB6387B0045F100 /* CheckInCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA625A2BB6387B0045F100 /* CheckInCard.swift */; };
 		0BCAE7442B7E6B5D005AD0EF /* MissionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCAE7432B7E6B5D005AD0EF /* MissionItem.swift */; };
 		0BCAE7462B7E6B8E005AD0EF /* PrizeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCAE7452B7E6B8E005AD0EF /* PrizeItem.swift */; };
 		0BCBC18E2ACDC2FF00992D8E /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCBC18D2ACDC2FF00992D8E /* View.swift */; };
@@ -636,8 +635,8 @@
 		0B502A882C1C9B78003411AB /* UserProfileActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileActivitiesView.swift; sourceTree = "<group>"; };
 		0B5070582BBC434900593C1B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0B50705A2BBC4ABA00593C1B /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
-		0B51A8D32ACEC58400DA38DC /* MediasVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediasVM.swift; sourceTree = "<group>"; };
-		0B51A8D52ACEC61000DA38DC /* MediasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediasView.swift; sourceTree = "<group>"; };
+		0B51A8D32ACEC58400DA38DC /* MediaItemsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaItemsVM.swift; sourceTree = "<group>"; };
+		0B51A8D52ACEC61000DA38DC /* MediaItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaItemsView.swift; sourceTree = "<group>"; };
 		0B547D7B2B3EEA9B002C6336 /* ListsDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsDM.swift; sourceTree = "<group>"; };
 		0B547D7D2B3EEC61002C6336 /* UserPlacesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPlacesList.swift; sourceTree = "<group>"; };
 		0B547D7F2B3F33AA002C6336 /* MyProfileListsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileListsView.swift; sourceTree = "<group>"; };
@@ -800,7 +799,6 @@
 		0BC9BBF52B92495900477654 /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
 		0BC9BBFB2B924B1A00477654 /* ActionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionManager.swift; sourceTree = "<group>"; };
 		0BCA62582BB62CBF0045F100 /* MapActivitySheetVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapActivitySheetVM.swift; sourceTree = "<group>"; };
-		0BCA625A2BB6387B0045F100 /* CheckInCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInCard.swift; sourceTree = "<group>"; };
 		0BCAE7432B7E6B5D005AD0EF /* MissionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionItem.swift; sourceTree = "<group>"; };
 		0BCAE7452B7E6B8E005AD0EF /* PrizeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrizeItem.swift; sourceTree = "<group>"; };
 		0BCBC18D2ACDC2FF00992D8E /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
@@ -1401,11 +1399,11 @@
 			isa = PBXGroup;
 			children = (
 				0B77EA4F2AAF8C3B00C8DF87 /* AuthWelcomeView.swift */,
+				0BEF7A3D2B0EB60F001532E7 /* CompleteTheUserInfoView.swift */,
 				0B35B7AA2B0D14CA00822BA6 /* SignInOptionsView.swift */,
+				0B35B7AC2B0D14D500822BA6 /* SignInWithEmailView.swift */,
 				0BEF7A372B0EB278001532E7 /* SignUpOptionsView.swift */,
 				0B77EA4D2AAF889100C8DF87 /* SignUpWithPasswordView.swift */,
-				0B35B7AC2B0D14D500822BA6 /* SignInWithEmailView.swift */,
-				0BEF7A3D2B0EB60F001532E7 /* CompleteTheUserInfoView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1586,7 +1584,7 @@
 				0BDBD3CB2ACB5FCD003B8D2D /* GoogleRatingView.swift */,
 				0B013EED2AB7559E003CB57F /* LevelView.swift */,
 				0B77EA572AAFCDBD00C8DF87 /* LottieView.swift */,
-				0B51A8D52ACEC61000DA38DC /* MediasView.swift */,
+				0B51A8D52ACEC61000DA38DC /* MediaItemsView.swift */,
 				0B0253042B18CE64003702AF /* PlaceIcon.swift */,
 				0B9307F22B0709F1005FA1C3 /* ProfileImage.swift */,
 				0BC84A642AD0339F00D723AA /* ReactionLabel.swift */,
@@ -1907,7 +1905,7 @@
 				0B2BF8812B17AA8000C10A5E /* AppGeneralVM.swift */,
 				0B77EA5A2AAFE31300C8DF87 /* Authentication.swift */,
 				0B86F9362B4433CB00DD4C85 /* EmojisVM.swift */,
-				0B51A8D32ACEC58400DA38DC /* MediasVM.swift */,
+				0B51A8D32ACEC58400DA38DC /* MediaItemsVM.swift */,
 				0B3126E22B6A9FE30063FC0E /* OnboardingVM.swift */,
 				0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */,
 				0BC2E3172B2208880002649D /* PickerVM.swift */,
@@ -1998,7 +1996,6 @@
 			isa = PBXGroup;
 			children = (
 				0B502A852C1C562D003411AB /* ActivityItem.swift */,
-				0BCA625A2BB6387B0045F100 /* CheckInCard.swift */,
 				0B45BB4F2BB6FB48003BFA7C /* ImageLoader.swift */,
 				0B50705A2BBC4ABA00593C1B /* LoadingView.swift */,
 				0B6D56CD2BE2A09E003C2853 /* VideoPlayer.swift */,
@@ -2353,7 +2350,7 @@
 				0B0A38CD2B90BED50088D684 /* PlaceIdentifier.swift in Sources */,
 				0B35B7B72B0E016900822BA6 /* SignInAppleHelper.swift in Sources */,
 				0BEF7A382B0EB278001532E7 /* SignUpOptionsView.swift in Sources */,
-				0B51A8D42ACEC58400DA38DC /* MediasVM.swift in Sources */,
+				0B51A8D42ACEC58400DA38DC /* MediaItemsVM.swift in Sources */,
 				0B6D56CE2BE2A09E003C2853 /* VideoPlayer.swift in Sources */,
 				0B9950DF2BBEF2BC0060B6AF /* TCHAdapter.swift in Sources */,
 				0B1275AC2BE52DB6007CCE20 /* Constants.swift in Sources */,
@@ -2364,7 +2361,7 @@
 				0BFDA1522BD6660000DE83B5 /* OnboardingView.swift in Sources */,
 				0B73EAC82BBF0E4C00991B13 /* ObservableResultPublisher.swift in Sources */,
 				0BC9A39D2BE14F2200C0EA4E /* Transaction.swift in Sources */,
-				0B51A8D62ACEC61000DA38DC /* MediasView.swift in Sources */,
+				0B51A8D62ACEC61000DA38DC /* MediaItemsView.swift in Sources */,
 				0B997B6A2AC7377C00579C9C /* UserProfileVM.swift in Sources */,
 				0B9950BC2BBED12B0060B6AF /* ConversationsClientWrapper.swift in Sources */,
 				0B547D7C2B3EEA9B002C6336 /* ListsDM.swift in Sources */,
@@ -2478,7 +2475,6 @@
 				0B5070592BBC434900593C1B /* AppDelegate.swift in Sources */,
 				0B3BAFCC2BF6286800E7A4F3 /* MyProfileVM.swift in Sources */,
 				0B1E015B2BDBF27200FEE5C3 /* SettingsVM.swift in Sources */,
-				0BCA625B2BB6387B0045F100 /* CheckInCard.swift in Sources */,
 				0BC2E3162B2207EB0002649D /* TaskManager.swift in Sources */,
 				0BB0C9592B30B3F00013DEAE /* Emoji.swift in Sources */,
 				0BF17BA92AF2FAA500D87812 /* ProfileCheckinsVM.swift in Sources */,
@@ -2731,7 +2727,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2771,7 +2767,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

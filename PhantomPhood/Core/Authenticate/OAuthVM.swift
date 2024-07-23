@@ -35,10 +35,18 @@ final class OAuthVM: ObservableObject {
         }
         
         let helper = SignInWithAppleHelper.shared
-        let tokens = try await helper.startSignInWithAppleFlow()
-        let result = await Authentication.shared.signinWithApple(tokens: tokens)
-        if !result.success {
-            self.error = result.error
+        let res = try await helper.startSignInWithAppleFlow()
+        switch res {
+        case .token(let signInWithAppleResult):
+            let result = await Authentication.shared.signinWithApple(tokens: signInWithAppleResult)
+            if !result.success {
+                self.error = result.error
+            }
+        case .credentials(let username, let password):
+            let result = await Authentication.shared.signIn(email: username, password: password)
+            if !result.success {
+                self.error = result.error
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-//  MediasVM.swift
+//  MediaItemsVM.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 10/5/23.
@@ -9,9 +9,9 @@ import Foundation
 import Combine
 
 @MainActor
-final class MediasVM: ObservableObject {
+final class MediaItemsVM: ObservableObject {
     @Published var show = false
-    @Published var medias: [MediaItem] = []
+    @Published var items: [MediaItem] = []
         
     private var cancellables: Set<AnyCancellable> = []
     
@@ -19,14 +19,14 @@ final class MediasVM: ObservableObject {
         $show
             .sink { newValue in
                 if !newValue {
-                    self.medias.removeAll()
+                    self.items.removeAll()
                 }
             }
             .store(in: &cancellables)
     }
     
-    func show(medias: [MediaItem]) {
-        self.medias = medias
+    func show(_ items: [MediaItem]) {
+        self.items = items
         self.show = true
     }
 }

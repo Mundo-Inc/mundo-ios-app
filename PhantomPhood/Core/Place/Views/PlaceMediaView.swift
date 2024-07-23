@@ -55,7 +55,7 @@ struct PlaceMediaView: View {
                 .aspectRatio(2 / 3, contentMode: .fill)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let place = placeVM.place {
-                if vm.medias.isEmpty {
+                if vm.mediaItems.isEmpty {
                     Text("No media")
                         .cfont(.subheadline)
                         .foregroundStyle(.secondary)
@@ -104,7 +104,7 @@ struct PlaceMediaView: View {
                         }
                     }
                     
-                    ForEach(vm.medias) { media in
+                    ForEach(vm.mediaItems) { media in
                         ZStack {
                             if let expandedMedia = placeVM.expandedMedia, case .phantom(let m) = expandedMedia, media.id == m.id {
                                 Rectangle()

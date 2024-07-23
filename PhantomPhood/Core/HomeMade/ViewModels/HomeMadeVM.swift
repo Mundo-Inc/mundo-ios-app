@@ -26,19 +26,19 @@ final class HomeMadeVM: ObservableObject {
         
         self.loadingSections.insert(.submitting)
         
-        taskManager.newTask(.init(title: "New Homemade Content", medias: mediaItems.compactMap({ mediaItem in
+        taskManager.newTask(.init(title: "New Homemade Content", mediaItems: mediaItems.compactMap({ mediaItem in
             switch mediaItem.state {
             case .loaded(let mediaData):
                 return TasksMedia.uncompressed(mediaItemData: .init(id: mediaItem.id, state: mediaData))
             default:
                 return nil
             }
-        }), mediasUsecase: .placeReview, onReadyToSubmit: { medias in
-            guard let medias else {
+        }), mediaUsecase: .placeReview, onReadyToSubmit: { mediaItems in
+            guard let mediaItems else {
                 throw URLError(.badURL)
             }
             
-            let mediaIds = UploadManager.getMediaIds(from: medias)
+            let mediaIds = UploadManager.getMediaIds(from: mediaItems)
             
             do {
                 try await self.homemadeDM.createHomeMadeContent(body: .init(content: self.content, media: mediaIds, tags: self.tags.map({ $0.id })))

@@ -56,7 +56,7 @@ struct ActivityItem<ViewModel: ActivityItemVM>: View {
         
         switch item.wrappedValue.resource {
         case .review(let feedReview):
-            if let firstMedia = feedReview.medias.first {
+            if let firstMedia = feedReview.media?.first {
                 self._tabPage = State(wrappedValue: firstMedia.id)
             }
         case .homemade(let homemade):
@@ -200,8 +200,18 @@ struct ActivityItem<ViewModel: ActivityItemVM>: View {
         switch item.activityType {
         case .newCheckin:
             if case .checkin(let feedCheckin) = item.resource {
-                if let image = feedCheckin.image {
-                    MediaItem(media: image)
+                if let media = feedCheckin.media, !media.isEmpty {
+                    if media.count > 1 {
+                        TabView(selection: $tabPage) {
+                            ForEach(media) { item in
+                                MediaItem(media: item)
+                                    .tag(item.id)
+                            }
+                        }
+                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+                    } else if let first = media.first {
+                        MediaItem(media: first)
+                    }
                 } else {
                     LinearGradient(
                         colors: [
@@ -239,16 +249,18 @@ struct ActivityItem<ViewModel: ActivityItemVM>: View {
             }
         case .newReview:
             if case .review(let feedReview) = item.resource {
-                if feedReview.medias.count > 1 {
-                    TabView(selection: $tabPage) {
-                        ForEach(feedReview.medias) { item in
-                            MediaItem(media: item)
-                                .tag(item.id)
+                if let media = feedReview.media, !media.isEmpty {
+                    if media.count > 1 {
+                        TabView(selection: $tabPage) {
+                            ForEach(media) { item in
+                                MediaItem(media: item)
+                                    .tag(item.id)
+                            }
                         }
+                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+                    } else if let first = media.first {
+                        MediaItem(media: first)
                     }
-                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-                } else if let media = feedReview.medias.first {
-                    MediaItem(media: media)
                 } else if let place = item.place {
                     LinearGradient(
                         colors: [

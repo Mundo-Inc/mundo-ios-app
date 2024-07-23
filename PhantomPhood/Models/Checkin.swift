@@ -12,14 +12,14 @@ struct Checkin: Identifiable, Decodable {
     let createdAt: Date
     let user: UserEssentials
     let place: PlaceEssentials
-    let image: MediaItem?
+    let media: [MediaItem]?
     let tags: [UserEssentials]?
     let caption: String?
     let userActivityId: String?
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case createdAt, user, place, image, tags, caption, userActivityId
+        case createdAt, user, place, media, tags, caption, userActivityId
     }
 }
 
@@ -28,7 +28,7 @@ struct FeedCheckin: Identifiable, Decodable {
     let createdAt: Date
     let user: UserEssentials
     let place: PlaceEssentials
-    let image: MediaItem?
+    let media: [MediaItem]?
     let tags: [UserEssentials]?
     let caption: String?
     let userActivityId: String?
@@ -36,6 +36,6 @@ struct FeedCheckin: Identifiable, Decodable {
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case createdAt, user, place, totalCheckins, image, tags, caption, userActivityId
+        case createdAt, user, place, totalCheckins, media, tags, caption, userActivityId
     }
 }

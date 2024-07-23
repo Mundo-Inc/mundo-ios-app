@@ -36,7 +36,7 @@ final class TaskManager: ObservableObject {
         self.tasks = self.tasks.map {
             if $0.id == task.id {
                 var updatedTask = task
-                updatedTask.medias = $0.medias.map({ tasksMedia in
+                updatedTask.mediaItems = $0.mediaItems.map({ tasksMedia in
                     if tasksMedia.id == media.id {
                         return media
                     } else {
@@ -55,7 +55,7 @@ final class TaskManager: ObservableObject {
         self.tasks = self.tasks.map {
             if $0.id == task.id {
                 var updatedTask = task
-                updatedTask.medias = $0.medias.filter({ tasksMedia in
+                updatedTask.mediaItems = $0.mediaItems.filter({ tasksMedia in
                     return tasksMedia.id != mediaId
                 })
                 
@@ -66,9 +66,9 @@ final class TaskManager: ObservableObject {
         }
     }
     
-    /// Checks to see if all the medias are at their **.uploaded** state
+    /// Checks to see if all the media items are at their **.uploaded** state
     func isTaskReadyToSubmit(task: Tasks) -> Bool {
-        return task.medias.allSatisfy { media in
+        return task.mediaItems.allSatisfy { media in
             if case .uploaded(_, _, _) = media {
                 return true
             } else {
@@ -82,7 +82,7 @@ final class TaskManager: ObservableObject {
     func submitIfReady(taskId: String) async throws {
         if let task = self.tasks.first(where: { $0.id == taskId }) {
             if isTaskReadyToSubmit(task: task) {
-                try await task.onReadyToSubmit(task.medias.isEmpty ? nil : task.medias)
+                try await task.onReadyToSubmit(task.mediaItems.isEmpty ? nil : task.mediaItems)
                 self.tasks.removeAll { task in
                     task.id == taskId
                 }
@@ -115,11 +115,11 @@ final class TaskManager: ObservableObject {
                 }
             }
             
-            guard !nextTask.medias.isEmpty else {
+            guard !nextTask.mediaItems.isEmpty else {
                 try await submitIfReady(taskId: nextTask.id)
                 return
             }
-            for media in nextTask.medias {
+            for media in nextTask.mediaItems {
                 if case .uncompressed(let mediaItemData) = media {
                     switch mediaItemData.state {
                     case .image(let uiImage):
@@ -229,8 +229,8 @@ struct Tasks {
     let id = UUID().uuidString
     var status: TasksStatus = .pending
     let title: String
-    var medias: [TasksMedia]
-    let mediasUsecase: UploadManager.UploadUseCase?
+    var mediaItems: [TasksMedia]
+    let mediaUsecase: UploadManager.UploadUseCase?
     var onReadyToSubmit: ([TasksMedia]?) async throws -> Void
     var onError: ((Error) -> Void)?
     

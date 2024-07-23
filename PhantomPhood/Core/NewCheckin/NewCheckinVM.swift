@@ -78,31 +78,25 @@ final class NewCheckinVM: ObservableObject {
         
         loadingSections.insert(.submitting)
         
-        taskManager.newTask(.init(title: "New Checkin", medias: mediaItems.compactMap({ mediaItem in
+        taskManager.newTask(.init(title: "New Checkin", mediaItems: mediaItems.compactMap({ mediaItem in
             switch mediaItem.state {
             case .loaded(let mediaData):
                 return TasksMedia.uncompressed(mediaItemData: .init(id: mediaItem.id, state: mediaData))
             default:
                 return nil
             }
-        }), mediasUsecase: .checkin, onReadyToSubmit: { medias in
-            let image: UploadManager.MediaIds?
-            if let medias, !medias.isEmpty {
-                image = UploadManager.getMediaIds(from: medias, type: .image).first
+        }), mediaUsecase: .checkin, onReadyToSubmit: { mediaItems in
+            let media: [UploadManager.MediaIds]? = if let mediaItems {
+                UploadManager.getMediaIds(from: mediaItems)
             } else {
-                image = nil
+                nil
             }
             
             do {
-                let body: CheckInDM.CheckinRequestBody
-                if let event = self.event {
-                    body = .init(event: event.id, privacyType: self.privacyType, tags: self.mentions.compactMap({ user in
-                        user.id
-                    }), caption: self.caption, image: image?.uploadId)
+                let body: CheckInDM.CheckinRequestBody = if let event = self.event {
+                    .init(event: event.id, privacyType: self.privacyType, tags: self.mentions.compactMap({ $0.id }), caption: self.caption, media: media?.compactMap({ $0.uploadId }))
                 } else {
-                    body = .init(place: place.id, privacyType: self.privacyType, tags: self.mentions.compactMap({ user in
-                        user.id
-                    }), caption: self.caption, image: image?.uploadId)
+                    .init(place: place.id, privacyType: self.privacyType, tags: self.mentions.compactMap({ $0.id }), caption: self.caption, media: media?.compactMap({ $0.uploadId }))
                 }
                 try await self.checkInDM.checkin(body: body)
                 self.toastVM.toast(.init(type: .success, title: "Success", message: "Checked in"))

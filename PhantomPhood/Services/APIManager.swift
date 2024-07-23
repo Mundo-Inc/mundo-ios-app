@@ -49,7 +49,7 @@ extension APIManager {
         
         guard (200...299).contains(httpResponse.statusCode) else {
             let serverError = try decode(ServerResponseError.self, from: data)
-            throw APIError.serverError(.init(success: serverError.success, error: serverError.error, statusCode: httpResponse.statusCode))
+            throw APIError.serverError(.init(status: serverError.status, error: serverError.error, statusCode: httpResponse.statusCode))
         }
         
         return try decode(T.self, from: data)
@@ -73,7 +73,7 @@ extension APIManager {
         
         guard (200...299).contains(httpResponse.statusCode) else {
             let serverError = try decode(ServerResponseError.self, from: data)
-            throw APIError.serverError(.init(success: serverError.success, error: serverError.error, statusCode: httpResponse.statusCode))
+            throw APIError.serverError(.init(status: serverError.status, error: serverError.error, statusCode: httpResponse.statusCode))
         }
         
         return httpResponse
@@ -146,22 +146,27 @@ extension APIManager {
     // MARK: - Structs and Enums
     
     struct ServerResponseError: Decodable {
-        let success: Bool
+        let status: String
         let error: ErrorData
         
         struct ErrorData: Codable {
-            let title: String?
+            let type: String
             let message: String
+            let details: Details?
+            
+            struct Details: Codable {
+                let message: String
+            }
         }
     }
     
     struct ServerError: Codable {
-        let success: Bool
+        let status: String
         let error: ServerResponseError.ErrorData
         let statusCode: Int
         
         var title: String {
-            error.title ?? "\(statusCode)"
+            "\(error.type) (\(statusCode))"
         }
         
         // Convenience property to get the main error message

@@ -134,117 +134,107 @@ struct MapActivitySheet: View {
                 ForEach(clusteredMapActivity.items.indices, id: \.self) { index in
                     VStack {
                         if let activity = vm.feedItems[clusteredMapActivity.items[index].id] {
-                            switch activity.resource {
-                            case .checkin(let checkin):
-                                if let image = checkin.image, let url = image.src {
-                                    ImageLoader(url, contentMode: .fit) { _ in
-                                        Image(systemName: "arrow.down.circle.dotted")
-                                            .foregroundStyle(Color.white.opacity(0.5))
-                                    }
-                                    .overlay {
-                                        if checkin.caption != nil || (checkin.tags != nil && !checkin.tags!.isEmpty) {
-                                            ZStack(alignment: .top) {
-                                                LinearGradient(colors: [.black.opacity(0.5), .black.opacity(0.4), .clear, .clear], startPoint: .top, endPoint: .bottom)
+                            ScrollView {
+                                VStack {
+                                    switch activity.resource {
+                                    case .checkin(let checkin):
+                                        Label {
+                                            HStack {
+                                                Text("\(checkin.user.name) checked-in here")
                                                 
-                                                VStack(spacing: 5) {
-                                                    if let tags = checkin.tags {
-                                                        ForEach(tags) { user in
-                                                            HStack(spacing: 3) {
-                                                                ProfileImage(user.profileImage, size: 22)
-                                                                Text("@\(user.username)")
-                                                                    .cfont(.caption)
-                                                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                                                    .foregroundStyle(.white)
+                                                Spacer()
+                                                
+                                                Text(checkin.createdAt.timeElapsed(suffix: " ago"))
+                                                    .cfont(.caption)
+                                                    .foregroundStyle(.tertiary)
+                                                    .fontWeight(.regular)
+                                            }
+                                        } icon: {
+                                            Image(systemName: "mappin.and.ellipse")
+                                                .foregroundStyle(LinearGradient(colors: [Color.green, Color.accentColor], startPoint: .topLeading, endPoint: .trailing))
+                                        }
+                                        .foregroundStyle(.primary)
+                                        .cfont(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        
+                                        if let caption = checkin.caption, !caption.isEmpty {
+                                            Label {
+                                                Text("Note")
+                                            } icon: {
+                                                Image(systemName: "pencil")
+                                            }
+                                            .foregroundStyle(.tertiary)
+                                            .cfont(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .padding(.top)
+                                            .padding(.bottom, 3)
+                                            
+                                            Text(caption)
+                                                .multilineTextAlignment(.leading)
+                                                .lineLimit(8)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .foregroundStyle(.primary)
+                                                .cfont(.caption)
+                                        }
+                                        
+                                        if let tags = checkin.tags {
+                                            VStack(spacing: 5) {
+                                                ForEach(tags) { user in
+                                                    TaggedUser(user)
+                                                }
+                                            }
+                                            .padding(.top)
+                                        }
+                                        
+                                        if let media = checkin.media, !media.isEmpty {
+                                            Label {
+                                                Text("Media")
+                                            } icon: {
+                                                Image(systemName: "photo.on.rectangle")
+                                            }
+                                            .foregroundStyle(.tertiary)
+                                            .cfont(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .padding(.top)
+                                            .padding(.bottom, 3)
+                                            
+                                            ScrollView(.horizontal) {
+                                                HStack {
+                                                    ForEach(media) { item in
+                                                        switch item.type {
+                                                        case .video:
+                                                            ImageLoader(item.thumbnail) { _ in
+                                                                Image(systemName: "arrow.down.circle.dotted")
+                                                                    .foregroundStyle(Color.white.opacity(0.5))
                                                             }
+                                                            .frame(width: 100, height: 100)
+                                                            .overlay {
+                                                                ZStack {
+                                                                    Color.black.opacity(0.5)
+                                                                    
+                                                                    Image(systemName: "video.fill")
+                                                                        .font(.system(size: 24))
+                                                                        .foregroundStyle(Color.white.opacity(0.8))
+                                                                }
+                                                            }
+                                                            .clipShape(.rect(cornerRadius: 8))
+                                                        case .image:
+                                                            ImageLoader(item.src) { _ in
+                                                                Image(systemName: "arrow.down.circle.dotted")
+                                                                    .foregroundStyle(Color.white.opacity(0.5))
+                                                            }
+                                                            .frame(width: 100, height: 100)
+                                                            .clipShape(.rect(cornerRadius: 8))
                                                         }
                                                     }
-                                                    
-                                                    if let caption = checkin.caption, !caption.isEmpty {
-                                                        Text(caption)
-                                                            .cfont(.caption)
-                                                            .multilineTextAlignment(.leading)
-                                                            .lineLimit(6)
-                                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                                            .foregroundStyle(.white)
-                                                    }
-                                                    
-                                                    Spacer()
                                                 }
-                                                .padding()
                                             }
+                                            .scrollIndicators(.never)
                                         }
-                                    }
-                                } else {
-                                    Label {
-                                        HStack {
-                                            Text("\(checkin.user.name) checked-in")
-                                            
-                                            Spacer()
-                                            
-                                            Text(checkin.createdAt.timeElapsed(suffix: " ago"))
-                                                .cfont(.caption)
-                                                .foregroundStyle(.tertiary)
-                                                .fontWeight(.regular)
-                                        }
-                                    } icon: {
-                                        Image(systemName: "checkmark.diamond.fill")
-                                            .foregroundStyle(LinearGradient(colors: [Color.green, Color.accentColor], startPoint: .topLeading, endPoint: .trailing))
-                                    }
-                                    .foregroundStyle(.primary)
-                                    .cfont(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    
-                                    if let caption = checkin.caption, !caption.isEmpty {
-                                        Label {
-                                            Text("Note")
-                                        } icon: {
-                                            Image(systemName: "pencil")
-                                        }
-                                        .foregroundStyle(.tertiary)
-                                        .cfont(.subheadline)
-                                        .fontWeight(.semibold)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .padding(.top)
-                                        .padding(.bottom, 3)
-                                        
-                                        Text(caption)
-                                            .multilineTextAlignment(.leading)
-                                            .lineLimit(8)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                            .foregroundStyle(.primary)
-                                            .cfont(.caption)
-                                    }
-                                    
-                                    if let tags = checkin.tags, !tags.isEmpty {
-                                        Label {
-                                            Text("Tags")
-                                        } icon: {
-                                            Image(systemName: "at.circle")
-                                        }
-                                        .foregroundStyle(.tertiary)
-                                        .cfont(.subheadline)
-                                        .fontWeight(.semibold)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .padding(.top)
-                                        
-                                        ForEach(tags) { user in
-                                            HStack(spacing: 8) {
-                                                ProfileImage(user.profileImage, size: 28)
-                                                Text(user.name)
-                                                    .cfont(.caption)
-                                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                            }
-                                            .onTapGesture {
-                                                AppData.shared.goToUser(user.id)
-                                                dismiss()
-                                            }
-                                        }
-                                    }
-                                }
-                            case .review(let review):
-                                ScrollView {
-                                    VStack {
+                                    case .review(let review):
                                         Label {
                                             HStack {
                                                 Text("\(review.writer.name) reviewed this place")
@@ -308,7 +298,7 @@ struct MapActivitySheet: View {
                                             }
                                         }
                                         
-                                        if !review.medias.isEmpty {
+                                        if let media = review.media, !media.isEmpty {
                                             Label {
                                                 Text("Media")
                                             } icon: {
@@ -323,7 +313,7 @@ struct MapActivitySheet: View {
                                             
                                             ScrollView(.horizontal) {
                                                 HStack {
-                                                    ForEach(review.medias) { item in
+                                                    ForEach(media) { item in
                                                         switch item.type {
                                                         case .video:
                                                             ImageLoader(item.thumbnail) { _ in
@@ -389,19 +379,19 @@ struct MapActivitySheet: View {
                                                 }
                                             }
                                         }
+                                    default:
+                                        Label {
+                                            Text("Not Supported")
+                                        } icon: {
+                                            Image(systemName: "exclamationmark.triangle")
+                                        }
+                                        .cfont(.caption2)
+                                        .foregroundStyle(.tertiary)
                                     }
-                                    .padding(.bottom, 50)
                                 }
-                                .scrollIndicators(.never)
-                            default:
-                                Label {
-                                    Text("Not Supported")
-                                } icon: {
-                                    Image(systemName: "exclamationmark.triangle")
-                                }
-                                .cfont(.caption2)
-                                .foregroundStyle(.tertiary)
+                                .padding(.bottom, 50)
                             }
+                            .scrollIndicators(.never)
                         } else {
                             Label {
                                 Text("Loading")
@@ -441,6 +431,27 @@ struct MapActivitySheet: View {
             }
         }
         .presentationDetents([.medium, .fraction(0.99)])
+    }
+    
+    @ViewBuilder
+    private func TaggedUser(_ user: UserEssentials) -> some View {
+        HStack(spacing: 5) {
+            ProfileImage(user.profileImage, size: 28)
+            
+            Text(user.username)
+                .cfont(.caption)
+                .foregroundStyle(.white)
+                .fontWeight(.medium)
+            
+            Image(systemName: "chevron.forward")
+                .font(.system(size: 10))
+                .fontWeight(.bold)
+            
+            Spacer()
+        }
+        .onTapGesture {
+            AppData.shared.goToUser(user.id)
+        }
     }
 }
 

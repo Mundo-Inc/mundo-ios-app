@@ -11,8 +11,7 @@ struct PlaceReview: Identifiable, Decodable {
     let id: String
     let scores: ReviewScores?
     let content: String
-    let images: [MediaItem]
-    let videos: [MediaItem]
+    let media: [MediaItem]
     let tags: [String]?
     let recommend: Bool?
     let language: String?
@@ -25,7 +24,7 @@ struct PlaceReview: Identifiable, Decodable {
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case scores, content, images, videos, tags, recommend, language, createdAt, updatedAt, userActivityId, writer, comments, reactions
+        case scores, content, media, tags, recommend, language, createdAt, updatedAt, userActivityId, writer, comments, reactions
     }
     
     mutating func addReaction(_ userReaction: UserReaction) {

@@ -1,5 +1,5 @@
 //
-//  MediasView.swift
+//  MediaItemsView.swift
 //  PhantomPhood
 //
 //  Created by Kia Abdi on 10/5/23.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct MediasView: View {
-    @StateObject var vm: MediasVM
+struct MediaItemsView: View {
+    @StateObject var vm: MediaItemsVM
     
     @State var offset: CGSize = .zero
     var scale: CGFloat {
@@ -17,10 +17,10 @@ struct MediasView: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            if !vm.medias.isEmpty {
+            if !vm.items.isEmpty {
                 VStack {
                     TabView {
-                        ForEach(vm.medias) { media in
+                        ForEach(vm.items) { media in
                             if media.type == .video {
                                 ReviewVideoView(url: media.src)
                                     .frame(maxWidth: UIScreen.main.bounds.size.width, maxHeight: UIScreen.main.bounds.size.height)
@@ -81,10 +81,10 @@ struct MediasView: View {
 }
 
 #Preview {
-    @ObservedObject var vm = MediasVM()
-    return MediasView(vm: vm)
+    @ObservedObject var vm = MediaItemsVM()
+    return MediaItemsView(vm: vm)
         .onAppear {
-            vm.show(medias: [
+            vm.show([
                 .init(id: "Test1", src: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/af9ddd441be2d1d48450e96aaaed0658.jpg"), caption: nil, type: .image),
                 .init(id: "Test2", src: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/2a667b01b413fd08fd00a60b2f5ba3e1.mp4"), caption: nil, type: .video)
             ])

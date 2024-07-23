@@ -8,22 +8,24 @@
 import SwiftUI
 
 struct UserActivityReview: View {
+    @EnvironmentObject private var actionManager: ActionManager
+    
     @ObservedObject private var vm: UserActivityVM
-    @ObservedObject private var mediasViewModel: MediasVM
+    @ObservedObject private var mediaItemsVM: MediaItemsVM
     
-    init(vm: UserActivityVM, mediasViewModel: MediasVM) {
+    init(vm: UserActivityVM, mediaItemsVM: MediaItemsVM) {
         self._vm = ObservedObject(wrappedValue: vm)
-        self._mediasViewModel = ObservedObject(wrappedValue: mediasViewModel)
+        self._mediaItemsVM = ObservedObject(wrappedValue: mediaItemsVM)
     }
-    
-    @State private var showActions = false
     
     private func showMedia() {
         guard let data = vm.data else { return }
         
         switch data.resource {
         case .review(let feedReview):
-            mediasViewModel.show(medias: feedReview.medias)
+            if let media = feedReview.media {
+                mediaItemsVM.show(media)
+            }
         default:
             return
         }
@@ -50,7 +52,7 @@ struct UserActivityReview: View {
                             .foregroundStyle(.black)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 4)
-                            .background(Color("Reviewed"))
+                            .background(Color.reviewed)
                             .clipShape(RoundedRectangle(cornerRadius: 5))
                         
                         if let place = data.place {
@@ -66,7 +68,13 @@ struct UserActivityReview: View {
                         Spacer()
                         
                         Button {
-                            showActions = true
+                            actionManager.value = [
+                                .init(title: "Report", callback: {
+                                    if case .review(let review) = data.resource {
+                                        AppData.shared.goTo(AppRoute.report(item: .review(review.id)))
+                                    }
+                                })
+                            ]
                         } label: {
                             Image(systemName: "ellipsis")
                         }
@@ -78,10 +86,10 @@ struct UserActivityReview: View {
                     switch data.resource {
                     case .review(let review):
                         VStack {
-                            if !review.medias.isEmpty {
+                            if let media = review.media, !media.isEmpty {
                                 ZStack {
                                     TabView {
-                                        ForEach(review.medias) { item in
+                                        ForEach(media) { item in
                                             switch item.type {
                                             case .video:
                                                 ReviewVideoView(url: item.src, mute: true)
@@ -159,16 +167,6 @@ struct UserActivityReview: View {
                         EmptyView()
                     }
                 }
-                .confirmationDialog("Actions", isPresented: $showActions) {
-                    switch data.resource {
-                    case .review(let review):
-                        NavigationLink(value: AppRoute.report(item: .review(review.id))) {
-                            Text("Report")
-                        }
-                    default:
-                        EmptyView()
-                    }
-                }
             } footer: {
                 WrappingHStack(horizontalSpacing: 4, verticalSpacing: 6) {
                     Button {
@@ -211,6 +209,27 @@ struct UserActivityReview: View {
                 }
                 .foregroundStyle(.primary)
             }
+        }
+    }
+    
+    @ViewBuilder
+    private func TaggedUser(_ user: UserEssentials) -> some View {
+        HStack(spacing: 5) {
+            ProfileImage(user.profileImage, size: 28)
+            
+            Text(user.username)
+                .cfont(.caption)
+                .foregroundStyle(.white)
+                .fontWeight(.medium)
+            
+            Image(systemName: "chevron.forward")
+                .font(.system(size: 10))
+                .fontWeight(.bold)
+            
+            Spacer()
+        }
+        .onTapGesture {
+            AppData.shared.goToUser(user.id)
         }
     }
 }

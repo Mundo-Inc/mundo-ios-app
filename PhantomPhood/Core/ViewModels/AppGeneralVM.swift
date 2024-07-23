@@ -36,11 +36,11 @@ class AppGeneralVM: ObservableObject {
                 
                 let token = await auth.getToken()
                 
-                let data: AppInfoResponse = try await apiManager.requestData("/general/app-version/\(appVersion)", token: token)
+                let data: APIResponse<AppInfoResponse> = try await apiManager.requestData("/general/app-version/\(appVersion)", token: token)
                 
-                self.appInfo = data
+                self.appInfo = data.data
                 
-                if !data.isOperational {
+                if !data.data.isOperational {
                     self.showForceUpdate = true
                 } else {
                     if self.showForceUpdate {

@@ -90,12 +90,21 @@ struct MyProfilePostsView: View {
                             case .newCheckin:
                                 if case .checkin(let feedCheckin) = item.resource {
                                     ZStack {
-                                        if let image = feedCheckin.image {
-                                            ImageLoader(image.src) { _ in
-                                                Image(systemName: "arrow.down.circle.dotted")
-                                                    .foregroundStyle(.tertiary)
+                                        if let item = feedCheckin.media?.first {
+                                            switch item.type {
+                                            case .image:
+                                                ImageLoader(item.src) { _ in
+                                                    Image(systemName: "arrow.down.circle.dotted")
+                                                        .foregroundStyle(.tertiary)
+                                                }
+                                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                            case .video:
+                                                ImageLoader(item.thumbnail) { _ in
+                                                    Image(systemName: "arrow.down.circle.dotted")
+                                                        .foregroundStyle(.tertiary)
+                                                }
+                                                .frame(maxWidth: .infinity, maxHeight: .infinity)
                                             }
-                                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                                         } else {
                                             LinearGradient(
                                                 colors: [
@@ -147,7 +156,7 @@ struct MyProfilePostsView: View {
                             case .newReview:
                                 if case .review(let feedReview) = item.resource {
                                     ZStack {
-                                        if let item = feedReview.medias.first {
+                                        if let item = feedReview.media?.first {
                                             switch item.type {
                                             case .image:
                                                 ImageLoader(item.src) { _ in
