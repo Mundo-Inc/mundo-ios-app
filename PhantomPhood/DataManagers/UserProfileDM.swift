@@ -208,6 +208,16 @@ final class UserProfileDM {
         return data
     }
     
+    func getStats() async throws -> UserStats {
+        guard let userId = auth.currentUser?.id, let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let data: APIResponse<UserStats> = try await apiManager.requestData("/users/\(userId)", method: .get, token: token)
+        
+        return data.data
+    }
+    
     // MARK: - Response Models
     
     struct UserEssentialsWithCreationDate: Identifiable, Decodable {

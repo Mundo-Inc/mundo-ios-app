@@ -22,8 +22,7 @@ struct CTAButton<Content>: View where Content: View {
                 .frame(maxWidth: .infinity)
                 .foregroundStyle(Color.black.opacity(0.85))
                 .padding(.vertical, 12)
-                .background(Color.accentColor)
-                .clipShape(.rect(cornerRadius: 10))
+                .background(Color.accentColor, in: .rect(cornerRadius: 10))
         }
         .cfont(.body)
         .fontWeight(.medium)
