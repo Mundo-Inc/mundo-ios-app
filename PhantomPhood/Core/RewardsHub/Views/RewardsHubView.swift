@@ -95,6 +95,8 @@ struct RewardsHubView: View {
                         .cfont(.title3)
                         .foregroundStyle(Color.accentColor)
                 }
+
+                Text("You can cash out your earnings once you reach a minimum of **$25**.")
             }
             .padding(.all, 20)
             .background(Color.themePrimary, in: .rect(cornerRadius: 25))

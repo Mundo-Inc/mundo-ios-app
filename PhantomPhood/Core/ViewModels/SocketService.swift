@@ -18,6 +18,7 @@ final class SocketService: ObservableObject {
     
     public let socket: SocketIOClient
     
+    private var requests: [Event: [(id: String, callback: ([Any]) -> ())?]] = [:]
     private var eventListeners: [Event: [(id: String, callback: NormalCallback)]] = [:]
     private let eventQueue = DispatchQueue(label: "\(K.ENV.BundleIdentifier).SocketService.eventQueue")
     
@@ -31,16 +32,56 @@ final class SocketService: ObservableObject {
         self.manager = SocketManager(socketURL: URL(string: K.ENV.APIBaseURL)!, config: config)
         self.socket = self.manager.defaultSocket
         
+        socket.on(clientEvent: .connect) { data, ack in
+            if !self.requests.isEmpty {
+                for (key, value) in self.requests {
+                    guard !value.isEmpty else { return }
+                    
+                    if value.contains(where: { $0?.callback == nil }) {
+                        self.socket.emit(Event.request.rawValue, ["event": key.rawValue, "type": "emit"])
+                    } else {
+                        self.socket.emitWithAck(Event.request.rawValue, ["event": key.rawValue, "type": "ack"]).timingOut(after: 10) { result in
+                            for cb in value {
+                                if let cb {
+                                    cb.callback(result)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
         setupSocketEvents()
     }
     
-    func request(for event: Event, callback: @escaping ([Any]) -> ()) -> Any {
+    func request(for event: Event, callback: @escaping ([Any]) -> (), id: String = UUID().uuidString) {
+        guard socket.status == .connected else {
+            if requests[event] == nil {
+                requests[event] = [(id, callback)]
+            } else if !requests[event]!.contains(where: { $0?.id == id }) {
+                requests[event]!.append((id, callback))
+            }
+            
+            return
+        }
+        
         socket.emitWithAck(Event.request.rawValue, ["event": event.rawValue, "type": "ack"]).timingOut(after: 10) { result in
             callback(result)
         }
     }
     
     func request(for event: Event) {
+        guard socket.status == .connected else {
+            if requests[event] == nil {
+                requests[event] = [nil]
+            } else if !requests[event]!.contains(where: { $0 == nil }) {
+                requests[event]!.append(nil)
+            }
+            
+            return
+        }
+        
         socket.emit(Event.request.rawValue, ["event": event.rawValue, "type": "emit"])
     }
     
