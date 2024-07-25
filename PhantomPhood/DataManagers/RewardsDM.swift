@@ -13,16 +13,6 @@ final class RewardsDM {
     
     // MARK: - Public methods
     
-    func getDailyRewardsInfo() async throws -> DailyRewardsInfoResponse {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
-        
-        let resData: APIResponse<DailyRewardsInfoResponse> = try await apiManager.requestData("/rewards/daily", method: .get, token: token)
-        
-        return resData.data
-    }
-    
     func claimDailyRewards() async throws {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
@@ -67,10 +57,17 @@ final class RewardsDM {
         try await apiManager.requestNoContent("/rewards/prizes/\(id)/redeem", method: .post, token: token)
     }
     
-    // MARK: - Structs
+    func cashOut() async throws -> CashOutResponse {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let data: APIResponse<CashOutResponse> = try await apiManager.requestData("/rewards/cashout", method: .post, token: token)
+        
+        return data.data
+    }
     
-    struct DailyRewardsInfoResponse: Codable {
-        let phantomCoins: PhantomCoins
-        let dailyRewards: [Int]
+    struct CashOutResponse: Decodable {
+        let message: String?
     }
 }

@@ -17,8 +17,6 @@
 		0B0253072B18F284003702AF /* HomeActivityInfoVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0253062B18F284003702AF /* HomeActivityInfoVM.swift */; };
 		0B026CD82B5AB4CD002DAD24 /* RewardsDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CD72B5AB4CD002DAD24 /* RewardsDM.swift */; };
 		0B026CDA2B5AB959002DAD24 /* Mission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CD92B5AB959002DAD24 /* Mission.swift */; };
-		0B026CDC2B5AC7B5002DAD24 /* PhantomCoins.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CDB2B5AC7B5002DAD24 /* PhantomCoins.swift */; };
-		0B026CDE2B5AC863002DAD24 /* PhantomCoinsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */; };
 		0B026CE02B5AED32002DAD24 /* RewardsHubVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B026CDF2B5AED32002DAD24 /* RewardsHubVM.swift */; };
 		0B08C80F2C0E18D3009F328E /* ToastItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B08C80E2C0E18D3009F328E /* ToastItem.swift */; };
 		0B0A38CD2B90BED50088D684 /* PlaceIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0A38CC2B90BED50088D684 /* PlaceIdentifier.swift */; };
@@ -50,6 +48,7 @@
 		0B1610DD2B63265100DCAFA5 /* FeedReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1610DC2B63265100DCAFA5 /* FeedReview.swift */; };
 		0B1610DF2B63267400DCAFA5 /* ReviewScores.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1610DE2B63267400DCAFA5 /* ReviewScores.swift */; };
 		0B17E11F2C4FEDD40025F845 /* CButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B17E11E2C4FEDD40025F845 /* CButton.swift */; };
+		0B19CFAF2C5137E5001E7607 /* SocketService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B19CFAE2C5137E5001E7607 /* SocketService.swift */; };
 		0B1E01572BDBEA9E00FEE5C3 /* TransactionsDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1E01562BDBEA9E00FEE5C3 /* TransactionsDM.swift */; };
 		0B1E015B2BDBF27200FEE5C3 /* SettingsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1E015A2BDBF27200FEE5C3 /* SettingsVM.swift */; };
 		0B1E015F2BDBF35B00FEE5C3 /* AccountDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1E015E2BDBF35B00FEE5C3 /* AccountDM.swift */; };
@@ -199,6 +198,8 @@
 		0B3E50AC2BA08B070082078B /* HomeMadeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3E50AB2BA08B070082078B /* HomeMadeView.swift */; };
 		0B4016702B045D56000F1263 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 0B40166F2B045D56000F1263 /* SwiftUIPager */; };
 		0B4016752B046AA5000F1263 /* HomeForYouView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4016742B046AA5000F1263 /* HomeForYouView.swift */; };
+		0B41A4732C52635D00E5976A /* EarningsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B41A4722C52635D00E5976A /* EarningsVM.swift */; };
+		0B41A4752C52910400E5976A /* EarningChangeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B41A4742C52910400E5976A /* EarningChangeItem.swift */; };
 		0B43C14C2BC44FC3001CEDCA /* WanderingGhost.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B43C14B2BC44FC3001CEDCA /* WanderingGhost.json */; };
 		0B448E692B832DEC00179D0E /* QuickActionsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B448E682B832DEC00179D0E /* QuickActionsVM.swift */; };
 		0B45BB502BB6FB48003BFA7C /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B45BB4F2BB6FB48003BFA7C /* ImageLoader.swift */; };
@@ -400,6 +401,7 @@
 		0BDBD3CC2ACB5FCD003B8D2D /* GoogleRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDBD3CB2ACB5FCD003B8D2D /* GoogleRatingView.swift */; };
 		0BE1BE8F2BE906480024F826 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE1BE8E2BE906480024F826 /* UserProfileView.swift */; };
 		0BE1D2612C5125E90090A285 /* UserStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE1D2602C5125E90090A285 /* UserStats.swift */; };
+		0BE1D2662C5134070090A285 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 0BE1D2652C5134070090A285 /* SocketIO */; };
 		0BE1E17A2AD498C200645AA0 /* AddReviewVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE1E1792AD498C200645AA0 /* AddReviewVM.swift */; };
 		0BE1E17E2AD5B84A00645AA0 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE1E17D2AD5B84A00645AA0 /* Location.swift */; };
 		0BE3118E2AC4842700CF9BA5 /* ReviewVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE3118D2AC4842700CF9BA5 /* ReviewVideoView.swift */; };
@@ -444,8 +446,6 @@
 		0B0253062B18F284003702AF /* HomeActivityInfoVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeActivityInfoVM.swift; sourceTree = "<group>"; };
 		0B026CD72B5AB4CD002DAD24 /* RewardsDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsDM.swift; sourceTree = "<group>"; };
 		0B026CD92B5AB959002DAD24 /* Mission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mission.swift; sourceTree = "<group>"; };
-		0B026CDB2B5AC7B5002DAD24 /* PhantomCoins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomCoins.swift; sourceTree = "<group>"; };
-		0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomCoinsVM.swift; sourceTree = "<group>"; };
 		0B026CDF2B5AED32002DAD24 /* RewardsHubVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsHubVM.swift; sourceTree = "<group>"; };
 		0B08C80E2C0E18D3009F328E /* ToastItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastItem.swift; sourceTree = "<group>"; };
 		0B0A38CC2B90BED50088D684 /* PlaceIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceIdentifier.swift; sourceTree = "<group>"; };
@@ -477,6 +477,7 @@
 		0B1610DC2B63265100DCAFA5 /* FeedReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedReview.swift; sourceTree = "<group>"; };
 		0B1610DE2B63267400DCAFA5 /* ReviewScores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewScores.swift; sourceTree = "<group>"; };
 		0B17E11E2C4FEDD40025F845 /* CButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CButton.swift; sourceTree = "<group>"; };
+		0B19CFAE2C5137E5001E7607 /* SocketService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketService.swift; sourceTree = "<group>"; };
 		0B1E01562BDBEA9E00FEE5C3 /* TransactionsDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsDM.swift; sourceTree = "<group>"; };
 		0B1E015A2BDBF27200FEE5C3 /* SettingsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVM.swift; sourceTree = "<group>"; };
 		0B1E015E2BDBF35B00FEE5C3 /* AccountDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDM.swift; sourceTree = "<group>"; };
@@ -622,6 +623,8 @@
 		0B3E50A92BA08AFF0082078B /* HomeMadeVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMadeVM.swift; sourceTree = "<group>"; };
 		0B3E50AB2BA08B070082078B /* HomeMadeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMadeView.swift; sourceTree = "<group>"; };
 		0B4016742B046AA5000F1263 /* HomeForYouView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeForYouView.swift; sourceTree = "<group>"; };
+		0B41A4722C52635D00E5976A /* EarningsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarningsVM.swift; sourceTree = "<group>"; };
+		0B41A4742C52910400E5976A /* EarningChangeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarningChangeItem.swift; sourceTree = "<group>"; };
 		0B43C14B2BC44FC3001CEDCA /* WanderingGhost.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = WanderingGhost.json; sourceTree = "<group>"; };
 		0B448E682B832DEC00179D0E /* QuickActionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsVM.swift; sourceTree = "<group>"; };
 		0B45BB4F2BB6FB48003BFA7C /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
@@ -865,6 +868,7 @@
 				0B83B79F2B09CD8200D81CE8 /* FirebasePerformance in Frameworks */,
 				0B83B7952B09CD8200D81CE8 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				0B77EA532AAF8CB800C8DF87 /* Lottie in Frameworks */,
+				0BE1D2662C5134070090A285 /* SocketIO in Frameworks */,
 				0B35B7A52B0D095A00822BA6 /* GoogleSignIn in Frameworks */,
 				0B5BD1EE2BD95FCE00DDCD28 /* StripeApplePay in Frameworks */,
 				0B83B79B2B09CD8200D81CE8 /* FirebaseInstallations in Frameworks */,
@@ -1558,7 +1562,6 @@
 				0B1610CC2B631E5500DCAFA5 /* MediaItem.swift */,
 				0B026CD92B5AB959002DAD24 /* Mission.swift */,
 				0B997B622AC70E1A00579C9C /* Notification.swift */,
-				0B026CDB2B5AC7B5002DAD24 /* PhantomCoins.swift */,
 				0BBEFAF22B7E41E800A78FF0 /* Prize.swift */,
 				0B0E6D332ABB872F00EC62EE /* Reaction.swift */,
 				0B383CF22B87852200D68678 /* RepeatItem.swift */,
@@ -1601,6 +1604,7 @@
 				0B4C6FD12C060E0200194305 /* MentionTextField */,
 				0B448E672B832DD100179D0E /* QuickActions */,
 				0BD9F9872B4DAF4A0040FCDA /* UserActivity */,
+				0B41A4742C52910400E5976A /* EarningChangeItem.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1904,11 +1908,12 @@
 				0BF5B4BB2AB37B8200DEC403 /* AppData.swift */,
 				0B2BF8812B17AA8000C10A5E /* AppGeneralVM.swift */,
 				0B77EA5A2AAFE31300C8DF87 /* Authentication.swift */,
+				0B41A4722C52635D00E5976A /* EarningsVM.swift */,
 				0B86F9362B4433CB00DD4C85 /* EmojisVM.swift */,
 				0B51A8D32ACEC58400DA38DC /* MediaItemsVM.swift */,
 				0B3126E22B6A9FE30063FC0E /* OnboardingVM.swift */,
-				0B026CDD2B5AC863002DAD24 /* PhantomCoinsVM.swift */,
 				0BC2E3172B2208880002649D /* PickerVM.swift */,
+				0B19CFAE2C5137E5001E7607 /* SocketService.swift */,
 				0BC2E3152B2207EB0002649D /* TaskManager.swift */,
 				0B37ABFB2AD7408E00E8D4BC /* ToastVM.swift */,
 				0BC2E3132B2207B40002649D /* UploadManager.swift */,
@@ -2107,6 +2112,7 @@
 				0B5070562BBC32DB00593C1B /* TwilioConversationsClient */,
 				0B5BD1ED2BD95FCE00DDCD28 /* StripeApplePay */,
 				0B5BD1EF2BD95FCE00DDCD28 /* StripePaymentSheet */,
+				0BE1D2652C5134070090A285 /* SocketIO */,
 			);
 			productName = PhantomPhood;
 			productReference = 0B77EA372AAF855500C8DF87 /* PhantomPhood.app */;
@@ -2146,6 +2152,7 @@
 				0BECB8D22B73F6A1007B51A1 /* XCRemoteSwiftPackageReference "ios-branch-sdk-spm" */,
 				0B5070552BBC32DB00593C1B /* XCRemoteSwiftPackageReference "conversations-ios" */,
 				0B5BD1EC2BD95FCE00DDCD28 /* XCRemoteSwiftPackageReference "stripe-ios-spm" */,
+				0BE1D2642C5134070090A285 /* XCRemoteSwiftPackageReference "socket" */,
 			);
 			productRefGroup = 0B77EA382AAF855500C8DF87 /* Products */;
 			projectDirPath = "";
@@ -2339,6 +2346,7 @@
 				0B64C4CD2AB4CCA1009F0D43 /* DataCard.swift in Sources */,
 				0B1610D12B631F3D00DCAFA5 /* PlaceAmenity.swift in Sources */,
 				0B76C9D32B712F120013CE3E /* AnimatedStarRating.swift in Sources */,
+				0B41A4752C52910400E5976A /* EarningChangeItem.swift in Sources */,
 				0B0253052B18CE64003702AF /* PlaceIcon.swift in Sources */,
 				0BD9F98F2B4DB5CC0040FCDA /* UserActivityReview.swift in Sources */,
 				0B2694B22B8E3CC0004FA5C8 /* PhotoCaptureView.swift in Sources */,
@@ -2375,7 +2383,6 @@
 				0B9950CE2BBEDC8D0060B6AF /* PersistentMessageDataItem+CoreDataExt.swift in Sources */,
 				0B384FA92B2B5DE500C98245 /* UserActivityVM.swift in Sources */,
 				0B2B496F2BD0332900842A9D /* ErrorHandler.swift in Sources */,
-				0B026CDC2B5AC7B5002DAD24 /* PhantomCoins.swift in Sources */,
 				0B448E692B832DEC00179D0E /* QuickActionsVM.swift in Sources */,
 				0B91A7252B57F049007F7969 /* ExploreView.swift in Sources */,
 				0BA0383F2AF24C96000A2B33 /* UserConnectionsView.swift in Sources */,
@@ -2402,7 +2409,6 @@
 				0BA43C232B516DCA00F0DDBF /* NetworkMonitor.swift in Sources */,
 				0B985AE12AC9AFC200019A06 /* PlaceDM.swift in Sources */,
 				0B0BB7792BB460DE00DE3728 /* DataStack.swift in Sources */,
-				0B026CDE2B5AC863002DAD24 /* PhantomCoinsVM.swift in Sources */,
 				0B1E79072B86AB1A00549D71 /* PlaceReviewItem.swift in Sources */,
 				0BFAC3B72B7425A700F1A036 /* UniversalLinkingManager.swift in Sources */,
 				0B026CD82B5AB4CD002DAD24 /* RewardsDM.swift in Sources */,
@@ -2530,10 +2536,12 @@
 				0B547D872B3F3D52002C6336 /* CreateNewListView.swift in Sources */,
 				0BC2E3142B2207B40002649D /* UploadManager.swift in Sources */,
 				0B29207C2B5587250026DDDE /* ExploreSearchVM.swift in Sources */,
+				0B19CFAF2C5137E5001E7607 /* SocketService.swift in Sources */,
 				0B29207E2B55876C0026DDDE /* SearchDM.swift in Sources */,
 				0B695D7E2AF15EEE00C11870 /* ConnectionsDM.swift in Sources */,
 				0B77EA502AAF8C3B00C8DF87 /* AuthWelcomeView.swift in Sources */,
 				0B1610C82B631DE000DCAFA5 /* PlaceOverview.swift in Sources */,
+				0B41A4732C52635D00E5976A /* EarningsVM.swift in Sources */,
 				0B2694AF2B8E3C64004FA5C8 /* CameraView.swift in Sources */,
 				0B384FA52B2B57B200C98245 /* UserActivityView.swift in Sources */,
 				0B226F692B3359F40036B8BE /* Achievement.swift in Sources */,
@@ -2727,7 +2735,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2767,7 +2775,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2865,6 +2873,14 @@
 				minimumVersion = 10.18.0;
 			};
 		};
+		0BE1D2642C5134070090A285 /* XCRemoteSwiftPackageReference "socket" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		0BECB8D22B73F6A1007B51A1 /* XCRemoteSwiftPackageReference "ios-branch-sdk-spm" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/BranchMetrics/ios-branch-sdk-spm";
@@ -2945,6 +2961,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0B83B7932B09CD8200D81CE8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebasePerformance;
+		};
+		0BE1D2652C5134070090A285 /* SocketIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BE1D2642C5134070090A285 /* XCRemoteSwiftPackageReference "socket" */;
+			productName = SocketIO;
 		};
 		0BECB8D32B73F6A1007B51A1 /* BranchSDK */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -11,6 +11,8 @@ struct RewardsHubView: View {
     private let cardsCornerRadious: CGFloat = 12
     
     @ObservedObject private var auth = Authentication.shared
+    @ObservedObject private var earningsVM = EarningsVM.shared
+    
     @StateObject private var vm = RewardsHubVM()
     
     var body: some View {
@@ -31,6 +33,11 @@ struct RewardsHubView: View {
             .padding(.horizontal)
             .padding(.top, 20)
         }
+        .refreshable {
+            Task {
+                await vm.getStats()
+            }
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Rectangle().foregroundStyle(Color.themeBG.gradient).ignoresSafeArea())
         .fullScreenCover(isPresented: $vm.showingHowItWorks) {
@@ -40,6 +47,9 @@ struct RewardsHubView: View {
             } else {
                 HowItWorksLayer()
             }
+        }
+        .task {
+            await vm.getStats()
         }
     }
     
@@ -105,10 +115,11 @@ struct RewardsHubView: View {
             
             HStack {
                 Text("🔥")
-                Text("8")
+                Text("\(vm.stats?.dailyStreak ?? 1)")
                 Text("days")
                     .foregroundStyle(.secondary)
             }
+            .redacted(reason: vm.stats == nil ? .placeholder : [])
             .cfont(.largeTitle)
             .fontWeight(.medium)
         }
@@ -142,15 +153,27 @@ struct RewardsHubView: View {
             }
             
             HStack {
-                Text("$52.82")
-                    .cfont(.largeTitle)
-                    .fontWeight(.bold)
+                if let earningsData = earningsVM.data, let text = earningsData.balance.asCurrency() {
+                    Text(text)
+                        .cfont(.largeTitle)
+                        .fontWeight(.bold)
+                        .redacted(reason: earningsVM.data?.balance == nil ? .placeholder : [])
+                } else {
+                    Text("$0000")
+                        .cfont(.largeTitle)
+                        .fontWeight(.bold)
+                        .redacted(reason: .placeholder)
+                }
+                
                 
                 Spacer()
                 
                 CButton(text: "CASH OUT", systemIcon: "creditcard") {
-                    
+                    Task {
+                        await vm.cashOut()
+                    }
                 }
+                .disabled(vm.loadingSections.contains(.cashOut) || vm.cashOutRequested || (earningsVM.data?.balance ?? 0) / 100 < 25)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -170,11 +193,12 @@ struct RewardsHubView: View {
             
             Spacer()
             
-            Text(152.formattedWithSuffix())
+            Text((vm.stats?.userActivityWithMediaCount ?? 1).formattedWithSuffix())
                 .cfont(.largeTitle)
                 .fontWeight(.medium)
                 .foregroundStyle(.secondary)
                 .frame(height: 50)
+                .redacted(reason: vm.stats == nil ? .placeholder : [])
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(alignment: .bottomTrailing) {
@@ -200,11 +224,12 @@ struct RewardsHubView: View {
             
             Spacer()
             
-            Text(1498.formattedWithSuffix())
+            Text((vm.stats?.gainedUniqueReactions ?? 1).formattedWithSuffix())
                 .cfont(.largeTitle)
                 .fontWeight(.medium)
                 .foregroundStyle(.secondary)
                 .frame(height: 50)
+                .redacted(reason: vm.stats == nil ? .placeholder : [])
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(alignment: .bottomTrailing) {

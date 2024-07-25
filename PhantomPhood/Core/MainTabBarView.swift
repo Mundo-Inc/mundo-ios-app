@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MainTabBarView: View {
     @ObservedObject private var auth = Authentication.shared
-    @ObservedObject private var pcVM = PhantomCoinsVM.shared
+    @ObservedObject private var earningsVM = EarningsVM.shared
     @Binding var selection: Tab
     @Binding var showActions: Bool
     
@@ -41,9 +41,9 @@ struct MainTabBarView: View {
             .offset(y: -25)
             .animation(.bouncy, value: showActions)
             
-            rewardsHubView()
+            rewardsHubView
             
-            myProfileView()
+            myProfileView
         }
         .padding(.top, 6)
         .background(.ultraThinMaterial)
@@ -69,7 +69,7 @@ extension MainTabBarView {
         }
     }
     
-    private func rewardsHubView() -> some View {
+    private var rewardsHubView: some View {
         VStack(spacing: 3) {
             Tab.rewardsHub.image
                 .resizable()
@@ -82,11 +82,19 @@ extension MainTabBarView {
                 .animation(.bouncy(duration: 0.5), value: self.selection)
                 .grayscale(self.selection == Tab.rewardsHub ? 0 : 1)
             
-            Text("\((pcVM.balance ?? 0).formattedWithSuffix()) Coins")
-                .lineLimit(1)
-                .cfont(.caption2)
-                .fontWeight(.medium)
-                .redacted(reason: pcVM.balance == nil ? .placeholder : [])
+            Group {
+                if let text = earningsVM.data?.balance.asCurrency() {
+                    Text(text)
+                        .lineLimit(1)
+                } else {
+                    Text("$0000")
+                        .lineLimit(1)
+                        .redacted(reason: .placeholder)
+                }
+            }
+            .cfont(.caption2)
+            .fontWeight(.medium)
+            
         }
         .foregroundStyle(self.selection == Tab.rewardsHub ? Color.gold : Color.secondary)
         .frame(maxWidth: .infinity)
@@ -95,7 +103,7 @@ extension MainTabBarView {
         }
     }
     
-    private func myProfileView() -> some View {
+    private var myProfileView: some View {
         VStack(spacing: 3) {
             if let currentUser = auth.currentUser {
                 ProfileImage(currentUser.profileImage, size: 30, cornerRadius: 15)

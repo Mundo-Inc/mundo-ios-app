@@ -12,10 +12,4 @@ struct UserStats: Decodable {
     let gainedUniqueReactions: Int
     let rank: Int
     let dailyStreak: Int
-    let earnings: Earnings
-    
-    struct Earnings: Decodable {
-        let total: Double
-        let balance: Double
-    }
 }

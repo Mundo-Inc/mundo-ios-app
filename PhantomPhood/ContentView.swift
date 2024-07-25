@@ -11,6 +11,8 @@ struct ContentView: View {
     @ObservedObject private var auth = Authentication.shared
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var sheetsManager = SheetsManager.shared
+    @ObservedObject private var socketService = SocketService.shared
+    @ObservedObject private var earningsVM = EarningsVM.shared
     
     @StateObject private var onboardingVM = OnboardingVM()
     
@@ -20,6 +22,40 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path: $appData.navStack) {
             RootView()
+        }
+        .overlay(alignment: .top) {
+            switch socketService.status {
+            case .notConnected, .disconnected, .connecting:
+                VStack {
+                    RoundedRectangle(cornerRadius: 4)
+                        .foregroundStyle(socketService.status == .connecting ? Color.orange.opacity(0.5) : Color.red.opacity(0.5))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 4)
+                        .blur(radius: 6)
+                    
+                    Spacer()
+                }
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+            default:
+                EmptyView()
+            }
+            
+            if !earningsVM.displayChanges.isEmpty {
+                VStack(spacing: 10) {
+                    Spacer()
+                    
+                    ForEach(earningsVM.displayChanges) { item in
+                        EarningChangeItem(item)
+                    }
+                    
+                    Spacer()
+                }
+                .animation(.linear(duration: 0.5), value: earningsVM.displayChanges.count)
+                .padding(.all, 25)
+                .allowsHitTesting(false)
+                .transition(AnyTransition.fade.animation(.easeInOut(duration: 0.3)))
+            }
         }
         .environmentObject(alertManager)
         .environmentObject(actionManager)

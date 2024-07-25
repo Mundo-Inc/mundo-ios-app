@@ -62,4 +62,10 @@ final class HapticManager {
             self.selectionGenerator.selectionChanged()
         }
     }
+    
+    public func prepare() {
+        DispatchQueue.main.async {
+            self.selectionGenerator.prepare()
+        }
+    }
 }

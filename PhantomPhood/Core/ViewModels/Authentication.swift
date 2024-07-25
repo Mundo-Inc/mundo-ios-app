@@ -132,6 +132,11 @@ final class Authentication: ObservableObject {
                 self?.userSession = user
                 if user == nil {
                     self?.currentUser = nil
+                    SocketService.shared.disconnect()
+                } else {
+                    Task {
+                        await SocketService.shared.connect()
+                    }
                 }
             }
         }

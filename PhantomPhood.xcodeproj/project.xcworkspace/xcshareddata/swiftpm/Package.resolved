@@ -1,5 +1,5 @@
 {
-  "originHash" : "fca5e543f67aaf30b7c39b7b73ada1eb450ad5b7c9f4ab39e7ea5dede3b6797c",
+  "originHash" : "dc02ca7cc0fe52d64b48b1d5787a3e386a3272cc1599b39294c336d002f91560",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -123,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BranchMetrics/ios-branch-sdk-spm",
       "state" : {
-        "revision" : "0df3ec69c4775cf326cd8c26aece361d92769e4b",
-        "version" : "3.4.4"
+        "revision" : "ffa4337da202af70fcff5719ebfce1211a9f2d3f",
+        "version" : "3.5.0"
       }
     },
     {
@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SDWebImage/SDWebImage.git",
       "state" : {
-        "revision" : "be0bcd7823ce56629948491f2eaeaa19979514f7",
-        "version" : "5.19.4"
+        "revision" : "86e9185ef41c4238a93ad8efe61ddeb701e80bbf",
+        "version" : "5.19.5"
       }
     },
     {
@@ -188,6 +188,24 @@
       "state" : {
         "revision" : "53573d6dd017e354c0e7d8f1c86b77ef1383c996",
         "version" : "2.2.7"
+      }
+    },
+    {
+      "identity" : "socket.io-client-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/socketio/socket.io-client-swift",
+      "state" : {
+        "branch" : "master",
+        "revision" : "175da8b5156f6b132436f0676cc84c2f6a766b6e"
+      }
+    },
+    {
+      "identity" : "starscream",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/daltoniam/Starscream",
+      "state" : {
+        "revision" : "ac6c0fc9da221873e01bd1a0d4818498a71eef33",
+        "version" : "4.0.6"
       }
     },
     {
@@ -204,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-protobuf.git",
       "state" : {
-        "revision" : "d57a5aecf24a25b32ec4a74be2f5d0a995a47c4b",
-        "version" : "1.27.0"
+        "revision" : "e17d61f26df0f0e06f58f6977ba05a097a720106",
+        "version" : "1.27.1"
       }
     },
     {
