@@ -14,32 +14,36 @@ struct CButton<Content: View>: View {
     private let label: (() -> Content)?
     private let text: String?
     private let image: Image?
+    private let fullWidth: Bool
     
-    init(size: ButtonSize = .md, color: ButtonColor = .primary, action: @escaping () -> Void, @ViewBuilder label: @escaping () -> Content) {
+    init(fullWidth: Bool = false, size: ButtonSize = .md, color: ButtonColor = .primary, action: @escaping () -> Void, @ViewBuilder label: @escaping () -> Content) {
         self.size = size
         self.color = color
         self.action = action
         self.label = label
         self.text = nil
         self.image = nil
+        self.fullWidth = fullWidth
     }
     
-    init(size: ButtonSize = .md, color: ButtonColor = .primary, text: String, systemIcon: String? = nil, action: @escaping () -> Void) where Content == EmptyView {
+    init(fullWidth: Bool = false, size: ButtonSize = .md, color: ButtonColor = .primary, text: String, systemIcon: String? = nil, action: @escaping () -> Void) where Content == EmptyView {
         self.size = size
         self.color = color
         self.action = action
         self.label = nil
         self.text = text
         self.image = if let systemIcon { Image(systemName: systemIcon) } else { nil }
+        self.fullWidth = fullWidth
     }
     
-    init(size: ButtonSize = .md, color: ButtonColor = .primary, text: String, image: Image? = nil, action: @escaping () -> Void) where Content == EmptyView {
+    init(fullWidth: Bool = false, size: ButtonSize = .md, color: ButtonColor = .primary, text: String, image: Image? = nil, action: @escaping () -> Void) where Content == EmptyView {
         self.size = size
         self.color = color
         self.action = action
         self.label = nil
         self.text = text
         self.image = image
+        self.fullWidth = fullWidth
     }
     
     var body: some View {
@@ -48,6 +52,7 @@ struct CButton<Content: View>: View {
                 label()
                     .foregroundStyle(color.textColor)
                     .padding(.all, size.padding)
+                    .frame(maxWidth: fullWidth ? .infinity : nil)
                     .background(color.bgColor, in: .rect(cornerRadius: size.cornerRadius))
             } else if let text {
                 HStack(spacing: 5) {
@@ -60,6 +65,7 @@ struct CButton<Content: View>: View {
                 .foregroundStyle(color.textColor)
                 .padding(.vertical, size.padding)
                 .padding(.horizontal, size.padding * 1.6)
+                .frame(maxWidth: fullWidth ? .infinity : nil)
                 .background(color.bgColor, in: .rect(cornerRadius: size.cornerRadius))
             }
         }

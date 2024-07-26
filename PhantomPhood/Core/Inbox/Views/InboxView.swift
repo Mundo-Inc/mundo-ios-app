@@ -11,7 +11,6 @@ struct InboxView: View {
     @StateObject private var vm = InboxVM()
     
     @ObservedObject private var notificationsVM = NotificationsVM.shared
-    @ObservedObject private var conversationsManager = ConversationsManager.shared
     
     @Environment(\.mainWindowSize) private var mainWindowSize
     

@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-@MainActor
 final class NewCheckinVM: ObservableObject {
     private let toastVM = ToastVM.shared
     private let taskManager = TaskManager.shared
@@ -20,12 +19,11 @@ final class NewCheckinVM: ObservableObject {
     @Published var mentions: [UserEssentials] = []
     
     @Published var presentedSheet: Sheets? = nil
-    
     @Published var savedImageId: String? = nil
     
     @Published var isAdvancedSettingsVisible: Bool = false
     
-    @Published var place: PlaceEssentials? = nil
+    @Published private(set) var place: PlaceEssentials? = nil
     @Published var event: Event? = nil
     @Published var error: String? = nil
     
@@ -73,6 +71,7 @@ final class NewCheckinVM: ObservableObject {
         }
     }
     
+    @MainActor
     func submit(mediaItems: [PickerMediaItem]) async {
         guard let place, !loadingSections.contains(.submitting) else { return }
         
@@ -111,6 +110,12 @@ final class NewCheckinVM: ObservableObject {
             presentErrorToast(error)
             self.loadingSections.remove(.submitting)
         }))
+    }
+    
+    func updatePlaceLocationInfo() {
+        Task {
+            await place?.location.updateLocationInfo()
+        }
     }
     
     enum Loadings: Hashable {

@@ -12,7 +12,7 @@ import MapKit
 struct PlaceEssentials: Identifiable, Decodable {
     let id: String
     let name: String
-    let location: PlaceLocation
+    var location: PlaceLocation
     let thumbnail: URL?
     let categories: [String]
     

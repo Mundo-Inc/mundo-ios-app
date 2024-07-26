@@ -14,7 +14,6 @@ struct HomeView: View {
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var notificationsVM = NotificationsVM.shared
     @ObservedObject private var homeActivityInfoVM = HomeActivityInfoVM.shared
-    @ObservedObject private var conversationsManager = ConversationsManager.shared
     
     var body: some View {
         TabView(selection: $appData.homeActiveTab) {
@@ -124,24 +123,14 @@ struct HomeView: View {
                 Spacer()
                 
                 NavigationLink(value: AppRoute.inbox) {
-                    let unreadDms = conversationsManager.conversations.filter({ $0.unreadMessagesCount > 0 }).count
                     let unreadNotifications = notificationsVM.unreadCount ?? 0
-                    Image(systemName: unreadDms > 0 ? "message.fill" : unreadNotifications > 0 ? "bell.fill" : "tray.fill")
-                        .animation(.spring, value: unreadDms)
+                    Image(systemName: unreadNotifications > 0 ? "bell.fill" : "tray.fill")
+                        .animation(.spring, value: unreadNotifications)
                         .font(.system(size: 20))
                         .frame(width: 40, height: 40)
                         .background(.ultraThinMaterial, in: Circle())
                         .overlay(alignment: .topTrailing) {
-                            if unreadDms > 0 {
-                                Text(unreadDms > 99 ? "99+" : "\(unreadDms)")
-                                    .cfont(.caption2)
-                                    .foregroundStyle(Color.white)
-                                    .frame(height: 16)
-                                    .frame(minWidth: 12)
-                                    .padding(.horizontal, 2)
-                                    .background(Capsule().foregroundStyle(Color.accentColor))
-                                    .transition(AnyTransition.scale.combined(with: .opacity).animation(.spring))
-                            } else if unreadNotifications > 0 {
+                            if unreadNotifications > 0 {
                                 Text(unreadNotifications > 99 ? "99+" : "\(unreadNotifications)")
                                     .cfont(.caption2)
                                     .foregroundStyle(Color.black)

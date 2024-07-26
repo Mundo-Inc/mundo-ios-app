@@ -64,12 +64,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             } catch {
                 presentErrorToast(error, silent: true)
             }
-            
-            do {
-                try ConversationsManager.shared.coreDataManager.deleteAll()
-            } catch {
-                presentErrorToast(error, silent: true)
-            }
         }
         
         return true
@@ -111,23 +105,6 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         let userInfo = notification.request.content.userInfo
         
         Messaging.messaging().appDidReceiveMessage(userInfo)
-        
-        if let contextId = userInfo["contextId"] as? String {
-            let splitted = contextId.split(separator: "/")
-            
-            if let context = splitted.first, let lastRoute = AppData.shared.navStack.last {
-                switch context {
-                case "chat":
-                    if splitted.count >= 2 {
-                        if case .conversation(sid: splitted[1], focusOnTextField: _) = lastRoute {
-                            return completionHandler([])
-                        }
-                    }
-                default:
-                    break
-                }
-            }
-        }
         
         // Change this to your preferred presentation option
         completionHandler([.banner, .badge, .sound])

@@ -20,11 +20,11 @@ struct PlaceScores: Decodable {
 
 struct PlaceLocation: Decodable {
     let geoLocation: GeoLocation
-    let address: String?
-    let city: String?
-    let state: String?
-    let country: String?
-    let zip: String?
+    var address: String?
+    var city: String?
+    var state: String?
+    var country: String?
+    var zip: String?
     
     var coordinates: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: geoLocation.lat, longitude: geoLocation.lng)
@@ -37,6 +37,28 @@ struct PlaceLocation: Decodable {
     
     enum CodingKeys: String, CodingKey {
         case geoLocation, address, city, state, country, zip
+    }
+    
+    mutating func updateLocationInfo() async {
+        let geoCoder = CLGeocoder()
+        guard let placeMarks = try? await geoCoder.reverseGeocodeLocation(CLLocation(latitude: geoLocation.lat, longitude: geoLocation.lng)),
+              let place = placeMarks.first else { return }
+        
+        if self.address == nil {
+            self.address = place.thoroughfare ?? place.subThoroughfare
+        }
+        if self.city == nil {
+            self.city = place.locality
+        }
+        if self.state == nil {
+            self.state = place.administrativeArea
+        }
+        if self.country == nil {
+            self.country = place.country
+        }
+        if self.zip == nil {
+            self.zip = place.postalCode
+        }
     }
 }
 

@@ -114,11 +114,6 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     
                 case .placesList(let listId):
                     PlacesListView(listId: listId)
-                    
-                    // Conversation
-                    
-                case .conversation(let sid, let focusOnTextField):
-                    ConversationView(sid, focusOnTextField: focusOnTextField)
                 }
             }
     }

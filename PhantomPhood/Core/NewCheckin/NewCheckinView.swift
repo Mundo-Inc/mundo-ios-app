@@ -41,36 +41,31 @@ struct NewCheckinView: View {
                             }
                             
                             VStack(spacing: 10) {
-                                if let event = vm.event {
-                                    Text(event.name)
-                                        .cfont(.body)
-                                        .fontWeight(.bold)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .lineLimit(1)
-                                        .padding(.vertical, vm.place?.location.address == nil && vm.place?.thumbnail != nil ? 8 : 0)
-                                } else {
-                                    Text(vm.place?.name ?? "Name Placeholder")
-                                        .cfont(.body)
-                                        .fontWeight(.bold)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .lineLimit(1)
-                                        .padding(.vertical, vm.place?.location.address == nil && vm.place?.thumbnail != nil ? 8 : 0)
-                                }
+                                Text(vm.event?.name ?? vm.place?.name ?? "Name Placeholder")
+                                    .cfont(.body)
+                                    .fontWeight(.bold)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .lineLimit(1)
                                 
-                                if let address = vm.place?.location.address {
-                                    Text(address)
-                                        .lineLimit(1)
-                                        .cfont(.caption)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .foregroundStyle(vm.place?.thumbnail != nil ? Color.white.opacity(0.7) : Color.secondary)
-                                } else if vm.place == nil {
-                                    Text("Address placeholder")
-                                        .lineLimit(1)
-                                        .cfont(.caption)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .foregroundStyle(vm.place?.thumbnail != nil ? Color.white.opacity(0.7) : Color.secondary)
+                                Group {
+                                    if let place = vm.place {
+                                        if let address = place.location.address {
+                                            Text(address)
+                                        } else {
+                                            Text("Address placeholder")
+                                                .redacted(reason: .placeholder)
+                                                .onAppear {
+                                                    vm.updatePlaceLocationInfo()
+                                                }
+                                        }
+                                    } else {
+                                        Text("Address placeholder")
+                                    }
                                 }
-                                
+                                .lineLimit(1)
+                                .cfont(.caption)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .foregroundStyle(vm.place?.thumbnail != nil ? Color.white.opacity(0.85) : Color.secondary)
                             }
                             .foregroundStyle(vm.place?.thumbnail != nil ? Color.white : Color.primary)
                             

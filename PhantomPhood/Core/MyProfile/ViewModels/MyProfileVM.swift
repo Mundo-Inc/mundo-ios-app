@@ -20,7 +20,6 @@ final class MyProfileVM: ActivityItemVM, Equatable, Hashable {
     // MARK: Data Managers
     
     private let userActivityDM = UserActivityDM()
-    private let conversationsDM = ConversationsDM()
     private let userProfileDM = UserProfileDM()
     private let reactionsDM = ReactionsDM()
     

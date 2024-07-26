@@ -1,13 +1,13 @@
 {
-  "originHash" : "dc02ca7cc0fe52d64b48b1d5787a3e386a3272cc1599b39294c336d002f91560",
+  "originHash" : "e0afca650e297a059ec6a1b47cc7343ef86c0cbf1e60671e022181fc38eb8d0d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/abseil-cpp-binary.git",
       "state" : {
-        "revision" : "748c7837511d0e6a507737353af268484e1745e2",
-        "version" : "1.2024011601.1"
+        "revision" : "194a6706acbd25e4ef639bcaddea16e8758a3e27",
+        "version" : "1.2024011602.0"
       }
     },
     {
@@ -26,15 +26,6 @@
       "state" : {
         "revision" : "c89ed571ae140f8eb1142735e6e23d7bb8c34cb2",
         "version" : "1.7.5"
-      }
-    },
-    {
-      "identity" : "conversations-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/twilio/conversations-ios",
-      "state" : {
-        "branch" : "latest",
-        "revision" : "92b8a814fd57fb11dabb0d9c3d2e11b90687c28a"
       }
     },
     {
@@ -233,15 +224,6 @@
       "state" : {
         "revision" : "4ddc04c801aac143090bb14cf26603a3bf9c74cb",
         "version" : "2.5.0"
-      }
-    },
-    {
-      "identity" : "twilsock-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/twilio/twilsock-ios",
-      "state" : {
-        "revision" : "0a128c07da3cdadc4fce258f4b86a700379630f0",
-        "version" : "2.1.1"
       }
     }
   ],

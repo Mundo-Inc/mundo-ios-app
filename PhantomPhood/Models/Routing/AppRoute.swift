@@ -42,9 +42,6 @@ enum AppRoute: Hashable {
     case userCheckins(userId: UserIdEnum)
     
     case placesList(listId: String)
-    
-    // Conversation
-    case conversation(sid: String, focusOnTextField: Bool)
 }
 
 enum PlaceAction: Hashable {

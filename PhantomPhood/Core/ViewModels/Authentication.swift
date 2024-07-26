@@ -300,8 +300,6 @@ final class Authentication: ObservableObject {
                 presentErrorToast(error, silent: true)
             }
             
-            ConversationsManager.shared.reset()
-            
             UserSettings.shared.logoutCleanup()
             
             await MainActor.run {

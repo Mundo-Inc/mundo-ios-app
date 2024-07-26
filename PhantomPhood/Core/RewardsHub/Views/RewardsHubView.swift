@@ -155,28 +155,29 @@ struct RewardsHubView: View {
             }
             
             HStack {
+                Text("🤑")
+                    .font(.system(size: 48))
+                
                 if let earningsData = earningsVM.data, let text = earningsData.balance.asCurrency() {
                     Text(text)
-                        .cfont(.largeTitle)
-                        .fontWeight(.bold)
                         .redacted(reason: earningsVM.data?.balance == nil ? .placeholder : [])
                 } else {
-                    Text("$0000")
-                        .cfont(.largeTitle)
-                        .fontWeight(.bold)
+                    Text("$00.00")
                         .redacted(reason: .placeholder)
                 }
                 
-                
-                Spacer()
-                
-                CButton(text: "CASH OUT", systemIcon: "creditcard") {
-                    Task {
-                        await vm.cashOut()
-                    }
-                }
-                .disabled(vm.loadingSections.contains(.cashOut) || vm.cashOutRequested || (earningsVM.data?.balance ?? 0) / 100 < 25)
+                Text("USD")
+                    .foregroundStyle(.secondary)
             }
+            .cfont(.largeTitle)
+            .fontWeight(.semibold)
+            
+            CButton(fullWidth: true, text: "CASH OUT", systemIcon: "creditcard") {
+                Task {
+                    await vm.cashOut()
+                }
+            }
+            .disabled(vm.loadingSections.contains(.cashOut) || vm.cashOutRequested || (earningsVM.data?.balance ?? 0) / 100 < 25)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
@@ -192,23 +193,19 @@ struct RewardsHubView: View {
                     .cfont(.caption)
                     .foregroundStyle(.secondary)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             
             Spacer()
             
-            Text((vm.stats?.userActivityWithMediaCount ?? 1).formattedWithSuffix())
-                .cfont(.largeTitle)
-                .fontWeight(.medium)
-                .foregroundStyle(.secondary)
-                .frame(height: 50)
-                .redacted(reason: vm.stats == nil ? .placeholder : [])
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(alignment: .bottomTrailing) {
-            Image(.Icons.camera)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 50)
-                .opacity(0.2)
+            HStack {
+                Text("📸")
+                    .font(.system(size: 48))
+                
+                Text((vm.stats?.userActivityWithMediaCount ?? 1).formattedWithSuffix())
+                    .cfont(.largeTitle)
+                    .fontWeight(.medium)
+                    .redacted(reason: vm.stats == nil ? .placeholder : [])
+            }
         }
         .padding()
         .background(Color.themePrimary, in: .rect(cornerRadius: cardsCornerRadious))
@@ -223,23 +220,19 @@ struct RewardsHubView: View {
                     .cfont(.caption)
                     .foregroundStyle(.secondary)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             
             Spacer()
             
-            Text((vm.stats?.gainedUniqueReactions ?? 1).formattedWithSuffix())
-                .cfont(.largeTitle)
-                .fontWeight(.medium)
-                .foregroundStyle(.secondary)
-                .frame(height: 50)
-                .redacted(reason: vm.stats == nil ? .placeholder : [])
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(alignment: .bottomTrailing) {
-            Image(.Icons.happyHeart)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 50)
-                .opacity(0.2)
+            HStack {
+                Text("😍")
+                    .font(.system(size: 48))
+                
+                Text((vm.stats?.gainedUniqueReactions ?? 1).formattedWithSuffix())
+                    .cfont(.largeTitle)
+                    .fontWeight(.medium)
+                    .redacted(reason: vm.stats == nil ? .placeholder : [])
+            }
         }
         .padding()
         .background(Color.themePrimary, in: .rect(cornerRadius: cardsCornerRadious))
@@ -247,8 +240,8 @@ struct RewardsHubView: View {
     
     private func LeaderboardCard() -> some View {
         NavigationLink(value: AppRoute.leaderboard) {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(alignment: .top) {
+            HStack {
+                VStack(alignment: .leading, spacing: 12) {
                     VStack(alignment: .leading) {
                         Text("Leaderboard")
                         Text("Your Ranking")
@@ -257,25 +250,20 @@ struct RewardsHubView: View {
                             .foregroundStyle(.secondary)
                     }
                     
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
+                    HStack {
+                        Text("🏆")
+                            .font(.system(size: 48))
+                        
+                        Text("#\(auth.currentUser?.rank ?? 1)")
+                            .cfont(.largeTitle)
+                            .fontWeight(.medium)
+                            .redacted(reason: auth.currentUser == nil ? .placeholder : [])
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Text("#\(auth.currentUser?.rank ?? 1)")
-                    .cfont(.largeTitle)
-                    .fontWeight(.medium)
+                Image(systemName: "chevron.right")
                     .foregroundStyle(.secondary)
-                    .frame(height: 50)
-                    .redacted(reason: auth.currentUser == nil ? .placeholder : [])
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(alignment: .bottomTrailing) {
-                Image(.Icons.medal)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 50)
-                    .opacity(0.2)
             }
             .padding()
             .background(Color.themePrimary, in: .rect(cornerRadius: cardsCornerRadious))

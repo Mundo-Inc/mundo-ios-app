@@ -18,7 +18,6 @@ class HomeVM: LoadingSections, ObservableObject {
     private let userProfileDM = UserProfileDM()
     private let leaderboardDM = LeaderboardDM()
     private let reactionsDM = ReactionsDM()
-    private let conversationsDM = ConversationsDM()
     
     @Published var forYouItems: [FeedItem] = []
     @Published var followingItems: [FeedItem] = []
@@ -44,25 +43,6 @@ class HomeVM: LoadingSections, ObservableObject {
     
     func startConversation(with userId: String) async {
         ToastVM.shared.toast(Toast(type: .info, title: "Messaging is disabled", message: "We're improving messaging system and it's temporarily disabled"))
-//        guard !loadingSections.contains(.startingConversation(with: userId)) else { return }
-//        
-//        setLoadingState(.startingConversation(with: userId), to: true)
-//        
-//        defer {
-//            setLoadingState(.startingConversation(with: userId), to: false)
-//        }
-//        
-//        do {
-//            let conversation = try await conversationsDM.createConversation(with: userId)
-//            
-//            await MainActor.run {
-//                HapticManager.shared.impact(style: .light)
-//                
-//                AppData.shared.goTo(.conversation(sid: conversation.sid, focusOnTextField: true))
-//            }
-//        } catch {
-//            presentErrorToast(error)
-//        }
     }
     
     // MARK: - Following

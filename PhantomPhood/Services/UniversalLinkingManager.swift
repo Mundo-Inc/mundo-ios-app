@@ -117,21 +117,6 @@ final class UniversalLinkingManager {
                 throw LinkingError.missingParam
             }
         }),
-        "chat": RouteScheme(pattern: ["id"], routeGetter: { components in
-            if let first = components.first {
-                return AppRoute.conversation(sid: first, focusOnTextField: false)
-            }
-            
-            throw LinkingError.missingParam
-        }, validator: { components in
-            if let first = components.first {
-                if first.isEmpty {
-                    throw LinkingError.badParam
-                }
-            } else {
-                throw LinkingError.missingParam
-            }
-        }),
         "inbox": RouteScheme(pattern: [], routeGetter: { _ in
             return AppRoute.inbox
         }),
