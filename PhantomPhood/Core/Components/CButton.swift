@@ -9,51 +9,77 @@ import SwiftUI
 
 struct CButton<Content: View>: View {
     private let size: ButtonSize
-    private let color: ButtonColor
+    private let variant: Variant
     private let action: () -> Void
     private let label: (() -> Content)?
     private let text: String?
     private let image: Image?
     private let fullWidth: Bool
+    private let cornerRadius: CGFloat?
     
-    init(fullWidth: Bool = false, size: ButtonSize = .md, color: ButtonColor = .primary, action: @escaping () -> Void, @ViewBuilder label: @escaping () -> Content) {
+    init(
+        fullWidth: Bool = false,
+        size: ButtonSize = .md,
+        variant: Variant = .primary,
+        cornerRadius: CGFloat? = nil,
+        action: @escaping () -> Void,
+        @ViewBuilder label: @escaping () -> Content
+    ) {
         self.size = size
-        self.color = color
+        self.variant = variant
         self.action = action
         self.label = label
         self.text = nil
         self.image = nil
         self.fullWidth = fullWidth
+        self.cornerRadius = cornerRadius
     }
     
-    init(fullWidth: Bool = false, size: ButtonSize = .md, color: ButtonColor = .primary, text: String, systemIcon: String? = nil, action: @escaping () -> Void) where Content == EmptyView {
+    init(
+        fullWidth: Bool = false,
+        size: ButtonSize = .md,
+        variant: Variant = .primary,
+        cornerRadius: CGFloat? = nil,
+        text: String, systemImage: String? = nil,
+        action: @escaping () -> Void
+    ) where Content == EmptyView {
         self.size = size
-        self.color = color
+        self.variant = variant
         self.action = action
         self.label = nil
         self.text = text
-        self.image = if let systemIcon { Image(systemName: systemIcon) } else { nil }
+        self.image = if let systemImage { Image(systemName: systemImage) } else { nil }
         self.fullWidth = fullWidth
+        self.cornerRadius = cornerRadius
     }
     
-    init(fullWidth: Bool = false, size: ButtonSize = .md, color: ButtonColor = .primary, text: String, image: Image? = nil, action: @escaping () -> Void) where Content == EmptyView {
+    init(
+        fullWidth: Bool = false,
+        size: ButtonSize = .md,
+        variant: Variant = .primary,
+        cornerRadius: CGFloat? = nil,
+        text: String, image: Image? = nil,
+        action: @escaping () -> Void
+    ) where Content == EmptyView {
         self.size = size
-        self.color = color
+        self.variant = variant
         self.action = action
         self.label = nil
         self.text = text
         self.image = image
         self.fullWidth = fullWidth
+        self.cornerRadius = cornerRadius
     }
     
     var body: some View {
         Button(action: self.action) {
             if let label {
                 label()
-                    .foregroundStyle(color.textColor)
-                    .padding(.all, size.padding)
+                    .foregroundStyle(variant.textColor)
+                    .padding(.horizontal, size.padding)
+                    .frame(height: size.height)
                     .frame(maxWidth: fullWidth ? .infinity : nil)
-                    .background(color.bgColor, in: .rect(cornerRadius: size.cornerRadius))
+                    .background(variant.bgColor, in: .rect(cornerRadius: cornerRadius ?? size.cornerRadius))
             } else if let text {
                 HStack(spacing: 5) {
                     if let image {
@@ -62,26 +88,29 @@ struct CButton<Content: View>: View {
                     
                     Text(text)
                 }
-                .foregroundStyle(color.textColor)
-                .padding(.vertical, size.padding)
-                .padding(.horizontal, size.padding * 1.6)
+                .foregroundStyle(variant.textColor)
+                .padding(.horizontal, size.padding)
+                .frame(height: size.height)
                 .frame(maxWidth: fullWidth ? .infinity : nil)
-                .background(color.bgColor, in: .rect(cornerRadius: size.cornerRadius))
+                .background(variant.bgColor, in: .rect(cornerRadius: cornerRadius ?? size.cornerRadius))
             }
         }
         .cfont(size.font)
         .fontWeight(size.fontWeight)
     }
     
-    enum ButtonColor {
+    enum Variant {
         case primary
         case secondary
+        case ghost
         
         var textColor: Color {
             switch self {
             case .primary:
                 Color.white
             case .secondary:
+                Color.accentColor
+            case .ghost:
                 Color.accentColor
             }
         }
@@ -92,6 +121,8 @@ struct CButton<Content: View>: View {
                 Color.accentColor
             case .secondary:
                 Color.themePrimary
+            case .ghost:
+                Color.clear
             }
         }
     }
@@ -104,11 +135,22 @@ struct CButton<Content: View>: View {
         var padding: CGFloat {
             switch self {
             case .sm:
-                6
+                10
             case .md:
-                8
+                16
             case .lg:
-                12
+                24
+            }
+        }
+        
+        var height: CGFloat {
+            switch self {
+            case .sm:
+                28
+            case .md:
+                38
+            case .lg:
+                48
             }
         }
         
@@ -130,12 +172,19 @@ struct CButton<Content: View>: View {
             case .md:
                 return .body
             case .lg:
-                return .title3
+                return .headline
             }
         }
         
         var fontWeight: Font.Weight {
-            return .regular
+            switch self {
+            case .sm:
+                return .regular
+            case .md:
+                return .regular
+            case .lg:
+                return .bold
+            }
         }
     }
 }
@@ -143,30 +192,30 @@ struct CButton<Content: View>: View {
 #Preview {
     VStack {
         CButton {
-            print(1)
+            
         } label: {
             Label("Test", systemImage: "swift")
         }
         
         HStack {
-            CButton(color: .primary, text: "Test", systemIcon: "swift") {
+            CButton(variant: .primary, text: "Test", systemImage: "swift") {
                 
             }
             
-            CButton(color: .secondary, text: "Test", systemIcon: "swift") {
+            CButton(variant: .secondary, text: "Test", systemImage: "swift") {
                 
             }
         }
         HStack {
-            CButton(size: .sm, color: .primary, text: "Test", systemIcon: "swift") {
+            CButton(size: .sm, variant: .primary, text: "Test", systemImage: "swift") {
                 
             }
             
-            CButton(color: .secondary, text: "Test", systemIcon: "swift") {
+            CButton(variant: .secondary, text: "Test", systemImage: "swift") {
                 
             }
             
-            CButton(size: .lg, color: .secondary, text: "Test", systemIcon: "swift") {
+            CButton(size: .lg, variant: .secondary, text: "Test", systemImage: "swift") {
                 
             }
         }

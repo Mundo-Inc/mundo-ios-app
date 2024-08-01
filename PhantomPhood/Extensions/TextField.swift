@@ -34,7 +34,6 @@ struct FilledTextFieldViewModifier: ViewModifier {
             .padding(.leading, paddingLeading)
             .padding(.trailing, paddingTrailing)
             .frame(height: size.rawValue)
-            .background(color)
-            .cornerRadius(8)
+            .background(color, in: .rect(cornerRadius: 8))
     }
 }

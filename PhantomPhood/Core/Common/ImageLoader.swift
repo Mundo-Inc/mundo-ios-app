@@ -9,17 +9,25 @@ import SwiftUI
 import Kingfisher
 
 struct ImageLoader<Placeholder>: View where Placeholder : View {
-    let url: URL?
-    let contentMode: SwiftUI.ContentMode
-    let placeholder: (Progress) -> Placeholder
+    private let url: URL?
+    private let contentMode: SwiftUI.ContentMode
+    private let placeholder: (Progress) -> Placeholder
     
-    init(_ url: URL?, contentMode: SwiftUI.ContentMode = .fill, @ViewBuilder placeholder: @escaping (Progress) -> Placeholder = { _ in EmptyView() }) {
+    init(
+        _ url: URL?,
+        contentMode: SwiftUI.ContentMode = .fill,
+        @ViewBuilder placeholder: @escaping (Progress) -> Placeholder = { _ in EmptyView() }
+    ) {
         self.url = url
         self.contentMode = contentMode
         self.placeholder = placeholder
     }
     
-    init(_ string: String, contentMode: SwiftUI.ContentMode = .fill, @ViewBuilder placeholder: @escaping (Progress) -> Placeholder = { _ in EmptyView() }) {
+    init(
+        _ string: String,
+        contentMode: SwiftUI.ContentMode = .fill,
+        @ViewBuilder placeholder: @escaping (Progress) -> Placeholder = { _ in EmptyView() }
+    ) {
         self.url = URL(string: string)
         self.contentMode = contentMode
         self.placeholder = placeholder
@@ -37,9 +45,19 @@ struct ImageLoader<Placeholder>: View where Placeholder : View {
 }
 
 fileprivate struct KingFisherImageLoader<Placeholder>: View where Placeholder : View {
-    let url: URL?
-    let contentMode: SwiftUI.ContentMode
-    let placeholder: (Progress) -> Placeholder
+    private let url: URL?
+    private let contentMode: SwiftUI.ContentMode
+    private let placeholder: (Progress) -> Placeholder
+    
+    init(
+        url: URL?,
+        contentMode: SwiftUI.ContentMode,
+        @ViewBuilder placeholder: @escaping (Progress) -> Placeholder
+    ) {
+        self.url = url
+        self.contentMode = contentMode
+        self.placeholder = placeholder
+    }
     
     var body: some View {
         KFImage(url)

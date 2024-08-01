@@ -304,42 +304,37 @@ struct EventView: View {
     
     @ViewBuilder
     private func CheckInButton() -> some View {
-        Group {
-            if let event = vm.event {
-                NavigationLink(value: AppRoute.checkin(.data(event.place), event)) {
-                    RoundedRectangle(cornerRadius: 10)
-                        .foregroundStyle(Color.accentColor)
-                        .aspectRatio(1, contentMode: .fit)
-                        .overlay {
-                            VStack {
-                                Image(systemName: "checkmark.seal.fill")
-                                    .font(.system(size: 26))
-                                    .frame(height: 28)
-                                
-                                Text("CHECK IN")
-                            }
+        if let event = vm.event {
+            NavigationLink(value: AppRoute.checkIn(.essentials(event.place), event)) {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(Color.accentColor)
+                    .aspectRatio(1, contentMode: .fit)
+                    .overlay {
+                        VStack {
+                            Image(systemName: "checkmark.seal.fill")
+                                .font(.system(size: 26))
+                                .frame(height: 28)
+                            
+                            Text("CHECK IN")
                         }
+                    }
+            }
+            .foregroundStyle(Color.black)
+        } else {
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundStyle(Color.themePrimary)
+                .aspectRatio(1, contentMode: .fit)
+                .overlay {
+                    VStack {
+                        Image(systemName: "checkmark.seal.fill")
+                            .font(.system(size: 26))
+                            .frame(height: 28)
+                        
+                        Text("Check In".uppercased())
+                    }
                 }
                 .foregroundStyle(Color.black)
-            } else {
-                Button {
-                } label: {
-                    RoundedRectangle(cornerRadius: 10)
-                        .foregroundStyle(Color.themePrimary)
-                        .aspectRatio(1, contentMode: .fit)
-                        .overlay {
-                            VStack {
-                                Image(systemName: "checkmark.seal.fill")
-                                    .font(.system(size: 26))
-                                    .frame(height: 28)
-                                
-                                Text("Check In".uppercased())
-                            }
-                        }
-                }
-            }
         }
-        .foregroundStyle(Color.accentColor.opacity(0.85))
     }
     
     @ViewBuilder

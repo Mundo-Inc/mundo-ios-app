@@ -53,7 +53,7 @@ final class CheckInDM {
         return data
     }
     
-    func checkin(id: String) async throws {
+    func checkin(placeId: String) async throws {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
@@ -62,7 +62,7 @@ final class CheckInDM {
             let place: String
         }
         
-        let body = try apiManager.createRequestBody(RequestBody(place: id))
+        let body = try apiManager.createRequestBody(RequestBody(place: placeId))
         try await apiManager.requestNoContent("/checkins", method: .post, body: body, token: token)
     }
     
@@ -92,23 +92,35 @@ final class CheckInDM {
         let tags: [String]?
         let caption: String?
         let media: [String]?
+        let scores: Scores?
         
-        init(place: String, privacyType: PrivacyType?, tags: [String]?, caption: String?, media: [String]?) {
+        init(place: String, privacyType: PrivacyType?, tags: [String]?, caption: String?, media: [String]?, scores: Scores?) {
             self.place = place
             self.event = nil
             self.privacyType = privacyType
             self.tags = tags
             self.caption = caption
             self.media = media
+            self.scores = scores
         }
         
-        init(event: String, privacyType: PrivacyType?, tags: [String]?, caption: String?, media: [String]?) {
+        init(event: String, privacyType: PrivacyType?, tags: [String]?, caption: String?, media: [String]?, scores: Scores?) {
             self.place = nil
             self.event = event
             self.privacyType = privacyType
             self.tags = tags
             self.caption = caption
             self.media = media
+            self.scores = scores
+        }
+        
+        struct Scores: Encodable {
+            let overall: Int?
+            let drinkQuality: Int?
+            let foodQuality: Int?
+            let service: Int?
+            let atmosphere: Int?
+            let value: Int?
         }
     }
 }

@@ -178,9 +178,9 @@ struct HomeActivityItem: View {
                 } else {
                     LinearGradient(
                         colors: [
-                            Color(hue: 347 / 360, saturation: 0.56, brightness: 0.39),
-                            Color(hue: 341 / 360, saturation: 0.66, brightness: 0.28),
-                            Color(hue: 320 / 360, saturation: 0.76, brightness: 0.3),
+                            Color(hue: 347 / 360, saturation: 0.72, brightness: 0.62),
+                            Color(hue: 341 / 360, saturation: 0.79, brightness: 0.46),
+                            Color(hue: 320 / 360, saturation: 0.86, brightness: 0.52),
                         ],
                         startPoint: .topTrailing,
                         endPoint: .bottomLeading
@@ -227,9 +227,9 @@ struct HomeActivityItem: View {
                 } else if let place = item.place {
                     LinearGradient(
                         colors: [
-                            Color(hue: 347 / 360, saturation: 0.56, brightness: 0.39),
-                            Color(hue: 341 / 360, saturation: 0.66, brightness: 0.28),
-                            Color(hue: 320 / 360, saturation: 0.76, brightness: 0.3),
+                            Color(hue: 347 / 360, saturation: 0.72, brightness: 0.62),
+                            Color(hue: 341 / 360, saturation: 0.79, brightness: 0.46),
+                            Color(hue: 320 / 360, saturation: 0.86, brightness: 0.52),
                         ],
                         startPoint: .topTrailing,
                         endPoint: .bottomLeading
@@ -263,7 +263,7 @@ struct HomeActivityItem: View {
             if case .user(_) = item.resource {
                 LinearGradient(
                     colors: [
-                        Color(hue: 202 / 360, saturation: 0.79, brightness: 0.5),
+                        Color(hue: 284 / 360, saturation: 0.78, brightness: 0.51),
                         Color(hue: 232 / 360, saturation: 0.59, brightness: 0.43),
                         Color(hue: 284 / 360, saturation: 0.78, brightness: 0.51),
                     ],
@@ -275,9 +275,9 @@ struct HomeActivityItem: View {
             if case .users(_) = item.resource {
                 LinearGradient(
                     colors: [
-                        Color(hue: 205 / 360, saturation: 0.76, brightness: 0.29),
-                        Color(hue: 178 / 360, saturation: 0.42, brightness: 0.25),
-                        Color(hue: 94 / 360, saturation: 0.33, brightness: 0.36),
+                        Color(hue: 205 / 360, saturation: 0.86, brightness: 0.51),
+                        Color(hue: 178 / 360, saturation: 0.59, brightness: 0.36),
+                        Color(hue: 94 / 360, saturation: 0.50, brightness: 0.49),
                     ],
                     startPoint: .topTrailing,
                     endPoint: .bottomLeading
@@ -297,14 +297,40 @@ struct HomeActivityItem: View {
                     MediaItem(media: media)
                 }
             }
-        default:
-            VStack {
-                Text("Unable to load\nPlease Skip this")
-                    .cfont(.headline)
-                Text("New features are coming. Please check for app update soon")
-                    .cfont(.body)
+        case .newRecommend:
+            LinearGradient(
+                colors: [
+                    Color(hue: 347 / 360, saturation: 0.72, brightness: 0.62),
+                    Color(hue: 341 / 360, saturation: 0.79, brightness: 0.46),
+                    Color(hue: 320 / 360, saturation: 0.86, brightness: 0.52),
+                ],
+                startPoint: .topTrailing,
+                endPoint: .bottomLeading
+            )
+            
+            if let place = item.place {
+                VStack(spacing: 30) {
+                    Text("Recommends")
+                        .cfont(.title)
+                        .foregroundStyle(Color.white)
+                    
+                    HStack(spacing: 5) {
+                        Text(place.name)
+                            .cfont(.headline)
+                        
+                        Image(systemName: "chevron.forward")
+                            .font(.system(size: 12))
+                            .fontWeight(.bold)
+                    }
                     .foregroundStyle(.secondary)
-                    .padding()
+                    .onTapGesture {
+                        AppData.shared.goTo(.place(id: place.id, action: nil))
+                    }
+                    
+                    Image(systemName: "hand.thumbsup")
+                        .font(.system(size: 100))
+                        .foregroundStyle(.tertiary.opacity(0.2))
+                }
             }
         }
     }
@@ -390,7 +416,7 @@ struct HomeActivityItem: View {
                 
                 HStack() {
                     switch item.activityType {
-                    case .newCheckin, .newReview:
+                    case .newCheckin, .newReview, .newRecommend:
                         if let place = item.place {
                             HStack(spacing: 5) {
                                 if let amenity = place.amenity {
@@ -425,8 +451,6 @@ struct HomeActivityItem: View {
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                             .fontWeight(.medium)
-                    default:
-                        EmptyView()
                     }
                     
                     Spacer()

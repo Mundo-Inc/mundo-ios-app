@@ -70,6 +70,24 @@ enum FeedItemResource: Decodable {
 enum PrivacyType: String, Codable {
     case PUBLIC = "PUBLIC"
     case PRIVATE = "PRIVATE"
+    
+    var title: String {
+        switch self {
+        case .PUBLIC:
+            "Public"
+        case .PRIVATE:
+            "Private"
+        }
+    }
+    
+    var systemImage: String {
+        switch self {
+        case .PUBLIC:
+            "eye"
+        case .PRIVATE:
+            "eye.slash"
+        }
+    }
 }
 
 struct ReactionsObject: Decodable {

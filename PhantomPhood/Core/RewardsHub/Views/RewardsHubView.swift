@@ -172,7 +172,7 @@ struct RewardsHubView: View {
             .cfont(.largeTitle)
             .fontWeight(.semibold)
             
-            CButton(fullWidth: true, text: "CASH OUT", systemIcon: "creditcard") {
+            CButton(fullWidth: true, text: "CASH OUT", systemImage: "creditcard") {
                 Task {
                     await vm.cashOut()
                 }

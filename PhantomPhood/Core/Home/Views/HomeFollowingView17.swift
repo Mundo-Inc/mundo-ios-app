@@ -184,14 +184,12 @@ struct HomeFollowingView17: View {
                             .padding(.top, 5)
                         
                         Spacer()
-                        
-                        Text("")
                     }
                     .containerRelativeFrame(.vertical)
                     .background(
                         LinearGradient(
                             colors: [
-                                Color(hue: 202 / 360, saturation: 0.79, brightness: 0.5),
+                                Color(hue: 284 / 360, saturation: 0.78, brightness: 0.51),
                                 Color(hue: 232 / 360, saturation: 0.59, brightness: 0.43),
                                 Color(hue: 284 / 360, saturation: 0.78, brightness: 0.51),
                             ],

@@ -9,9 +9,14 @@ import Foundation
 import SwiftUI
 import CoreData
 
-struct UserEssentials: Identifiable, Equatable, Decodable {
+struct UserEssentials: Identifiable, Equatable, Decodable, Hashable {
     static func == (lhs: UserEssentials, rhs: UserEssentials) -> Bool {
         lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine("User")
+        hasher.combine(id)
     }
     
     static let colors: [Color] = [.yellow, .cyan, .orange, .purple, .pink, .red, .green, .mint, .teal, .indigo]

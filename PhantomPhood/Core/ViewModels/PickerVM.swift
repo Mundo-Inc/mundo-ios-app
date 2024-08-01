@@ -51,23 +51,26 @@ class PickerVM: ObservableObject {
     }
     
     func removeItem(_ item: PickerMediaItem) {
-        if limitToOne {
+        guard !limitToOne else {
             selection.removeAll()
-        } else {
-            if item.source == .camera {
-                if let firstIndex = self.mediaItems.firstIndex(where: { $0.id == item.id }) {
-                    self.mediaItems.remove(at: firstIndex)
-                }
-            } else {
-                if let firstIndex = selection.firstIndex(where: { photoPickerItem in
-                    if let itemIdentifier = photoPickerItem.itemIdentifier {
-                        return itemIdentifier == item.id
-                    }
-                    return false
-                }) {
-                    self.selection.remove(at: firstIndex)
-                }
+            return
+        }
+        
+        guard item.source != .camera else {
+            if let firstIndex = self.mediaItems.firstIndex(where: { $0.id == item.id }) {
+                self.mediaItems.remove(at: firstIndex)
             }
+            
+            return
+        }
+        
+        if let firstIndex = selection.firstIndex(where: { photoPickerItem in
+            if let itemIdentifier = photoPickerItem.itemIdentifier {
+                return itemIdentifier == item.id
+            }
+            return false
+        }) {
+            self.selection.remove(at: firstIndex)
         }
     }
     

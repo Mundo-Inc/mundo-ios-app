@@ -39,6 +39,7 @@ struct PlaceLocation: Decodable {
         case geoLocation, address, city, state, country, zip
     }
     
+    @MainActor
     mutating func updateLocationInfo() async {
         let geoCoder = CLGeocoder()
         guard let placeMarks = try? await geoCoder.reverseGeocodeLocation(CLLocation(latitude: geoLocation.lat, longitude: geoLocation.lng)),

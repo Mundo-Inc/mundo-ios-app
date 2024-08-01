@@ -11,6 +11,7 @@ struct ContentView: View {
     @ObservedObject private var auth = Authentication.shared
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var sheetsManager = SheetsManager.shared
+    @ObservedObject private var taskManager = TaskManager.shared
     @ObservedObject private var socketService = SocketService.shared
     @ObservedObject private var earningsVM = EarningsVM.shared
     
@@ -19,11 +20,37 @@ struct ContentView: View {
     @StateObject private var actionManager = ActionManager()
     @StateObject private var alertManager = AlertManager()
     
+    @Environment(\.mainWindowSize) private var mainWindowSize
+    
     var body: some View {
         NavigationStack(path: $appData.navStack) {
             RootView()
         }
         .overlay(alignment: .top) {
+            if let activeTask = taskManager.activeTask {
+                VStack {
+                    ZStack(alignment: .topLeading) {
+                        RoundedRectangle(cornerRadius: 4)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 4)
+                            .foregroundStyle(Color.black.opacity(0.3))
+                            
+                        
+                        TimelineView(.animation(minimumInterval: 1)) { _ in
+                            let completionRate = activeTask.completionRate
+                            RoundedRectangle(cornerRadius: 4)
+                                .frame(width: mainWindowSize.width * completionRate, height: 4)
+                                .foregroundStyle(Color.white.opacity(0.7))
+                                .animation(.easeInOut, value: completionRate)
+                        }
+                    }
+                    
+                    Spacer()
+                }
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+            }
+            
             switch socketService.status {
             case .notConnected, .disconnected, .connecting:
                 VStack {
@@ -84,7 +111,12 @@ struct ContentView: View {
         .sheet(item: $sheetsManager.presenting) { item in
             switch item {
             case .placeSelector(let onSelect):
-                PlaceSelectorView(onSelect: onSelect)
+                if #available(iOS 16.4, *) {
+                    PlaceSelectorView(onSelect: onSelect)
+                        .presentationBackground(.thinMaterial)
+                } else {
+                    PlaceSelectorView(onSelect: onSelect)
+                }
             case .reactionSelector(let onSelect):
                 if #available(iOS 16.4, *) {
                     SelectReactionsView(onSelect: onSelect)

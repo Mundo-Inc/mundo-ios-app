@@ -14,12 +14,8 @@ enum AppRoute: Hashable {
     case userActivity(id: String)
     
     // Actions
-    case checkin(IdOrData<PlaceEssentials>, Event? = nil)
-    case checkinMapPlace(MapPlace)
-    case review(IdOrData<PlaceEssentials>)
-    case reviewMapPlace(MapPlace)
+    case checkIn(PlaceIdentifier, Event? = nil)
     case report(item: ReportDM.ReportType)
-    case homemadeContent
     
     // My Profile
     case settings
@@ -45,8 +41,7 @@ enum AppRoute: Hashable {
 }
 
 enum PlaceAction: Hashable {
-    case checkin
-    case addReview
+    case checkIn
 }
 
 struct MapPlace: Hashable {

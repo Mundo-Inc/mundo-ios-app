@@ -31,38 +31,12 @@ final class ReviewDM {
         return data
     }
     
-    func addReview(_ reviewBody: AddReviewRequestBody) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
-        
-        let body = try self.apiManager.createRequestBody(reviewBody)
-        try await self.apiManager.requestNoContent("/reviews", method: .post, body: body, token: token)
-    }
-    
     func remove(reviewId: String) async throws {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
         try await apiManager.requestNoContent("/reviews/\(reviewId)", method: .delete, token: token)
-    }
-    
-    struct AddReviewRequestBody: Encodable {
-        let place: String
-        let scores: ScoresBody
-        let content: String
-        let recommend: Bool?
-        let media: [UploadManager.MediaIds]
-        
-        struct ScoresBody: Encodable {
-            let overall: Int?
-            let drinkQuality: Int?
-            let foodQuality: Int?
-            let service: Int?
-            let atmosphere: Int?
-            let value: Int?
-        }
     }
     
     enum ReviewSort: String {

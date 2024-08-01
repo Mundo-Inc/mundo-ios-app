@@ -10,8 +10,11 @@ import SwiftUI
 struct MainTabBarView: View {
     @ObservedObject private var auth = Authentication.shared
     @ObservedObject private var earningsVM = EarningsVM.shared
-    @Binding var selection: Tab
-    @Binding var showActions: Bool
+    @Binding private var selection: Tab
+    
+    init(selection: Binding<Tab>) {
+        self._selection = selection
+    }
     
     var body: some View {
         HStack {
@@ -20,7 +23,11 @@ struct MainTabBarView: View {
             tabView(tab: .explore)
             
             Button {
-                showActions.toggle()
+                SheetsManager.shared.presenting = .placeSelector(onSelect: { mapItem in
+                    if let name = mapItem.name {
+                        AppData.shared.goTo(.checkIn(.mapPlace(.init(coordinate: mapItem.placemark.coordinate, title: name))))
+                    }
+                })
             } label: {
                 Circle()
                     .foregroundStyle(Color.clear)
@@ -28,7 +35,7 @@ struct MainTabBarView: View {
                     .overlay {
                         ZStack {
                             RoundedRectangle(cornerRadius: 12)
-                                .foregroundStyle(showActions ? Color.gray : Color.accentColor)
+                                .foregroundStyle(Color.accentColor)
                                 .rotationEffect(.degrees(45))
                             
                             Image(systemName: "plus")
@@ -37,9 +44,7 @@ struct MainTabBarView: View {
                         }
                     }
             }
-            .rotationEffect(showActions ? .degrees(135) : .zero)
             .offset(y: -25)
-            .animation(.bouncy, value: showActions)
             
             rewardsHubView
             
@@ -129,6 +134,6 @@ extension MainTabBarView {
     VStack {
         Spacer()
         
-        MainTabBarView(selection: .constant(.home), showActions: .constant(false))
+        MainTabBarView(selection: .constant(.home))
     }
 }

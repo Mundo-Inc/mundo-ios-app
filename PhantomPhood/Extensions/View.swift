@@ -58,19 +58,14 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     UserActivityView(id: id)
                     
                     // Actions
-                    
-                case .checkin(let idOrData, let event):
-                    NewCheckinView(idOrData, event: event)
-                case .checkinMapPlace(let mapPlace):
-                    NewCheckinView(mapPlace: mapPlace)
-                case .review(let idOrData):
-                    AddReviewView(idOrData)
-                case .reviewMapPlace(let mapPlace):
-                    AddReviewView(mapPlace: mapPlace)
+                case let .checkIn(placeIdentifier, event):
+                    if let event {
+                        NewCheckInView(event: event)
+                    } else {
+                        NewCheckInView(placeIdentifier)
+                    }
                 case .report(let item):
                     ReportView(item: item)
-                case .homemadeContent:
-                    HomeMadeView()
                     
                     // Place
                     

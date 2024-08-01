@@ -39,30 +39,14 @@ final class UploadManager {
     }
     
     /// Returns MediaIds that can be used to send requests with media to server
-    static func getMediaIds(from mediaItems: [TasksMedia], type: MediaType? = nil) -> [MediaIds] {
-        if let type {
-            return mediaItems.compactMap { tasksMedia in
-                switch tasksMedia {
-                case .uploaded(let response, _, _):
-                    if response.type == type.rawValue {
-                        return MediaIds(uploadId: response.id , caption: "")
-                    } else {
-                        return nil
-                    }
-                default:
-                    return nil
-                }
-            }
-        } else {
-            return mediaItems.compactMap { tasksMedia in
-                switch tasksMedia {
-                case .uploaded(let response, _, _):
-                    return MediaIds(uploadId: response.id , caption: "")
-                default:
-                    return nil
-                }
-            }
+    static func getMediaIds(from mediaItems: [AsyncTaskMedia]?) -> [MediaIds]? {
+        guard let mediaItems else {
+            return nil
         }
+        
+        let items = mediaItems.compactMap { $0.mediaId }
+        
+        return items.isEmpty ? nil : items
     }
     
     static private func uploadFormDataBody(file: UploadFile, usecase: UploadUseCase) -> (formData: Data, boundary: String) {
@@ -70,7 +54,6 @@ final class UploadManager {
         /// line break
         let lb = "\r\n"
         var body = Data()
-        
         
         body.append("\(lb)--\(boundary + lb)".data(using: .utf8)!)
         body.append("Content-Disposition: form-data; name=\"usecase\"\(lb + lb + usecase.rawValue)".data(using: .utf8)!)
@@ -109,8 +92,7 @@ final class UploadManager {
     
     /// Usecase of the uploading media (This is required to send request to server)
     enum UploadUseCase: String {
-        case placeReview = "placeReview"
-        case checkin = "checkin"
+        case checkIn = "checkin"
     }
     
     private enum UploadFileType: String {

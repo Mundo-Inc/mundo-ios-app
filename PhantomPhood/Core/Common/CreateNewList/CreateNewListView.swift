@@ -242,7 +242,12 @@ struct CreateNewListView: View {
         .sheet(item: $vm.presentingSheet) { item in
             switch item {
             case .userSelector(let onSelect):
-                UserSelectorView(onSelect: onSelect)
+                if #available(iOS 16.4, *) {
+                    UserSelectorView(onSelect: onSelect)
+                        .presentationBackground(.thinMaterial)
+                } else {
+                    UserSelectorView(onSelect: onSelect)
+                }
             case .reactionSelector(let onSelect):
                 if #available(iOS 16.4, *) {
                     SelectReactionsView(onSelect: onSelect)

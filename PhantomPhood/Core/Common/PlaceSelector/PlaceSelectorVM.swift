@@ -16,7 +16,7 @@ final class PlaceSelectorVM: ObservableObject {
 
     var mapRegion: MKCoordinateRegion? = nil
     
-    @Published var results: [MKMapItem] = []
+    @Published private(set) var results: [MKMapItem] = []
     
     @Published var text = ""
     

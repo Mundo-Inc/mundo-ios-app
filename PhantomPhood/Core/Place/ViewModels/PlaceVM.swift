@@ -79,11 +79,8 @@ final class PlaceVM: ObservableObject {
     
     private func handleNavigationAction(place: PlaceDetail, action: PlaceAction?) {
         switch action {
-        case .checkin:
-            AppData.shared.goTo(AppRoute.checkin(.data(PlaceEssentials(placeDetail: place))))
-        case .addReview:
-            self.activeTab = .reviews
-            AppData.shared.goTo(AppRoute.review(.data(PlaceEssentials(placeDetail: place))))
+        case .checkIn:
+            AppData.shared.goTo(AppRoute.checkIn(.detail(place)))
         case nil:
             break
         }

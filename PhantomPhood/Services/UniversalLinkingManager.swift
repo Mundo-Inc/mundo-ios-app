@@ -21,9 +21,7 @@ final class UniversalLinkingManager {
                     id = components[index]
                 case 1:
                     if components[index].lowercased() == "checkin" {
-                        action = .checkin
-                    } else if components[index].lowercased() == "addreview" {
-                        action = .addReview
+                        action = .checkIn
                     }
                 default:
                     break

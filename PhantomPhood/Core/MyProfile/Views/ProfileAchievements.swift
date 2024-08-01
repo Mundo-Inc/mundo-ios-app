@@ -72,7 +72,7 @@ struct ProfileAchievements: View {
                 VStack {
                     ZStack {
                         Text("#\(user.rank)")
-                            .font(.custom(K.Fonts.satoshi, fixedSize: 48))
+                            .font(.custom(K.Fonts.nunito, fixedSize: 48))
                             .minimumScaleFactor(0.5)
                             .fontWeight(.semibold)
                             .foregroundStyle(Color(hue: 329 / 360, saturation: 0.49, brightness: 1).opacity(0.8))

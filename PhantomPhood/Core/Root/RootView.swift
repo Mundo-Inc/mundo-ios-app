@@ -11,7 +11,6 @@ struct RootView: View {
     @StateObject private var inviteFriendsVM = InviteFriendsVM()
     
     @ObservedObject private var appData = AppData.shared
-    @State private var showActions: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -30,7 +29,7 @@ struct RootView: View {
             }
             .environmentObject(inviteFriendsVM)
             
-            MainTabBarView(selection: appData.tabViewSelectionHandler, showActions: $showActions)
+            MainTabBarView(selection: appData.tabViewSelectionHandler)
                 .ignoresSafeArea(edges: .bottom)
         }
         .ignoresSafeArea(.keyboard)
@@ -53,9 +52,6 @@ struct RootView: View {
         }
         .toolbarBackground(appData.activeTab == .myProfile ? Color.themePrimary : Color.clear, for: .navigationBar)
         .toolbarBackground(appData.activeTab == .myProfile ? .visible : .hidden, for: .navigationBar)
-        .sheet(isPresented: $showActions) {
-            QuickActionsView()
-        }
         .handleNavigationDestination()
     }
 }

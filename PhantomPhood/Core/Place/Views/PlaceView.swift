@@ -325,20 +325,17 @@ struct PlaceView: View {
                     
                     // MARK: - Action Buttons
                     HStack {
-                        MapButton
-                        
                         Spacer()
+                        
+                        MapButton
                         
                         CheckInButton()
                         
-                        Spacer()
-                        
-                        ReviewButton()
-                        
-                        Spacer()
-                        
                         SaveButton
+                        
+                        Spacer()
                     }
+                    .frame(height: 80)
                     .symbolRenderingMode(.hierarchical)
                     .cfont(.subheadline)
                     .fontWeight(.bold)
@@ -593,76 +590,34 @@ struct PlaceView: View {
         .padding()
     }
     
+    private var checkInBtn: some View {
+        RoundedRectangle(cornerRadius: 10)
+            .foregroundStyle(Color.accentColor)
+            .aspectRatio(1, contentMode: .fit)
+            .overlay {
+                VStack {
+                    Image(systemName: "checkmark.seal.fill")
+                        .font(.system(size: 26))
+                        .frame(height: 28)
+                    
+                    Text("CHECK IN")
+                }
+            }
+    }
+    
     @ViewBuilder
     private func CheckInButton() -> some View {
         if let place = vm.place {
-            NavigationLink(value: AppRoute.checkin(.data(.init(placeDetail: place)))) {
-                RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(Color.accentColor)
-                    .aspectRatio(1, contentMode: .fit)
-                    .overlay {
-                        VStack {
-                            Image(systemName: "checkmark.seal.fill")
-                                .font(.system(size: 26))
-                                .frame(height: 28)
-                            
-                            Text("CHECK IN")
-                        }
-                    }
+            NavigationLink(value: AppRoute.checkIn(.detail(place))) {
+                checkInBtn
             }
             .foregroundStyle(Color.black)
         } else {
-            RoundedRectangle(cornerRadius: 10)
-                .foregroundStyle(Color.accentColor)
-                .aspectRatio(1, contentMode: .fit)
-                .overlay {
-                    VStack {
-                        Image(systemName: "checkmark.seal.fill")
-                            .font(.system(size: 26))
-                            .frame(height: 28)
-                        
-                        Text("CHECK IN")
-                    }
-                }
+            checkInBtn
                 .foregroundStyle(Color.black)
         }
     }
-    
-    @ViewBuilder
-    private func ReviewButton() -> some View {
-        if let place = vm.place {
-            NavigationLink(value: AppRoute.review(.data(.init(placeDetail: place)))) {
-                RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(Color.accentColor)
-                    .aspectRatio(1, contentMode: .fit)
-                    .overlay {
-                        VStack {
-                            Image(systemName: "square.and.pencil")
-                                .font(.system(size: 26))
-                                .frame(height: 28)
-                            
-                            Text("REVIEW")
-                        }
-                    }
-            }
-            .foregroundStyle(Color.black)
-        } else {
-            RoundedRectangle(cornerRadius: 10)
-                .foregroundStyle(Color.accentColor)
-                .aspectRatio(1, contentMode: .fit)
-                .overlay {
-                    VStack {
-                        Image(systemName: "square.and.pencil")
-                            .font(.system(size: 26))
-                            .frame(height: 28)
-                        
-                        Text("REVIEW")
-                    }
-                }
-                .foregroundStyle(Color.black)
-        }
-    }
-    
+        
     @ViewBuilder
     private func CallButton() -> some View {
         if let phone = (vm.place?.phone ?? vm.place?.thirdParty.yelp?.phone), let url = URL(string: "tel://\(phone)") {
@@ -721,7 +676,7 @@ struct PlaceView: View {
                             .font(.system(size: 26))
                             .frame(height: 28)
                         
-                        Text((vm.includedLists?.isEmpty ?? true) ? "Save" : "Saved")
+                        Text((vm.includedLists?.isEmpty ?? true) ? "SAVE" : "SAVED")
                     }
                 }
         }

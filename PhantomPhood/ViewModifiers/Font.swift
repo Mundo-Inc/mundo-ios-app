@@ -12,6 +12,6 @@ struct CustomFontViewModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .font(.custom(K.Fonts.satoshi, size: textStyle.size, relativeTo: textStyle))
+            .font(.custom(K.Fonts.nunito, size: textStyle.size, relativeTo: textStyle))
     }
 }

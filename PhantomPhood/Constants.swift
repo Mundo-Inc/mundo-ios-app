@@ -71,7 +71,7 @@ struct K {
     }
     
     struct Fonts {
-        static let satoshi = "Satoshi Variable"
+        static let nunito = "Nunito"
     }
     
     private init() {}
