@@ -9,52 +9,17 @@ import SwiftUI
 import PhotosUI
 
 struct EditProfileView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
     
     @ObservedObject private var auth = Authentication.shared
+    
     @StateObject private var vm = EditProfileVM()
+    @StateObject private var pickerVM = PickerVM(limitToOne: true)
     
     var body: some View {
-        ZStack {
-            Color.themeBG.ignoresSafeArea()
-            
-            VStack {
-                HStack {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.backward")
-                    }
-                    .disabled(vm.isSubmitting)
-                    
-                    Spacer()
-                    
-                    Button {
-                        Task {
-                            do {
-                                try await vm.save()
-                                dismiss()
-                            } catch {
-                                presentErrorToast(error)
-                            }
-                        }
-                    } label: {
-                        HStack(spacing: 5) {
-                            if vm.isSubmitting {
-                                ProgressView()
-                            }
-                            Text("Save")
-                                .cfont(.headline)
-                        }
-                        .animation(.none, value: vm.isSubmitting)
-                    }
-                    .disabled(vm.isSubmitting)
-                    
-                }.padding(.horizontal)
-                
-                Divider()
-                
-                ScrollView {
+        NavigationStack {
+            ScrollView {
+                VStack {
                     Text("Profile Picture")
                         .cfont(.headline)
                         .foregroundStyle(.secondary)
@@ -62,125 +27,87 @@ struct EditProfileView: View {
                     
                     HStack {
                         Spacer()
+                        
                         VStack {
-                            switch vm.imageState {
-                            case .success(let (image, _, _)):
-                                self.profileImage(image: image)
-                                    .overlay {
-                                        ZStack {
-                                            Color.black.opacity(0.5)
-                                                .clipShape(RoundedRectangle(cornerRadius: 15))
-                                            PhotosPicker(
-                                                selection: $vm.imageSelection,
-                                                matching: .images,
-                                                photoLibrary: .shared()
-                                            ) {
+                            Button {
+                                vm.presentedSheet = .photosPicker
+                            } label: {
+                                if let mediaItem = pickerVM.mediaItems.first {
+                                    switch mediaItem.state {
+                                    case .empty, .loading(_):
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .frame(width: 90, height: 90)
+                                            .foregroundStyle(.tertiary)
+                                            .overlay {
+                                                ProgressView()
+                                            }
+                                    case .failure(_):
+                                        self.profileImage(image: Image(systemName: "exclamationmark.triangle.fill"))
+                                            .overlay {
+                                                Color.black.opacity(0.5)
+                                                
                                                 if !vm.isDeleting {
                                                     Image(systemName: "square.and.pencil")
                                                         .font(.system(size: 36))
                                                         .symbolRenderingMode(.hierarchical)
                                                         .foregroundStyle(.white)
                                                 }
-                                                
                                             }
+                                    case .loaded(let mediaData):
+                                        if case .image(let uiImage) = mediaData {
+                                            self.profileImage(image: Image(uiImage: uiImage))
+                                                .overlay {
+                                                    RoundedRectangle(cornerRadius: 15)
+                                                        .foregroundStyle(Color.black.opacity(0.5))
+                                                    
+                                                    if !vm.isDeleting {
+                                                        Image(systemName: "square.and.pencil")
+                                                            .font(.system(size: 36))
+                                                            .symbolRenderingMode(.hierarchical)
+                                                            .foregroundStyle(.white)
+                                                    }
+                                                }
                                         }
                                     }
-                            case .empty:
-                                if let user = auth.currentUser {
-                                    Group {
-                                        if let profileImage = user.profileImage {
-                                            ImageLoader(profileImage, contentMode: .fill) { progress in
-                                                Rectangle()
-                                                    .foregroundStyle(.clear)
-                                                    .frame(maxWidth: 150)
-                                                    .overlay {
-                                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                            .progressViewStyle(LinearProgressViewStyle())
-                                                            .padding(.horizontal)
-                                                    }
-                                            }
-                                        } else {
-                                            RoundedRectangle(cornerRadius: 15)
-                                                .foregroundStyle(.tertiary)
-                                        }
+                                } else if let profileImage = auth.currentUser?.profileImage {
+                                    ImageLoader(profileImage, contentMode: .fill) { _ in
+                                        Image(systemName: "arrow.down.circle.dotted")
+                                            .foregroundStyle(.secondary)
                                     }
                                     .frame(width: 90, height: 90)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 15)
-                                            .foregroundStyle(Color.themePrimary)
-                                    )
+                                    .background(Color.themePrimary, in: .rect(cornerRadius: 15))
                                     .overlay {
-                                        ZStack {
-                                            Color.black.opacity(0.5)
-                                                .clipShape(RoundedRectangle(cornerRadius: 15))
-                                            PhotosPicker(
-                                                selection: $vm.imageSelection,
-                                                matching: .images,
-                                                photoLibrary: .shared()
-                                            ) {
-                                                if !vm.isDeleting {
-                                                    Image(systemName: "square.and.pencil")
-                                                        .font(.system(size: 36))
-                                                        .symbolRenderingMode(.hierarchical)
-                                                        .foregroundStyle(.white)
-                                                }
-                                                
-                                            }
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .foregroundStyle(Color.black.opacity(0.5))
+                                        
+                                        if !vm.isDeleting {
+                                            Image(systemName: "square.and.pencil")
+                                                .font(.system(size: 36))
+                                                .symbolRenderingMode(.hierarchical)
+                                                .foregroundStyle(.white)
                                         }
+                                        
                                     }
                                     .clipShape(.rect(cornerRadius: 15))
                                 } else {
-                                    Color.themePrimary
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .foregroundStyle(Color.themePrimary)
                                         .frame(width: 90, height: 90)
-                                        .background(Color.themePrimary)
-                                        .clipShape(RoundedRectangle(cornerRadius: 15))
                                         .overlay {
-                                            PhotosPicker(
-                                                selection: $vm.imageSelection,
-                                                matching: .images,
-                                                photoLibrary: .shared()
-                                            ) {
-                                                Image(systemName: "photo.badge.plus.fill")
-                                                    .font(.system(size: 36))
-                                                    .symbolRenderingMode(.hierarchical)
-                                                    .foregroundStyle(.primary)
-                                            }.foregroundStyle(.primary)
+                                            Image(systemName: "photo.badge.plus.fill")
+                                                .font(.system(size: 36))
+                                                .symbolRenderingMode(.hierarchical)
+                                                .foregroundStyle(.primary)
                                         }
                                 }
-                            case .loading:
-                                RoundedRectangle(cornerRadius: 15)
-                                    .frame(width: 90, height: 90)
-                                    .foregroundStyle(.tertiary)
-                                    .overlay {
-                                        ProgressView()
-                                    }
-                            case .failure:
-                                self.profileImage(image: Image(systemName: "exclamationmark.triangle.fill"))
-                                    .overlay {
-                                        ZStack {
-                                            Color.black.opacity(0.5)
-                                            PhotosPicker(
-                                                selection: $vm.imageSelection,
-                                                matching: .images,
-                                                photoLibrary: .shared()
-                                            ) {
-                                                if !vm.isDeleting {
-                                                    Image(systemName: "square.and.pencil")
-                                                        .font(.system(size: 36))
-                                                        .symbolRenderingMode(.hierarchical)
-                                                        .foregroundStyle(.white)
-                                                }
-                                                
-                                            }
-                                        }
-                                    }
                             }
+                            .foregroundStyle(.primary)
                             
                             if let user = auth.currentUser {
                                 Text(user.profileImage == nil ? "Add" : vm.isDeleting ? "Removing" : "Edit")
                                     .cfont(.caption)
                                     .foregroundStyle(Color.accentColor)
-
+                                
                             }
                         }
                         .scaleEffect(vm.isDeleting ? 0.8 : 1)
@@ -191,7 +118,7 @@ struct EditProfileView: View {
                             
                             Button {
                                 withAnimation {
-                                    vm.toggleImageDeletion()
+                                    vm.isDeleting.toggle()
                                 }
                             } label: {
                                 VStack {
@@ -227,72 +154,128 @@ struct EditProfileView: View {
                             Text("Name")
                                 .cfont(.headline)
                                 .foregroundStyle(.secondary)
-                                .frame(width: 90, alignment: .leading)
+                                .frame(width: 90, height: 42, alignment: .leading)
                             
-                            VStack {
-                                TextField("Name", text: $vm.name)
-                                Divider()
-                            }
+                            TextField("Name", text: $vm.name)
+                                .frame(height: 42)
+                                .background(alignment: .bottom) {
+                                    Rectangle()
+                                        .frame(height: 1)
+                                        .frame(maxWidth: .infinity)
+                                        .foregroundStyle(.tertiary)
+                                }
                         }
                         HStack(alignment: .top) {
                             Text("Username")
                                 .cfont(.headline)
                                 .foregroundStyle(.secondary)
-                                .frame(width: 90, alignment: .leading)
+                                .frame(width: 90, height: 42, alignment: .leading)
                             
-                            VStack {
-                                TextField("Username", text: $vm.username)
-                                    .keyboardType(.default)
-                                    .autocorrectionDisabled(true)
-                                    .overlay(
-                                        HStack {
-                                            if vm.username.count > 0 {
-                                                if vm.isLoading {
-                                                    ProgressView()
-                                                } else {
-                                                    vm.isUsernameValid ?
-                                                    Image(systemName: "checkmark.circle.fill").foregroundColor(.green) :
-                                                    Image(systemName: "xmark.circle.fill").foregroundColor(.red)
-                                                }
+                            TextField("Username", text: $vm.username)
+                                .keyboardType(.default)
+                                .autocorrectionDisabled(true)
+                                .frame(height: 42)
+                                .background(alignment: .bottom) {
+                                    Rectangle()
+                                        .frame(height: 1)
+                                        .frame(maxWidth: .infinity)
+                                        .foregroundStyle(.tertiary)
+                                }
+                                .overlay(alignment: .trailing) {
+                                    HStack {
+                                        if !vm.username.isEmpty {
+                                            if vm.loadingSections.contains(.checkingUsername) {
+                                                ProgressView()
+                                            } else if vm.isUsernameValid {
+                                                Image(systemName: "checkmark.circle.fill").foregroundColor(.green)
+                                            } else {
+                                                Image(systemName: "xmark.circle.fill").foregroundColor(.red)
                                             }
-                                        },
-                                        alignment: .trailing
-                                    )
-                                Divider()
-                            }
+                                        }
+                                    }
+                                    .allowsTightening(false)
+                                }
                         }
+                        
                         HStack(alignment: .top) {
                             Text("Bio")
                                 .cfont(.headline)
                                 .foregroundStyle(.secondary)
-                                .frame(width: 90, alignment: .leading)
+                                .frame(width: 90, height: 42, alignment: .leading)
                             
-                            VStack(spacing: 0) {
-                                TextField("Bio", text: $vm.bio, axis: .vertical)
-                                    .lineLimit(4...6)
-                                    .overlay {
-                                        if vm.bio.count > 0 {
-                                            Text("\(vm.bio.count)/250")
-                                                .foregroundStyle(vm.bio.count > 250 ? .red : Color.secondary)
-                                                .padding(.bottom, 8)
-                                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-                                        }
+                            TextField("Bio", text: $vm.bio, axis: .vertical)
+                                .lineLimit(5...8)
+                                .overlay {
+                                    if vm.bio.count > 0 {
+                                        Text("\(vm.bio.count)/250")
+                                            .cfont(.caption)
+                                            .foregroundStyle(vm.bio.count > 250 ? Color.red : Color.secondary)
+                                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                                     }
-                                    
-                                Divider()
-                            }
+                                }
+                                .padding(.vertical, 10)
+                                .background(alignment: .bottom) {
+                                    Rectangle()
+                                        .frame(height: 1)
+                                        .frame(maxWidth: .infinity)
+                                        .foregroundStyle(.tertiary)
+                                }
                         }
                     }
                 }
                 .padding(.horizontal)
-                .onAppear {
-                    if let user = auth.currentUser {
-                        vm.name = user.name
-                        vm.username = user.username
-                        vm.bio = user.bio ?? ""
+            }
+            .onAppear {
+                guard let user = auth.currentUser else { return }
+                
+                vm.name = user.name
+                vm.username = user.username
+                vm.bio = user.bio ?? ""
+            }
+            .photosPicker(
+                isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: EditProfileVM.Sheets.photosPicker),
+                selection: $pickerVM.selection,
+                maxSelectionCount: 1,
+                matching: .any(of: [.images]),
+                photoLibrary: .shared()
+            )
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Edit Profile Info")
+            .toolbar {
+                let isSubmitting = vm.loadingSections.contains(.submittingChanges)
+                
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Cancel")
+                            .cfont(.headline)
                     }
+                    .disabled(isSubmitting)
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        Task {
+                            await vm.save(image: pickerVM.mediaItems.first)
+                            dismiss()
+                        }
+                    } label: {
+                        ZStack {
+                            Text("Save")
+                                .cfont(.headline)
+                                .opacity(isSubmitting ? 0 : 1)
+                            
+                            if isSubmitting {
+                                ProgressView()
+                            }
+                        }
+                        .animation(.none, value: isSubmitting)
+                    }
+                    .disabled(isSubmitting)
                 }
             }
+            .background(Color.themeBG.ignoresSafeArea())
         }
     }
 }
@@ -303,12 +286,8 @@ extension EditProfileView {
             .resizable()
             .aspectRatio(contentMode: .fill)
             .frame(width: 90, height: 90)
-            .background(
-                RoundedRectangle(cornerRadius: 15)
-                    .foregroundStyle(Color.themePrimary)
-            )
+            .background(Color.themePrimary, in: .rect(cornerRadius: 15))
             .clipShape(.rect(cornerRadius: 15))
-            
     }
 }
 

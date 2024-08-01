@@ -218,7 +218,23 @@ final class UserProfileDM {
         return data.data
     }
     
+    func editProfileInfo(changes: EditUserBody) async throws {
+        guard let token = await auth.getToken(), let uid = auth.currentUser?.id else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let reqBody = try apiManager.createRequestBody(changes)
+        try await apiManager.requestNoContent("/users/\(uid)", method: .put, body: reqBody, token: token)
+    }
+    
     // MARK: - Response Models
+    
+    struct EditUserBody: Encodable {
+        let name: String?
+        let username: String?
+        let bio: String?
+        let removeProfileImage: Bool?
+    }
     
     struct UserEssentialsWithCreationDate: Identifiable, Decodable {
         let id: String

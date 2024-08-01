@@ -73,7 +73,13 @@ struct NewCheckInView: View {
             .ignoresSafeArea(.keyboard)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .photosPicker(isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: NewCheckInVM.Sheets.photosPicker), selection: $pickerVM.selection, maxSelectionCount: 8, matching: .any(of: [.images, .videos]), photoLibrary: .shared())
+        .photosPicker(
+            isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: NewCheckInVM.Sheets.photosPicker),
+            selection: $pickerVM.selection,
+            maxSelectionCount: 8,
+            matching: .any(of: [.images, .videos]),
+            photoLibrary: .shared()
+        )
         .fullScreenCover(isPresented: Binding(optionalValue: $vm.presentedSheet, ofCase: NewCheckInVM.Sheets.camera)) {
             CameraView(onCompletion: pickerVM.cameraHandler)
         }

@@ -32,16 +32,15 @@ struct ContentView: View {
                     ZStack(alignment: .topLeading) {
                         RoundedRectangle(cornerRadius: 4)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 4)
+                            .frame(height: 5)
                             .foregroundStyle(Color.black.opacity(0.3))
-                            
                         
-                        TimelineView(.animation(minimumInterval: 1)) { _ in
+                        TimelineView(.animation(minimumInterval: 0.8)) { _ in
                             let completionRate = activeTask.completionRate
-                            RoundedRectangle(cornerRadius: 4)
-                                .frame(width: mainWindowSize.width * completionRate, height: 4)
+                            RoundedRectangle(cornerRadius: 3)
+                                .frame(width: mainWindowSize.width * completionRate, height: 5)
                                 .foregroundStyle(Color.white.opacity(0.7))
-                                .animation(.easeInOut, value: completionRate)
+                                .animation(.easeInOut(duration: 0.5), value: completionRate)
                         }
                     }
                     
@@ -145,11 +144,29 @@ struct ContentView: View {
         })) {
             OnboardingView(vm: onboardingVM)
         }
-//        .task {
-//            guard auth.currentUser != nil else { return }
-//            
-//            ContactsService.shared.tryToSyncContacts()
-//        }
+        .onChange(of: socketService.status) { status in
+            switch status {
+            case .notConnected, .disconnected:
+                Task {
+                    await SocketService.shared.connect()
+                }
+            default:
+                break
+            }
+        }
+        .task {
+            switch socketService.status {
+            case .notConnected, .disconnected:
+                await SocketService.shared.connect()
+            default:
+                break
+            }
+        }
+        //        .task {
+        //            guard auth.currentUser != nil else { return }
+        //
+        //            ContactsService.shared.tryToSyncContacts()
+        //        }
     }
 }
 

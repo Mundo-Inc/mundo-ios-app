@@ -7,23 +7,24 @@
 
 import Foundation
 import SwiftUI
-import PhotosUI
 import Combine
 
-@MainActor
-class EditProfileVM: ObservableObject {
-    private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
+class EditProfileVM: ObservableObject, LoadingSections {
+    private let checksDM = ChecksDM()
+    private let userProfileDM = UserProfileDM()
+    
+    @Published var loadingSections = Set<LoadingSection>()
     
     @Published var name: String = ""
     @Published var username: String = ""
     @Published var bio: String = ""
     
-    @Published var isLoading = false
-    @Published var isSubmitting = false
+    @Published private(set) var isUsernameValid: Bool = false
+    @Published private(set) var usernameError: String? = nil
     
-    @Published var isUsernameValid: Bool = false
-    @Published var usernameError: String? = nil
+    @Published var isDeleting: Bool = false
+    
+    @Published var presentedSheet: Sheets? = nil
     
     private var cancellable = Set<AnyCancellable>()
     
@@ -31,198 +32,99 @@ class EditProfileVM: ObservableObject {
         $username
             .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
             .sink { [weak self] value in
-                if value.count < 5 {
-                    if value.count > 0 {
-                        self?.usernameError = "Username must be at least 5 characters"
-                    }
-                    self?.isUsernameValid = false
-                    return
-                }
-                self?.isLoading = true
+                guard let self else { return }
                 Task {
-                    do {
-                        let token = await self?.auth.getToken()
-                        try await self?.apiManager.requestNoContent("/users/username-availability/\(value)", token: token)
-                        self?.isUsernameValid = true
-                    } catch {
-                        self?.isUsernameValid = false
-                        self?.usernameError = getErrorMessage(error)
-                    }
-                    self?.isLoading = false
+                    await self.handleUsernameChange(value)
                 }
             }
             .store(in: &cancellable)
     }
-    
-    // MARK: - Profile Image
-    
-    @Published var isDeleting: Bool = false
-    @Published private(set) var imageState: ImageState = .empty
-    @Published var imageSelection: PhotosPickerItem? = nil {
-        didSet {
-            if let imageSelection {
-                let progress = loadTransferable(from: imageSelection)
-                imageState = .loading(progress)
-            } else {
-                imageState = .empty
-            }
-        }
-    }
-    
-    enum ImageState {
-        case empty
-        case loading(Progress)
-        case success((Image, UIImage, Data))
-        case failure(Error)
-    }
-    
-    enum TransferError: Error {
-        case importFailed
-    }
-    
-    private enum UploadUseCase: String {
-        case profileImage = "profileImage"
-    }
-    private enum UploadFileType: String {
-        case jpeg = "image/jpeg"
-        case png = "image/png"
-    }
-    private struct UploadFile {
-        let name: String
-        let data: Data
-        let type: UploadFileType
-    }
-    
-    struct ProfileImage: Transferable {
-        let image: Image
-        let uiImage: UIImage
-        let data: Data
-        
-        static var transferRepresentation: some TransferRepresentation {
-            DataRepresentation(importedContentType: .image) { data in
-#if canImport(AppKit)
-                guard let nsImage = NSImage(data: data) else {
-                    throw TransferError.importFailed
-                }
-                let image = Image(nsImage: nsImage)
-                return ProfileImage(image: image, nsImage: nsImage, data: data)
-#elseif canImport(UIKit)
-                guard let uiImage = UIImage(data: data) else {
-                    throw TransferError.importFailed
-                }
-                let image = Image(uiImage: uiImage)
-                return ProfileImage(image: image, uiImage: uiImage, data: data)
-                
-#else
-                throw TransferError.importFailed
-#endif
-            }
-        }
-    }
-    
+            
     // MARK: - Public Methods
-    
-    func resetState() {
-        imageState = .empty
-        imageSelection = nil
-    }
-    
-    func toggleImageDeletion() {
-        if isDeleting {
-            isDeleting = false
-        } else {
-            resetState()
-            isDeleting = true
-        }
-    }
-    
-    func save() async throws {
-        guard let token = await auth.getToken(), let uid = auth.currentUser?.id else { return }
         
-        isSubmitting = true
+    @MainActor
+    func save(image: PickerMediaItem?) async {
+        guard !loadingSections.contains(.submittingChanges) else { return }
         
-        switch imageState {
-        case .success:
-            try? await self.uploadImage()
-        default:
-            break
+        setLoadingState(.submittingChanges, to: true)
+        
+        defer {
+            setLoadingState(.submittingChanges, to: false)
         }
         
-        struct EditUserBody: Encodable {
-            let name: String?
-            let username: String?
-            let bio: String?
-            let removeProfileImage: Bool?
+        do {
+            if let image, case .loaded(let mediaData) = image.state, case .image(let uiImage) = mediaData {
+                do {
+                    try await resizeAndUploadImage(uiImage: uiImage)
+                } catch {
+                    presentErrorToast(error)
+                }
+            }
+            
+            try await userProfileDM.editProfileInfo(changes: .init(name: self.name, username: self.username, bio: self.bio, removeProfileImage: self.isDeleting ? self.isDeleting : nil))
+        } catch {
+            presentErrorToast(error)
         }
         
-        let reqBody = try apiManager.createRequestBody(EditUserBody(name: self.name, username: self.username, bio: self.bio, removeProfileImage: self.isDeleting ? self.isDeleting : nil))
-        let _: APIResponse<CurrentUserCoreData> = try await apiManager.requestData("/users/\(uid)", method: .put, body: reqBody, token: token)
-        
-        isSubmitting = false
-        await auth.updateUserInfo()
+        await Authentication.shared.updateUserInfo()
     }
     
     // MARK: - Private Methods
     
-    private func uploadFormDataBody(file: UploadFile, useCase: UploadUseCase) -> (formData: Data, boundary: String) {
-        let boundary = "Boundary-\(UUID().uuidString)"
-        let linebreak = "\r\n"
-        var body = Data()
+    private func resizeAndUploadImage(uiImage: UIImage) async throws {
+        guard let resizedIamge = ImageHelper.resize(uiImage: uiImage, targetSize: CGSize(width: 512, height: 512)),
+              var compressedData = ImageHelper.compress(uiImage: resizedIamge, compressionQuality: 0.9)
+        else {
+            throw CancellationError()
+        }
         
-        body.append("\(linebreak)--\(boundary + linebreak)".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"usecase\"\(linebreak + linebreak + useCase.rawValue)".data(using: .utf8)!)
+        if compressedData.count / 1024 > 250 {
+            if let data = ImageHelper.compress(uiImage: resizedIamge, compressionQuality: compressedData.count / 1024 > 500 ? 0.6 : 0.75) {
+                compressedData = data
+            }
+        }
         
-        body.append("\(linebreak)--\(boundary + linebreak)".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"\(file.type.rawValue.components(separatedBy: "/").first!)\"; filename=\"\(file.name)\"\(linebreak)".data(using: .utf8)!)
-        body.append("Content-Type: \(file.type.rawValue)\(linebreak + linebreak)".data(using: .utf8)!)
-        body.append(file.data)
-        
-        body.append("\(linebreak)--\(boundary)--\(linebreak)".data(using: .utf8)!)
-        
-        return (body, boundary)
+        let _ = try await UploadManager.shared.uploadMedia(media: .image(compressedData), usecase: .profileImage)
     }
     
-    private func uploadImage() async throws {
-        switch imageState {
-        case .success(let (_, uiImage, _)):
-            guard
-                let token = await auth.getToken(),
-                let resizedIamge = ImageHelper.resize(uiImage: uiImage, targetSize: CGSize(width: 512, height: 512)),
-                var compressedData = ImageHelper.compress(uiImage: resizedIamge, compressionQuality: 0.9)
-            else {
-                throw CancellationError()
-            }
-            
-            if compressedData.count / 1024 > 250 {
-                if let data = ImageHelper.compress(uiImage: resizedIamge, compressionQuality: compressedData.count / 1024 > 500 ? 0.6 : 0.75) {
-                    compressedData = data
+    private func handleUsernameChange(_ value: String) async {
+        guard value.count >= 5 else {
+            await MainActor.run {
+                if value.count > 0 {
+                    self.usernameError = "Username must be at least 5 characters"
                 }
+                self.isUsernameValid = false
             }
             
-            let (formData, boundary) = uploadFormDataBody(file: UploadFile(name: "profileImage.jpg", data: compressedData, type: .jpeg), useCase: .profileImage)
-            try await apiManager.requestNoContent("/upload", method: .post, body: formData, token: token, contentType: .multipartFormData(boundary: boundary))
-            
-        default:
-            break
+            return
+        }
+        
+        setLoadingState(.checkingUsername, to: true)
+        
+        defer {
+            setLoadingState(.checkingUsername, to: false)
+        }
+        
+        do {
+            try await checksDM.checkUsername(value)
+            await MainActor.run {
+                self.isUsernameValid = true
+                self.usernameError = nil
+            }
+        } catch {
+            await MainActor.run {
+                self.isUsernameValid = false
+                self.usernameError = getErrorMessage(error)
+            }
         }
     }
     
-    private func loadTransferable(from imageSelection: PhotosPickerItem) -> Progress {
-        return imageSelection.loadTransferable(type: ProfileImage.self) { result in
-            DispatchQueue.main.async {
-                guard imageSelection == self.imageSelection else {
-                    print("Failed to get the selected item.")
-                    return
-                }
-                switch result {
-                case .success(let profileImage?):
-                    self.imageState = .success((profileImage.image, profileImage.uiImage, profileImage.data))
-                case .success(nil):
-                    self.imageState = .empty
-                case .failure(let error):
-                    self.imageState = .failure(error)
-                }
-            }
-        }
+    enum LoadingSection: Hashable {
+        case submittingChanges
+        case checkingUsername
+    }
+    
+    enum Sheets {
+        case photosPicker
     }
 }

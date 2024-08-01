@@ -16,17 +16,20 @@ struct CButton<Content: View>: View {
     private let image: Image?
     private let fullWidth: Bool
     private let cornerRadius: CGFloat?
+    private let isLoading: Bool
     
     init(
         fullWidth: Bool = false,
         size: ButtonSize = .md,
         variant: Variant = .primary,
         cornerRadius: CGFloat? = nil,
+        isLoading: Bool = false,
         action: @escaping () -> Void,
         @ViewBuilder label: @escaping () -> Content
     ) {
         self.size = size
         self.variant = variant
+        self.isLoading = isLoading
         self.action = action
         self.label = label
         self.text = nil
@@ -41,10 +44,12 @@ struct CButton<Content: View>: View {
         variant: Variant = .primary,
         cornerRadius: CGFloat? = nil,
         text: String, systemImage: String? = nil,
+        isLoading: Bool = false,
         action: @escaping () -> Void
     ) where Content == EmptyView {
         self.size = size
         self.variant = variant
+        self.isLoading = isLoading
         self.action = action
         self.label = nil
         self.text = text
@@ -59,10 +64,12 @@ struct CButton<Content: View>: View {
         variant: Variant = .primary,
         cornerRadius: CGFloat? = nil,
         text: String, image: Image? = nil,
+        isLoading: Bool = false,
         action: @escaping () -> Void
     ) where Content == EmptyView {
         self.size = size
         self.variant = variant
+        self.isLoading = isLoading
         self.action = action
         self.label = nil
         self.text = text
@@ -72,14 +79,20 @@ struct CButton<Content: View>: View {
     }
     
     var body: some View {
-        Button(action: self.action) {
+        Button(action: action) {
             if let label {
                 label()
+                    .opacity(isLoading ? 0 : 1)
                     .foregroundStyle(variant.textColor)
                     .padding(.horizontal, size.padding)
                     .frame(height: size.height)
                     .frame(maxWidth: fullWidth ? .infinity : nil)
                     .background(variant.bgColor, in: .rect(cornerRadius: cornerRadius ?? size.cornerRadius))
+                    .overlay {
+                        if isLoading {
+                            ProgressView()
+                        }
+                    }
             } else if let text {
                 HStack(spacing: 5) {
                     if let image {
@@ -88,11 +101,17 @@ struct CButton<Content: View>: View {
                     
                     Text(text)
                 }
+                .opacity(isLoading ? 0 : 1)
                 .foregroundStyle(variant.textColor)
                 .padding(.horizontal, size.padding)
                 .frame(height: size.height)
                 .frame(maxWidth: fullWidth ? .infinity : nil)
                 .background(variant.bgColor, in: .rect(cornerRadius: cornerRadius ?? size.cornerRadius))
+                .overlay {
+                    if isLoading {
+                        ProgressView()
+                    }
+                }
             }
         }
         .cfont(size.font)
@@ -211,11 +230,32 @@ struct CButton<Content: View>: View {
                 
             }
             
+            CButton(variant: .ghost, text: "Test", systemImage: "swift") {
+                
+            }
+            
             CButton(variant: .secondary, text: "Test", systemImage: "swift") {
                 
             }
             
             CButton(size: .lg, variant: .secondary, text: "Test", systemImage: "swift") {
+                
+            }
+        }
+        HStack {
+            CButton(size: .sm, variant: .primary, text: "Test", systemImage: "swift", isLoading: true) {
+                
+            }
+            
+            CButton(variant: .ghost, text: "Test", systemImage: "swift", isLoading: true) {
+                
+            }
+            
+            CButton(variant: .secondary, text: "Test", systemImage: "swift", isLoading: true) {
+                
+            }
+            
+            CButton(size: .lg, variant: .secondary, text: "Test", systemImage: "swift", isLoading: true) {
                 
             }
         }

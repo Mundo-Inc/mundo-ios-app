@@ -93,6 +93,7 @@ final class UploadManager {
     /// Usecase of the uploading media (This is required to send request to server)
     enum UploadUseCase: String {
         case checkIn = "checkin"
+        case profileImage = "profileImage"
     }
     
     private enum UploadFileType: String {

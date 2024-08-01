@@ -53,12 +53,16 @@ final class TaskManager: ObservableObject {
         }
     }
     
-    func updateTaskMediaStatus(taskId: String, media: AsyncTaskMedia) async {
+    func updateAsyncTaskMedia(of taskId: String, with media: AsyncTaskMedia) async {
         await MainActor.run {
             self.tasks = self.tasks.map {
                 if $0.id == taskId {
+                    guard let mediaItems = $0.mediaItems else {
+                        return $0
+                    }
+                    
                     var updatedTask = $0
-                    updatedTask.mediaItems = $0.mediaItems.map({ tasksMedia in
+                    updatedTask.mediaItems = mediaItems.map({ tasksMedia in
                         if tasksMedia.id == media.id {
                             return media
                         } else {
@@ -74,12 +78,16 @@ final class TaskManager: ObservableObject {
         }
     }
     
-    func removeTaskMedia(task: AsyncTask, mediaId: String) async {
+    func removeAsyncTaskMedia(of taskId: String, mediaId: String) async {
         await MainActor.run {
             self.tasks = self.tasks.map {
-                if $0.id == task.id {
-                    var updatedTask = task
-                    updatedTask.mediaItems = $0.mediaItems.filter({ tasksMedia in
+                if $0.id == taskId {
+                    guard let mediaItems = $0.mediaItems else {
+                        return $0
+                    }
+                    
+                    var updatedTask = $0
+                    updatedTask.mediaItems = mediaItems.filter({ tasksMedia in
                         return tasksMedia.id != mediaId
                     })
                     
@@ -91,23 +99,12 @@ final class TaskManager: ObservableObject {
         }
     }
     
-    /// Checks to see if all the media items are at their **.uploaded** state
-    func isTaskReadyToSubmit(task: AsyncTask) -> Bool {
-        return task.mediaItems.allSatisfy { media in
-            if case .uploaded(_, _, _) = media {
-                return true
-            } else {
-                return false
-            }
-        }
-    }
-    
     /// Calls the task's `onReadyToSubmit` function if `isTaskReadyToSubmit` is true
     /// - Calls the `startNextTask` at the end
     func submitIfReady(taskId: String) async throws {
         if let task = self.tasks.first(where: { $0.id == taskId }) {
-            if isTaskReadyToSubmit(task: task) {
-                try await task.onReadyToSubmit(task.mediaItems.isEmpty ? nil : task.mediaItems)
+            if task.isTaskReadyToSubmit {
+                try await task.onReadyToSubmit(task.mediaItems)
                 await MainActor.run {
                     self.tasks.removeAll { $0.id == taskId }
                 }
@@ -154,12 +151,12 @@ final class TaskManager: ObservableObject {
                 }
             }
             
-            guard !nextTask.mediaItems.isEmpty, let mediaUsecase = nextTask.mediaUsecase else {
+            guard let mediaItems = nextTask.mediaItems, !mediaItems.isEmpty, let mediaUsecase = nextTask.mediaUsecase else {
                 try await submitIfReady(taskId: nextTask.id)
                 return
             }
             
-            for media in nextTask.mediaItems {
+            for media in mediaItems {
                 if case .uncompressed(let mediaItemData) = media {
                     switch mediaItemData.state {
                     case .image(let uiImage):
@@ -173,9 +170,9 @@ final class TaskManager: ObservableObject {
                                 uiImage: resizedImage,
                                 compressionQuality: TaskManager.imageCompressionRate
                             ) {
-                            await updateTaskMediaStatus(
-                                taskId: nextTask.id,
-                                media: .compressed(
+                            await updateAsyncTaskMedia(
+                                of: nextTask.id,
+                                with: .compressed(
                                     compressedMediaData: .image(data),
                                     mediaItemData: mediaItemData
                                 )
@@ -183,9 +180,9 @@ final class TaskManager: ObservableObject {
                             
                             Task {
                                 // Start upload
-                                await updateTaskMediaStatus(
-                                    taskId: nextTask.id,
-                                    media: .uploading(
+                                await updateAsyncTaskMedia(
+                                    of: nextTask.id,
+                                    with: .uploading(
                                         compressedMediaData: .image(data),
                                         mediaItemData: mediaItemData
                                     )
@@ -195,22 +192,22 @@ final class TaskManager: ObservableObject {
                                     compressedMediaData: .image(data),
                                     usecase: mediaUsecase
                                 ) {
-                                    await updateTaskMediaStatus(
-                                        taskId: nextTask.id,
-                                        media: .uploaded(
+                                    await updateAsyncTaskMedia(
+                                        of: nextTask.id,
+                                        with: .uploaded(
                                             tasksMediaAPIResponseData: uploadResponse,
                                             compressedMediaData: .image(data),
                                             mediaItemData: mediaItemData
                                         )
                                     )
                                 } else {
-                                    await removeTaskMedia(task: nextTask, mediaId: mediaItemData.id)
+                                    await removeAsyncTaskMedia(of: nextTask.id, mediaId: mediaItemData.id)
                                 }
                                 
                                 try await submitIfReady(taskId: nextTask.id)
                             }
                         } else {
-                            await removeTaskMedia(task: nextTask, mediaId: mediaItemData.id)
+                            await removeAsyncTaskMedia(of: nextTask.id, mediaId: mediaItemData.id)
                             
                             // Submit if ready
                             try await submitIfReady(taskId: nextTask.id)
@@ -227,9 +224,9 @@ final class TaskManager: ObservableObject {
                                 outputFileName: outputFileName
                             )
                             
-                            await updateTaskMediaStatus(
-                                taskId: nextTask.id,
-                                media: .compressed(
+                            await updateAsyncTaskMedia(
+                                of: nextTask.id,
+                                with: .compressed(
                                     compressedMediaData: .movie(outputURL),
                                     mediaItemData: mediaItemData
                                 )
@@ -237,9 +234,9 @@ final class TaskManager: ObservableObject {
                             
                             Task {
                                 // Start upload
-                                await updateTaskMediaStatus(
-                                    taskId: nextTask.id,
-                                    media: .uploading(
+                                await updateAsyncTaskMedia(
+                                    of: nextTask.id,
+                                    with: .uploading(
                                         compressedMediaData: .movie(outputURL),
                                         mediaItemData: mediaItemData
                                     )
@@ -249,16 +246,16 @@ final class TaskManager: ObservableObject {
                                     compressedMediaData: .movie(outputURL),
                                     usecase: mediaUsecase
                                 ) {
-                                    await updateTaskMediaStatus(
-                                        taskId: nextTask.id,
-                                        media: .uploaded(
+                                    await updateAsyncTaskMedia(
+                                        of: nextTask.id,
+                                        with: .uploaded(
                                             tasksMediaAPIResponseData: uploadResponse,
                                             compressedMediaData: .movie(outputURL),
                                             mediaItemData: mediaItemData
                                         )
                                     )
                                 } else {
-                                    await removeTaskMedia(task: nextTask, mediaId: mediaItemData.id)
+                                    await removeAsyncTaskMedia(of: nextTask.id, mediaId: mediaItemData.id)
                                 }
                                 
                                 // Submit if ready
@@ -266,7 +263,7 @@ final class TaskManager: ObservableObject {
                             }
                         } catch {
                             presentErrorToast(error, debug: "Error Compressing video", silent: true)
-                            await removeTaskMedia(task: nextTask, mediaId: mediaItemData.id)
+                            await removeAsyncTaskMedia(of: nextTask.id, mediaId: mediaItemData.id)
                             
                             // Submit if ready
                             try await submitIfReady(taskId: nextTask.id)
@@ -325,15 +322,28 @@ struct AsyncTask {
     let id = UUID().uuidString
     var status: TaskManager.TaskStatus = .pending
     let title: String
-    var mediaItems: [AsyncTaskMedia]
+    var mediaItems: [AsyncTaskMedia]?
     let mediaUsecase: UploadManager.UploadUseCase?
     var onReadyToSubmit: ([AsyncTaskMedia]?) async throws -> Void
     var onError: ((Error) -> Void)?
     
     init(
         title: String,
+        onReadyToSubmit: @escaping ([AsyncTaskMedia]?) async throws -> Void,
+        onError: ((Error) -> Void)? = nil
+    ) {
+        self.title = title
+        self.onReadyToSubmit = onReadyToSubmit
+        self.onError = onError
+        
+        self.mediaItems = nil
+        self.mediaUsecase = nil
+    }
+    
+    init(
+        title: String,
         mediaItems: [AsyncTaskMedia],
-        mediaUsecase: UploadManager.UploadUseCase?,
+        mediaUsecase: UploadManager.UploadUseCase,
         onReadyToSubmit: @escaping ([AsyncTaskMedia]?) async throws -> Void,
         onError: ((Error) -> Void)? = nil
     ) {
@@ -347,7 +357,7 @@ struct AsyncTask {
     init(
         title: String,
         pickerMediaItems: [PickerMediaItem],
-        mediaUsecase: UploadManager.UploadUseCase?,
+        mediaUsecase: UploadManager.UploadUseCase,
         onReadyToSubmit: @escaping ([AsyncTaskMedia]?) async throws -> Void,
         onError: ((Error) -> Void)? = nil
     ) {
@@ -369,11 +379,9 @@ struct AsyncTask {
         case .pending:
             return 0
         case let .processing(startedAt):
-            let naturalProgress = 1 - exp(startedAt.timeIntervalSince(.now) / 3)
+            let naturalProgress = 1 - exp(startedAt.timeIntervalSince(.now) / 5)
             
-            let mediaCompletion: Double = if mediaItems.isEmpty {
-                naturalProgress
-            } else {
+            let mediaCompletion: Double = if let mediaItems, !mediaItems.isEmpty {
                 Double(mediaItems.filter {
                     if case .uploaded = $0 {
                         return true
@@ -381,9 +389,27 @@ struct AsyncTask {
                         return false
                     }
                 }.count) / Double(mediaItems.count)
+            } else {
+                naturalProgress
             }
             
             return (naturalProgress * 0.4) + (mediaCompletion * 0.6)
+        }
+    }
+    
+    
+    /// Checks to see if all the media items are at their **.uploaded** state
+    var isTaskReadyToSubmit: Bool {
+        guard let mediaItems = self.mediaItems else {
+            return true
+        }
+        
+        return mediaItems.allSatisfy { media in
+            if case .uploaded(_, _, _) = media {
+                return true
+            } else {
+                return false
+            }
         }
     }
 }

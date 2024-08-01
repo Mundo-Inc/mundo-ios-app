@@ -47,6 +47,9 @@ struct NotificationsView: View {
             .background(Color.themePrimary, in: RoundedRectangle(cornerRadius: 10))
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden, edges: .top)
+            .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
+            .alignmentGuide(.listRowSeparatorTrailing) { $0[.trailing] }
+            .alignmentGuide(.listRowSeparatorTrailing) { $0[.trailing] }
             .onTapGesture {
                 AppData.shared.goTo(AppRoute.requests)
             }
@@ -55,6 +58,8 @@ struct NotificationsView: View {
                 let cluster = notificationsVM.notificationsCluster[index]
                 
                 NotificationCluster(cluster)
+                    .alignmentGuide(.listRowSeparatorTrailing) { $0[.trailing] }
+                    .alignmentGuide(.listRowSeparatorTrailing) { $0[.trailing] }
                     .task {
                         await notificationsVM.loadMore(index: index)
                     }
@@ -110,14 +115,13 @@ struct NotificationsView: View {
                     }
                 }
                 .foregroundStyle(.primary)
-                .listRowBackground(data.readAt == nil ? Color.accentColor.opacity(0.15) : Color.themePrimary)
+                .listRowBackground(data.readAt == nil ? Color.accentColor.opacity(0.15) : Color.themePrimary.opacity(0.3))
             }
         } header: {
             Group {
                 if let user = cluster.user {
                     HStack {
                         ProfileImage(user.profileImage, size: 44, cornerRadius: 10)
-                            .frame(width: 44, height: 44)
                             .onTapGesture {
                                 AppData.shared.goToUser(user.id)
                             }
@@ -139,6 +143,11 @@ struct NotificationsView: View {
                     RoundedRectangle(cornerRadius: 10)
                         .frame(width: 44, height: 44)
                         .foregroundStyle(Color.themePrimary)
+                        .overlay {
+                            Image(systemName: "bell")
+                                .foregroundStyle(.secondary)
+                        }
+                    
                 }
             }
             .padding(.bottom, 5)
