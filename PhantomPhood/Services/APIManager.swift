@@ -137,6 +137,13 @@ extension APIManager {
         do {
             return try APIManager.decoder.decode(T.self, from: data)
         } catch {
+#if DEBUG
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("Response Data: \(jsonString)")
+            } else {
+                print("Failed to convert data to a String.")
+            }
+#endif
             throw APIError.decodingError(error)
         }
     }
