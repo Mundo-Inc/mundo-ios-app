@@ -23,7 +23,7 @@ struct AppRouter: View {
         ZStack {
             if auth.userSession != nil {
                 if let user = auth.currentUser {
-                    if user.acceptedEula != nil {
+                    if user.acceptedEula != nil && user.phone?.verified == true {
                         ContentView()
                     } else {
                         CompleteTheUserInfoView()

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct CButton<Content: View>: View {
+    @Environment(\.isEnabled) private var isEnabled
+    
     private let size: ButtonSize
     private let variant: Variant
     private let action: () -> Void
@@ -43,7 +45,7 @@ struct CButton<Content: View>: View {
         size: ButtonSize = .md,
         variant: Variant = .primary,
         cornerRadius: CGFloat? = nil,
-        text: String, systemImage: String? = nil,
+        text: String,
         isLoading: Bool = false,
         action: @escaping () -> Void
     ) where Content == EmptyView {
@@ -53,7 +55,7 @@ struct CButton<Content: View>: View {
         self.action = action
         self.label = nil
         self.text = text
-        self.image = if let systemImage { Image(systemName: systemImage) } else { nil }
+        self.image = nil
         self.fullWidth = fullWidth
         self.cornerRadius = cornerRadius
     }
@@ -63,7 +65,29 @@ struct CButton<Content: View>: View {
         size: ButtonSize = .md,
         variant: Variant = .primary,
         cornerRadius: CGFloat? = nil,
-        text: String, image: Image? = nil,
+        text: String,
+        systemImage: String,
+        isLoading: Bool = false,
+        action: @escaping () -> Void
+    ) where Content == EmptyView {
+        self.size = size
+        self.variant = variant
+        self.isLoading = isLoading
+        self.action = action
+        self.label = nil
+        self.text = text
+        self.image = Image(systemName: systemImage)
+        self.fullWidth = fullWidth
+        self.cornerRadius = cornerRadius
+    }
+    
+    init(
+        fullWidth: Bool = false,
+        size: ButtonSize = .md,
+        variant: Variant = .primary,
+        cornerRadius: CGFloat? = nil,
+        text: String,
+        image: Image,
         isLoading: Bool = false,
         action: @escaping () -> Void
     ) where Content == EmptyView {
@@ -80,37 +104,28 @@ struct CButton<Content: View>: View {
     
     var body: some View {
         Button(action: action) {
-            if let label {
-                label()
-                    .opacity(isLoading ? 0 : 1)
-                    .foregroundStyle(variant.textColor)
-                    .padding(.horizontal, size.padding)
-                    .frame(height: size.height)
-                    .frame(maxWidth: fullWidth ? .infinity : nil)
-                    .background(variant.bgColor, in: .rect(cornerRadius: cornerRadius ?? size.cornerRadius))
-                    .overlay {
-                        if isLoading {
-                            ProgressView()
+            Group {
+                if let label {
+                    label()
+                } else if let text {
+                    HStack(spacing: 5) {
+                        if let image {
+                            image
                         }
+                        
+                        Text(text)
                     }
-            } else if let text {
-                HStack(spacing: 5) {
-                    if let image {
-                        image
-                    }
-                    
-                    Text(text)
                 }
-                .opacity(isLoading ? 0 : 1)
-                .foregroundStyle(variant.textColor)
-                .padding(.horizontal, size.padding)
-                .frame(height: size.height)
-                .frame(maxWidth: fullWidth ? .infinity : nil)
-                .background(variant.bgColor, in: .rect(cornerRadius: cornerRadius ?? size.cornerRadius))
-                .overlay {
-                    if isLoading {
-                        ProgressView()
-                    }
+            }
+            .opacity(isLoading ? 0 : 1)
+            .foregroundStyle(variant.textColor.opacity(isEnabled ? 1 : 0.4))
+            .padding(.horizontal, size.padding)
+            .frame(height: size.height)
+            .frame(maxWidth: fullWidth ? .infinity : nil)
+            .background(isEnabled ? variant.bgColor : Color.themeBorder.opacity(0.5), in: .rect(cornerRadius: cornerRadius ?? size.cornerRadius))
+            .overlay {
+                if isLoading {
+                    ProgressView()
                 }
             }
         }

@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 private struct MainWindowSizeKey: EnvironmentKey {
-    static let defaultValue: CGSize = .zero
+    static let defaultValue: CGSize = UIScreen.main.bounds.size
 }
 
 private struct MainWindowSafeAreaInsets: EnvironmentKey {

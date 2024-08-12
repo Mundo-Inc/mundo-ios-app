@@ -218,6 +218,24 @@ final class UserProfileDM {
         return data.data
     }
     
+    func sendPhoneVerificationCode(phone: String) async throws {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let reqBody = try apiManager.createRequestBody(GetPhoneVerificationBody(phone: phone))
+        try await apiManager.requestNoContent("/auth/verify-phone", method: .post, body: reqBody, token: token)
+    }
+    
+    func verifyPhoneNumber(phone: String, code: String) async throws {
+        guard let token = await auth.getToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let reqBody = try apiManager.createRequestBody(VerifyPhoneBody(phone: phone, code: code))
+        try await apiManager.requestNoContent("/auth/verify-phone", method: .patch, body: reqBody, token: token)
+    }
+    
     func editProfileInfo(changes: EditUserBody) async throws {
         guard let token = await auth.getToken(), let uid = auth.currentUser?.id else {
             throw URLError(.userAuthenticationRequired)
@@ -234,6 +252,37 @@ final class UserProfileDM {
         let username: String?
         let bio: String?
         let removeProfileImage: Bool?
+        
+        let eula: Bool?
+        let referrer: String?
+        
+        init(name: String? = nil, username: String? = nil, bio: String? = nil, removeProfileImage: Bool? = nil) {
+            self.name = name
+            self.username = username
+            self.bio = bio
+            self.removeProfileImage = removeProfileImage
+            
+            self.eula = nil
+            self.referrer = nil
+        }
+        
+        init(eula: Bool, referrer: String?, name: String?, username: String?, bio: String?, removeProfileImage: Bool?) {
+            self.name = name
+            self.username = username
+            self.bio = bio
+            self.removeProfileImage = removeProfileImage
+            self.eula = eula
+            self.referrer = referrer
+        }
+    }
+    
+    struct GetPhoneVerificationBody: Encodable {
+        let phone: String
+    }
+    
+    struct VerifyPhoneBody: Encodable {
+        let phone: String
+        let code: String
     }
     
     struct UserEssentialsWithCreationDate: Identifiable, Decodable {

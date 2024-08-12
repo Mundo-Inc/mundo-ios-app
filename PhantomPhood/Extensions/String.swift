@@ -33,3 +33,66 @@ extension String {
         return false
     }
 }
+
+extension String {
+    func formatPhoneNumber() -> (number: String, country: Country?) {
+        let country: Country?
+        var cleanNumber: String
+        
+        if hasPrefix("+") {
+            guard count >= 5 else {
+                return (self, nil)
+            }
+            
+            let number = numbersOnly
+            
+            if let found = Country.find(phoneNumber: "+\(number)") {
+                country = found
+                cleanNumber = "+\(number)".replacingOccurrences(of: found.dialCode, with: "")
+            } else {
+                country = nil
+                cleanNumber = number
+            }
+        } else {
+            country = nil
+            cleanNumber = numbersOnly
+        }
+        
+        while cleanNumber.hasPrefix("0") {
+            cleanNumber = String(cleanNumber.dropFirst())
+        }
+        
+        let mask = "(XXX) XXX-XXXX"
+        
+        var result = ""
+        var startIndex = cleanNumber.startIndex
+        let endIndex = cleanNumber.endIndex
+        
+        for char in mask where startIndex < endIndex {
+            if char == "X" {
+                result.append(cleanNumber[startIndex])
+                startIndex = cleanNumber.index(after: startIndex)
+            } else {
+                result.append(char)
+            }
+        }
+        
+        return (result, country)
+    }
+    
+    var numbersOnly: String {
+        components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
+    }
+    
+    var isValidPhoneNumber: Bool {
+        let phoneRegex = "^\\+[0-9]{6,14}$"
+        let phoneTest = NSPredicate(format: "SELF MATCHES %@", phoneRegex)
+        return phoneTest.evaluate(with: self)
+    }
+    
+    var isValidEmail: Bool {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        return emailTest.evaluate(with: self)
+    }
+}

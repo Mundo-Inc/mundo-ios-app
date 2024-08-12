@@ -10,9 +10,9 @@ import SwiftUI
 struct MentionTextField: View {
     @StateObject private var vm: MentionTextFieldVM
     @Binding private var text: String
-    let placeholder: String?
-    let size: CGFloat
-    let trailingPadding: CGFloat
+    private let placeholder: String?
+    private let size: CGFloat
+    private let trailingPadding: CGFloat
     
     init(text: Binding<String>, size: CGFloat, placeholder: String? = nil, trailingPadding: CGFloat = 0) {
         self._vm = StateObject(wrappedValue: MentionTextFieldVM(text: text))

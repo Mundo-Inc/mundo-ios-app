@@ -16,46 +16,6 @@ enum UserRole: String, Codable {
     case admin
 }
 
-struct CurrentUserCoreData: Codable, Identifiable {
-    let id: String
-    let name: String
-    let username: String
-    let profileImage: URL?
-    let bio: String?
-    let email: Email
-    let role: UserRole
-    let verified: Bool
-    let isPrivate: Bool
-    let progress: UserProgress
-    
-    struct Email: Codable {
-        let address: String
-        let verified: Bool
-    }
-    
-    enum CodingKeys: String, CodingKey {
-        case id = "_id"
-        case name, username, profileImage, bio, email, role, verified, isPrivate, progress
-    }
-    
-}
-
-extension CurrentUserCoreData {
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
-        name = try container.decode(String.self, forKey: .name)
-        username = try container.decode(String.self, forKey: .username)
-        bio = try container.decodeOptionalString(forKey: .bio)
-        email = try container.decode(Email.self, forKey: .email)
-        role = try container.decode(UserRole.self, forKey: .role)
-        verified = try container.decode(Bool.self, forKey: .verified)
-        isPrivate = try container.decode(Bool.self, forKey: .isPrivate)
-        progress = try container.decode(UserProgress.self, forKey: .progress)
-        profileImage = try container.decodeURLIfPresent(forKey: .profileImage)
-    }
-}
-
 struct CurrentUserFullData: Codable {
     let id: String
     let name: String
@@ -63,6 +23,7 @@ struct CurrentUserFullData: Codable {
     let profileImage: URL?
     var bio: String?
     let email: Email
+    let phone: Phone?
     let rank, remainingXp, prevLevelXp, reviewsCount, followersCount, followingCount, totalCheckins: Int
     let role: UserRole
     let verified: Bool
@@ -75,9 +36,14 @@ struct CurrentUserFullData: Codable {
         let verified: Bool
     }
     
+    struct Phone: Codable {
+        let number: String?
+        let verified: Bool?
+    }
+    
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, username, profileImage, bio, email, rank, remainingXp, prevLevelXp, reviewsCount, followersCount, followingCount, totalCheckins, role, verified, isPrivate, progress, acceptedEula
+        case name, username, profileImage, bio, email, phone, rank, remainingXp, prevLevelXp, reviewsCount, followersCount, followingCount, totalCheckins, role, verified, isPrivate, progress, acceptedEula
     }
     
     var levelProgress: Double {
@@ -93,6 +59,7 @@ extension CurrentUserFullData {
         username = try container.decode(String.self, forKey: .username)
         bio = try container.decodeOptionalString(forKey: .bio)
         email = try container.decode(Email.self, forKey: .email)
+        phone = try container.decodeIfPresent(Phone.self, forKey: .phone)
         rank = try container.decode(Int.self, forKey: .rank)
         remainingXp = try container.decode(Int.self, forKey: .remainingXp)
         prevLevelXp = try container.decode(Int.self, forKey: .prevLevelXp)
