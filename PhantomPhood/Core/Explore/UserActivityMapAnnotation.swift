@@ -114,18 +114,12 @@ struct UserActivityMapAnnotation: MapContent {
 
 @available(iOS 17.0, *)
 #Preview {
-    let place1 = PlaceEssentials(id: "Place1", name: "Place 1", location: .init(geoLocation: .init(lng: -73.9245, lat: 40.82125), address: nil, city: nil, state: nil, country: nil, zip: nil), thumbnail: nil, categories: [])
-    let user1 = UserEssentials(id: "User1", name: "Name 1", username: "Username1", verified: false, isPrivate: false, profileImage: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645c8b222134643c020860a5/profile.jpg"), progress: .init(level: 35, xp: 2000))
-    
-    let place2 = PlaceEssentials(id: "Place2", name: "Place 2", location: .init(geoLocation: .init(lng: -73.9345, lat: 40.81125), address: nil, city: nil, state: nil, country: nil, zip: nil), thumbnail: nil, categories: [])
-    let user2 = UserEssentials(id: "User2", name: "Name 2", username: "Username2", verified: false, isPrivate: false, profileImage: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/profile.jpg"), progress: .init(level: 45, xp: 4000))
-    
-    return Map {
+    Map {
         UserActivityMapAnnotation(item: ClusteredMapActivity(items: [
             .init(
                 id: "Activity1",
-                place: place1,
-                user: user1,
+                place: Placeholder.places[0],
+                user: Placeholder.users[0],
                 activityType: "NEW_CHECKIN",
                 createdAt: .now
             )
@@ -134,15 +128,15 @@ struct UserActivityMapAnnotation: MapContent {
         UserActivityMapAnnotation(item: ClusteredMapActivity(items: [
             .init(
                 id: "Activity1",
-                place: place2,
-                user: user1,
+                place: Placeholder.places[1],
+                user: Placeholder.users[0],
                 activityType: "NEW_CHECKIN",
                 createdAt: .now
             ),
             .init(
                 id: "Activity1",
-                place: place2,
-                user: user2,
+                place: Placeholder.places[1],
+                user: Placeholder.users[1],
                 activityType: "NEW_CHECKIN",
                 createdAt: .now
             )

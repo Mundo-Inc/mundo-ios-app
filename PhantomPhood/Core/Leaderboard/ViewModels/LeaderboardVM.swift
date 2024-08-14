@@ -7,11 +7,10 @@
 
 import Foundation
 
-@MainActor
-class LeaderboardVM: ObservableObject {
+class LeaderboardVM: ObservableObject, LoadingSections {
     private let leaderboardDM = LeaderboardDM()
     
-    @Published private(set) var isLoading = false
+    @Published var loadingSections = Set<LoadingSection>()
     @Published private(set) var list: [UserEssentials] = []
     
     private var page: Int = 1
@@ -22,10 +21,16 @@ class LeaderboardVM: ObservableObject {
         }
     }
     
+    private var pagination: Pagination? = nil
+    
     func fetchList(_ action: RefreshNewAction) async {
-        guard !isLoading else { return }
+        guard !loadingSections.contains(.fetchLeaderboard) else { return }
         
-        self.isLoading = true
+        setLoadingState(.fetchLeaderboard, to: true)
+        
+        defer {
+            setLoadingState(.fetchLeaderboard, to: false)
+        }
         
         if action == .refresh {
             page = 1
@@ -33,23 +38,31 @@ class LeaderboardVM: ObservableObject {
         
         do {
             let data = try await leaderboardDM.fetchLeaderboard(page: page)
-            if action == .refresh || self.list.isEmpty {
-                self.list = data
-            } else {
-                self.list.append(contentsOf: data)
+            
+            await MainActor.run {
+                if action == .refresh || self.list.isEmpty {
+                    self.list = data
+                } else {
+                    self.list.append(contentsOf: data)
+                }
             }
             
             page += 1
         } catch {
             presentErrorToast(error)
         }
-        self.isLoading = false
     }
     
     func loadMore(index: Int) async {
+        guard !loadingSections.contains(.fetchLeaderboard) else { return }
+        
         let thresholdIndex = list.index(list.endIndex, offsetBy: -5)
         if index == thresholdIndex {
             await fetchList(.new)
         }
+    }
+    
+    enum LoadingSection: Hashable {
+        case fetchLeaderboard
     }
 }

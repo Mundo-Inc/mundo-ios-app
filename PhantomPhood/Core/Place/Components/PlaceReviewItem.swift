@@ -92,7 +92,7 @@ struct PlaceReviewItem: View {
                             }
                             .onTapGesture {
                                 withAnimation {
-                                    placeVM.expandedMedia = .phantom(.init(id: first.id, src: first.src, caption: first.caption, type: first.type, user: nil))
+                                    placeVM.expandedMedia = .init(id: first.id, type: first.type, src: first.src, caption: first.caption, user: nil)
                                 }
                             }
                         }
@@ -113,7 +113,7 @@ struct PlaceReviewItem: View {
                                             }
                                             .onTapGesture {
                                                 withAnimation {
-                                                    placeVM.expandedMedia = .phantom(.init(id: media.id, src: media.src, caption: media.caption, type: media.type, user: nil))
+                                                    placeVM.expandedMedia = .init(id: media.id, type: media.type, src: media.src, caption: media.caption, user: nil)
                                                 }
                                             }
                                     case .image:
@@ -136,7 +136,7 @@ struct PlaceReviewItem: View {
                                         }
                                         .onTapGesture {
                                             withAnimation {
-                                                placeVM.expandedMedia = .phantom(.init(id: media.id, src: media.src, caption: media.caption, type: media.type, user: nil))
+                                                placeVM.expandedMedia = .init(id: media.id, type: media.type, src: media.src, caption: media.caption, user: nil)
                                             }
                                         }
                                     }
@@ -211,26 +211,7 @@ extension PlaceReviewItem {
 
 #Preview {
     VStack {
-        PlaceReviewItem(review: .constant(
-            PlaceReview(
-                id: "TESTID",
-                scores: .init(overall: 4, drinkQuality: nil, foodQuality: nil, atmosphere: nil, service: nil, value: nil),
-                content: "This is the content",
-                media: [],
-                tags: nil,
-                recommend: true,
-                language: nil,
-                createdAt: .now,
-                updatedAt: .now,
-                userActivityId: "UserActivityId",
-                writer: UserEssentials(id: "UserId", name: "Test User", username: "TestUser", verified: false, isPrivate: false, profileImage: nil, progress: .init(level: 72, xp: 8920), connectionStatus: nil),
-                comments: [],
-                reactions: .init(
-                    total: [.init(reaction: "❤️", type: .emoji, count: 4), .init(reaction: "😍", type: .emoji, count: 2)],
-                    user: [.init(id: "Test", reaction: "😍", type: .emoji, createdAt: .now)]
-                )
-            )
-        ), placeVM: PlaceVM(id: "TEST"))
+        PlaceReviewItem(review: .constant(Placeholder.placeReviews[0]), placeVM: PlaceVM(id: "TEST", action: nil))
     }
     .padding(.vertical)
     .background(Color.themePrimary)

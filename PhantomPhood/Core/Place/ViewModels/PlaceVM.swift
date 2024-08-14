@@ -7,12 +7,10 @@
 
 import Foundation
 
-@MainActor
 final class PlaceVM: ObservableObject {
     private let placeDM = PlaceDM()
     
     @Published private(set) var place: PlaceDetail?
-    @Published private(set) var isLoading = false
     
     enum ScoresTab {
         case googlePhantomYelp
@@ -24,21 +22,33 @@ final class PlaceVM: ObservableObject {
     
     @Published var presentedSheet: Sheets? = nil
     @Published var activeTab: PlaceTab = .media
-    @Published var expandedMedia: MixedMedia? = nil
+    @Published var expandedMedia: MediaItem? = nil
     
     @Published var draggedAmount: CGSize = .zero
     
     /// user's lists that include this place
     @Published var includedLists: [String]? = nil
     
-    init(id: String, action: PlaceAction? = nil) {
+    init(data: PlaceDetail, action: PlaceAction?) {
+        self.place = data
+        self.handleNavigationAction(place: data, action: action)
+        
+        Task {
+            await updateIncludedLists(id: data.id)
+        }
+    }
+    
+    init(id: String, action: PlaceAction?) {
         Task {
             await updateIncludedLists(id: id)
         }
         Task {
             do {
                 let data = try await placeDM.fetch(id: id)
-                self.place = data
+                
+                await MainActor.run {
+                    self.place = data
+                }
                 
                 self.handleNavigationAction(place: data, action: action)
             } catch {
@@ -47,11 +57,14 @@ final class PlaceVM: ObservableObject {
         }
     }
     
-    init(mapPlace: MapPlace, action: PlaceAction? = nil) {
+    init(mapPlace: MapPlace, action: PlaceAction?) {
         Task {
             do {
                 let data = try await placeDM.fetch(mapPlace: mapPlace)
-                self.place = data
+                
+                await MainActor.run {
+                    self.place = data
+                }
                 
                 self.handleNavigationAction(place: data, action: action)
                 
@@ -69,7 +82,10 @@ final class PlaceVM: ObservableObject {
         
         do {
             let listIds = try await placeDM.getIncludedLists(id: id)
-            self.includedLists = listIds
+            
+            await MainActor.run {
+                self.includedLists = listIds
+            }
         } catch {
             presentErrorToast(error, title: "Failed to update lists")
         }
@@ -78,11 +94,11 @@ final class PlaceVM: ObservableObject {
     // MARK: - Private Methods
     
     private func handleNavigationAction(place: PlaceDetail, action: PlaceAction?) {
+        guard let action else { return }
+        
         switch action {
         case .checkIn:
             AppData.shared.goTo(AppRoute.checkIn(.detail(place)))
-        case nil:
-            break
         }
     }
     

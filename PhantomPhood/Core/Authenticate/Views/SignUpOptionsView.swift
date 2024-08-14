@@ -38,7 +38,7 @@ struct SignUpOptionsView: View {
                         HStack(spacing: 20) {
                             Button {
                                 Task {
-                                    try? await vm.signInApple()
+                                    await vm.signInApple()
                                 }
                             } label: {
                                 Image(.signInIconOnlyApple)
@@ -49,7 +49,7 @@ struct SignUpOptionsView: View {
                             
                             Button {
                                 Task {
-                                    try? await vm.signInGoogle()
+                                    await vm.signInGoogle()
                                 }
                             } label: {
                                 Image(.signInIconOnlyGoogle)
@@ -87,7 +87,7 @@ struct SignUpOptionsView: View {
             .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
-            if vm.isLoading {
+            if !vm.loadingSections.isEmpty {
                 Color.black.opacity(0.8)
                     .ignoresSafeArea()
                     .overlay {

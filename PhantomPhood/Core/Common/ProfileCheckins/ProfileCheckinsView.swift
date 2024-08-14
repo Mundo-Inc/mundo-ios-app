@@ -102,9 +102,9 @@ struct ProfileCheckinsView: View {
 
 fileprivate struct CheckInCluster: Identifiable {
     let place: PlaceEssentials
-    let checkIns: [Checkin]
+    let checkIns: [CheckIn]
     
-    init(checkIns: [Checkin]) throws {
+    init(checkIns: [CheckIn]) throws {
         guard !checkIns.isEmpty else {
             throw InitializationError.emptyArray(description: "checkIns array must contain at least one item.")
         }
@@ -116,9 +116,9 @@ fileprivate struct CheckInCluster: Identifiable {
         place.id
     }
     
-    static func create(from items: [Checkin]) -> [CheckInCluster] {
+    static func create(from items: [CheckIn]) -> [CheckInCluster] {
         /// placeId, activity
-        var dict: [String: [Checkin]] = [:]
+        var dict: [String: [CheckIn]] = [:]
         
         for item in items {
             if dict[item.place.id] == nil {
@@ -136,7 +136,7 @@ fileprivate struct CheckInCluster: Identifiable {
 fileprivate struct CheckinsMap17: View {
     private let checkInCluster: [CheckInCluster]
     
-    init(checkIns: [Checkin]) {
+    init(checkIns: [CheckIn]) {
         self.checkInCluster = CheckInCluster.create(from: checkIns)
     }
     
@@ -165,7 +165,7 @@ fileprivate struct CheckinsMap17: View {
 fileprivate struct CheckinsMap16: View {
     private let checkInCluster: [CheckInCluster]
     
-    init(checkIns: [Checkin]) {
+    init(checkIns: [CheckIn]) {
         self.checkInCluster = CheckInCluster.create(from: checkIns)
     }
     

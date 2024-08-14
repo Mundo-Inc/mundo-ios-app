@@ -12,8 +12,8 @@ class ProfileCheckinsVM: ObservableObject {
     private let checkInDM = CheckInDM()
     
     @Published var isLoading = false
-    @Published var checkIns: [Checkin]? = nil
-    @Published var total: Int? = nil
+    @Published private(set) var checkIns: [CheckIn]? = nil
+    @Published private(set) var total: Int? = nil
     
     @Published var displayMode: DisplayModeEnum = .map
     enum DisplayModeEnum: String, CaseIterable {
@@ -73,7 +73,6 @@ class ProfileCheckinsVM: ObservableObject {
             let data = try await checkInDM.getCheckins(user: uid, page: page, limit: 500)
             
             switch type {
-                
             case .refresh:
                 self.checkIns = data.data
             case .new:

@@ -7,8 +7,7 @@
 
 import Foundation
 
-@MainActor
-final class EventVM: ObservableObject {
+final class EventVM: ObservableObject, LoadingSections {
     private let toastVM = ToastVM.shared
     private let eventsDM = EventsDM()
     
@@ -23,11 +22,11 @@ final class EventVM: ObservableObject {
     
     @Published var activeTab: EventTab = .media
     @Published var presentedSheet: Sheets? = nil
-    @Published private(set) var loadingSections = Set<LoadingSection>()
+    @Published var loadingSections = Set<LoadingSection>()
     
     @Published var event: Event? = nil
     
-    @Published var expandedMedia: MediaWithUser? = nil
+    @Published var expandedMedia: MediaItem? = nil
     
     @Published var draggedAmount: CGSize = .zero
     
@@ -38,6 +37,7 @@ final class EventVM: ObservableObject {
     
     init(id: String) {
         self.eventId = id
+        
         Task {
             await getEvent()
         }
@@ -46,22 +46,21 @@ final class EventVM: ObservableObject {
     func getEvent() async {
         guard !loadingSections.contains(.getEvent) else { return }
         
-        loadingSections.insert(.getEvent)
+        setLoadingState(.getEvent, to: true)
+        
+        defer {
+            setLoadingState(.getEvent, to: false)
+        }
+        
         do {
             let data = try await eventsDM.getEvent(self.eventId)
-            self.event = data
+            
+            await MainActor.run {
+                self.event = data
+            }
         } catch {
             presentErrorToast(error)
         }
-        loadingSections.remove(.getEvent)
-    }
-    
-    func getMedia() async {
-        
-    }
-    
-    func getCheckIn() async {
-        
     }
     
     enum Sheets {

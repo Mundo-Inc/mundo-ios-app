@@ -22,6 +22,20 @@ extension KeyedDecodingContainer {
         return nil
     }
     
+    /// Decodes a URL array from an array of strings associated with the given key.
+    ///
+    /// If the string is empty or not present, returns `[]`.
+    ///
+    /// - Parameter key: Key to decode the URL from.
+    /// - Returns: `[URL]`
+    /// - Throws: Decoding error on failure.
+    func decodeURLArrayIfPresent(forKey key: Key) throws -> [URL] {
+        if let stringArray = try decodeIfPresent([String].self, forKey: key) {
+            return stringArray.compactMap { $0.isEmpty ? nil : URL(string: $0) }
+        }
+        return []
+    }
+    
     /// Decodes an optional string associated with the given key.
     ///
     /// Treats empty strings as `nil`.

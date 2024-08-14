@@ -379,17 +379,5 @@ struct EventView: View {
 }
 
 #Preview {
-    EventView(.data(Event(
-        id: "65eafc78b56154da574fc9fa",
-        name: "AEπ",
-        description: "Test description",
-        logo: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/events/AEPi.png"),
-        place: PlaceEssentials(
-            id: "65eafc78b56154da574fc9f8",
-            name: "AEπ",
-            location: PlaceLocation(geoLocation: .init(lng: -122.0308473, lat: 36.9699794), address: "318 Maple St", city: "Santa Cruz", state: "CA", country: "US", zip: "95060"),
-            thumbnail: URL(string: ""),
-            categories: []
-        )
-    )))
+    EventView(.data(Placeholder.events[0]))
 }

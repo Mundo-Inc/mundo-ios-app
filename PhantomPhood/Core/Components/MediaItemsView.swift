@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct MediaItemsView: View {
-    @StateObject var vm: MediaItemsVM
+    @ObservedObject var vm: MediaItemsVM
     
-    @State var offset: CGSize = .zero
-    var scale: CGFloat {
+    @State private var offset: CGSize = .zero
+    
+    private var scale: CGFloat {
         return abs(offset.height) < 100 ? 1 - abs(offset.height) / 1000 : 0.9
     }
     
@@ -85,8 +86,8 @@ struct MediaItemsView: View {
     return MediaItemsView(vm: vm)
         .onAppear {
             vm.show([
-                .init(id: "Test1", src: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/64b5a0bad66d45323e935bda/images/af9ddd441be2d1d48450e96aaaed0658.jpg"), caption: nil, type: .image),
-                .init(id: "Test2", src: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/645e7f843abeb74ee6248ced/videos/2a667b01b413fd08fd00a60b2f5ba3e1.mp4"), caption: nil, type: .video)
+                Placeholder.media[0],
+                Placeholder.media[1]
             ])
         }
 }

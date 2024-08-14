@@ -7,8 +7,7 @@
 
 import Foundation
 
-@MainActor
-class PlaceMediaVM: ObservableObject {
+class PlaceMediaVM: ObservableObject, LoadingSections {
     private let placeDM = PlaceDM()
     
     private let placeVM: PlaceVM
@@ -17,36 +16,53 @@ class PlaceMediaVM: ObservableObject {
         self.placeVM = placeVM
     }
     
-    @Published var isLoading: Bool = false
-    @Published var mediaItems: [MediaWithUser] = []
+    @Published var loadingSections = Set<LoadingSection>()
+    @Published var mediaItems: [MediaItem] = []
     @Published var initialCall = false
     
-    var page = 1
-    func fetch(type: FetchType) async {
-        guard let placeId = placeVM.place?.id, !isLoading else { return }
-
+    private var mediaPagination: Pagination? = nil
+    
+    func fetch(type: RefreshNewAction) async {
+        guard let placeId = placeVM.place?.id, !loadingSections.contains(.fetchingMedia) else { return }
+        
         if type == .refresh {
-            page = 1
+            mediaPagination = nil
+        } else if let mediaPagination, !mediaPagination.hasMore {
+            return
         }
         
-        isLoading = true
+        setLoadingState(.fetchingMedia, to: true)
+        
+        defer {
+            setLoadingState(.fetchingMedia, to: false)
+        }
+        
         do {
-            let data = try await placeDM.getMedias(id: placeId, page: page)
-            self.initialCall = true
-            if page == 1 {
-                mediaItems = data.data
+            let page = if let mediaPagination {
+                mediaPagination.page + 1
             } else {
-                mediaItems.append(contentsOf: data.data)
+                1
             }
-            page += 1
+            
+            let data = try await placeDM.getMedias(id: placeId, page: page)
+            
+            await MainActor.run {
+                self.initialCall = true
+                
+                if page == 1 {
+                    mediaItems = data.data
+                } else {
+                    mediaItems.append(contentsOf: data.data)
+                }
+            }
+            
+            self.mediaPagination = data.pagination
         } catch {
             presentErrorToast(error)
         }
-        isLoading = false
     }
     
-    enum FetchType {
-        case refresh
-        case new
+    enum LoadingSection: Hashable {
+        case fetchingMedia
     }
 }

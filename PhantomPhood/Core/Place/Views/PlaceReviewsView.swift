@@ -95,5 +95,5 @@ struct PlaceReviewsView: View {
 }
 
 #Preview {
-    PlaceReviewsView(placeVM: PlaceVM(id: "645c1d1ab41f8e12a0d166bc"))
+    PlaceReviewsView(placeVM: PlaceVM(data: Placeholder.placeDetails[0], action: nil))
 }

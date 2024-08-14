@@ -416,22 +416,5 @@ struct NewCheckInView: View {
 }
 
 #Preview {
-    let place = PlaceEssentials(
-        id: "645c1d1ab41f8e12a0d166bc",
-        name: "Eleven Madison Park",
-        location: PlaceLocation(
-            geoLocation: PlaceLocation.GeoLocation(lng: -73.9872074872255, lat: 40.7416907417333),
-            address: nil,
-            city: "New York",
-            state: "NY",
-            country: "US",
-            zip: "10010"
-        ),
-        thumbnail: URL(string: "https://lh3.googleusercontent.com/p/AF1QipORpCE38GEBjvmFeP2fO3yrHfKLjVb_wswX-Y_N=s680-w680-h510"),
-        categories: []
-    )
-    
-    let event = Event(id: "662fa397516a809bf7b46f77", name: "Rich Ventures", description: "Lorem ipsum dolor sit amet.\nconsectetur adipiscing elit.\nsed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", logo: URL(string: "https://phantom-localdev.s3.us-west-1.amazonaws.com/events/RichVenturesLogo.jpg"), place: place)
-    
-    return NewCheckInView(event: event)
+    return NewCheckInView(event: Placeholder.events[1])
 }

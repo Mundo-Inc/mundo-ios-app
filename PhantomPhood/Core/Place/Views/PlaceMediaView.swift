@@ -29,16 +29,14 @@ struct PlaceMediaView: View {
         LazyVGrid(columns: gridColumns, spacing: 0) {
             if !vm.initialCall {
                 Group {
-                    if placeVM.place != nil {
-                        ZStack {
+                    ZStack {
+                        if placeVM.place != nil {
                             Rectangle()
                                 .foregroundStyle(Color.themePrimary)
                                 .task {
                                     await vm.fetch(type: .refresh)
                                 }
-                        }
-                    } else {
-                        ZStack {
+                        } else {
                             Rectangle()
                                 .foregroundStyle(Color.themePrimary)
                         }
@@ -63,13 +61,13 @@ struct PlaceMediaView: View {
                         .padding(.horizontal)
                 } else {
                     if let yelpImages = place.thirdParty.yelp?.photos {
-                        ForEach(yelpImages, id: \.self) { string in
+                        ForEach(yelpImages) { mediaItem in
                             ZStack {
-                                if let expandedMedia = placeVM.expandedMedia, case .yelp(let s) = expandedMedia, string == s {
+                                if let expandedMedia = placeVM.expandedMedia, mediaItem.id == expandedMedia.id {
                                     Rectangle()
                                         .foregroundStyle(Color.themeBorder)
-                                } else if let url = URL(string: string) {
-                                    ImageLoader(url, contentMode: .fill) { progress in
+                                } else {
+                                    ImageLoader(mediaItem.src, contentMode: .fill) { progress in
                                         Rectangle()
                                             .foregroundStyle(.clear)
                                             .frame(maxWidth: 150)
@@ -79,7 +77,7 @@ struct PlaceMediaView: View {
                                                     .padding(.horizontal)
                                             }
                                     }
-                                    .matchedGeometryEffect(id: string.hash, in: namespace)
+                                    .matchedGeometryEffect(id: mediaItem.id, in: namespace)
                                     .aspectRatio(2/3, contentMode: .fill)
                                     .overlay(alignment: .bottomTrailing) {
                                         Image(.yelpLogo)
@@ -98,7 +96,7 @@ struct PlaceMediaView: View {
                             .clipped()
                             .onTapGesture {
                                 withAnimation {
-                                    placeVM.expandedMedia = .yelp(string)
+                                    placeVM.expandedMedia = mediaItem
                                 }
                             }
                         }
@@ -106,7 +104,7 @@ struct PlaceMediaView: View {
                     
                     ForEach(vm.mediaItems) { media in
                         ZStack {
-                            if let expandedMedia = placeVM.expandedMedia, case .phantom(let m) = expandedMedia, media.id == m.id {
+                            if let expandedMedia = placeVM.expandedMedia, media.id == expandedMedia.id {
                                 Rectangle()
                                     .foregroundStyle(Color.themeBorder)
                             } else {
@@ -176,7 +174,7 @@ struct PlaceMediaView: View {
                         .clipped()
                         .onTapGesture {
                             withAnimation {
-                                placeVM.expandedMedia = .phantom(media)
+                                placeVM.expandedMedia = media
                             }
                         }
                     }
@@ -194,5 +192,5 @@ struct PlaceMediaView: View {
 }
 
 #Preview {
-    PlaceMediaView(placeVM: PlaceVM(id: "645c1d1ab41f8e12a0d166bc"), namespace: Namespace().wrappedValue)
+    PlaceMediaView(placeVM: PlaceVM(data: Placeholder.placeDetails[0], action: nil), namespace: Namespace().wrappedValue)
 }

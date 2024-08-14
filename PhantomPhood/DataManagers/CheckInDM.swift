@@ -11,12 +11,12 @@ final class CheckInDM {
     private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     
-    func getCheckins(event: String, page: Int = 1, limit: Int = 20) async throws -> APIResponseWithPagination<[Checkin]> {
+    func getCheckins(event: String, page: Int = 1, limit: Int = 20) async throws -> APIResponseWithPagination<[CheckIn]> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data: APIResponseWithPagination<[Checkin]> = try await apiManager.requestData("/checkins", queryParams: [
+        let data: APIResponseWithPagination<[CheckIn]> = try await apiManager.requestData("/checkins", queryParams: [
             "event": event,
             "page": page.description,
             "limit": limit.description
@@ -25,12 +25,12 @@ final class CheckInDM {
         return data
     }
     
-    func getCheckins(user: String, page: Int = 1, limit: Int = 20) async throws -> APIResponseWithPagination<[Checkin]> {
+    func getCheckins(user: String, page: Int = 1, limit: Int = 20) async throws -> APIResponseWithPagination<[CheckIn]> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data: APIResponseWithPagination<[Checkin]> = try await apiManager.requestData("/checkins", queryParams: [
+        let data: APIResponseWithPagination<[CheckIn]> = try await apiManager.requestData("/checkins", queryParams: [
             "user": user,
             "page": page.description,
             "limit": limit.description
@@ -39,12 +39,12 @@ final class CheckInDM {
         return data
     }
     
-    func getCheckins(place: String, page: Int = 1, limit: Int = 20) async throws -> APIResponseWithPagination<[Checkin]> {
+    func getCheckins(place: String, page: Int = 1, limit: Int = 20) async throws -> APIResponseWithPagination<[CheckIn]> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data: APIResponseWithPagination<[Checkin]> = try await apiManager.requestData("/checkins", queryParams: [
+        let data: APIResponseWithPagination<[CheckIn]> = try await apiManager.requestData("/checkins", queryParams: [
             "place": place,
             "page": page.description,
             "limit": limit.description

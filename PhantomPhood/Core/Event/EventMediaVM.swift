@@ -7,8 +7,7 @@
 
 import Foundation
 
-@MainActor
-final class EventMediaVM: ObservableObject {
+final class EventMediaVM: ObservableObject, LoadingSections {
     private let mediaDM = MediaDM()
     
     private let eventVM: EventVM
@@ -17,31 +16,48 @@ final class EventMediaVM: ObservableObject {
         self.eventVM = eventVM
     }
     
-    @Published var isLoading: Bool = false
-    @Published var mediaItems: [MediaWithUser]? = nil
+    @Published var loadingSections = Set<LoadingSection>()
+    @Published private(set) var mediaItems: [MediaItem]? = nil
     
-    var page = 1
+    private var pagination: Pagination? = nil
+    
     func fetch(type: RefreshNewAction) async {
-        guard let eventId = eventVM.event?.id, !isLoading else { return }
+        guard let eventId = eventVM.event?.id, !loadingSections.contains(.fetchMedia) else { return }
 
         if type == .refresh {
-            page = 1
+            pagination = nil
+        } else if let pagination, !pagination.hasMore {
+            return
         }
         
-        isLoading = true
+        setLoadingState(.fetchMedia, to: true)
+        
+        defer {
+            setLoadingState(.fetchMedia, to: false)
+        }
+        
         do {
+            let page = (pagination?.page ?? 0) + 1
+            
             let data = try await mediaDM.getMedia(event: eventId, page: page)
-            if page == 1 {
-                mediaItems = data
-            } else if mediaItems != nil {
-                mediaItems!.append(contentsOf: data)
-            } else {
-                mediaItems = data
+            
+            await MainActor.run {
+                if page == 1 {
+                    mediaItems = data.data
+                } else if mediaItems != nil {
+                    mediaItems!.append(contentsOf: data.data)
+                } else {
+                    mediaItems = data.data
+                }
             }
-            page += 1
+            
+            pagination = data.pagination
         } catch {
             presentErrorToast(error)
         }
-        isLoading = false
+    }
+    
+    enum LoadingSection: Hashable {
+        case fetchMedia
     }
 }

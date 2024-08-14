@@ -106,12 +106,8 @@ struct LeaderboardView: View {
                                             .cfont(.caption)
                                             .foregroundStyle(.secondary)
                                     }
-                                    .onAppear {
-                                        if !vm.isLoading {
-                                            Task {
-                                                await vm.loadMore(index: index)
-                                            }
-                                        }
+                                    .task {
+                                        await vm.loadMore(index: index)
                                     }
                                 }
                                 .foregroundStyle(auth.currentUser?.id == vm.list[index].id ? Color.accentColor : Color.primary)

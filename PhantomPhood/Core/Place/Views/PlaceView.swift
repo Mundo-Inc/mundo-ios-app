@@ -12,6 +12,10 @@ import MapKit
 struct PlaceView: View {
     @StateObject private var vm: PlaceVM
     
+    init(data: PlaceDetail, action: PlaceAction? = nil) {
+        self._vm = StateObject(wrappedValue: PlaceVM(data: data, action: action))
+    }
+    
     init(id: String, action: PlaceAction? = nil) {
         self._vm = StateObject(wrappedValue: PlaceVM(id: id, action: action))
     }
@@ -451,7 +455,7 @@ struct PlaceView: View {
     
     @ViewBuilder
     private func ExpandedMedia() -> some View {
-        if let mixedMedia = vm.expandedMedia {
+        if let expandedMedia = vm.expandedMedia {
             ZStack(alignment: .bottom) {
                 Color.black.opacity(0.8)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -463,29 +467,29 @@ struct PlaceView: View {
                     }
                 
                 Group {
-                    switch mixedMedia {
-                    case .phantom(let media):
-                        Group {
-                            if media.type == .image, let url = media.src {
-                                ImageLoader(url, contentMode: .fit) { progress in
-                                    Rectangle()
-                                        .foregroundStyle(.clear)
-                                        .frame(maxWidth: 150)
-                                        .overlay {
-                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                .progressViewStyle(LinearProgressViewStyle())
-                                                .padding(.horizontal)
-                                        }
-                                }
-                                .matchedGeometryEffect(id: media.id, in: namespace)
-                            } else if media.type == .video, let url = media.src {
-                                ZStack(alignment: .bottom) {
-                                    VideoPlayer(url: url, playing: true, isMute: isMute)
-                                }
+                    Group {
+                        if expandedMedia.type == .image {
+                            ImageLoader(expandedMedia.src, contentMode: .fit) { progress in
+                                Rectangle()
+                                    .foregroundStyle(.clear)
+                                    .frame(maxWidth: 150)
+                                    .overlay {
+                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                            .progressViewStyle(LinearProgressViewStyle())
+                                            .padding(.horizontal)
+                                    }
+                            }
+                            .matchedGeometryEffect(id: expandedMedia.id, in: namespace)
+                        } else if expandedMedia.type == .video, let url = expandedMedia.src {
+                            ZStack(alignment: .bottom) {
+                                VideoPlayer(url: url, playing: true, isMute: isMute)
                             }
                         }
-                        .overlay(alignment: .bottomLeading) {
-                            if let user = media.user {
+                    }
+                    .overlay(alignment: .bottomLeading) {
+                        switch expandedMedia.source {
+                        case .mundo:
+                            if let user = expandedMedia.user {
                                 HStack(spacing: 5) {
                                     ProfileImage(user.profileImage, size: 24, cornerRadius: 12)
                                     
@@ -497,28 +501,20 @@ struct PlaceView: View {
                                 .padding(.leading, 5)
                                 .padding(.bottom, 5)
                             }
-                        }
-                    case .yelp(let string):
-                        if let url = URL(string: string) {
-                            ImageLoader(url, contentMode: .fit) { progress in
-                                Rectangle()
-                                    .foregroundStyle(.clear)
-                                    .frame(maxWidth: 150)
-                                    .overlay {
-                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                            .progressViewStyle(LinearProgressViewStyle())
-                                            .padding(.horizontal)
-                                    }
-                            }
-                            .matchedGeometryEffect(id: string.hash, in: namespace)
-                            .overlay(alignment: .bottomTrailing) {
-                                Image(.yelpLogo)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(maxHeight: 30)
-                                    .padding(.leading, 5)
-                                    .padding(.bottom, 5)
-                            }
+                        case .google:
+                            Image(.googleLogo)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(maxHeight: 30)
+                                .padding(.leading, 5)
+                                .padding(.bottom, 5)
+                        case .yelp:
+                            Image(.yelpLogo)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(maxHeight: 30)
+                                .padding(.leading, 5)
+                                .padding(.bottom, 5)
                         }
                     }
                 }
@@ -754,7 +750,7 @@ private struct ScoreItem: View {
 
 #Preview {
     NavigationStack {
-        PlaceView(id: "645c1d1ab41f8e12a0d166bc")
+        PlaceView(data: Placeholder.placeDetails[0])
             .navigationTitle("Place")
             .navigationBarTitleDisplayMode(.inline)
     }

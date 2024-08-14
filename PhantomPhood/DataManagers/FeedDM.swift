@@ -21,7 +21,10 @@ final class FeedDM {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data: APIResponse<[FeedItem]> = try await apiManager.requestData("/feeds?page=\(page)\(type == .forYou ? "&isForYou=true" : "")", method: .get, token: token)
+        let data: APIResponse<[FeedItem]> = try await apiManager.requestData("/feeds", method: .get, queryParams: [
+            "page": page.description,
+            "isForYou": type == .forYou ? "true" : nil
+        ], token: token)
         
         return data.data
     }

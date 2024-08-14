@@ -111,130 +111,107 @@ final class Authentication: ObservableObject {
     // MARK: - Public Methods
     
     func getToken() async -> String? {
-        do {
-            let token = try await Auth.auth().currentUser?.getIDToken()
-            return token
-        } catch {
-            return nil
-        }
+        return try? await Auth.auth().currentUser?.getIDToken()
     }
     
-    @discardableResult
-    func signIn(email: String, password: String) async -> (success: Bool, error: String?, errorCode: Int?) {
+    func signIn(email: String, password: String) async throws {
         do {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
+            await MainActor.run {
+                self.userSession = result.user
+            }
             do {
                 guard let uid = Auth.auth().currentUser?.uid, let token = await getToken() else {
                     throw URLError(.userAuthenticationRequired)
                 }
                 let user = try await getUserInfo(uid: uid, token: token)
-                DispatchQueue.main.async {
-                    self.userSession = result.user
+                await MainActor.run {
                     self.currentUser = user
                 }
                 await setDeviceToken()
-                return (true, nil, nil)
             } catch {
-                print("DEBUG: Couldn't get user info | Error: \(error.localizedDescription)")
-                return (false, "Couldn't get user info", nil)
+                throw AuthenticationError.failedToGetUserInfo
             }
         } catch {
-            return (false, "Email/Password is incorrect", 400)
+            throw AuthenticationError.incorrectCredentials
         }
     }
     
-    @discardableResult
-    func signIn(credential: AuthCredential) async -> (success: Bool, error: String?, errorCode: Int?) {
+    func signIn(credential: AuthCredential) async throws {
+        let result = try await Auth.auth().signIn(with: credential)
+        
         do {
-            let result = try await Auth.auth().signIn(with: credential)
-            do {
-                guard let uid = Auth.auth().currentUser?.uid, let token = await getToken() else {
-                    throw URLError(.userAuthenticationRequired)
-                }
-                DispatchQueue.main.async {
-                    self.userSession = result.user
-                }
-                let user = try await getUserInfo(uid: uid, token: token)
-                DispatchQueue.main.async {
-                    self.currentUser = user
-                }
-                await setDeviceToken()
-                return (true, nil, nil)
-            } catch let error as APIManager.APIError {
-                switch error {
-                case .serverError(let serverError):
-                    if serverError.statusCode == 404 {
+            guard let uid = Auth.auth().currentUser?.uid, let token = await getToken() else {
+                throw URLError(.userAuthenticationRequired)
+            }
+            await MainActor.run {
+                self.userSession = result.user
+            }
+            let user = try await getUserInfo(uid: uid, token: token)
+            await MainActor.run {
+                self.currentUser = user
+            }
+            await setDeviceToken()
+        } catch let error as APIManager.APIError {
+            if case .serverError(let serverError) = error, serverError.statusCode == 404 {
+                // Delaying until account is ready
+                DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                    Task {
                         do {
-                            // Delaying until account is ready
+                            guard let uid = Auth.auth().currentUser?.uid, let token = await self.getToken() else {
+                                throw URLError(.userAuthenticationRequired)
+                            }
+                            await MainActor.run {
+                                self.userSession = result.user
+                            }
+                            let user = try await self.getUserInfo(uid: uid, token: token)
+                            await MainActor.run {
+                                self.currentUser = user
+                            }
+                            await self.setDeviceToken()
+                        } catch {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
                                 Task {
                                     do {
                                         guard let uid = Auth.auth().currentUser?.uid, let token = await self.getToken() else {
                                             throw URLError(.userAuthenticationRequired)
                                         }
-                                        DispatchQueue.main.async {
+                                        await MainActor.run {
                                             self.userSession = result.user
                                         }
                                         let user = try await self.getUserInfo(uid: uid, token: token)
-                                        DispatchQueue.main.async {
+                                        await MainActor.run {
                                             self.currentUser = user
                                         }
                                         await self.setDeviceToken()
                                     } catch {
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
-                                            Task {
-                                                do {
-                                                    guard let uid = Auth.auth().currentUser?.uid, let token = await self.getToken() else {
-                                                        throw URLError(.userAuthenticationRequired)
-                                                    }
-                                                    DispatchQueue.main.async {
-                                                        self.userSession = result.user
-                                                    }
-                                                    let user = try await self.getUserInfo(uid: uid, token: token)
-                                                    DispatchQueue.main.async {
-                                                        self.currentUser = user
-                                                    }
-                                                    await self.setDeviceToken()
-                                                } catch {
-                                                    try Auth.auth().signOut()
-                                                    DispatchQueue.main.async {
-                                                        self.currentUser = nil
-                                                        self.userSession = nil
-                                                    }
-                                                }
-                                            }
+                                        try Auth.auth().signOut()
+                                        await MainActor.run {
+                                            self.currentUser = nil
+                                            self.userSession = nil
                                         }
                                     }
                                 }
                             }
                         }
-                        return (false, "You are not signed up with \(K.appName)", 404)
                     }
-                case .decodingError(let error):
-                    print("DEBUG: Couldn't decode user info | Error: \(error.localizedDescription)")
-                case .unknown:
-                    print("DEBUG: Couldn't get user info | Error: \(error.localizedDescription)")
                 }
-                return (false, "Something went wrong", nil)
+                
+                throw AuthenticationError.notSignedUpWithUs
             }
-        } catch {
-            print("DEBUG: Something went wrong | Error: \(error.localizedDescription)")
-            return (false, "Something went wrong", nil)
+            
+            throw error
         }
     }
     
-    @discardableResult
-    func signinWithGoogle(tokens: GoogleSignInResult) async -> (success: Bool, error: String?, errorCode: Int?) {
+    func signinWithGoogle(tokens: GoogleSignInResult) async throws {
         let credential = GoogleAuthProvider.credential(withIDToken: tokens.idToken, accessToken: tokens.accessToken)
-        let result = await signIn(credential: credential)
-        return result
+        try await signIn(credential: credential)
     }
     
-    @discardableResult
-    func signinWithApple(tokens: SignInWithAppleResult) async -> (success: Bool, error: String?, errorCode: Int?) {
+    func signinWithApple(tokens: SignInWithAppleResult) async throws {
         let credential = OAuthProvider.appleCredential(withIDToken: tokens.token, rawNonce: tokens.nonce, fullName: tokens.fullName)
-        let result = await signIn(credential: credential)
-        return result
+        try await signIn(credential: credential)
     }
     
     func signUp(name: String, email: String, password: String, username: String?, referrer: String?) async throws {
@@ -249,7 +226,7 @@ final class Authentication: ObservableObject {
         let reqBody = try apiManager.createRequestBody(SignUpRequestBody(name: name, email: email, password: password, username: username, referrer: referrer))
         try await apiManager.requestNoContent("/users", method: .post, body: reqBody)
         
-        await self.signIn(email: email, password: password)
+        try? await self.signIn(email: email, password: password)
     }
     
     func signOut() async {
@@ -279,7 +256,7 @@ final class Authentication: ObservableObject {
             
             let data: APIResponse<CurrentUserFullData> = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token)
             
-            DispatchQueue.main.async {
+            await MainActor.run {
                 self.currentUser = data.data
             }
             
@@ -325,6 +302,28 @@ final class Authentication: ObservableObject {
             UserDefaults.standard.removeObject(forKey: K.UserDefaults.fcmToken)
         } catch {
             presentErrorToast(error, debug: "Couldn't send device token", silent: true)
+        }
+    }
+}
+
+extension Authentication {
+    enum AuthenticationError: LocalizedError {
+        case failedToGetUserInfo
+        case incorrectCredentials
+        case notSignedUpWithUs
+        case unknown
+        
+        var errorDescription: String? {
+            switch self {
+            case .failedToGetUserInfo:
+                "Couldn't get user info"
+            case .incorrectCredentials:
+                "Email/Password is incorrect"
+            case .notSignedUpWithUs:
+                "You are not signed up with \(K.appName)"
+            case .unknown:
+                "Something went wrong"
+            }
         }
     }
 }

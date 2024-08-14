@@ -36,9 +36,9 @@ final class MapDM {
         var title: String {
             switch self {
             case .global:
-                "Global Activities"
+                "Global"
             case .followings:
-                "Followings' Activities"
+                "Followings"
             }
         }
     }

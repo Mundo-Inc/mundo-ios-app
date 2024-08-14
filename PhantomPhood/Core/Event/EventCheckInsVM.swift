@@ -7,8 +7,7 @@
 
 import Foundation
 
-@MainActor
-final class EventCheckInsVM: ObservableObject {
+final class EventCheckInsVM: ObservableObject, LoadingSections {
     private let checkInDM = CheckInDM()
     
     private let eventVM: EventVM
@@ -17,35 +16,52 @@ final class EventCheckInsVM: ObservableObject {
         self.eventVM = eventVM
     }
     
-    @Published private(set) var isLoading: Bool = false
-    @Published private(set) var total: Int? = nil
-    @Published var checkIns: [Checkin]? = nil
+    @Published var loadingSections = Set<LoadingSection>()
+    @Published var checkIns: [CheckIn]? = nil
     
-    private var page = 1
+    private var checkInsPagination: Pagination? = nil
+    
     func fetch(type: RefreshNewAction) async {
-        guard let eventId = eventVM.event?.id, !isLoading else { return }
+        guard let eventId = eventVM.event?.id, !loadingSections.contains(.fetchCheckIns) else { return }
 
         if type == .refresh {
-            page = 1
+            checkInsPagination = nil
+        } else if let checkInsPagination, !checkInsPagination.hasMore {
+            return
         }
         
-        isLoading = true
+        setLoadingState(.fetchCheckIns, to: true)
+        
+        defer {
+            setLoadingState(.fetchCheckIns, to: false)
+        }
+        
         do {
-            let data = try await checkInDM.getCheckins(event: eventId, page: page)
-            self.total = data.pagination.totalCount
-            
-            if page == 1 {
-                checkIns = data.data
-            } else if checkIns != nil {
-                checkIns!.append(contentsOf: data.data)
+            let page = if let checkInsPagination {
+                checkInsPagination.page + 1
             } else {
-                checkIns = data.data
+                1
             }
             
-            page += 1
+            let data = try await checkInDM.getCheckins(event: eventId, page: page)
+            
+            await MainActor.run {
+                if page == 1 {
+                    checkIns = data.data
+                } else if checkIns != nil {
+                    checkIns!.append(contentsOf: data.data)
+                } else {
+                    checkIns = data.data
+                }
+            }
+            
+            self.checkInsPagination = data.pagination
         } catch {
             presentErrorToast(error)
         }
-        isLoading = false
+    }
+    
+    enum LoadingSection: Hashable {
+        case fetchCheckIns
     }
 }

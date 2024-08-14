@@ -156,37 +156,8 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
 #Preview {
     ScrollView {
         UserActivityItemTemplate(
-            user: UserEssentials(
-                id: "TEST_USER_ID",
-                name: "Dwayne",
-                username: "DwayneTheRock",
-                verified: true,
-                isPrivate: false,
-                profileImage: nil,
-                progress: .init(level: 7, xp: 300),
-                connectionStatus: nil
-            ),
-            comments: [
-                Comment(
-                    id: "TEST_COMMENT_ID_1",
-                    content: "This is the comment body let's see what happens if this exceeds two lines",
-                    createdAt: .now,
-                    updatedAt: .now,
-                    author: UserEssentials(
-                        id: "TEST_USER_ID",
-                        name: "Dwayne",
-                        username: "DwayneTheRock",
-                        verified: true,
-                        isPrivate: false,
-                        profileImage: URL(string: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
-                        progress: .init(level: 7, xp: 300),
-                        connectionStatus: nil
-                    ),
-                    mentions: [],
-                    likes: 4,
-                    liked: true
-                )
-            ]
+            user: Placeholder.users[0],
+            comments: [Placeholder.comments[0]]
         ) {
             Text("Header")
         } content: {
@@ -194,37 +165,8 @@ struct UserActivityItemTemplate<Header: View, Content: View, Footer: View>: View
         }
         
         UserActivityItemTemplate(
-            user: UserEssentials(
-                id: "TEST_USER_ID",
-                name: "Dwayne",
-                username: "DwayneTheRock",
-                verified: true,
-                isPrivate: false,
-                profileImage: URL(string: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
-                progress: .init(level: 52, xp: 3000),
-                connectionStatus: nil
-            ),
-            comments: [
-                Comment(
-                    id: "TEST_COMMENT_ID_1",
-                    content: "This is the comment body let's see what happens if this exceeds two lines",
-                    createdAt: .now,
-                    updatedAt: .now,
-                    author: UserEssentials(
-                        id: "TEST_USER_ID",
-                        name: "Dwayne",
-                        username: "DwayneTheRock",
-                        verified: true,
-                        isPrivate: false,
-                        profileImage: URL(string: "https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
-                        progress: .init(level: 80, xp: 10000),
-                        connectionStatus: nil
-                    ),
-                    mentions: [],
-                    likes: 4,
-                    liked: true
-                )
-            ]
+            user: Placeholder.users[0],
+            comments: [Placeholder.comments[0]]
         ) {
             Text("Header")
         } content: {

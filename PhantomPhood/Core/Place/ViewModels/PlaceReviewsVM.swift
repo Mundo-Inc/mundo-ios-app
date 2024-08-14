@@ -7,8 +7,7 @@
 
 import SwiftUI
 
-@MainActor
-class PlaceReviewsVM: ObservableObject {
+class PlaceReviewsVM: ObservableObject, LoadingSections {
     private let reactionsDM = ReactionsDM()
     private let placeDM = PlaceDM()
     
@@ -31,34 +30,46 @@ class PlaceReviewsVM: ObservableObject {
     @Published var yelpReviews: [YelpReview]? = nil
     @Published var total: Int? = nil
     
-    var page = 1
+    private var pagination: Pagination? = nil
+    
     func fetch(_ type: RefreshNewAction) async {
         guard let placeId = placeVM.place?.id, !loadingSections.contains(.new) && !loadingSections.contains(.refresh) else { return }
 
         if type == .refresh {
-            page = 1
-            loadingSections.insert(.refresh)
+            pagination = nil
+            setLoadingState(.refresh, to: true)
+        } else if let pagination, !pagination.hasMore {
+            return
         } else {
-            loadingSections.insert(.new)
+            setLoadingState(.new, to: true)
+        }
+        
+        defer {
+            switch type {
+            case .refresh:
+                setLoadingState(.refresh, to: false)
+            case .new:
+                setLoadingState(.new, to: false)
+            }
         }
         
         do {
+            let page = (pagination?.page ?? 0) + 1
+            
             let data = try await placeDM.getReviews(id: placeId, page: page)
-            self.total = data.pagination.totalCount
-            if page == 1 {
-                reviews = data.data
-            } else {
-                reviews.append(contentsOf: data.data)
+            
+            await MainActor.run {
+                self.total = data.pagination.totalCount
+                if page == 1 {
+                    reviews = data.data
+                } else {
+                    reviews.append(contentsOf: data.data)
+                }
             }
-            page += 1
+            
+            pagination = data.pagination
         } catch {
             presentErrorToast(error)
-        }
-        
-        if type == .refresh {
-            loadingSections.remove(.refresh)
-        } else {
-            loadingSections.remove(.new)
         }
     }
     

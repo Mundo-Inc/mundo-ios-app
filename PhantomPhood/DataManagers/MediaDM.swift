@@ -11,23 +11,31 @@ final class MediaDM {
     private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     
-    func getMedia(event: String, page: Int = 1, limit: Int = 20) async throws -> [MediaWithUser] {
+    func getMedia(event: String, page: Int = 1, limit: Int = 20) async throws -> APIResponseWithPagination<[MediaItem]> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data: APIResponse<[MediaWithUser]> = try await apiManager.requestData("/media?event=\(event)&page=\(page)&limit=\(limit)", token: token)
+        let data: APIResponseWithPagination<[MediaItem]> = try await apiManager.requestData("/media", queryParams: [
+            "event": event,
+            "page": page.description,
+            "limit": limit.description
+        ], token: token)
         
-        return data.data
+        return data
     }
     
-    func getMedia(place: String, page: Int = 1, limit: Int = 20) async throws -> [MediaWithUser] {
+    func getMedia(place: String, page: Int = 1, limit: Int = 20) async throws -> APIResponseWithPagination<[MediaItem]> {
         guard let token = await auth.getToken() else {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let data: APIResponse<[MediaWithUser]> = try await apiManager.requestData("/media?place=\(place)&page=\(page)&limit=\(limit)", token: token)
+        let data: APIResponseWithPagination<[MediaItem]> = try await apiManager.requestData("/media", queryParams: [
+            "place": place,
+            "page": page.description,
+            "limit": limit.description
+        ], token: token)
         
-        return data.data
+        return data
     }
 }
