@@ -8,16 +8,16 @@
 import Foundation
 import MapKit
 
-final class SearchDM {
+struct SearchDM {
     static let AcceptablePointOfInterestCategories: [MKPointOfInterestCategory] = [.cafe, .restaurant, .nightlife, .bakery, .brewery, .winery, .beach, .fitnessCenter]
     
     private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
+    private let auth = Authentication.shared
     
     // MARK: - Public methods
     
     func searchUsers(q: String, limit: Int = 20) async throws -> [UserEssentials] {
-        let token = await auth.getToken()
+        let token = try? await auth.getToken()
         
         let resData: APIResponse<[UserEssentials]> = try await apiManager.requestData("/users", queryParams: [
             "q": q.isEmpty ? nil : q,

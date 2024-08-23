@@ -305,32 +305,30 @@ struct CompleteTheUserInfoView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom)
                 
-                TextField("", text: $vm.phoneVerificationCode)
-                    .onChange(of: vm.phoneVerificationCode) { value in
-                        if !value.isEmpty {
-                            vm.phoneVerificationCode = vm.formatVerificationCode(code: value)
-                        }
-                    }
-                    .frame(width: 190)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled(true)
-                    .keyboardType(.numberPad)
-                    .textContentType(UITextContentType.oneTimeCode)
-                    .focused($focusedField, equals: .phoneVerification)
-                    .background {
-                        if vm.phoneVerificationCode.isEmpty {
-                            Text("C O D E ?")
-                                .foregroundStyle(.tertiary.opacity(0.3))
-                        }
+                Text("C O D E ?")
+                    .foregroundStyle(.tertiary.opacity(vm.phoneVerificationCode.isEmpty ? 0.3 : 0))
+                    .overlay {
+                        TextField("", text: $vm.phoneVerificationCode)
+                            .onChange(of: vm.phoneVerificationCode) { value in
+                                if !value.isEmpty {
+                                    vm.phoneVerificationCode = vm.formatVerificationCode(code: value)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled(true)
+                            .keyboardType(.numberPad)
+                            .textContentType(UITextContentType.oneTimeCode)
+                            .focused($focusedField, equals: .phoneVerification)
                     }
                     .padding(.bottom, 8)
                     .background(alignment: .bottom) {
                         Text("_ _ _ _ _")
                             .foregroundStyle(.tertiary)
                     }
+                    .padding(.bottom)
                     .font(.system(size: 32))
                     .monospaced()
-                    .padding(.bottom)
                 
                 Text("Code can take a few minutes (usually seconds) to arrive. Please be patient")
                     .foregroundStyle(.secondary)

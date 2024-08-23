@@ -7,56 +7,48 @@
 
 import Foundation
 
-final class CheckInDM {
+struct CheckInDM {
     private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     
     func getCheckins(event: String, page: Int = 1, limit: Int = 20) async throws -> APIResponseWithPagination<[CheckIn]> {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponseWithPagination<[CheckIn]> = try await apiManager.requestData("/checkins", queryParams: [
             "event": event,
-            "page": page.description,
-            "limit": limit.description
+            "page": String(page),
+            "limit": String(limit)
         ], token: token)
         
         return data
     }
     
     func getCheckins(user: String, page: Int = 1, limit: Int = 20) async throws -> APIResponseWithPagination<[CheckIn]> {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponseWithPagination<[CheckIn]> = try await apiManager.requestData("/checkins", queryParams: [
             "user": user,
-            "page": page.description,
-            "limit": limit.description
+            "page": String(page),
+            "limit": String(limit)
         ], token: token)
         
         return data
     }
     
     func getCheckins(place: String, page: Int = 1, limit: Int = 20) async throws -> APIResponseWithPagination<[CheckIn]> {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponseWithPagination<[CheckIn]> = try await apiManager.requestData("/checkins", queryParams: [
             "place": place,
-            "page": page.description,
-            "limit": limit.description
+            "page": String(page),
+            "limit": String(limit)
         ], token: token)
         
         return data
     }
     
     func checkin(placeId: String) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         struct RequestBody: Encodable {
             let place: String
@@ -67,18 +59,14 @@ final class CheckInDM {
     }
     
     func checkin(body: CheckinRequestBody) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let body = try apiManager.createRequestBody(body)
         try await apiManager.requestNoContent("/checkins", method: .post, body: body, token: token)
     }
     
     func deleteOne(byId id: String) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         try await apiManager.requestNoContent("/checkins/\(id)", method: .delete, token: token)
     }

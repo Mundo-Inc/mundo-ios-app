@@ -9,8 +9,8 @@ import Foundation
 
 struct GoogleReview: Decodable {
     let name: String
-    let text: LocalizedText
-    let originalText: LocalizedText
+    let text: LocalizedText?
+    let originalText: LocalizedText?
     let rating: Double
     let authorAttribution: AuthorAttribution
     let publishTime: String

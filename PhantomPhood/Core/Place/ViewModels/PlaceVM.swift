@@ -7,10 +7,12 @@
 
 import Foundation
 
-final class PlaceVM: ObservableObject {
+final class PlaceVM: ObservableObject, LoadingSections {
     private let placeDM = PlaceDM()
     
     @Published private(set) var place: PlaceDetail?
+    @Published private(set) var mediaItems: [MediaItem]? = nil
+    @Published var expandedMediaScrollPosition: String? = nil
     
     enum ScoresTab {
         case googlePhantomYelp
@@ -24,10 +26,10 @@ final class PlaceVM: ObservableObject {
     @Published var activeTab: PlaceTab = .media
     @Published var expandedMedia: MediaItem? = nil
     
-    @Published var draggedAmount: CGSize = .zero
-    
     /// user's lists that include this place
     @Published var includedLists: [String]? = nil
+    
+    @Published var loadingSections = Set<LoadingSection>()
     
     init(data: PlaceDetail, action: PlaceAction?) {
         self.place = data
@@ -75,10 +77,69 @@ final class PlaceVM: ObservableObject {
         }
     }
     
+    private var mediaPagination: Pagination? = nil
+    
     // MARK: - Public Methods
     
+    func fetchMedia(_ type: RefreshNewAction) async {
+        guard let place = place, !loadingSections.contains(.fetchingMedia) else { return }
+        
+        if type == .refresh {
+            mediaPagination = nil
+        } else if let mediaPagination, !mediaPagination.hasMore {
+            return
+        }
+        
+        setLoadingState(.fetchingMedia, to: true)
+        
+        defer {
+            setLoadingState(.fetchingMedia, to: false)
+        }
+        
+        do {
+            let page = (mediaPagination?.page ?? 0) + 1
+            
+            let data = try await placeDM.getMedias(id: place.id, page: page)
+            
+            await MainActor.run {
+                if page == 1 {
+                    if let photos = place.thirdParty.yelp?.photos, !photos.isEmpty {
+                        mediaItems = photos
+                    }
+                    if mediaItems != nil {
+                        mediaItems!.append(contentsOf: data.data)
+                    } else {
+                        mediaItems = data.data
+                    }
+                } else if mediaItems != nil {
+                    mediaItems!.append(contentsOf: data.data)
+                } else {
+                    mediaItems = data.data
+                }
+            }
+            
+            self.mediaPagination = data.pagination
+        } catch {
+            presentErrorToast(error)
+        }
+    }
+    
+    func loadMoreMedia(currentItem: MediaItem) async {
+        guard let mediaItems, !loadingSections.contains(.fetchingMedia) else { return }
+        let thresholdIndex = mediaItems.index(mediaItems.endIndex, offsetBy: -5)
+        if mediaItems.firstIndex(where: { $0.id == currentItem.id }) == thresholdIndex {
+            await fetchMedia(.new)
+        }
+    }
+    
     func updateIncludedLists(id: String? = nil) async {
-        guard let id = id ?? self.place?.id else { return }
+        guard let id = id ?? self.place?.id, !loadingSections.contains(.fetchingList) else { return }
+        
+        setLoadingState(.fetchingList, to: true)
+        
+        defer {
+            setLoadingState(.fetchingList, to: false)
+        }
         
         do {
             let listIds = try await placeDM.getIncludedLists(id: id)
@@ -108,6 +169,11 @@ final class PlaceVM: ObservableObject {
         case navigationOptions
         case addToList
         case openningHours
+    }
+    
+    enum LoadingSection: Hashable {
+        case fetchingMedia
+        case fetchingList
     }
 }
 

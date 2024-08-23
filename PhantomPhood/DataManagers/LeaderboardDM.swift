@@ -7,18 +7,16 @@
 
 import Foundation
 
-final class LeaderboardDM {
+struct LeaderboardDM {
     private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
-        
+    private let auth = Authentication.shared
+    
     func fetchLeaderboard(page: Int = 1, limit: Int = 30) async throws -> [UserEssentials] {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<[UserEssentials]> = try await apiManager.requestData("/users/leaderboard", method: .get, queryParams: [
-            "page": page.description,
-            "limit": limit.description
+            "page": String(page),
+            "limit": String(limit)
         ], token: token)
         
         return data.data

@@ -34,7 +34,7 @@ class AppGeneralVM: ObservableObject {
             if let appVersion {
                 self.appVersion = appVersion
                 
-                let token = await auth.getToken()
+                let token = try? await auth.getToken()
                 
                 let data: APIResponse<AppInfoResponse> = try await apiManager.requestData("/general/app-version/\(appVersion)", token: token)
                 

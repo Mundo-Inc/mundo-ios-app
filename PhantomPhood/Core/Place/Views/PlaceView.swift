@@ -29,6 +29,8 @@ struct PlaceView: View {
     @State private var interactingWithMap = false
     
     @AppStorage(K.UserDefaults.isMute) private var isMute = false
+    @Environment(\.mainWindowSize) private var mainWindowSize
+    @Environment(\.mainWindowSafeAreaInsets) private var mainWindowSafeAreaInsets
     
     var body: some View {
         ZStack {
@@ -398,9 +400,14 @@ struct PlaceView: View {
                 OpenningHours(place: place)
                 
                 // vm.expandedMedia != nil
-                ExpandedMedia()
+                if #available(iOS 17.0, *) {
+                    ExpandedMedia17()
+                } else {
+                    ExpandedMedia()
+                }
             }
         }
+        .navigationBarBackButtonHidden(vm.expandedMedia != nil)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if vm.expandedMedia == nil {
@@ -426,10 +433,9 @@ struct PlaceView: View {
     
     @ViewBuilder
     private func OpenningHours(place: PlaceDetail) -> some View {
-        if
-            let googleResult = place.thirdParty.google,
-            let openingHours = googleResult.openingHours,
-            vm.presentedSheet == .openningHours {
+        if let googleResult = place.thirdParty.google,
+           let openingHours = googleResult.openingHours,
+           vm.presentedSheet == .openningHours {
             // MARK: - Openning Hours
             ZStack {
                 Color.black.opacity(0.7)
@@ -453,93 +459,168 @@ struct PlaceView: View {
         }
     }
     
+    @available(iOS 17.0, *)
     @ViewBuilder
-    private func ExpandedMedia() -> some View {
-        if let expandedMedia = vm.expandedMedia {
-            ZStack(alignment: .bottom) {
-                Color.black.opacity(0.8)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation {
-                            vm.expandedMedia = nil
-                        }
-                    }
-                
-                Group {
-                    Group {
-                        if expandedMedia.type == .image {
-                            ImageLoader(expandedMedia.src, contentMode: .fit) { progress in
-                                Rectangle()
-                                    .foregroundStyle(.clear)
-                                    .frame(maxWidth: 150)
-                                    .overlay {
-                                        ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                            .progressViewStyle(LinearProgressViewStyle())
-                                            .padding(.horizontal)
+    private func ExpandedMedia17() -> some View {
+        if let expandedMedia = vm.expandedMedia, let mediaItems = vm.mediaItems {
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(mediaItems) { media in
+                        ZStack(alignment: .bottomLeading) {
+                            if media.type == .image {
+                                if expandedMedia.id == media.id {
+                                    ImageLoader(media.src, contentMode: .fit) { progress in
+                                        Image(systemName: "arrow.down.circle.dotted")
+                                            .foregroundStyle(Color.white.opacity(0.5))
                                     }
-                            }
-                            .matchedGeometryEffect(id: expandedMedia.id, in: namespace)
-                        } else if expandedMedia.type == .video, let url = expandedMedia.src {
-                            ZStack(alignment: .bottom) {
-                                VideoPlayer(url: url, playing: true, isMute: isMute)
-                            }
-                        }
-                    }
-                    .overlay(alignment: .bottomLeading) {
-                        switch expandedMedia.source {
-                        case .mundo:
-                            if let user = expandedMedia.user {
-                                HStack(spacing: 5) {
-                                    ProfileImage(user.profileImage, size: 24, cornerRadius: 12)
-                                    
-                                    Text(user.name)
-                                        .cfont(.caption2)
-                                        .lineLimit(1)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    .matchedGeometryEffect(id: media.id, in: namespace)
+                                } else {
+                                    ImageLoader(media.src, contentMode: .fit) { progress in
+                                        Image(systemName: "arrow.down.circle.dotted")
+                                            .foregroundStyle(Color.white.opacity(0.5))
+                                    }
                                 }
-                                .padding(.leading, 5)
-                                .padding(.bottom, 5)
+                            } else if media.type == .video, let url = media.src {
+                                ZStack(alignment: .bottom) {
+                                    VideoPlayer(url: url, playing: vm.expandedMediaScrollPosition == media.id, isMute: isMute)
+                                }
                             }
-                        case .google:
-                            Image(.googleLogo)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(maxHeight: 30)
-                                .padding(.leading, 5)
-                                .padding(.bottom, 5)
-                        case .yelp:
-                            Image(.yelpLogo)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(maxHeight: 30)
-                                .padding(.leading, 5)
-                                .padding(.bottom, 5)
+                            
+                            Group {
+                                switch media.source {
+                                case .mundo:
+                                    if let user = media.user {
+                                        HStack(spacing: 5) {
+                                            ProfileImage(user.profileImage, size: 24, cornerRadius: 12)
+                                            
+                                            Text(user.name)
+                                                .cfont(.caption2)
+                                                .lineLimit(1)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
+                                    }
+                                case .google:
+                                    Image(.googleLogo)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(maxHeight: 30)
+                                case .yelp:
+                                    Image(.yelpLogo)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(maxHeight: 30)
+                                }
+                            }
+                            .padding(.leading, 5)
+                            .padding(.bottom, 5)
+                        }
+                        .padding(.bottom, mainWindowSafeAreaInsets.bottom)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: UIScreen.main.bounds.height)
+                        .id(media.id)
+                        .task {
+                            await vm.loadMoreMedia(currentItem: media)
                         }
                     }
                 }
-                .zIndex(2)
-                .offset(vm.draggedAmount)
-                .opacity(max(abs(vm.draggedAmount.width), abs(vm.draggedAmount.height)) >= 80 ? 0.5 : 1)
+                .scrollTargetLayout()
+                .ignoresSafeArea()
             }
+            .scrollPosition(id: $vm.expandedMediaScrollPosition)
+            .scrollTargetBehavior(.paging)
+            .scrollIndicators(.never)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .ignoresSafeArea()
+            .background(Color.black)
             .zIndex(1)
-            .ignoresSafeArea(edges: .top)
-            .gesture(
-                DragGesture()
-                    .onChanged({ value in
-                        vm.draggedAmount = value.translation
-                    })
-                    .onEnded({ value in
-                        if max(abs(value.translation.width), abs(value.translation.height)) >= 80 {
-                            withAnimation {
-                                vm.expandedMedia = nil
+            .onAppear {
+                vm.expandedMediaScrollPosition = expandedMedia.id
+            }
+            .onDisappear {
+                vm.expandedMediaScrollPosition = nil
+            }
+        }
+    }
+    
+    // TODO: This component is WIP
+    @ViewBuilder
+    private func ExpandedMedia() -> some View {
+        if let expandedMedia = vm.expandedMedia, let mediaItems = vm.mediaItems {
+            ScrollView {
+                LazyVStack {
+                    ForEach(mediaItems) { media in
+                        ZStack(alignment: .bottom) {
+                            Color.black.opacity(0.8)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .ignoresSafeArea()
+                                .onTapGesture {
+                                    withAnimation {
+                                        vm.expandedMedia = nil
+                                    }
+                                }
+                            
+                            Group {
+                                if expandedMedia.type == .image {
+                                    ImageLoader(expandedMedia.src, contentMode: .fit) { progress in
+                                        Rectangle()
+                                            .foregroundStyle(.clear)
+                                            .frame(maxWidth: 150)
+                                            .overlay {
+                                                ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
+                                                    .progressViewStyle(LinearProgressViewStyle())
+                                                    .padding(.horizontal)
+                                            }
+                                    }
+                                    .matchedGeometryEffect(id: expandedMedia.id, in: namespace)
+                                } else if expandedMedia.type == .video, let url = expandedMedia.src {
+                                    ZStack(alignment: .bottom) {
+                                        VideoPlayer(url: url, playing: true, isMute: isMute)
+                                    }
+                                }
                             }
+                            .overlay(alignment: .bottomLeading) {
+                                Group {
+                                    switch expandedMedia.source {
+                                    case .mundo:
+                                        if let user = expandedMedia.user {
+                                            HStack(spacing: 5) {
+                                                ProfileImage(user.profileImage, size: 24, cornerRadius: 12)
+                                                
+                                                Text(user.name)
+                                                    .cfont(.caption2)
+                                                    .lineLimit(1)
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                            }
+                                        }
+                                    case .google:
+                                        Image(.googleLogo)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(maxHeight: 30)
+                                    case .yelp:
+                                        Image(.yelpLogo)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(maxHeight: 30)
+                                    }
+                                }
+                                .padding(.leading, 5)
+                                .padding(.bottom, 5)
+                                .padding(.bottom, mainWindowSafeAreaInsets.bottom)
+                            }
+                            .zIndex(2)
                         }
-                        withAnimation {
-                            vm.draggedAmount = .zero
-                        }
-                    })
-            )
+                        .frame(maxWidth: .infinity)
+                        .frame(height: UIScreen.main.bounds.height)
+                    }
+                }
+                .ignoresSafeArea()
+            }
+            .scrollIndicators(.never)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .ignoresSafeArea()
+            .background(Color.black)
+            .zIndex(1)
         }
     }
     

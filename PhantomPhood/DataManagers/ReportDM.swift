@@ -8,9 +8,9 @@
 import Foundation
 import CryptoKit
 
-final class ReportDM {
+struct ReportDM {
     private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
+    private let auth = Authentication.shared
     
     struct CrashReport: Encodable {
         let function: String
@@ -20,6 +20,7 @@ final class ReportDM {
         
         func encrypt(with: String) -> String? {
             let encoder = JSONEncoder()
+            
             do {
                 let jsonData = try encoder.encode(self)
                 let keyData = SHA256.hash(data: Data(with.utf8))
@@ -27,7 +28,7 @@ final class ReportDM {
                 let sealedBox = try AES.GCM.seal(jsonData, using: key)
                 return sealedBox.combined?.base64EncodedString()
             } catch {
-                print("Encryption error: \(error)")
+                presentErrorToast(error)
                 return nil
             }
         }
@@ -37,9 +38,10 @@ final class ReportDM {
     
     func reportBug(report: CrashReport) async throws {
         if let userId = auth.currentUser?.id {
-            guard let token = await auth.getToken(),
-                  let reportString = report.encrypt(with: userId) else {
-                throw URLError(.userAuthenticationRequired)
+            let token = try await auth.getToken()
+            
+            guard let reportString = report.encrypt(with: userId) else {
+                throw URLError(.badServerResponse)
             }
             
             struct CrashReportBody: Encodable {
@@ -55,11 +57,19 @@ final class ReportDM {
     }
     
     func report(item: ReportType, flagType: FlagType, note: String) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let body: Data
+        
+        struct ReportRequestBody: Encodable {
+            let activity: String?
+            let review: String?
+            let comment: String?
+            let homemade: String?
+            let checkIn: String?
+            let flagType: String
+            let note: String
+        }
         
         switch item {
         case .activity(let id):
@@ -76,18 +86,8 @@ final class ReportDM {
         
         try await apiManager.requestNoContent("/activities/flag", method: .post, body: body, token: token)
     }
-        
-    // MARK: - Structs
     
-    struct ReportRequestBody: Encodable {
-        let activity: String?
-        let review: String?
-        let comment: String?
-        let homemade: String?
-        let checkIn: String?
-        let flagType: String
-        let note: String
-    }
+    // MARK: - Structs
     
     enum ReportType: Hashable {
         case activity(String)
@@ -111,7 +111,7 @@ final class ReportDM {
             }
         }
     }
-
+    
     enum FlagType: String, CaseIterable {
         case INAPPROPRIATE_CONTENT = "INAPPROPRIATE_CONTENT"
         case SPAM = "SPAM"

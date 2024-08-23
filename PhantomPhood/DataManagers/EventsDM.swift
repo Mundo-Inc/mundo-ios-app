@@ -7,24 +7,22 @@
 
 import Foundation
 
-final class EventsDM {
+struct EventsDM {
     private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     
     func getEvents(q: String? = nil) async throws -> [Event] {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
-        let data: APIResponse<[Event]> = try await apiManager.requestData("/events\((q != nil && !q!.isEmpty) ? "?q=\(q!)" : "")", token: token)
+        let data: APIResponse<[Event]> = try await apiManager.requestData("/events", queryParams: [
+            "q": q != nil && !q!.isEmpty ? q! : nil
+        ], token: token)
         
         return data.data
     }
     
     func getEvent(_ eventId: String) async throws -> Event {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<Event> = try await apiManager.requestData("/events/\(eventId)", token: token)
         

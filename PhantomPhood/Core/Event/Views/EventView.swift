@@ -31,29 +31,17 @@ struct EventView: View {
                     HStack(alignment: .top) {
                         Group {
                             if let logo = vm.event?.logo {
-                                ImageLoader(logo, contentMode: .fill) { progress in
-                                    Rectangle()
-                                        .foregroundStyle(.clear)
-                                        .frame(maxWidth: 150)
-                                        .overlay {
-                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                .progressViewStyle(LinearProgressViewStyle())
-                                                .padding(.horizontal)
-                                        }
+                                ImageLoader(logo, contentMode: .fill) { _ in
+                                    Image(systemName: "arrow.down.circle.dotted")
+                                        .foregroundStyle(.secondary)
                                 }
                                 .frame(width: 80, height: 80)
                                 .background(RoundedRectangle(cornerRadius: 10).foregroundStyle(Color.themePrimary))
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                             } else if let thumbnail = vm.event?.place.thumbnail {
-                                ImageLoader(thumbnail, contentMode: .fill) { progress in
-                                    Rectangle()
-                                        .foregroundStyle(.clear)
-                                        .frame(maxWidth: 150)
-                                        .overlay {
-                                            ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                                .progressViewStyle(LinearProgressViewStyle())
-                                                .padding(.horizontal)
-                                        }
+                                ImageLoader(thumbnail, contentMode: .fill) { _ in
+                                    Image(systemName: "arrow.down.circle.dotted")
+                                        .foregroundStyle(.secondary)
                                 }
                                 .frame(width: 80, height: 80)
                                 .background(RoundedRectangle(cornerRadius: 10).foregroundStyle(Color.themePrimary))

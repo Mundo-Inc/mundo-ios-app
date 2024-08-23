@@ -18,9 +18,7 @@ final class UploadManager {
     }
     
     func uploadMedia(media: CompressedMediaData, usecase: UploadUseCase) async throws -> ResponseData {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         switch media {
         case .image(let data):
@@ -100,6 +98,7 @@ final class UploadManager {
         case image = "image/jpeg"
         case video = "video/mp4"
     }
+    
     private struct UploadFile {
         let name: String
         let data: Data

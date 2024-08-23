@@ -40,34 +40,36 @@ final class PaymentsSettingVM: LoadingSections, ObservableObject {
     func onPaymentMethodCompletion(result: CustomerSheet.CustomerSheetResult) {
         switch result {
         case .canceled(let paymentOptionSelection):
-            Task {
-                await MainActor.run {
-                    selectedPaymentOption = paymentOptionSelection
-                }
+            DispatchQueue.main.async {
+                self.selectedPaymentOption = paymentOptionSelection
             }
         case .selected(let paymentOptionSelection):
-            Task {
-                await MainActor.run {
-                    selectedPaymentOption = paymentOptionSelection
-                }
+            DispatchQueue.main.async {
+                self.selectedPaymentOption = paymentOptionSelection
             }
         case .error(let error):
-            print(error)
+            presentErrorToast(error)
         }
     }
     
-    @MainActor
     func presentPaymentSheet() {
-        self.isPaymentsSheetPresented = true
+        DispatchQueue.main.async {
+            self.isPaymentsSheetPresented = true
+        }
     }
 
     private func getPaymentOptionSelection() async {
         setLoadingState(.retrievePaymentOptionSelection, to: true)
+        
+        defer {
+            setLoadingState(.retrievePaymentOptionSelection, to: false)
+        }
+        
         let paymentOptionSelection = try? await customerAdapter.retrievePaymentOptionSelection()
+        
         await MainActor.run {
             selectedPaymentOption = paymentOptionSelection
         }
-        setLoadingState(.retrievePaymentOptionSelection, to: false)
     }
     
     // MARK: Enums

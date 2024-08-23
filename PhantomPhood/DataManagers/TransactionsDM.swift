@@ -7,14 +7,12 @@
 
 import Foundation
 
-final class TransactionsDM {
+struct TransactionsDM {
     private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
+    private let auth = Authentication.shared
     
     func getCustomerEphemeralKey() async throws -> CustomerEphemeralKey {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<CustomerEphemeralKey> = try await apiManager.requestData("/transactions/customer", method: .get, token: token)
         
@@ -22,9 +20,7 @@ final class TransactionsDM {
     }
     
     func sendGift(amount: Double, to userId: String, using paymentMethod: String, message: String? = nil) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         struct RequestBody: Encodable {
             let amount: Double
@@ -38,9 +34,7 @@ final class TransactionsDM {
     }
     
     func getTransaction(withId id: String) async throws -> Transaction {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<Transaction> = try await apiManager.requestData("/transactions/\(id)", method: .get, token: token)
         

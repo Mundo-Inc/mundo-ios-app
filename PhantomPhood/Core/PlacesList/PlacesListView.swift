@@ -237,14 +237,8 @@ fileprivate struct PlaceItem: View {
             .background {
                 if let thumbnail = place.place.thumbnail {
                     ImageLoader(thumbnail, contentMode: .fill) { progress in
-                        Rectangle()
-                            .foregroundStyle(.clear)
-                            .frame(maxWidth: 150)
-                            .overlay {
-                                ProgressView(value: Double(progress.completedUnitCount), total: Double(progress.totalUnitCount))
-                                    .progressViewStyle(LinearProgressViewStyle())
-                                    .padding(.horizontal)
-                            }
+                        Image(systemName: "arrow.down.circle.dotted")
+                            .foregroundStyle(.secondary)
                     }
                 } else {
                     Color.gray.opacity(0.8)

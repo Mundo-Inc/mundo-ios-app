@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class UserProfileDM {
+struct UserProfileDM {
     private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     private let dataManager = DataStack.shared
@@ -96,9 +96,7 @@ final class UserProfileDM {
     }
     
     func fetch(id: String) async throws -> UserDetail {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<UserDetail> = try await apiManager.requestData("/users/\(id)", method: .get, token: token)
         
@@ -109,9 +107,7 @@ final class UserProfileDM {
     }
     
     func fetch(username: String) async throws -> UserDetail {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<UserDetail> = try await apiManager.requestData("/users/@\(username)", method: .get, token: token)
         
@@ -122,9 +118,7 @@ final class UserProfileDM {
     }
     
     func getFollowRequests(page: Int = 1, limit: Int = 30) async throws -> APIResponseWithPagination<[FollowRequest]> {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponseWithPagination<[FollowRequest]> = try await apiManager.requestData("/users/followRequests?page=\(page)&limit=\(limit)", method: .get, token: token)
         
@@ -132,9 +126,7 @@ final class UserProfileDM {
     }
     
     func follow(id: String) async throws -> FollowRequestStatus {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let httpResponse = try await apiManager.requestNoContent("/users/\(id)/connections", method: .post, token: token)
         
@@ -148,70 +140,56 @@ final class UserProfileDM {
     }
     
     func unfollow(id: String) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         try await apiManager.requestNoContent("/users/\(id)/connections", method: .delete, token: token)
     }
     
     func removeFollower(id: String) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         try await apiManager.requestNoContent("/users/followers/\(id)", method: .delete, token: token)
     }
     
     func acceptRequest(for requestId: String) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         try await apiManager.requestNoContent("/users/followRequests/\(requestId)", method: .post, token: token)
     }
     
     func rejectRequest(for requestId: String) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         try await apiManager.requestNoContent("/users/followRequests/\(requestId)", method: .delete, token: token)
     }
     
     func block(id: String) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         try await apiManager.requestNoContent("/users/\(id)/block", method: .post, token: token)
     }
     
     func unblock(id: String) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         try await apiManager.requestNoContent("/users/\(id)/block", method: .delete, token: token)
     }
     
     @discardableResult
     func getReferredUsers() async throws -> APIResponseWithPagination<[UserEssentialsWithCreationDate]> {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponseWithPagination<[UserEssentialsWithCreationDate]> = try await apiManager.requestData("/users/latestReferrals", method: .get, token: token)
         
+        print("Saving")
         UserDataStack.shared.saveUsers(userEssentialsList: data.data)
+        print("Saved \(data.data.count) | Total:\(data.pagination.totalCount)")
         
         return data
     }
     
     func getStats() async throws -> UserStats {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<UserStats> = try await apiManager.requestData("/users/stats", method: .get, token: token)
         
@@ -219,8 +197,10 @@ final class UserProfileDM {
     }
     
     func sendPhoneVerificationCode(phone: String) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
+        let token = try await auth.getToken()
+        
+        struct GetPhoneVerificationBody: Encodable {
+            let phone: String
         }
         
         let reqBody = try apiManager.createRequestBody(GetPhoneVerificationBody(phone: phone))
@@ -228,8 +208,11 @@ final class UserProfileDM {
     }
     
     func verifyPhoneNumber(phone: String, code: String) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
+        let token = try await auth.getToken()
+        
+        struct VerifyPhoneBody: Encodable {
+            let phone: String
+            let code: String
         }
         
         let reqBody = try apiManager.createRequestBody(VerifyPhoneBody(phone: phone, code: code))
@@ -237,9 +220,11 @@ final class UserProfileDM {
     }
     
     func editProfileInfo(changes: EditUserBody) async throws {
-        guard let token = await auth.getToken(), let uid = auth.currentUser?.id else {
-            throw URLError(.userAuthenticationRequired)
+        guard let uid = auth.currentUser?.id else {
+            throw URLError(.badServerResponse)
         }
+        
+        let token = try await auth.getToken()
         
         let reqBody = try apiManager.createRequestBody(changes)
         try await apiManager.requestNoContent("/users/\(uid)", method: .put, body: reqBody, token: token)
@@ -274,15 +259,6 @@ final class UserProfileDM {
             self.eula = eula
             self.referrer = referrer
         }
-    }
-    
-    struct GetPhoneVerificationBody: Encodable {
-        let phone: String
-    }
-    
-    struct VerifyPhoneBody: Encodable {
-        let phone: String
-        let code: String
     }
     
     struct UserEssentialsWithCreationDate: Identifiable, Decodable {

@@ -110,8 +110,12 @@ final class Authentication: ObservableObject {
     
     // MARK: - Public Methods
     
-    func getToken() async -> String? {
-        return try? await Auth.auth().currentUser?.getIDToken()
+    func getToken() async throws -> String {
+        guard let token = try? await Auth.auth().currentUser?.getIDToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        return token
     }
     
     func signIn(email: String, password: String) async throws {
@@ -121,9 +125,12 @@ final class Authentication: ObservableObject {
                 self.userSession = result.user
             }
             do {
-                guard let uid = Auth.auth().currentUser?.uid, let token = await getToken() else {
+                guard let uid = Auth.auth().currentUser?.uid else {
                     throw URLError(.userAuthenticationRequired)
                 }
+                
+                let token = try await getToken()
+                
                 let user = try await getUserInfo(uid: uid, token: token)
                 await MainActor.run {
                     self.currentUser = user
@@ -141,9 +148,12 @@ final class Authentication: ObservableObject {
         let result = try await Auth.auth().signIn(with: credential)
         
         do {
-            guard let uid = Auth.auth().currentUser?.uid, let token = await getToken() else {
+            guard let uid = Auth.auth().currentUser?.uid else {
                 throw URLError(.userAuthenticationRequired)
             }
+            
+            let token = try await getToken()
+            
             await MainActor.run {
                 self.userSession = result.user
             }
@@ -158,9 +168,11 @@ final class Authentication: ObservableObject {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
                     Task {
                         do {
-                            guard let uid = Auth.auth().currentUser?.uid, let token = await self.getToken() else {
+                            guard let uid = Auth.auth().currentUser?.uid else {
                                 throw URLError(.userAuthenticationRequired)
                             }
+                            let token = try await self.getToken()
+                            
                             await MainActor.run {
                                 self.userSession = result.user
                             }
@@ -173,9 +185,11 @@ final class Authentication: ObservableObject {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
                                 Task {
                                     do {
-                                        guard let uid = Auth.auth().currentUser?.uid, let token = await self.getToken() else {
+                                        guard let uid = Auth.auth().currentUser?.uid else {
                                             throw URLError(.userAuthenticationRequired)
                                         }
+                                        let token = try await self.getToken()
+                                        
                                         await MainActor.run {
                                             self.userSession = result.user
                                         }
@@ -251,8 +265,10 @@ final class Authentication: ObservableObject {
     }
     
     func updateUserInfo() async {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
         do {
-            guard let uid = Auth.auth().currentUser?.uid, let token = await getToken() else { return }
+            let token = try await getToken()
             
             let data: APIResponse<CurrentUserFullData> = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token)
             
@@ -282,7 +298,7 @@ final class Authentication: ObservableObject {
         let apnToken = UserDefaults.standard.string(forKey: K.UserDefaults.apnToken)
         let fcmToken = UserDefaults.standard.string(forKey: K.UserDefaults.fcmToken)
         
-        guard let token = await getToken(), let currentUser, let apnToken, !apnToken.isEmpty, let fcmToken, !fcmToken.isEmpty else {
+        guard let token = try? await getToken(), let currentUser, let apnToken, !apnToken.isEmpty, let fcmToken, !fcmToken.isEmpty else {
             return
         }
         

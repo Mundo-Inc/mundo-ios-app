@@ -7,14 +7,12 @@
 
 import Foundation
 
-final class CommentsDM {
+struct CommentsDM {
     private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
+    private let auth = Authentication.shared
     
     func submitComment(for activityId: String, content: String, parent: String? = nil) async throws -> Comment {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         struct CreateCommentBody: Encodable {
             let content: String
@@ -29,9 +27,7 @@ final class CommentsDM {
     }
     
     func updateCommentLike(for commentId: String, action: LikeAction) async throws -> Comment {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<Comment> = try await apiManager.requestData("/comments/\(commentId)/likes", method: action == .add ? .post : .delete, token: token)
         
@@ -39,9 +35,7 @@ final class CommentsDM {
     }
     
     func getReplies(for commentId: String, page: Int = 1, limit: Int = 30) async throws -> [Comment] {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<[Comment]> = try await apiManager.requestData("/comments/\(commentId)/replies", method: .get, queryParams: [
             "page": String(page),

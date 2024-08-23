@@ -40,18 +40,16 @@ struct GoogleReviewItem: View {
             }
             .padding(.horizontal)
             
-            Text(review.text.text)
-                .cfont(.body)
-                .foregroundStyle(Color.primary.opacity(0.8))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .multilineTextAlignment(.leading)
-                .padding(.horizontal)
+            if let text = review.text {
+                Text(text.text)
+                    .cfont(.body)
+                    .foregroundStyle(Color.primary.opacity(0.8))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.leading)
+                    .padding(.horizontal)
+            }
             
             Divider()
         }
     }
 }
-
-//#Preview {
-//    GoogleReviewItem()
-//}

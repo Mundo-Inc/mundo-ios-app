@@ -12,7 +12,7 @@ import CoreData
 import Combine
 
 @available(iOS 17.0, *)
-final class ExploreVM17: ObservableObject {
+final class ExploreVM17: ObservableObject, LoadingSections {
     static let annotationLimitOnMap: Int = 30
     static let mapAnnotationUpdateThruttle: Double = 1.5
     
@@ -33,7 +33,7 @@ final class ExploreVM17: ObservableObject {
     
     @Published var isInviteBannerPresented: Bool = true
     
-    @Published private(set) var loadingSections = Set<LoadingSection>()
+    @Published var loadingSections = Set<LoadingSection>()
     @Published var searchResults: [MKMapItem]? = nil
     @Published var isSearching: Bool = false
     @Published var startDate: DateOption = .year
@@ -48,7 +48,7 @@ final class ExploreVM17: ObservableObject {
     @Published var presentedSheet: Sheets? = nil
     
     private(set) var originalItems: [MapActivity] = []
-    private(set) var fetchedAreas: [AreaLevel:[FetchedMapRect]] = [
+    private(set) var fetchedAreas: [AreaLevel: [FetchedMapRect]] = [
         .A: [],
         .B: [],
         .C: [],
@@ -62,14 +62,16 @@ final class ExploreVM17: ObservableObject {
         updateFetchedRegions()
         
         $startDate
-            .sink { value in
-                self.getSavedData(startDate: value.getDate)
-                self.removeRequestedRegions()
+            .sink { [weak self] value in
+                self?.getSavedData(startDate: value.getDate)
+                self?.removeRequestedRegions()
             }
             .store(in: &cancellables)
         
         $activitiesScope
-            .sink { value in
+            .sink { [weak self] value in
+                guard let self else { return }
+                
                 if value == .followings {
                     try? self.dataStack.removeMapActivities()
                 }
@@ -91,7 +93,11 @@ final class ExploreVM17: ObservableObject {
     // MARK: - Shared Methods
     
     func panToRegion(_ region: MKCoordinateRegion) {
-        position = .region(region)
+        DispatchQueue.main.async {
+            withAnimation {
+                self.position = .region(region)
+            }
+        }
     }
     
     // MARK: - Exclusive Methods
@@ -102,8 +108,10 @@ final class ExploreVM17: ObservableObject {
         
         guard let intersectingRects = shouldFetch(rect: fetchRect, areaLevel: areaLevel) else { return }
         
-        DispatchQueue.main.async {
-            self.loadingSections.insert(.fetchActivities)
+        setLoadingState(.fetchActivities, to: true)
+        
+        defer {
+            setLoadingState(.fetchActivities, to: false)
         }
         
         do {
@@ -117,26 +125,24 @@ final class ExploreVM17: ObservableObject {
         } catch {
             presentErrorToast(error, silent: true)
         }
-        
-        DispatchQueue.main.async {
-            self.loadingSections.remove(.fetchActivities)
-        }
     }
     
     func onMapCameraChangeContinuosHandler(_ context: MapCameraUpdateContext) {
-        if isInviteBannerPresented && position.positionedByUser {
-            withAnimation {
-                isInviteBannerPresented = false
-            }
-        }
-        
-        self.latestMapContext = context
         DispatchQueue.main.async {
+            if self.isInviteBannerPresented && self.position.positionedByUser {
+                withAnimation {
+                    self.isInviteBannerPresented = false
+                }
+            }
+            
+            self.latestMapContext = context
+            
             self.scale = context.scaleValue
         }
         
         if !throttles.contains(.fetch) && !loadingSections.contains(.fetchActivities) {
             throttles.insert(.fetch)
+            
             Task {
                 await self.fetchData(rect: context.rect)
                 updateAnnotations()
@@ -164,10 +170,11 @@ final class ExploreVM17: ObservableObject {
             var (acttivities, events) = self.makeCluster(self.originalItems.filter({ context.rect.contains(.init($0.place.coordinates)) }), events: self.originalEvents?.filter({ context.rect.contains(.init($0.place
                 .coordinates)) }))
             
+            if acttivities.count > Self.annotationLimitOnMap {
+                acttivities = Array(acttivities.prefix(Self.annotationLimitOnMap))
+            }
+            
             DispatchQueue.main.async {
-                if acttivities.count > Self.annotationLimitOnMap {
-                    acttivities = Array(acttivities.prefix(Self.annotationLimitOnMap))
-                }
                 self.events = events
                 self.activities = acttivities
             }
@@ -464,24 +471,30 @@ final class ExploreVM17: ObservableObject {
 
 @available(iOS 17.0, *)
 extension ExploreVM17 {
-    @MainActor
     func getEvents() async {
         guard !self.loadingSections.contains(.fetchEvents) else { return }
         
-        self.loadingSections.insert(.fetchEvents)
+        setLoadingState(.fetchEvents, to: true)
+        
+        defer {
+            setLoadingState(.fetchEvents, to: false)
+        }
+        
         do {
-            self.originalEvents = try await eventsDM.getEvents()
+            let data = try await eventsDM.getEvents()
+            
+            await MainActor.run {
+                self.originalEvents = data
+            }
         } catch {
             presentErrorToast(error)
         }
-        self.loadingSections.remove(.fetchEvents)
     }
 }
 
 
 @available(iOS, introduced: 16.0, deprecated: 17.0, message: "Use ExploreVM17 for iOS 17 and above")
-@MainActor
-final class ExploreVM16: ObservableObject {
+final class ExploreVM16: ObservableObject, LoadingSections {
     
     // MARK: - Shared
     
@@ -499,7 +512,7 @@ final class ExploreVM16: ObservableObject {
     
     private var originalEvents: [Event]? = nil
     
-    @Published private(set) var loadingSections = Set<LoadingSection>()
+    @Published var loadingSections = Set<LoadingSection>()
     @Published var searchResults: [MKMapItem]? = nil
     @Published var isSearching: Bool = false
     
@@ -523,14 +536,25 @@ final class ExploreVM16: ObservableObject {
     // MARK: - Shared Methods
     
     func fetchPlace(mapItem: MKMapItem) async {
-        self.selectedPlaceData = nil
-        self.loadingSections.insert(.fetchPlace)
+        await MainActor.run {
+            self.selectedPlaceData = nil
+        }
+        
+        setLoadingState(.fetchPlace, to: true)
+        
+        defer {
+            setLoadingState(.fetchPlace, to: false)
+        }
+        
         do {
-            self.selectedPlaceData = try await placeDM.fetch(mapItem: mapItem)
+            let data = try await placeDM.fetch(mapItem: mapItem)
+            
+            await MainActor.run {
+                self.selectedPlaceData = data
+            }
         } catch {
             presentErrorToast(error)
         }
-        self.loadingSections.remove(.fetchPlace)
     }
     
     func mapClickHandler(coordinate: CLLocationCoordinate2D) async -> MKMapItem? {
@@ -546,7 +570,11 @@ final class ExploreVM16: ObservableObject {
     // MARK: - Exlusive Methods
     
     func panToRegion(_ region: MKCoordinateRegion) {
-        self.centerCoordinate = region.center
+        DispatchQueue.main.async {
+            withAnimation {
+                self.centerCoordinate = region.center
+            }
+        }
     }
 }
 
@@ -554,12 +582,20 @@ extension ExploreVM16 {
     func getEvents() async {
         guard !self.loadingSections.contains(.fetchEvents) else { return }
         
-        self.loadingSections.insert(.fetchEvents)
+        setLoadingState(.fetchEvents, to: true)
+        
+        defer {
+            setLoadingState(.fetchEvents, to: false)
+        }
+        
         do {
-            self.originalEvents = try await eventsDM.getEvents()
+            let data = try await eventsDM.getEvents()
+            
+            await MainActor.run {
+                self.originalEvents = data
+            }
         } catch {
             presentErrorToast(error)
         }
-        self.loadingSections.remove(.fetchEvents)
     }
 }

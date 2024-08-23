@@ -8,14 +8,12 @@
 import Foundation
 import MapKit
 
-final class MapDM {
+struct MapDM {
     private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
-        
+    private let auth = Authentication.shared
+    
     func getMapActivities(ne: CLLocationCoordinate2D, sw: CLLocationCoordinate2D, startDate: Date, scope: Scope) async throws -> [MapActivity] {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let responseData: APIResponse<[MapActivity]> = try await apiManager.requestData("/map/mapActivities", queryParams: [
             "northEastLat": String(ne.latitude),

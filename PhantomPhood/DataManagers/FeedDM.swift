@@ -7,9 +7,9 @@
 
 import Foundation
 
-final class FeedDM {
+struct FeedDM {
     private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
+    private let auth = Authentication.shared
     
     enum FeedType: String {
         case followings
@@ -17,12 +17,10 @@ final class FeedDM {
     }
     
     func getFeed(page: Int = 1, type: FeedType) async throws -> [FeedItem] {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<[FeedItem]> = try await apiManager.requestData("/feeds", method: .get, queryParams: [
-            "page": page.description,
+            "page": String(page),
             "isForYou": type == .forYou ? "true" : nil
         ], token: token)
         

@@ -9,37 +9,33 @@ import Foundation
 import SwiftUI
 import MapKit
 
-final class PlaceDM {
+struct PlaceDM {
     private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
+    private let auth = Authentication.shared
     
     func fetch(mapPlace: MapPlace) async throws -> PlaceDetail {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<PlaceDetail> = try await apiManager.requestData("/places/context", method: .get, queryParams: [
             "title": mapPlace.title,
-            "lat": mapPlace.coordinate.latitude.description,
-            "lng": mapPlace.coordinate.longitude.description
+            "lat": String(mapPlace.coordinate.latitude),
+            "lng": String(mapPlace.coordinate.longitude)
         ], token: token)
         
         return data.data
     }
     
     func fetch(mapItem: MKMapItem) async throws -> PlaceDetail {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         guard let title = mapItem.name else {
-            throw URLError(.requestBodyStreamExhausted)
+            throw URLError(.badServerResponse)
         }
         
         let data: APIResponse<PlaceDetail> = try await apiManager.requestData("/places/context", method: .get, queryParams: [
             "title": title,
-            "lat": mapItem.placemark.coordinate.latitude.description,
-            "lng": mapItem.placemark.coordinate.longitude.description
+            "lat": String(mapItem.placemark.coordinate.latitude),
+            "lng": String(mapItem.placemark.coordinate.longitude)
         ], token: token)
         
         return data.data
@@ -47,9 +43,7 @@ final class PlaceDM {
     
     @available(iOS 17.0, *)
     func fetch(mapFeature: MapFeature) async throws -> PlaceDetail {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         guard let title = mapFeature.title else {
             throw URLError(.requestBodyStreamExhausted)
@@ -57,17 +51,15 @@ final class PlaceDM {
         
         let data: APIResponse<PlaceDetail> = try await apiManager.requestData("/places/context", method: .get, queryParams: [
             "title": title,
-            "lat": mapFeature.coordinate.latitude.description,
-            "lng": mapFeature.coordinate.longitude.description
+            "lat": String(mapFeature.coordinate.latitude),
+            "lng": String(mapFeature.coordinate.longitude)
         ], token: token)
         
         return data.data
     }
     
     func fetch(id: String) async throws -> PlaceDetail {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<PlaceDetail> = try await apiManager.requestData("/places/\(id)", method: .get, token: token)
         
@@ -75,9 +67,7 @@ final class PlaceDM {
     }
     
     func getOverview(id: String) async throws -> PlaceOverview {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<PlaceOverview> = try await apiManager.requestData("/places/\(id)", method: .get, token: token)
         
@@ -85,9 +75,7 @@ final class PlaceDM {
     }
     
     func getIncludedLists(id: String) async throws -> [String] {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<[String]> = try await apiManager.requestData("/places/\(id)/lists", token: token)
         
@@ -95,22 +83,18 @@ final class PlaceDM {
     }
     
     func getReviews(id: String, page: Int = 1, limit: Int = 1) async throws -> APIResponseWithPagination<[PlaceReview]> {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponseWithPagination<[PlaceReview]> = try await apiManager.requestData("/places/\(id)/reviews", queryParams: [
-            "page": page.description,
-            "limit": limit.description
+            "page": String(page),
+            "limit": String(limit)
         ], token: token)
         
         return data
     }
     
     func getGooglePlacesReviews(id: String) async throws -> [GoogleReview] {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<[GoogleReview]> = try await apiManager.requestData("/places/\(id)/reviews", queryParams: [
             "type": "googlePlaces"
@@ -120,9 +104,7 @@ final class PlaceDM {
     }
     
     func getYelpReviews(id: String) async throws -> [YelpReview] {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<[YelpReview]> = try await apiManager.requestData("/places/\(id)/reviews", queryParams: [
             "type": "yelp"
@@ -131,14 +113,12 @@ final class PlaceDM {
         return data.data
     }
     
-    func getMedias(id: String, page: Int = 1, limit: Int = 1) async throws -> APIResponseWithPagination<[MediaItem]> {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+    func getMedias(id: String, page: Int = 1, limit: Int = 30) async throws -> APIResponseWithPagination<[MediaItem]> {
+        let token = try await auth.getToken()
         
         let data: APIResponseWithPagination<[MediaItem]> = try await apiManager.requestData("/places/\(id)/media", queryParams: [
-            "page": page.description,
-            "limit": limit.description,
+            "page": String(page),
+            "limit": String(limit)
         ], token: token)
         
         return data

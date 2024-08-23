@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BranchMetrics/ios-branch-sdk-spm",
       "state" : {
-        "revision" : "ffa4337da202af70fcff5719ebfce1211a9f2d3f",
-        "version" : "3.5.0"
+        "revision" : "69ca4d1b00c25861bdee07d448f7a0eb1b8d8b4a",
+        "version" : "3.6.1"
       }
     },
     {
@@ -168,8 +168,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SDWebImage/SDWebImage.git",
       "state" : {
-        "revision" : "5191b801aca999b704eb93f118f91468b4570571",
-        "version" : "5.19.6"
+        "revision" : "8a1be70a625683bc04d6903e2935bf23f3c6d609",
+        "version" : "5.19.7"
       }
     },
     {
@@ -204,8 +204,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stripe/stripe-ios-spm",
       "state" : {
-        "revision" : "96381080ea0a26f4829458920a6f8bfcdc9e1711",
-        "version" : "23.29.1"
+        "revision" : "865bfefff6904cdd9baca3dc68dac964fc8340af",
+        "version" : "23.29.2"
       }
     },
     {

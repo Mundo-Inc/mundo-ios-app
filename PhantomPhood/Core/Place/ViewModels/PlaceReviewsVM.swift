@@ -76,27 +76,41 @@ class PlaceReviewsVM: ObservableObject, LoadingSections {
     func fetchGooglePlacesReviews() async {
         guard let placeId = placeVM.place?.id, !loadingSections.contains(.fetchingGoogleReviews), googleReviews == nil else { return }
         
-        loadingSections.insert(.fetchingGoogleReviews)
+        setLoadingState(.fetchingGoogleReviews, to: true)
+        
+        defer {
+            setLoadingState(.fetchingGoogleReviews, to: false)
+        }
+
         do {
             let data = try await placeDM.getGooglePlacesReviews(id: placeId)
-            self.googleReviews = data
+            
+            await MainActor.run {
+                self.googleReviews = data
+            }
         } catch {
             presentErrorToast(error)
         }
-        loadingSections.remove(.fetchingGoogleReviews)
     }
     
     func fetchYelpReviews() async {
         guard let placeId = placeVM.place?.id, !loadingSections.contains(.fetchingYelpReviews), googleReviews == nil else { return }
         
-        loadingSections.insert(.fetchingYelpReviews)
+        setLoadingState(.fetchingYelpReviews, to: true)
+        
+        defer {
+            setLoadingState(.fetchingYelpReviews, to: false)
+        }
+        
         do {
             let data = try await placeDM.getYelpReviews(id: placeId)
-            self.yelpReviews = data
+            
+            await MainActor.run {
+                self.yelpReviews = data
+            }
         } catch {
             presentErrorToast(error)
         }
-        loadingSections.remove(.fetchingYelpReviews)
     }
     
     /// Add reaction to item
@@ -108,40 +122,48 @@ class PlaceReviewsVM: ObservableObject, LoadingSections {
         HapticManager.shared.impact(style: .light)
         // add temporary reaction
         let tempUserReaction = UserReaction(id: "Temp", reaction: reaction.reaction, type: reaction.type, createdAt: .now)
-        self.reviews = self.reviews.map({ i in
-            if i.id == review.id {
-                var newItem = i
-                newItem.addReaction(tempUserReaction)
-                return newItem
-            }
-            return i
-        })
+        
+        await MainActor.run {
+            self.reviews = self.reviews.map({ i in
+                if i.id == review.id {
+                    var newItem = i
+                    newItem.addReaction(tempUserReaction)
+                    return newItem
+                }
+                return i
+            })
+        }
 
         // add reaction to server
         do {
             let userReaction = try await reactionsDM.addReaction(type: reaction.type, reaction: reaction.reaction, for: activityId)
 
-            // replace temporary reaction with server reaction
-            self.reviews = self.reviews.map({ i in
-                if i.id == review.id {
-                    var newItem = i
-                    newItem.removeReaction(tempUserReaction)
-                    newItem.addReaction(userReaction)
-                    return newItem
-                }
-                return i
-            })
+            await MainActor.run {
+                // replace temporary reaction with server reaction
+                self.reviews = self.reviews.map({ i in
+                    if i.id == review.id {
+                        var newItem = i
+                        newItem.removeReaction(tempUserReaction)
+                        newItem.addReaction(userReaction)
+                        return newItem
+                    }
+                    return i
+                })
+            }
         } catch {
             HapticManager.shared.impact(style: .light)
             // remove temp reaction
-            self.reviews = self.reviews.map({ i in
-                if i.id == review.id {
-                    var newItem = i
-                    newItem.removeReaction(tempUserReaction)
-                    return newItem
-                }
-                return i
-            })
+            
+            await MainActor.run {
+                self.reviews = self.reviews.map({ i in
+                    if i.id == review.id {
+                        var newItem = i
+                        newItem.removeReaction(tempUserReaction)
+                        return newItem
+                    }
+                    return i
+                })
+            }
         }
     }
 
@@ -150,29 +172,33 @@ class PlaceReviewsVM: ObservableObject, LoadingSections {
     ///   - reaction: UserReaction
     ///   - item: FeedItem
     func removeReaction(_ reaction: UserReaction, from review: PlaceReview) async {
-        // remove temporary reaction
-        self.reviews = self.reviews.map({ i in
-            if i.id == review.id {
-                var newItem = i
-                newItem.removeReaction(reaction)
-                return newItem
-            }
-            return i
-        })
+        await MainActor.run {
+            // remove temporary reaction
+            self.reviews = self.reviews.map({ i in
+                if i.id == review.id {
+                    var newItem = i
+                    newItem.removeReaction(reaction)
+                    return newItem
+                }
+                return i
+            })
+        }
 
         // remove reaction from server
         do {
             try await reactionsDM.removeReaction(reactionId: reaction.id)
         } catch {
-            // add temp reaction back
-            self.reviews = self.reviews.map({ i in
-                if i.id == review.id {
-                    var newItem = i
-                    newItem.addReaction(reaction)
-                    return newItem
-                }
-                return i
-            })
+            await MainActor.run {
+                // add temp reaction back
+                self.reviews = self.reviews.map({ i in
+                    if i.id == review.id {
+                        var newItem = i
+                        newItem.addReaction(reaction)
+                        return newItem
+                    }
+                    return i
+                })
+            }
         }
     }
 }

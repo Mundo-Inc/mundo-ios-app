@@ -116,7 +116,7 @@ final class SocketService: ObservableObject {
     }
     
     func connect() async {
-        guard let token = await auth.getToken() else { return }
+        guard let token = try? await auth.getToken() else { return }
         
         self.manager.setConfigs([.extraHeaders(["Authorization": token])])
         socket.connect()

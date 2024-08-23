@@ -7,14 +7,12 @@
 
 import Foundation
 
-final class UserActivityDM {
+struct UserActivityDM {
     private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
+    private let auth = Authentication.shared
     
     func getUserActivity(_ id: String) async throws -> FeedItem {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<FeedItem> = try await apiManager.requestData("/feeds/\(id)", method: .get, token: token)
         
@@ -22,9 +20,7 @@ final class UserActivityDM {
     }
     
     func getUserActivities(_ userId: String, page: Int, activityType: FeedItemActivityType?, limit: Int = 20) async throws -> APIResponseWithPagination<[FeedItem]> {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponseWithPagination<[FeedItem]> = try await apiManager.requestData("/users/\(userId)/userActivities", method: .get, queryParams: [
             "page": String(page),
@@ -36,9 +32,7 @@ final class UserActivityDM {
     }
     
     func getUserActivities(_ userId: String, page: Int, activityTypes: [FeedItemActivityType], limit: Int = 20) async throws -> APIResponseWithPagination<[FeedItem]> {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let types = activityTypes.map { $0.rawValue }.joined(separator: ",")
         let data: APIResponseWithPagination<[FeedItem]> = try await apiManager.requestData("/users/\(userId)/userActivities", method: .get, queryParams: [
@@ -51,9 +45,7 @@ final class UserActivityDM {
     }
     
     func getActivityComments(for activityId: String, page: Int , limit: Int = 20) async throws -> APIResponseWithPagination<CommentsResponse> {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponseWithPagination<CommentsResponse> = try await apiManager.requestData("/feeds/\(activityId)/comments", queryParams: [
             "page": String(page),

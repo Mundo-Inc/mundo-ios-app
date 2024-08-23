@@ -7,14 +7,12 @@
 
 import Foundation
 
-final class HomeMadeDM {
+struct HomeMadeDM {
     private let apiManager = APIManager.shared
     private let auth = Authentication.shared
     
     func getHomemades() async throws -> [HomeMade] {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponse<[HomeMade]> = try await apiManager.requestData("/homemades", method: .get, token: token)
         
@@ -22,18 +20,14 @@ final class HomeMadeDM {
     }
     
     func createHomeMadeContent(body: CreateHomeMadeRequestBody) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let requestBody = try apiManager.createRequestBody(body)
         try await apiManager.requestNoContent("/homemades", method: .post, body: requestBody, token: token)
     }
     
     func deleteOne(byId id: String) async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         try await apiManager.requestNoContent("/homemades/\(id)", method: .delete, token: token)
     }

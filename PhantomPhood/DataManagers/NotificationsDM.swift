@@ -7,17 +7,15 @@
 
 import Foundation
 
-final class NotificationsDM {
+struct NotificationsDM {
     private let apiManager = APIManager.shared
-    private let auth: Authentication = Authentication.shared
+    private let auth = Authentication.shared
     
     func getNotifications(page: Int = 1, unread: Bool = false) async throws -> APIResponseWithPagination<[Notification]> {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         let data: APIResponseWithPagination<[Notification]> = try await apiManager.requestData("/notifications", method: .get, queryParams: [
-            "page": page.description,
+            "page": String(page),
             "limit": "30",
             "unread": unread ? "true" : nil,
             "v": "2",
@@ -27,9 +25,7 @@ final class NotificationsDM {
     }
     
     func markNotificationsAsRead() async throws {
-        guard let token = await auth.getToken() else {
-            throw URLError(.userAuthenticationRequired)
-        }
+        let token = try await auth.getToken()
         
         struct RequestBody: Encodable {
             let date: Int
