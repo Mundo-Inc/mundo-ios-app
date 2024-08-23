@@ -40,9 +40,9 @@ final class UserDataStack {
         self.viewContext.perform {
             let ids: Set<String> = Set(userEssentialsList.compactMap { $0.id })
             let existingUsers = self.fetchUsers(withIDs: ids)
-
+            
             let existingUsersDict = Dictionary(uniqueKeysWithValues: existingUsers.compactMap { ($0.id, $0) })
-
+            
             for essentials in userEssentialsList {
                 let user = existingUsersDict[essentials.id] ?? ReferredUserEntity(context: self.viewContext)
                 self.updateReferredUserEntity(user, with: essentials)

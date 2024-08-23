@@ -1022,8 +1022,7 @@ extension ActivityItem {
             .foregroundStyle(.black)
             .padding(.horizontal, 6)
             .padding(.vertical, 4)
-            .background(color.opacity(0.8))
-            .clipShape(.rect(cornerRadius: 5))
+            .background(color.opacity(0.8), in: .rect(cornerRadius: 5))
     }
     
     @ViewBuilder

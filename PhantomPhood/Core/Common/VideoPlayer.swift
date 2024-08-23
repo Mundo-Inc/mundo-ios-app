@@ -10,9 +10,9 @@ import AVKit
 
 struct VideoPlayer: UIViewControllerRepresentable {
     private let originalURL: URL
-    var player: AVPlayer
-    var playing: Bool
-    var isMute: Bool
+    private var player: AVPlayer
+    private var playing: Bool
+    private var isMute: Bool
     
     init(url: URL, playing: Bool, isMute: Bool = false) {
         self.originalURL = url

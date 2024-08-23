@@ -27,25 +27,25 @@ struct MapActivity: Identifiable, Decodable {
     
     @discardableResult
     func createMapActivityEntity(context: NSManagedObjectContext, user: UserEntity, place: PlaceEntity) -> MapActivityEntity {
-        var mapActivityEntity: MapActivityEntity!
-        
-        context.performAndWait {
-            mapActivityEntity = MapActivityEntity(context: context)
-            mapActivityEntity.id = self.id
-            mapActivityEntity.activityType = self.activityType
-            mapActivityEntity.createdAt = self.createdAt
-            mapActivityEntity.user = user
-            mapActivityEntity.place = place
-            mapActivityEntity.savedAt = .now
+        let mapActivityEntity = context.performAndWait {
+            let entity = MapActivityEntity(context: context)
+            entity.id = self.id
+            entity.activityType = self.activityType
+            entity.createdAt = self.createdAt
+            entity.user = user
+            entity.place = place
+            entity.savedAt = .now
             
             do {
-                try context.obtainPermanentIDs(for: [mapActivityEntity])
+                try context.obtainPermanentIDs(for: [entity])
             } catch {
                 presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
             }
             
-            user.addToMapActivities(mapActivityEntity)
-            place.addToMapActivities(mapActivityEntity)
+            user.addToMapActivities(entity)
+            place.addToMapActivities(entity)
+            
+            return entity
         }
         
         return mapActivityEntity

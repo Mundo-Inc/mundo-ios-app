@@ -90,6 +90,32 @@ final class ExploreVM17: ObservableObject, LoadingSections {
         }
     }
     
+    private var mapActivityCancellable: AnyCancellable? = nil
+    private func setCDPublisher(startDate: Date) {
+        if let cancellable = mapActivityCancellable {
+            cancellable.cancel()
+            mapActivityCancellable = nil
+        }
+        
+        let request = MapActivityEntity.fetchRequest()
+        request.predicate = .init(format: "createdAt > %@", startDate as CVarArg)
+        request.sortDescriptors = [
+            .init(keyPath: \MapActivityEntity.createdAt, ascending: false)
+        ]
+        
+        self.mapActivityCancellable = CDPublisher(request: request, context: dataStack.viewContext)
+            .map({ $0.compactMap { entity in
+                try? MapActivity(entity)
+            } })
+            .sink(receiveCompletion: { completion in
+                if case .failure(let error) = completion {
+                    print("Error receiving completion: \(error)")
+                }
+            }, receiveValue: { mapActivity in
+                self.originalItems = mapActivity
+            })
+    }
+    
     // MARK: - Shared Methods
     
     func panToRegion(_ region: MKCoordinateRegion) {
@@ -358,8 +384,6 @@ final class ExploreVM17: ObservableObject, LoadingSections {
                     }()
                     
                     activity.createMapActivityEntity(context: context, user: user, place: place)
-                    
-                    originalItems.append(activity)
                 }
                 
                 if context.hasChanges {
@@ -401,22 +425,8 @@ final class ExploreVM17: ObservableObject, LoadingSections {
     }
     
     private func getSavedData(startDate: Date) {
-        let mapActivitiesRequest: NSFetchRequest<MapActivityEntity> = MapActivityEntity.fetchRequest()
-        do {
-            let mapActivities = try dataStack.viewContext.fetch(mapActivitiesRequest)
-            let activities = mapActivities.filter({ entity in
-                if let createdAt = entity.createdAt {
-                    return createdAt >= startDate
-                }
-                return false
-            }).compactMap { try? MapActivity($0) }
-            originalItems = activities
-            if let latestMapContext {
-                self.onMapCameraChangeContinuosHandler(latestMapContext)
-            }
-        } catch {
-            presentErrorToast(error, silent: true)
-        }
+        setCDPublisher(startDate: startDate)
+        // TODO: Update the map?
     }
     
     private func removeRequestedRegions() {

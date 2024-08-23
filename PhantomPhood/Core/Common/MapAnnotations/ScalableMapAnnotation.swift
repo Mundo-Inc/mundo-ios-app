@@ -18,6 +18,14 @@ struct ScalableMapAnnotation: View {
         self.image = image ?? Image(systemName: "mappin")
     }
     
+    private var scaleValue: CGFloat {
+        if let count {
+            return max(scale + (CGFloat(min(count, 10)) / 5.0) * 0.4 - 0.2, 0.5)
+        } else {
+            return scale
+        }
+    }
+    
     var body: some View {
         Circle()
             .foregroundStyle(Color.accentColor)
@@ -39,7 +47,7 @@ struct ScalableMapAnnotation: View {
                         .frame(width: 21, height: 21)
                 }
             }
-            .scaleEffect(max(scale + (count != nil ? min((CGFloat(count!) / 5.0) * 0.4 - 0.2, 0.5) : 0), 0.4))
+            .scaleEffect(scaleValue)
             .animation(.spring, value: scale)
     }
 }

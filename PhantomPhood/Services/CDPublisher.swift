@@ -63,10 +63,8 @@ final class CDPublisher<Entity>: NSObject, NSFetchedResultsControllerDelegate, P
         
         context.performAndWait { [weak self] in
             do {
-                Swift.print("performFetch")
                 try controller.performFetch()
                 let result = controller.fetchedObjects ?? []
-                Swift.print("performFetch result \(result.count)")
                 self?.subject.send(result)
             } catch {
                 self?.subject.send(completion: .failure(error))
@@ -89,7 +87,7 @@ final class CDPublisher<Entity>: NSObject, NSFetchedResultsControllerDelegate, P
     }
     
     private class CDSubscription: Subscription {
-        private weak var fetchPublisher: CDPublisher?
+        private var fetchPublisher: CDPublisher?
         private var cancellable: AnyCancellable?
         
         @discardableResult

@@ -1483,7 +1483,6 @@
 			isa = PBXGroup;
 			children = (
 				0B77EA412AAF855600C8DF87 /* Preview Assets.xcassets */,
-				0B4C75A12C6B8E48005C9127 /* Placeholder.swift */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -1504,6 +1503,7 @@
 				0B1610CC2B631E5500DCAFA5 /* MediaItem.swift */,
 				0B026CD92B5AB959002DAD24 /* Mission.swift */,
 				0B997B622AC70E1A00579C9C /* Notification.swift */,
+				0B4C75A12C6B8E48005C9127 /* Placeholder.swift */,
 				0BBEFAF22B7E41E800A78FF0 /* Prize.swift */,
 				0B0E6D332ABB872F00EC62EE /* Reaction.swift */,
 				0B383CF22B87852200D68678 /* RepeatItem.swift */,
@@ -2591,7 +2591,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.5;
+				MARKETING_VERSION = 1.4.6;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2631,7 +2631,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.5;
+				MARKETING_VERSION = 1.4.6;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.phantomphood.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

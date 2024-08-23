@@ -41,7 +41,7 @@ struct ExploreView17: View {
                 ForEach(vm.events) { item in
                     UserActivityMapAnnotation(item: item)
                 }
-                                
+                
                 if let searchResults = vm.searchResults, !searchResults.isEmpty {
                     ForEach(searchResults, id: \.self) { item in
                         Annotation(item.name ?? "Unknown", coordinate: item.placemark.coordinate) {
@@ -167,7 +167,7 @@ struct ExploreView17: View {
                     }
                     .padding(.vertical, 6)
                     .padding(.horizontal, 10)
-                    .background(RoundedRectangle(cornerRadius: 25).foregroundStyle(Color.accentColor))
+                    .background(Color.accentColor, in: .rect(cornerRadius: 25))
                 }
                 .foregroundStyle(Color.black)
                 
@@ -187,7 +187,7 @@ struct ExploreView17: View {
                     }
                     .padding(.vertical, 6)
                     .padding(.horizontal, 10)
-                    .background(RoundedRectangle(cornerRadius: 25).foregroundStyle(Color.black))
+                    .background(Color.black, in: .rect(cornerRadius: 25))
                 }
                 .foregroundStyle(Color.white)
             }

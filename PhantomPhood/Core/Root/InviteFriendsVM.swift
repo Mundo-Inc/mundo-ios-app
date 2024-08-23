@@ -44,7 +44,6 @@ final class InviteFriendsVM: ObservableObject {
         CDPublisher(request: request, context: coreDataManager.viewContext)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { _ in }, receiveValue: { [weak self] items in
-                print("observeReferredUserEntity \(items.count)")
                 self?.referredUsers = items
             })
             .store(in: &cancellables)
@@ -60,7 +59,6 @@ final class InviteFriendsVM: ObservableObject {
         CDPublisher(request: request, context: coreDataManager.viewContext)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { _ in }, receiveValue: { [weak self] items in
-                print("observeInviteLinkEntity \(items.count)")
                 self?.inviteLinks = items
             })
             .store(in: &cancellables)

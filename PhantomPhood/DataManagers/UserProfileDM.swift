@@ -181,9 +181,7 @@ struct UserProfileDM {
         
         let data: APIResponseWithPagination<[UserEssentialsWithCreationDate]> = try await apiManager.requestData("/users/latestReferrals", method: .get, token: token)
         
-        print("Saving")
         UserDataStack.shared.saveUsers(userEssentialsList: data.data)
-        print("Saved \(data.data.count) | Total:\(data.pagination.totalCount)")
         
         return data
     }

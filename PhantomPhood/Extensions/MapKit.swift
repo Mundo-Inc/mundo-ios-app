@@ -86,6 +86,6 @@ extension CLLocationCoordinate2D: Equatable {
 extension MapCameraUpdateContext {
     var scaleValue: CGFloat {
         let value = 1.0 / (self.region.span.latitudeDelta * 8)
-        return max(0.4, min(value, 1))
+        return max(0.5, min(value, 1))
     }
 }
