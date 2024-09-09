@@ -11,8 +11,8 @@ import BranchSDK
 
 struct CompleteTheUserInfoView: View {
     enum Field: Hashable {
-        case phone
-        case phoneVerification
+//        case phone
+//        case phoneVerification
         case name
         case username
         case userSearch
@@ -30,12 +30,12 @@ struct CompleteTheUserInfoView: View {
         ZStack {
             Group {
                 switch vm.step {
-                case .phone where auth.currentUser?.phone?.verified != true:
-                    phoneView
-                        .tag(CompleteTheUserInfoVM.Step.phone)
-                case .phoneVerification where auth.currentUser?.phone?.verified != true:
-                    phoneVerificationView
-                        .tag(CompleteTheUserInfoVM.Step.phoneVerification)
+//                case .phone where auth.currentUser?.phone?.verified != true:
+//                    phoneView
+//                        .tag(CompleteTheUserInfoVM.Step.phone)
+//                case .phoneVerification where auth.currentUser?.phone?.verified != true:
+//                    phoneVerificationView
+//                        .tag(CompleteTheUserInfoVM.Step.phoneVerification)
                 case .name:
                     nameView
                         .tag(CompleteTheUserInfoVM.Step.name)
@@ -48,16 +48,16 @@ struct CompleteTheUserInfoView: View {
                 case .tos:
                     tosView
                         .tag(CompleteTheUserInfoVM.Step.tos)
-                default:
-                    Color.clear
-                        .onAppear {
-                            guard let user = auth.currentUser else { return }
-                            guard user.phone?.verified == true else { return }
-                            
-                            withAnimation {
-                                vm.step = .name
-                            }
-                        }
+//                default:
+//                    Color.clear
+//                        .onAppear {
+//                            guard let user = auth.currentUser else { return }
+//                            guard user.phone?.verified == true else { return }
+//                            
+//                            withAnimation {
+//                                vm.step = .name
+//                            }
+//                        }
                 }
             }
             .transition(
@@ -86,22 +86,26 @@ struct CompleteTheUserInfoView: View {
                 CButton(fullWidth: true, size: .lg, variant: .ghost, text: vm.step.backButtonTitle) {
                     if auth.currentUser?.acceptedEula == nil {
                         switch vm.step {
-                        case .phone:
+//                        case .phone:
+//                            Task {
+//                                await auth.signOut()
+//                                vm.direction = 1
+//                            }
+//                        case .phoneVerification:
+//                            vm.direction = -1
+//                            withAnimation {
+//                                vm.step = .phone
+//                            }
+                        case .name:
+//                            guard let user = auth.currentUser, user.phone?.verified != true else { return }
+//                            
+//                            vm.direction = -1
+//                            withAnimation {
+//                                vm.step = .phoneVerification
+//                            }
                             Task {
                                 await auth.signOut()
                                 vm.direction = 1
-                            }
-                        case .phoneVerification:
-                            vm.direction = -1
-                            withAnimation {
-                                vm.step = .phone
-                            }
-                        case .name:
-                            guard let user = auth.currentUser, user.phone?.verified != true else { return }
-                            
-                            vm.direction = -1
-                            withAnimation {
-                                vm.step = .phoneVerification
                             }
                         case .username:
                             vm.direction = -1
@@ -120,20 +124,20 @@ struct CompleteTheUserInfoView: View {
                             }
                         }
                     } else {
-                        switch vm.step {
-                        case .phone:
-                            Task {
-                                await auth.signOut()
-                                vm.direction = 1
-                            }
-                        case .phoneVerification:
-                            vm.direction = -1
-                            withAnimation {
-                                vm.step = .phone
-                            }
-                        default:
-                            break
-                        }
+//                        switch vm.step {
+//                        case .phone:
+//                            Task {
+//                                await auth.signOut()
+//                                vm.direction = 1
+//                            }
+//                        case .phoneVerification:
+//                            vm.direction = -1
+//                            withAnimation {
+//                                vm.step = .phone
+//                            }
+//                        default:
+//                            break
+//                        }
                     }
                 }
                 
@@ -143,24 +147,24 @@ struct CompleteTheUserInfoView: View {
                     vm.direction = 1
                     
                     switch vm.step {
-                    case .phone:
-                        Task {
-                            withAnimation {
-                                vm.step = .phoneVerification
-                            }
-                            do {
-                                try await vm.sendVerificationCode()
-                            } catch {
-                                vm.error = getErrorMessage(error)
-                                withAnimation {
-                                    vm.step = .phone
-                                }
-                            }
-                        }
-                    case .phoneVerification:
-                        Task {
-                            await vm.verifyPhone()
-                        }
+//                    case .phone:
+//                        Task {
+//                            withAnimation {
+//                                vm.step = .phoneVerification
+//                            }
+//                            do {
+//                                try await vm.sendVerificationCode()
+//                            } catch {
+//                                vm.error = getErrorMessage(error)
+//                                withAnimation {
+//                                    vm.step = .phone
+//                                }
+//                            }
+//                        }
+//                    case .phoneVerification:
+//                        Task {
+//                            await vm.verifyPhone()
+//                        }
                     case .name:
                         withAnimation {
                             vm.step = .username
@@ -204,150 +208,150 @@ struct CompleteTheUserInfoView: View {
         }
     }
     
-    private var phoneView: some View {
-        ScrollView {
-            VStack {
-                VStack(alignment: .leading) {
-                    Text("Request for Your Digits")
-                        .cfont(.title2)
-                        .fontWeight(.semibold)
-                        .padding(.bottom)
-                    Text("To continue with the app you need to verify your phone number.")
-                        .fixedSize(horizontal: false, vertical: true)
-                        .cfont(.subheadline)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.leading)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom)
-                
-                HStack(alignment: .bottom) {
-                    Button {
-                        vm.presentedSheet = .countryPicker
-                    } label: {
-                        Text("\(vm.selectedCountry.emoji) \(vm.selectedCountry.dialCode)")
-                            .cfont(.title2)
-                    }
-                    .foregroundStyle(.primary)
-                    .padding(.bottom, 8)
-                    .background(alignment: .bottom) {
-                        RoundedRectangle(cornerRadius: 1)
-                            .frame(height: 2)
-                            .frame(maxWidth: .infinity)
-                            .foregroundStyle(vm.presentedSheet == .countryPicker ? Color.primary.opacity(0.8) : Color.primary.opacity(0.3))
-                    }
-                    
-                    TextField("Phone Number", text: $vm.phoneNumber)
-                        .onChange(of: vm.phoneNumber) { value in
-                            if !value.isEmpty {
-                                let formatted = value.formatPhoneNumber()
-                                
-                                if let country = formatted.country {
-                                    vm.selectedCountry = country
-                                }
-                                
-                                vm.phoneNumber = formatted.number
-                            }
-                        }
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled(true)
-                        .cfont(.title2)
-                        .keyboardType(.phonePad)
-                        .textContentType(UITextContentType.telephoneNumber)
-                        .focused($focusedField, equals: .phone)
-                        .padding(.bottom, 8)
-                        .background(alignment: .bottom) {
-                            RoundedRectangle(cornerRadius: 1)
-                                .frame(height: 2)
-                                .frame(maxWidth: .infinity)
-                                .foregroundStyle(focusedField == .phone ? Color.primary.opacity(0.8) : Color.primary.opacity(0.3))
-                        }
-                }
-            }
-            .padding(.top, mainWindowSize.height / 5)
-            .padding(.horizontal)
-            .frame(maxWidth: .infinity, minHeight: mainWindowSize.height)
-        }
-        .scrollIndicators(.hidden)
-        .scrollDismissesKeyboard(.interactively)
-        .ignoresSafeArea(edges: .top)
-        .sheet(item: $vm.presentedSheet) {
-            if vm.phoneNumber.isEmpty {
-                focusedField = .phone
-            }
-        } content: { sheet in
-            switch sheet {
-            case .countryPicker:
-                CountryPickerView(selection: $vm.selectedCountry)
-            }
-        }
-        .onAppear {
-            if focusedField != nil || vm.phoneNumber.isEmpty {
-                focusedField = .phone
-            }
-        }
-    }
-    
-    private var phoneVerificationView: some View {
-        ScrollView {
-            VStack {
-                VStack(alignment: .leading) {
-                    Image(.message)
-                    Text("Please enter the code that\nwe sent you")
-                        .cfont(.title2)
-                        .fontWeight(.semibold)
-                        .padding(.bottom, 3)
-                    Text("Enter the five digit verification code that we’ve sent to your phone")
-                        .cfont(.subheadline)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.leading)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom)
-                
-                Text("C O D E ?")
-                    .foregroundStyle(.tertiary.opacity(vm.phoneVerificationCode.isEmpty ? 0.3 : 0))
-                    .overlay {
-                        TextField("", text: $vm.phoneVerificationCode)
-                            .onChange(of: vm.phoneVerificationCode) { value in
-                                if !value.isEmpty {
-                                    vm.phoneVerificationCode = vm.formatVerificationCode(code: value)
-                                }
-                            }
-                            .frame(maxWidth: .infinity)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled(true)
-                            .keyboardType(.numberPad)
-                            .textContentType(UITextContentType.oneTimeCode)
-                            .focused($focusedField, equals: .phoneVerification)
-                    }
-                    .padding(.bottom, 8)
-                    .background(alignment: .bottom) {
-                        Text("_ _ _ _ _")
-                            .foregroundStyle(.tertiary)
-                    }
-                    .padding(.bottom)
-                    .font(.system(size: 32))
-                    .monospaced()
-                
-                Text("Code can take a few minutes (usually seconds) to arrive. Please be patient")
-                    .foregroundStyle(.secondary)
-                    .cfont(.caption2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding(.top, mainWindowSize.height / 5)
-            .padding(.horizontal)
-            .frame(maxWidth: .infinity, minHeight: mainWindowSize.height)
-        }
-        .scrollIndicators(.hidden)
-        .scrollDismissesKeyboard(.interactively)
-        .ignoresSafeArea(edges: .top)
-        .onAppear {
-            if focusedField != nil || vm.phoneVerificationCode.count != 5 {
-                focusedField = .phoneVerification
-            }
-        }
-    }
+//    private var phoneView: some View {
+//        ScrollView {
+//            VStack {
+//                VStack(alignment: .leading) {
+//                    Text("Request for Your Digits")
+//                        .cfont(.title2)
+//                        .fontWeight(.semibold)
+//                        .padding(.bottom)
+//                    Text("To continue with the app you need to verify your phone number.")
+//                        .fixedSize(horizontal: false, vertical: true)
+//                        .cfont(.subheadline)
+//                        .foregroundColor(.secondary)
+//                        .multilineTextAlignment(.leading)
+//                }
+//                .frame(maxWidth: .infinity, alignment: .leading)
+//                .padding(.bottom)
+//                
+//                HStack(alignment: .bottom) {
+//                    Button {
+//                        vm.presentedSheet = .countryPicker
+//                    } label: {
+//                        Text("\(vm.selectedCountry.emoji) \(vm.selectedCountry.dialCode)")
+//                            .cfont(.title2)
+//                    }
+//                    .foregroundStyle(.primary)
+//                    .padding(.bottom, 8)
+//                    .background(alignment: .bottom) {
+//                        RoundedRectangle(cornerRadius: 1)
+//                            .frame(height: 2)
+//                            .frame(maxWidth: .infinity)
+//                            .foregroundStyle(vm.presentedSheet == .countryPicker ? Color.primary.opacity(0.8) : Color.primary.opacity(0.3))
+//                    }
+//                    
+//                    TextField("Phone Number", text: $vm.phoneNumber)
+//                        .onChange(of: vm.phoneNumber) { value in
+//                            if !value.isEmpty {
+//                                let formatted = value.formatPhoneNumber()
+//                                
+//                                if let country = formatted.country {
+//                                    vm.selectedCountry = country
+//                                }
+//                                
+//                                vm.phoneNumber = formatted.number
+//                            }
+//                        }
+//                        .textInputAutocapitalization(.never)
+//                        .autocorrectionDisabled(true)
+//                        .cfont(.title2)
+//                        .keyboardType(.phonePad)
+//                        .textContentType(UITextContentType.telephoneNumber)
+//                        .focused($focusedField, equals: .phone)
+//                        .padding(.bottom, 8)
+//                        .background(alignment: .bottom) {
+//                            RoundedRectangle(cornerRadius: 1)
+//                                .frame(height: 2)
+//                                .frame(maxWidth: .infinity)
+//                                .foregroundStyle(focusedField == .phone ? Color.primary.opacity(0.8) : Color.primary.opacity(0.3))
+//                        }
+//                }
+//            }
+//            .padding(.top, mainWindowSize.height / 5)
+//            .padding(.horizontal)
+//            .frame(maxWidth: .infinity, minHeight: mainWindowSize.height)
+//        }
+//        .scrollIndicators(.hidden)
+//        .scrollDismissesKeyboard(.interactively)
+//        .ignoresSafeArea(edges: .top)
+//        .sheet(item: $vm.presentedSheet) {
+//            if vm.phoneNumber.isEmpty {
+//                focusedField = .phone
+//            }
+//        } content: { sheet in
+//            switch sheet {
+//            case .countryPicker:
+//                CountryPickerView(selection: $vm.selectedCountry)
+//            }
+//        }
+//        .onAppear {
+//            if focusedField != nil || vm.phoneNumber.isEmpty {
+//                focusedField = .phone
+//            }
+//        }
+//    }
+//    
+//    private var phoneVerificationView: some View {
+//        ScrollView {
+//            VStack {
+//                VStack(alignment: .leading) {
+//                    Image(.message)
+//                    Text("Please enter the code that\nwe sent you")
+//                        .cfont(.title2)
+//                        .fontWeight(.semibold)
+//                        .padding(.bottom, 3)
+//                    Text("Enter the five digit verification code that we’ve sent to your phone")
+//                        .cfont(.subheadline)
+//                        .foregroundColor(.secondary)
+//                        .multilineTextAlignment(.leading)
+//                }
+//                .frame(maxWidth: .infinity, alignment: .leading)
+//                .padding(.bottom)
+//                
+//                Text("C O D E ?")
+//                    .foregroundStyle(.tertiary.opacity(vm.phoneVerificationCode.isEmpty ? 0.3 : 0))
+//                    .overlay {
+//                        TextField("", text: $vm.phoneVerificationCode)
+//                            .onChange(of: vm.phoneVerificationCode) { value in
+//                                if !value.isEmpty {
+//                                    vm.phoneVerificationCode = vm.formatVerificationCode(code: value)
+//                                }
+//                            }
+//                            .frame(maxWidth: .infinity)
+//                            .textInputAutocapitalization(.never)
+//                            .autocorrectionDisabled(true)
+//                            .keyboardType(.numberPad)
+//                            .textContentType(UITextContentType.oneTimeCode)
+//                            .focused($focusedField, equals: .phoneVerification)
+//                    }
+//                    .padding(.bottom, 8)
+//                    .background(alignment: .bottom) {
+//                        Text("_ _ _ _ _")
+//                            .foregroundStyle(.tertiary)
+//                    }
+//                    .padding(.bottom)
+//                    .font(.system(size: 32))
+//                    .monospaced()
+//                
+//                Text("Code can take a few minutes (usually seconds) to arrive. Please be patient")
+//                    .foregroundStyle(.secondary)
+//                    .cfont(.caption2)
+//                    .frame(maxWidth: .infinity, alignment: .leading)
+//            }
+//            .padding(.top, mainWindowSize.height / 5)
+//            .padding(.horizontal)
+//            .frame(maxWidth: .infinity, minHeight: mainWindowSize.height)
+//        }
+//        .scrollIndicators(.hidden)
+//        .scrollDismissesKeyboard(.interactively)
+//        .ignoresSafeArea(edges: .top)
+//        .onAppear {
+//            if focusedField != nil || vm.phoneVerificationCode.count != 5 {
+//                focusedField = .phoneVerification
+//            }
+//        }
+//    }
     
     private var nameView: some View {
         ScrollView {

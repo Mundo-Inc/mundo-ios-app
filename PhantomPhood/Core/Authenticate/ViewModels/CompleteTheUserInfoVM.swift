@@ -26,7 +26,7 @@ class CompleteTheUserInfoVM: ObservableObject {
     
     @Published var loadingSections = Set<LoadingSection>()
     
-    @Published var step: Step = .phone
+    @Published var step: Step = .name
     @Published var direction = 1
     
     @Published var eula = false
@@ -234,10 +234,10 @@ class CompleteTheUserInfoVM: ObservableObject {
     
     var isValid: Bool {
         switch step {
-        case .phone:
-            "\(selectedCountry.dialCode)\(phoneNumber.numbersOnly)".isValidPhoneNumber
-        case .phoneVerification:
-            phoneVerificationCode.numbersOnly.count == 5
+//        case .phone:
+//            "\(selectedCountry.dialCode)\(phoneNumber.numbersOnly)".isValidPhoneNumber
+//        case .phoneVerification:
+//            phoneVerificationCode.numbersOnly.count == 5
         case .name:
             true
         case .username:
@@ -252,8 +252,8 @@ class CompleteTheUserInfoVM: ObservableObject {
     // MARK: - Enums
     
     enum Step: Hashable {
-        case phone
-        case phoneVerification
+//        case phone
+//        case phoneVerification
         case name
         case username
         case referral
@@ -261,19 +261,21 @@ class CompleteTheUserInfoVM: ObservableObject {
         
         var backButtonTitle: String {
             if Authentication.shared.currentUser?.acceptedEula == nil {
-                switch self {
-                case .phone:
-                    "Cancel"
-                default:
-                    "Back"
-                }
+//                switch self {
+//                case .phone:
+//                    "Cancel"
+//                default:
+//                    "Back"
+//                }
+                "Back"
             } else {
-                switch self {
-                case .phone:
-                    "Switch Account"
-                default:
-                    "Back"
-                }
+//                switch self {
+//                case .phone:
+//                    "Switch Account"
+//                default:
+//                    "Back"
+//                }
+                "Back"
             }
         }
         
@@ -286,12 +288,13 @@ class CompleteTheUserInfoVM: ObservableObject {
                     "Next"
                 }
             } else {
-                switch self {
-                case .phone:
-                    "Send Code"
-                default:
-                    "Verify"
-                }
+//                switch self {
+//                case .phone:
+//                    "Send Code"
+//                default:
+//                    "Verify"
+//                }
+                "Verify"
             }
         }
     }

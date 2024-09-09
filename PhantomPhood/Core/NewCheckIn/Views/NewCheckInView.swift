@@ -259,7 +259,7 @@ struct NewCheckInView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .scrollIndicators(.never)
-        .scrollDismissesKeyboard(.interactively)
+        .scrollDismissesKeyboard(.immediately)
         .tag(NewCheckInVM.Tab.mediaAndCaption)
     }
     
@@ -338,7 +338,7 @@ struct NewCheckInView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .scrollIndicators(.never)
-        .scrollDismissesKeyboard(.interactively)
+        .scrollDismissesKeyboard(.immediately)
         .tag(NewCheckInVM.Tab.rating)
     }
     
