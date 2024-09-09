@@ -77,7 +77,7 @@ struct SettingsView: View {
                 }
             }
             
-            if UserSettings.shared.userRole == .admin {
+            if let user = auth.currentUser, user.role == .admin {
                 Section {
                     Toggle(isOn: UserSettings.shared.$isBetaTester) {
                         Text("Beta Features")
@@ -102,53 +102,9 @@ struct SettingsView: View {
                 Label("Log out", systemImage: "rectangle.portrait.and.arrow.right")
             }
             
-            Section {
-                if vm.isAccountSettingsVisible {
-                    let isLoading = vm.loadingSections.contains(.resetPassword)
-                    
-                    Button {
-                        Task {
-                            await vm.resetPasswordRequest()
-                        }
-                    } label: {
-                        Label(
-                            title: { Text("Change Password") },
-                            icon: { Image(systemName: "ellipsis.rectangle.fill") }
-                        )
-                    }
-                    .foregroundStyle(.primary)
-                    .disabled(isLoading)
-                    .opacity(isLoading ? 0.5 : 1)
-                    
-                    Button(role: .destructive) {
-                        alertManager.value = .init(message: "Are you sure you want to delete your account. This action is irreversible", confirmationText: "Delete", role: .destructive, callback: {
-                            Task {
-                                await vm.deleteAccount()
-                            }
-                        })
-                    } label: {
-                        Label("Delete Account", systemImage: "person.slash.fill")
-                    }
-                }
-            } header: {
-                Button {
-                    withAnimation {
-                        vm.isAccountSettingsVisible.toggle()
-                    }
-                } label: {
-                    HStack {
-                        Text("Account")
-                            .foregroundStyle(Color.secondary)
-                        
-                        Spacer()
-                        
-                        Text(vm.isAccountSettingsVisible ? "Hide" : "Show")
-                        Image(systemName: "chevron.right")
-                            .rotationEffect(.degrees(vm.isAccountSettingsVisible ? 90 : 0))
-                            .foregroundStyle(Color.accentColor)
-                    }
-                }
-            }
+            accountSection
+            
+            advancedSection
             
             VStack(alignment: .leading) {
                 Text("\(K.appName) Inc.")
@@ -161,9 +117,57 @@ struct SettingsView: View {
             .listRowBackground(Color.clear)
         }
         .cfont(.body)
-        .listStyle(.insetGrouped)
+        .listStyle(.sidebar)
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)
+    }
+    
+    @ViewBuilder
+    private var accountSection: some View {
+        CollapsableSection(isExpanded: $vm.isAccountSettingsVisible, title: "Account") {
+            let isLoading = vm.loadingSections.contains(.resetPassword)
+            
+            Button {
+                Task {
+                    await vm.resetPasswordRequest()
+                }
+            } label: {
+                Label(
+                    title: { Text("Change Password") },
+                    icon: { Image(systemName: "ellipsis.rectangle.fill") }
+                )
+            }
+            .foregroundStyle(Color.primary)
+            .disabled(isLoading)
+            .opacity(isLoading ? 0.5 : 1)
+            
+            Button(role: .destructive) {
+                alertManager.value = .init(message: "Are you sure you want to delete your account? This action is irreversible", confirmationText: "Delete", role: .destructive, callback: {
+                    Task {
+                        await vm.deleteAccount()
+                    }
+                })
+            } label: {
+                Label("Delete Account", systemImage: "person.slash.fill")
+            }
+            .foregroundStyle(Color.red)
+        }
+    }
+    
+    @ViewBuilder
+    private var advancedSection: some View {
+        CollapsableSection(isExpanded: $vm.isAdvancedSettingsVisible, title: "Advanced") {
+            Button(role: .destructive) {
+                alertManager.value = .init(message: "Are you sure you want to delete local data?", confirmationText: "Delete", role: .destructive, callback: {
+                    DataStack.shared.viewContext.perform {
+                        DataStack.shared.deleteAll()
+                    }
+                })
+            } label: {
+                Label("Delete Local Data", systemImage: "iphone.gen3.slash")
+            }
+            .foregroundStyle(Color.red)
+        }
     }
 }
 

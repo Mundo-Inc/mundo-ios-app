@@ -60,7 +60,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             // Perform necessary cleanup or reset operations here
             
             do {
-                try DataStack.shared.deleteAll()
+                try DataStack.shared.crashCleanUp()
             } catch {
                 presentErrorToast(error, silent: true)
             }

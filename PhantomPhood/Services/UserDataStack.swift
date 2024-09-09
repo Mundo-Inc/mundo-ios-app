@@ -93,4 +93,25 @@ final class UserDataStack {
         user.createdAt = essentialsWithDate.createdAt
         user.savedAt = Date()
     }
+    
+    func deleteAll() {
+        let entityNames = self.persistentContainer.managedObjectModel.entities.map({ $0.name!})
+        
+        for entityName in entityNames {
+            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
+            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            batchDeleteRequest.resultType = .resultTypeCount
+            
+            do {
+                let batchDeleteResult = try viewContext.execute(batchDeleteRequest) as? NSBatchDeleteResult
+                
+                try viewContext.save()
+#if DEBUG
+                print("Deleted \(batchDeleteResult?.result ?? 0) records from \(entityName)")
+#endif
+            } catch {
+                presentErrorToast(error, debug: "Error deleting entity \(entityName): \(error)", silent: true)
+            }
+        }
+    }
 }

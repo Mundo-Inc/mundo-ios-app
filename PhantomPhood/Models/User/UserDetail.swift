@@ -45,6 +45,10 @@ struct UserDetail: Identifiable, Decodable {
     mutating func setConnectionStatus(following: FollowStatusEnum, followedBy: FollowStatusEnum) {
         self.connectionStatus = ConnectionStatus(followingStatus: following, followedByStatus: followedBy)
     }
+    
+    var essentials: UserEssentials {
+        UserEssentials(userDetail: self)
+    }
 }
 
 extension UserDetail {

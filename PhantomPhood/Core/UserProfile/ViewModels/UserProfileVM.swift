@@ -222,10 +222,6 @@ final class UserProfileVM: LoadingSections, Equatable, Hashable {
         setLoadingState(.blockOperation, to: false)
     }
     
-    func startConversation() async {
-        ToastVM.shared.toast(Toast(type: .info, title: "Messaging is disabled", message: "We're improving messaging system and it's temporarily disabled"))
-    }
-    
     private var userPostsPagination: Pagination? = nil
     func getPosts(_ requestType: RefreshNewAction) async {
         guard let id = self.user?.id, !activityLoadingSections.contains(.gettingPosts) else { return }
@@ -367,7 +363,6 @@ final class UserProfileVM: LoadingSections, Equatable, Hashable {
         case blockOperation
         case followOperation
         case removeFollower
-        case startingConversation
     }
 }
 

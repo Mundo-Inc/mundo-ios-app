@@ -403,9 +403,7 @@ struct HomeActivityItem: View {
                         .foregroundStyle(Color.primary)
                         .background(Color.accentColor, in: Capsule())
                         .onTapGesture {
-                            Task {
-                                await self.vm.startConversation(with: item.user.id)
-                            }
+                            AppData.shared.goTo(.conversation(.user(.data(item.user))))
                         }
                     }
                 }

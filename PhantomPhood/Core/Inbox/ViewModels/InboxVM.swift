@@ -11,8 +11,8 @@ import Foundation
 final class InboxVM: ObservableObject {
     private let userProfileDM = UserProfileDM()
     
-    @Published var activeTab: Tab = .notifications
-    @Published var usersDict: [String:UserEssentials] = [:]
+    @Published var activeTab: Tab = .messages
+    @Published var usersDict: [String: UserEssentials] = [:]
     
     func getUsers(ids: [String]) async {
         do {
@@ -36,8 +36,17 @@ final class InboxVM: ObservableObject {
     
     // MARK: Enums
     
-    enum Tab: String {
-        case messages = "Messages"
-        case notifications = "Notifications"
+    enum Tab {
+        case messages
+        case notifications
+        
+        var title: String {
+            switch self {
+            case .messages:
+                "Messages"
+            case .notifications:
+                "Notifications"
+            }
+        }
     }
 }

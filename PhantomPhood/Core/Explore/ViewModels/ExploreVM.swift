@@ -372,7 +372,7 @@ final class ExploreVM17: ObservableObject, LoadingSections {
                 
                 for activity in activitiesToAdd {
                     let user = usersDict[activity.user.id] ?? {
-                        let newUser = activity.user.createUserEntity(context: context)
+                        let newUser = activity.user.createOrModifyUserEntity(context: context)
                         usersDict[activity.user.id] = newUser
                         return newUser
                     }()

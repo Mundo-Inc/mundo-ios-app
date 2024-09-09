@@ -15,10 +15,7 @@ struct K {
     struct UserDefaults {
         static let isMute = "isMute"
         static let theme = "theme"
-        
-        /// User role - (user, admin)
-        static let userRole = "userRole"
-        
+                
         /// Beta tester status
         static let isBetaTester = "isBetaTester"
         

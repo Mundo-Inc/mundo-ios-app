@@ -247,10 +247,8 @@ final class Authentication: ObservableObject {
         do {
             try Auth.auth().signOut()
             
-            do {
-                try DataStack.shared.deleteAll()
-            } catch {
-                presentErrorToast(error, silent: true)
+            await DataStack.shared.viewContext.perform {
+                DataStack.shared.deleteAll()
             }
             
             UserSettings.shared.logoutCleanup()
@@ -276,8 +274,6 @@ final class Authentication: ObservableObject {
                 self.currentUser = data.data
             }
             
-            UserSettings.shared.setUserInfo(data.data)
-            
             await setDeviceToken()
         } catch {
             print("DEBUG: Couldn't get user info | Error: \(error)")
@@ -286,7 +282,6 @@ final class Authentication: ObservableObject {
     func getUserInfo(uid: String, token: String) async throws -> CurrentUserFullData {
         let data: APIResponse<CurrentUserFullData> = try await apiManager.requestData("/users/\(uid)?idType=uid", method: .get, token: token)
         
-        UserSettings.shared.setUserInfo(data.data)
         return data.data
     }
     

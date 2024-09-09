@@ -9,11 +9,14 @@ import Foundation
 
 enum EntityError: Error, LocalizedError {
     case missingStructRequiredData
+    case notFound
     
     var errorDescription: String {
         switch self {
         case .missingStructRequiredData:
             "Missing required data for creating struct from entity"
+        case .notFound:
+            "Entity does not exist on CoreData"
         }
     }
 }

@@ -14,10 +14,6 @@ struct UserSettings {
     
     private init() {}
     
-    // MARK: - User Info
-    
-    @AppStorage(K.UserDefaults.userRole) private(set) var userRole: UserRole = .user
-    
     // MARK: - App settings
     
     @AppStorage(K.UserDefaults.isBetaTester) var isBetaTester: Bool = false
@@ -32,13 +28,7 @@ struct UserSettings {
     
     /// Cleans up user defaults on logout
     func logoutCleanup() {
-        userRole = .user
         isBetaTester = false
-    }
-    
-    /// Used in sign in flow to set user information
-    func setUserInfo(_ user: CurrentUserFullData) {
-        userRole = user.role
     }
 }
 

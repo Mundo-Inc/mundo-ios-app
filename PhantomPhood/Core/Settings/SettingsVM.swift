@@ -11,6 +11,7 @@ final class SettingsVM: LoadingSections, ObservableObject {
     private let accountDM = AccountDM()
     
     @Published var isAccountSettingsVisible: Bool = false
+    @Published var isAdvancedSettingsVisible: Bool = false
     @Published var loadingSections = Set<LoadingSection>()
     
     // MARK: Methods

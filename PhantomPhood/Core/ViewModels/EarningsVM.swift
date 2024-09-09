@@ -9,7 +9,6 @@ import Foundation
 
 
 final class EarningsVM: ObservableObject, SocketListener {
-    static let BalanceIncreaseSteps: Int = 10
     static let shared = EarningsVM()
     
     private let socketService = SocketService.shared
@@ -17,7 +16,7 @@ final class EarningsVM: ObservableObject, SocketListener {
     private init() {
         addSocketListener()
         
-        socketService.request(for: .earnings)
+        socketService.request(for: .request(event: .earnings))
     }
     
     deinit {
@@ -58,7 +57,6 @@ final class EarningsVM: ObservableObject, SocketListener {
                     self.displayChanges.removeAll { $0.id == ti.id }
                 }
             }
-            
         }
     }
     

@@ -26,6 +26,22 @@ final class APIManager {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         return decoder
     }()
+    
+    static func getData<T: Decodable>(_ data: [Any]) throws -> T {
+        guard let dataDictionary = data.first as? [String: Any] else {
+            throw DataDecodingError.invalidDataFormat
+        }
+        
+        do {
+            let myData = try JSONSerialization.data(withJSONObject: dataDictionary)
+            let response = try Self.decoder.decode(T.self, from: myData)
+            return response
+        } catch let error as DecodingError {
+            throw DataDecodingError.decodingFailed(error)
+        } catch let error {
+            throw DataDecodingError.jsonSerializationFailed(error)
+        }
+    }
 }
 
 extension APIManager {
@@ -207,6 +223,23 @@ extension APIManager {
             case .multipartFormData(let boundary):
                 return "multipart/form-data; boundary=\(boundary)"
             }
+        }
+    }
+}
+
+enum DataDecodingError: Error {
+    case invalidDataFormat
+    case jsonSerializationFailed(Error)
+    case decodingFailed(Error)
+    
+    var localizedDescription: String {
+        switch self {
+        case .invalidDataFormat:
+            return "The data is not in the expected format."
+        case .jsonSerializationFailed:
+            return "Failed to serialize JSON data."
+        case .decodingFailed(let error):
+            return "Failed to decode data: \(error.localizedDescription)"
         }
     }
 }

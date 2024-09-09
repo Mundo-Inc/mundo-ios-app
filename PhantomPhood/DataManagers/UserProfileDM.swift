@@ -17,7 +17,11 @@ struct UserProfileDM {
         let data: APIResponse<UserEssentials> = try await apiManager.requestData("/users/\(id)?view=basic", method: .get)
         
         // update CoreData
-        try? self.dataManager.saveUser(userEssentials: data.data)
+        Task {
+            dataManager.viewContext.perform {
+                data.data.createOrModifyUserEntity(context: dataManager.viewContext, save: true)
+            }
+        }
         
         return data.data
     }
@@ -28,7 +32,7 @@ struct UserProfileDM {
         coreDataCompletion: @escaping (UserEssentials) -> Void
     ) async throws -> UserEssentials? {
         do {
-            if let user = try dataManager.fetchUser(withID: id),
+            if let user = try dataManager.fetchUser(withId: id),
                let userEssentials = try? UserEssentials(entity: user),
                let savedAt = user.savedAt {
                 if Date().timeIntervalSince(savedAt) < 60 * 60 * 24 {
@@ -45,7 +49,11 @@ struct UserProfileDM {
         let data: APIResponse<UserEssentials> = try await apiManager.requestData("/users/\(id)?view=basic", method: .get)
         
         // update CoreData
-        try? self.dataManager.saveUser(userEssentials: data.data)
+        Task {
+            dataManager.viewContext.perform {
+                data.data.createOrModifyUserEntity(context: dataManager.viewContext, save: true)
+            }
+        }
         
         return data.data
     }
@@ -57,7 +65,7 @@ struct UserProfileDM {
     ) async throws -> [UserEssentials] {
         var toFetch = Set<String>()
         do {
-            let users = try dataManager.fetchUsers(withIDs: ids).compactMap { uEntity in
+            let users = try dataManager.fetchUsers(withIds: ids).compactMap { uEntity in
                 if let uEssentials = try? UserEssentials(entity: uEntity), let savedAt = uEntity.savedAt {
                     if updateAll || Date().timeIntervalSince(savedAt) > 60 * 60 * 24 {
                         toFetch.insert(uEssentials.id)
@@ -101,7 +109,11 @@ struct UserProfileDM {
         let data: APIResponse<UserDetail> = try await apiManager.requestData("/users/\(id)", method: .get, token: token)
         
         // update CoreData
-        try? self.dataManager.saveUser(userEssentials: UserEssentials(userDetail: data.data))
+        Task {
+            dataManager.viewContext.perform {
+                UserEssentials(userDetail: data.data).createOrModifyUserEntity(context: dataManager.viewContext, save: true)
+            }
+        }
         
         return data.data
     }
@@ -112,7 +124,11 @@ struct UserProfileDM {
         let data: APIResponse<UserDetail> = try await apiManager.requestData("/users/@\(username)", method: .get, token: token)
         
         // update CoreData
-        try? self.dataManager.saveUser(userEssentials: UserEssentials(userDetail: data.data))
+        Task {
+            dataManager.viewContext.perform {
+                UserEssentials(userDetail: data.data).createOrModifyUserEntity(context: dataManager.viewContext, save: true)
+            }
+        }
         
         return data.data
     }

@@ -119,26 +119,38 @@ extension UserEssentials {
         self.connectionStatus = nil
     }
     
-    func createUserEntity(context: NSManagedObjectContext) -> UserEntity {
-        var userEntity: UserEntity!
-        context.performAndWait {
-            userEntity = UserEntity(context: context)
-            userEntity.id = self.id
-            userEntity.name = self.name
-            userEntity.username = self.username
-            userEntity.verified = self.verified
-            userEntity.isPrivate = self.isPrivate
-            userEntity.profileImage = self.profileImage?.absoluteString
-            userEntity.level = Int16(self.progress.level)
-            userEntity.xp = Int16(self.progress.xp)
-            userEntity.savedAt = .now
-            
+    @discardableResult
+    func createOrModifyUserEntity(context: NSManagedObjectContext, save: Bool = false) -> UserEntity {
+        let userEntity = if let result = try? context.fetch(UserEntity.fetchRequest(forId: self.id)), let first = result.first {
+            first
+        } else {
+            UserEntity(context: context)
+        }
+        
+        userEntity.id = self.id
+        userEntity.name = self.name
+        userEntity.username = self.username
+        userEntity.verified = self.verified
+        userEntity.isPrivate = self.isPrivate
+        userEntity.profileImage = self.profileImage?.absoluteString
+        userEntity.level = Int16(self.progress.level)
+        userEntity.xp = Int16(self.progress.xp)
+        userEntity.savedAt = .now
+        
+        do {
+            try context.obtainPermanentIDs(for: [userEntity])
+        } catch {
+            presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
+        }
+        
+        if save {
             do {
-                try context.obtainPermanentIDs(for: [userEntity])
+                try context.save()
             } catch {
-                presentErrorToast(error, debug: "Error obtaining a permanent ID for userEntity", silent: true)
+                presentErrorToast(error, debug: "Error saving context", silent: true)
             }
         }
+        
         return userEntity
     }
 }

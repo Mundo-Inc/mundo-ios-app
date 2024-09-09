@@ -15,6 +15,8 @@ struct ContentView: View {
     @ObservedObject private var socketService = SocketService.shared
     @ObservedObject private var earningsVM = EarningsVM.shared
     
+    @ObservedObject private var conversationManager = ConversationManager.shared // TODO: Complete
+    
     @StateObject private var onboardingVM = OnboardingVM()
     
     @StateObject private var actionManager = ActionManager()

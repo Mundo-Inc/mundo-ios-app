@@ -13,11 +13,10 @@ class AppGeneralVM: ObservableObject {
     private init() {}
     
     private let apiManager = APIManager.shared
-    private let auth = Authentication.shared
     
     @Published var showForceUpdate = false
-    @Published var appInfo: AppInfoResponse?
-    @Published var appVersion: String = ""
+    @Published private(set) var appInfo: AppInfoResponse?
+    @Published private(set) var appVersion: String = ""
     
     struct AppInfoResponse: Decodable {
         let isLatest: Bool
@@ -30,22 +29,22 @@ class AppGeneralVM: ObservableObject {
     func checkVersion() async {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         
+        guard let appVersion else { return }
+        
         do {
-            if let appVersion {
-                self.appVersion = appVersion
-                
-                let token = try? await auth.getToken()
-                
-                let data: APIResponse<AppInfoResponse> = try await apiManager.requestData("/general/app-version/\(appVersion)", token: token)
-                
-                self.appInfo = data.data
-                
-                if !data.data.isOperational {
-                    self.showForceUpdate = true
-                } else {
-                    if self.showForceUpdate {
-                        self.showForceUpdate = false
-                    }
+            self.appVersion = appVersion
+            
+            let token = try? await Authentication.shared.getToken()
+            
+            let data: APIResponse<AppInfoResponse> = try await apiManager.requestData("/general/app-version/\(appVersion)", token: token)
+            
+            self.appInfo = data.data
+            
+            if !data.data.isOperational {
+                self.showForceUpdate = true
+            } else {
+                if self.showForceUpdate {
+                    self.showForceUpdate = false
                 }
             }
         } catch {

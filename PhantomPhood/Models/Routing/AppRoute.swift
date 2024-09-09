@@ -10,6 +10,7 @@ import MapKit
 
 enum AppRoute: Hashable {
     case inbox
+    case conversation(_ args: ConversationArgs)
     case leaderboard
     case userActivity(id: String)
     
@@ -38,6 +39,11 @@ enum AppRoute: Hashable {
     case userCheckins(userId: UserIdEnum)
     
     case placesList(listId: String)
+    
+    enum ConversationArgs: Hashable {
+        case user(IdOrData<UserEssentials>)
+        case id(String)
+    }
 }
 
 enum PlaceAction: Hashable {

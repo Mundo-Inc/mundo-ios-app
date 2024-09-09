@@ -54,6 +54,13 @@ struct NavigationDestinationViewModifier: ViewModifier {
                     LeaderboardView()
                 case .inbox:
                     InboxView()
+                case .conversation(let args):
+                    switch args {
+                    case .id(let id):
+                        ConversationView(id: id)
+                    case .user(let user):
+                        ConversationView(user: user)
+                    }
                 case .userActivity(let id):
                     UserActivityView(id: id)
                     

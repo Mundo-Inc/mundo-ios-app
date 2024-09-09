@@ -92,10 +92,9 @@ final class DataStack {
         }
     }
     
-    
-    func deleteAll() throws {
+    func crashCleanUp() throws {
         try viewContext.performAndWait {
-            let entityNames = ["RequestedRegionEntity", "MapActivityEntity", "UserEntity", "PlaceEntity"]
+            let entityNames = ["RequestedRegionEntity", "MapActivityEntity"]
             
             for entityName in entityNames {
                 let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
@@ -116,13 +115,23 @@ final class DataStack {
         }
     }
     
-    func saveUser(userEssentials: UserEssentials) throws {
-        try viewContext.performAndWait {
-            let user = try self.fetchUser(withID: userEssentials.id) ?? UserEntity(context: viewContext)
+    func deleteAll() {
+        let entityNames = self.persistentContainer.managedObjectModel.entities.map({ $0.name!})
+        
+        for entityName in entityNames {
+            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
+            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            batchDeleteRequest.resultType = .resultTypeCount
             
-            self.updateUserEntity(user, with: userEssentials)
-            if viewContext.hasChanges {
+            do {
+                let batchDeleteResult = try viewContext.execute(batchDeleteRequest) as? NSBatchDeleteResult
+                
                 try viewContext.save()
+#if DEBUG
+                print("Deleted \(batchDeleteResult?.result ?? 0) records from \(entityName)")
+#endif
+            } catch {
+                presentErrorToast(error, debug: "Error deleting entity \(entityName): \(error)", silent: true)
             }
         }
     }
@@ -134,12 +143,12 @@ final class DataStack {
         let context = viewContext
         
         try context.performAndWait {
-            let existingUsers = try self.fetchUsers(withIDs: ids)
+            let existingUsers = try self.fetchUsers(withIds: ids)
             let existingUsersDict = Dictionary(uniqueKeysWithValues: existingUsers.compactMap { ($0.id, $0) })
             
             for essentials in userEssentialsList {
                 let user = existingUsersDict[essentials.id] ?? UserEntity(context: context)
-                self.updateUserEntity(user, with: essentials)
+                user.updateInfo(with: essentials)
             }
             
             if context.hasChanges {
@@ -148,30 +157,16 @@ final class DataStack {
         }
     }
     
-    func fetchUser(withID id: String) throws -> UserEntity? {
-        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+    func fetchUser(withId id: String) throws -> UserEntity? {
+        let request = UserEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", id)
         request.fetchLimit = 1
         return try viewContext.fetch(request).first
     }
     
-    func fetchUsers(withIDs ids: Set<String>) throws -> [UserEntity] {
-        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+    func fetchUsers(withIds ids: Set<String>) throws -> [UserEntity] {
+        let request = UserEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id IN %@", ids)
         return try viewContext.fetch(request)
-    }
-    
-    // MARK: Private methods
-    
-    private func updateUserEntity(_ user: UserEntity, with essentials: UserEssentials) {
-        user.id = essentials.id
-        user.name = essentials.name
-        user.username = essentials.username
-        user.verified = essentials.verified
-        user.isPrivate = essentials.isPrivate
-        user.profileImage = essentials.profileImage?.absoluteString
-        user.level = Int16(essentials.progress.level)
-        user.xp = Int16(essentials.progress.xp)
-        user.savedAt = Date()
     }
 }

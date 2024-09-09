@@ -39,12 +39,6 @@ class HomeVM: LoadingSections, ObservableObject {
     var scrollFollowingToItem: ((String) -> Void)? = nil
     var scrollForYouToItem: ((String) -> Void)? = nil
     
-    // MARK: - General
-    
-    func startConversation(with userId: String) async {
-        ToastVM.shared.toast(Toast(type: .info, title: "Messaging is disabled", message: "We're improving messaging system and it's temporarily disabled"))
-    }
-    
     // MARK: - Following
     
     func updateFollowingData(_ action: RefreshNewAction) async {

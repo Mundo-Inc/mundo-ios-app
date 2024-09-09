@@ -32,7 +32,6 @@ struct AuthWelcomeView: View {
                     .frame(width: mainWindowSize.width + 10, height: mainWindowSize.width + 10)
                     .onAppear {
                         playbackMode = .playing(.fromProgress(0, toProgress: 1, loopMode: .loop))
-                        
                     }
                     .onDisappear {
                         playbackMode = .paused

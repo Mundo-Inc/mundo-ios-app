@@ -111,27 +111,22 @@ struct UserProfileView: View {
                             }
                             .disabled(vm.loadingSections.contains(.followOperation))
                             
-                            Button {
-                                Task {
-                                    await vm.startConversation()
-                                }
-                            } label: {
-                                HStack {
-                                    if vm.loadingSections.contains(.startingConversation) {
-                                        ProgressView()
-                                            .controlSize(.mini)
-                                    } else {
-                                        Text("Message")
-                                    }
-                                }
-                                .frame(height: 32)
-                                .frame(maxWidth: .infinity)
-                                .background(Color.themeBorder)
-                                .clipShape(.rect(cornerRadius: 5))
-                                .foregroundStyle(Color.primary)
+                            let route: AppRoute = if let user = vm.user {
+                                .conversation(.user(.data(user.essentials)))
+                            } else {
+                                .conversation(.id(""))
                             }
-                            .disabled(vm.loadingSections.contains(.startingConversation))
                             
+                            NavigationLink(value: route) {
+                                Text("Message")
+                                    .frame(height: 32)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.themeBorder)
+                                    .clipShape(.rect(cornerRadius: 5))
+                                    .foregroundStyle(Color.primary)
+                            }
+                            .disabled(vm.user == nil)
+                                                        
                             Button {
                                 ToastVM.shared.toast(.init(type: .info, title: "Coming Soon", message: "This feature is under development"))
                                 //                                if let user = vm.user {
