@@ -127,9 +127,9 @@ struct HomeView: View {
                     let unreadNotifications = notificationsVM.unreadCount ?? 0
                     let unreadCovnversationsCount = conversationManager.unreadCovnersations.count
                     
-                    let icon: String = unreadCovnversationsCount > 0 ? "message.badge.filled.fill" : unreadCovnversationsCount > 0 ? "bell.fill" : "message"
+                    let icon: String = unreadCovnversationsCount > 0 ? "message.badge.filled.fill" : unreadNotifications > 0 ? "bell.fill" : "message"
                     
-                    let count: Int = unreadCovnversationsCount > 0 ? unreadCovnversationsCount : unreadCovnversationsCount
+                    let count: Int = unreadCovnversationsCount > 0 ? unreadCovnversationsCount : unreadNotifications
                     
                     Image(systemName: icon)
                         .animation(.spring, value: unreadNotifications + unreadCovnversationsCount)
