@@ -118,6 +118,26 @@ final class UniversalLinkingManager {
         "inbox": RouteScheme(pattern: [], routeGetter: { _ in
             return AppRoute.inbox
         }),
+        "conversation": RouteScheme(pattern: ["id"], routeGetter: { components in
+            guard let conversationId = components.first else {
+                throw LinkingError.missingParam
+            }
+            
+            // Close sheets
+            if SheetsManager.shared.presenting != nil {
+                SheetsManager.shared.presenting = nil
+            }
+            
+            return .conversation(.id(conversationId))
+        }, validator: { components in
+            if let first = components.first {
+                if first.isEmpty {
+                    throw LinkingError.badParam
+                }
+            } else {
+                throw LinkingError.missingParam
+            }
+        }),
         "signup": RouteScheme(pattern: ["ref?"], authRouteGetter: { components in
             if let first = components.first {
                 UserDefaults.standard.setValue(first, forKey: K.UserDefaults.referredBy)

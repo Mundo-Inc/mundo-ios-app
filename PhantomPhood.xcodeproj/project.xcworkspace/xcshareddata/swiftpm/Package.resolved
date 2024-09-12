@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BranchMetrics/ios-branch-sdk-spm",
       "state" : {
-        "revision" : "69ca4d1b00c25861bdee07d448f7a0eb1b8d8b4a",
-        "version" : "3.6.1"
+        "revision" : "b1882cf72c67ff8a9e3064d3fb010e8f1153a9e8",
+        "version" : "3.6.2"
       }
     },
     {
@@ -204,8 +204,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stripe/stripe-ios-spm",
       "state" : {
-        "revision" : "865bfefff6904cdd9baca3dc68dac964fc8340af",
-        "version" : "23.29.2"
+        "revision" : "90129926d024ea0259cb854c6b23f4061ae76323",
+        "version" : "23.30.0"
       }
     },
     {

@@ -106,6 +106,35 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         
         Messaging.messaging().appDidReceiveMessage(userInfo)
         
+        for (key, value) in userInfo {
+            if let stringKey = key as? String {
+                if stringKey == "link", let url = URL(string: "\(K.ENV.WebsiteURL)/\(value)") {
+                    var components = url.pathComponents
+                    if url.pathComponents.first == "/" {
+                        components = Array(components.dropFirst())
+                    }
+                    
+                    guard let route = components.first else {
+                        continue
+                    }
+                    
+                    switch route {
+                    case "conversation":
+                        if let currentRoute = AppData.shared.navStack.last {
+                            if case .conversation(let args) = currentRoute, components.count > 1 {
+                                if case .id(let covnersationId) = args, components[1] == covnersationId {
+                                    return
+                                }
+                            }
+                        }
+                        break
+                    default:
+                        break
+                    }
+                }
+            }
+        }
+        
         // Change this to your preferred presentation option
         completionHandler([.banner, .badge, .sound])
     }

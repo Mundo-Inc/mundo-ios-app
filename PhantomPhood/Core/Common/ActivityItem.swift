@@ -607,11 +607,10 @@ struct ActivityItem<ViewModel: ActivityItemVM>: View {
                         HStack(spacing: 30) {
                             ForEach(HomeActivityItem.defaultReactions) { r in
                                 let selectedIndex = item.reactions.user.firstIndex { $0.reaction == r.reaction && $0.type == r.type }
-                                ForYouReactionLabel(
+                                VerticalReactionLabel(
                                     reaction: .init(reaction: r.reaction, type: r.type, count: item.reactions.total.filter({ $0.reaction == r.reaction && $0.type == r.type }).count),
                                     isSelected: selectedIndex != nil,
-                                    size: 50,
-                                    orientation: .vertical
+                                    size: 50
                                 ) { _ in
                                     if let selectedIndex {
                                         Task {

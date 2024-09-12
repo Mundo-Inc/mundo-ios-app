@@ -9,9 +9,9 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct Emoji: View {
-    let emoji: EmojisManager.Emoji
-    @Binding var isAnimating: Bool
-    let size: CGFloat
+    private let emoji: EmojisManager.Emoji
+    private let size: CGFloat
+    @Binding private var isAnimating: Bool
     
     init(_ emoji: EmojisManager.Emoji, isAnimating: Binding<Bool>, size: CGFloat = 20) {
         self.emoji = emoji
@@ -44,6 +44,7 @@ struct Emoji: View {
     var body: some View {
         if emoji.isAnimated, let gifName = emoji.gifName, isAnimating {
             Rectangle()
+                .frame(width: size, height: size)
                 .opacity(0)
                 .overlay {
                     AnimatedImage(name: gifName, isAnimating: $isAnimating)
@@ -52,9 +53,9 @@ struct Emoji: View {
                         .allowsHitTesting(false)
                 }
                 .clipped()
-                .frame(width: size, height: size)
         } else if !emoji.unicode.isEmpty && UIImage(named: "Emojis/\(emoji.unicode)") != nil {
             Rectangle()
+                .frame(width: size, height: size)
                 .opacity(0)
                 .overlay {
                     Image("Emojis/\(emoji.unicode)")
@@ -62,7 +63,6 @@ struct Emoji: View {
                         .aspectRatio(contentMode: .fit)
                 }
                 .clipped()
-                .frame(width: size, height: size)
         } else {
             Text(emoji.symbol)
                 .font(.system(size: size * 0.75))

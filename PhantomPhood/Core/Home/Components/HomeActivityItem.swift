@@ -36,6 +36,10 @@ struct HomeActivityItem: View {
         self.forTab = forTab
         
         switch item.wrappedValue.resource {
+        case .checkin(let checkIn):
+            if let firstMedia = checkIn.media?.first {
+                self._tabPage = State(wrappedValue: firstMedia.id)
+            }
         case .review(let feedReview):
             if let firstMedia = feedReview.media?.first {
                 self._tabPage = State(wrappedValue: firstMedia.id)
@@ -79,6 +83,15 @@ struct HomeActivityItem: View {
             return true
         default:
             return false
+        }
+    }
+    
+    private var isInView: Bool {
+        switch forTab {
+        case .forYou:
+            vm.forYouItemOnViewPort == item.id
+        case .following:
+            vm.followingItemOnViewPort == item.id
         }
     }
     
@@ -157,6 +170,8 @@ struct HomeActivityItem: View {
             }
         }
     }
+    
+    // MARK: - BackgroundContent
     
     @ViewBuilder
     private func BackgroundContent() -> some View {
@@ -335,6 +350,8 @@ struct HomeActivityItem: View {
         }
     }
     
+    // MARK: - HeaderContent
+    
     @ViewBuilder
     private func HeaderContent() -> some View {
         HStack {
@@ -466,6 +483,8 @@ struct HomeActivityItem: View {
         .padding(.top)
     }
     
+    // MARK: - Content
+    
     @ViewBuilder
     private func Content() -> some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -474,7 +493,45 @@ struct HomeActivityItem: View {
                 if case .checkin(let feedCheckin) = item.resource {
                     Spacer()
                     
-                    ContentTypeChip(text: "Check In", color: .checkedIn)
+                    HStack {
+                        ForEach(Array(item.reactions.total.prefix(5))) { reaction in
+                            let selectedIndex = item.reactions.user.firstIndex(where: { $0.reaction == reaction.reaction })
+                            
+                            ForYouReactionLabel(reaction: reaction, isSelected: selectedIndex != nil, isAnimating: isInView) { _ in
+                                Task {
+                                    let i = item
+                                    
+                                    if let selectedIndex {
+                                        item.removeReaction(i.reactions.user[selectedIndex])
+                                        guard let res = await vm.removeReaction(i.reactions.user[selectedIndex], from: i) else { return }
+                                        switch res {
+                                        case .success(let updatedItem):
+                                            item = updatedItem
+                                        case .failure(_):
+                                            item = i
+                                        }
+                                    } else {
+                                        item.addReaction(UserReaction(id: "Temp", reaction: reaction.reaction, type: .emoji, createdAt: .now))
+                                        guard let res = await vm.addReaction(reaction, to: i) else { return }
+                                        switch res {
+                                        case .success(let updatedItem):
+                                            item = updatedItem
+                                        case .failure(_):
+                                            item = i
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(width: 28, height: 28)
+                        }
+                        
+                        if item.reactions.total.count > 5 {
+                            Text("+ \(item.reactions.total.count - 5)")
+                                .cfont(.caption)
+                        }
+                        
+                        Spacer()
+                    }
                     
                     ForEach(feedCheckin.tags ?? []) { user in
                         TaggedUser(user)
@@ -506,23 +563,6 @@ struct HomeActivityItem: View {
             case .newReview:
                 if case .review(let feedReview) = item.resource {
                     Spacer()
-                    
-                    ContentTypeChip(text: "Review", color: .reviewed)
-                        .onTapGesture {
-                            HomeActivityInfoVM.shared.show(item) { reaction in
-                                Task {
-                                    let i = item
-                                    item.addReaction(UserReaction(id: "Temp", reaction: reaction.symbol, type: .emoji, createdAt: .now))
-                                    guard let res = await vm.addReaction(NewReaction(reaction: reaction.symbol, type: .emoji), to: i) else { return }
-                                    switch res {
-                                    case .success(let updatedItem):
-                                        item = updatedItem
-                                    case .failure(_):
-                                        item = i
-                                    }
-                                }
-                            }
-                        }
                     
                     if let overallScore = feedReview.scores.overall {
                         HStack {
@@ -590,11 +630,10 @@ struct HomeActivityItem: View {
                         HStack(spacing: 30) {
                             ForEach(Self.defaultReactions) { r in
                                 let selectedIndex = item.reactions.user.firstIndex { $0.reaction == r.reaction && $0.type == r.type }
-                                ForYouReactionLabel(
+                                VerticalReactionLabel(
                                     reaction: .init(reaction: r.reaction, type: r.type, count: item.reactions.total.filter({ $0.reaction == r.reaction && $0.type == r.type }).count),
                                     isSelected: selectedIndex != nil,
-                                    size: 50,
-                                    orientation: .vertical
+                                    size: 50
                                 ) { _ in
                                     if let selectedIndex {
                                         Task {
@@ -737,8 +776,6 @@ struct HomeActivityItem: View {
                 if case .homemade(let homemade) = item.resource {
                     Spacer()
                     
-                    ContentTypeChip(text: "Home Made", color: .homemade)
-                    
                     ForEach(homemade.tags) { user in
                         TaggedUser(user)
                     }
@@ -775,50 +812,12 @@ struct HomeActivityItem: View {
         .padding(.bottom)
     }
     
+    // MARK: - SideBar
+    
     @ViewBuilder
     private func SideBar() -> some View {
         VStack(spacing: 6) {
             Spacer()
-            
-            ForEach(Array(item.reactions.total.prefix(5))) { reaction in
-                Group {
-                    if let selectedIndex = item.reactions.user.firstIndex(where: { $0.reaction == reaction.reaction }) {
-                        ForYouReactionLabel(reaction: reaction, isSelected: true) { _ in
-                            Task {
-                                let i = item
-                                item.removeReaction(i.reactions.user[selectedIndex])
-                                guard let res = await vm.removeReaction(i.reactions.user[selectedIndex], from: i) else { return }
-                                switch res {
-                                case .success(let updatedItem):
-                                    item = updatedItem
-                                case .failure(_):
-                                    item = i
-                                }
-                            }
-                        }
-                    } else {
-                        ForYouReactionLabel(reaction: reaction, isSelected: false) { _ in
-                            Task {
-                                let i = item
-                                item.addReaction(UserReaction(id: "Temp", reaction: reaction.reaction, type: .emoji, createdAt: .now))
-                                guard let res = await vm.addReaction(reaction, to: i) else { return }
-                                switch res {
-                                case .success(let updatedItem):
-                                    item = updatedItem
-                                case .failure(_):
-                                    item = i
-                                }
-                            }
-                        }
-                    }
-                }
-                .frame(width: 52, height: 40)
-            }
-            
-            if item.reactions.total.count > 5 {
-                Text("+ \(item.reactions.total.count - 5)")
-                    .cfont(.caption)
-            }
             
             Image(.Icons.addReaction)
                 .resizable()
@@ -990,30 +989,13 @@ extension HomeActivityItem {
                 }
                 .contentShape(.rect)
             case .video:
-                switch forTab {
-                case .following:
-                    VideoPlayer(url: url, playing: vm.followingItemOnViewPort == self.item.id && tabPage == media.id, isMute: isMute)
-                case .forYou:
-                    VideoPlayer(url: url, playing: vm.forYouItemOnViewPort == self.item.id && tabPage == media.id, isMute: isMute)
-                }
+                VideoPlayer(url: url, playing: isInView && tabPage == media.id, isMute: isMute)
             }
         } else {
             Text("Something went wrong!")
         }
     }
-    
-    @ViewBuilder
-    private func ContentTypeChip(text: String, color: Color) -> some View {
-        Text(text)
-            .cfont(.caption)
-            .fontWeight(.medium)
-            .foregroundStyle(.black)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 4)
-            .background(color.opacity(0.8))
-            .clipShape(.rect(cornerRadius: 5))
-    }
-    
+        
     @ViewBuilder
     private func TaggedUser(_ user: UserEssentials) -> some View {
         HStack(spacing: 5) {

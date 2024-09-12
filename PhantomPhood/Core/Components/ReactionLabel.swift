@@ -44,17 +44,48 @@ struct ReactionLabel: View {
 }
 
 struct ForYouReactionLabel: View {
-    let reaction: Reaction
-    let isSelected: Bool
-    let orientation: Orientation
-    let size: CGFloat
-    let onPress: (_ isSelected: Bool) -> Void
+    private let reaction: Reaction
+    private let isSelected: Bool
+    private let size: CGFloat
+    private let onPress: (_ isSelected: Bool) -> Void
+    private let isAnimating: Bool
     
-    init(reaction: Reaction, isSelected: Bool, size: CGFloat = 36, orientation: Orientation = .horizontal, onPress: @escaping (Bool) -> Void) {
+    init(reaction: Reaction, isSelected: Bool, size: CGFloat = 28, isAnimating: Bool = true, onPress: @escaping (Bool) -> Void) {
         self.reaction = reaction
         self.isSelected = isSelected
         self.size = size
-        self.orientation = orientation
+        self.onPress = onPress
+        self.isAnimating = isAnimating
+    }
+    
+    enum Orientation {
+        case vertical
+        case horizontal
+    }
+    
+    var body: some View {
+        Button {
+            onPress(isSelected)
+        } label: {
+            Emoji(reaction: reaction, isAnimating: Binding(get: {
+                isAnimating
+            }, set: { _ in }), size: size)
+            .grayscale(isSelected ? 0 : 0.9)
+            .opacity(isSelected ? 1 : 0.8)
+        }
+    }
+}
+
+struct VerticalReactionLabel: View {
+    let reaction: Reaction
+    let isSelected: Bool
+    let size: CGFloat
+    let onPress: (_ isSelected: Bool) -> Void
+    
+    init(reaction: Reaction, isSelected: Bool, size: CGFloat = 36, onPress: @escaping (Bool) -> Void) {
+        self.reaction = reaction
+        self.isSelected = isSelected
+        self.size = size
         self.onPress = onPress
     }
     
@@ -67,35 +98,18 @@ struct ForYouReactionLabel: View {
         Button {
             onPress(isSelected)
         } label: {
-            switch orientation {
-            case .vertical:
-                VStack(spacing: 3) {
-                    Emoji(reaction: reaction, isAnimating: Binding(get: {
-                        isSelected
-                    }, set: { _ in }), size: size)
-                    
-                    Text(String(reaction.count))
-                        .foregroundStyle(Color.white)
-                        .cfont(.caption2)
-                        .frame(height: 20)
-                        .frame(minWidth: 20)
-                        .background(.ultraThinMaterial.opacity(0.65), in: RoundedRectangle(cornerRadius: 5))
-                        .background(isSelected ? Color.accentColor : Color.clear, in: RoundedRectangle(cornerRadius: 5))
-                }
-            case .horizontal:
-                HStack(spacing: 3) {
-                    Emoji(reaction: reaction, isAnimating: Binding(get: {
-                        isSelected
-                    }, set: { _ in }), size: size)
-                    
-                    Text(String(reaction.count))
-                        .foregroundStyle(Color.white)
-                        .cfont(.caption2)
-                        .frame(height: 20)
-                        .frame(minWidth: 20)
-                        .background(.ultraThinMaterial.opacity(0.65), in: RoundedRectangle(cornerRadius: 5))
-                        .background(isSelected ? Color.accentColor : Color.clear, in: RoundedRectangle(cornerRadius: 5))
-                }
+            VStack(spacing: 3) {
+                Emoji(reaction: reaction, isAnimating: Binding(get: {
+                    isSelected
+                }, set: { _ in }), size: size)
+                
+                Text(String(reaction.count))
+                    .foregroundStyle(Color.white)
+                    .cfont(.caption2)
+                    .frame(height: 20)
+                    .frame(minWidth: 20)
+                    .background(.ultraThinMaterial.opacity(0.65), in: RoundedRectangle(cornerRadius: 5))
+                    .background(isSelected ? Color.accentColor : Color.clear, in: RoundedRectangle(cornerRadius: 5))
             }
         }
     }
@@ -106,11 +120,5 @@ struct ForYouReactionLabel: View {
     VStack {
         ReactionLabel(reaction: Reaction(reaction: "😍", type: .emoji, count: 5), isSelected: false)
         ReactionLabel(reaction: Reaction(reaction: "🙌🏻", type: .emoji, count: 2), isSelected: true)
-//        
-//        Group {
-//            ForYouReactionLabel(reaction: Reaction(reaction: "😍", type: .emoji, count: 5), isSelected: false)
-//            ForYouReactionLabel(reaction: Reaction(reaction: "🙌🏻", type: .emoji, count: 2), isSelected: true)
-//        }
-//        .frame(maxWidth: 80)
     }
 }

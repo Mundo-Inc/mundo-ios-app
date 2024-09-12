@@ -55,7 +55,11 @@ struct PlaceReview: Identifiable, Decodable {
         }
         
         if let index = newReactions.total.firstIndex(where: { $0.reaction == userReaction.reaction }) {
-            newReactions.total[index] = Reaction(reaction: userReaction.reaction, type: .emoji, count: newReactions.total[index].count - 1)
+            if newReactions.total[index].count == 1 {
+                newReactions.total.remove(at: index)
+            } else {
+                newReactions.total[index] = Reaction(reaction: userReaction.reaction, type: .emoji, count: newReactions.total[index].count - 1)
+            }
         }
         
         self.reactions = newReactions

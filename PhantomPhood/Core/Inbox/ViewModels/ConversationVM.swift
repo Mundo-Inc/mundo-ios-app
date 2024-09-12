@@ -129,6 +129,14 @@ final class ConversationVM: ObservableObject {
     func handleSend() {
         guard let exists else { return }
         
+        let content = self.content
+        
+        DispatchQueue.main.async {
+            withAnimation {
+                self.content = ""
+            }
+        }
+        
         if let conversation, exists {
             ConversationManager.shared.sendMessage(conversation: conversation.id, content: content)
         } else if let recepient {
@@ -153,12 +161,6 @@ final class ConversationVM: ObservableObject {
             }
         } else {
             print("Hmm...")
-        }
-        
-        DispatchQueue.main.async {
-            withAnimation {
-                self.content = ""
-            }
         }
     }
     
