@@ -18,7 +18,6 @@ final class ConversationManager: ObservableObject, SocketListener {
     
     @Published private(set) var conversations: [Conversation] = []
     
-    
     private init() {
         addSocketListener()
         
@@ -29,6 +28,20 @@ final class ConversationManager: ObservableObject, SocketListener {
         removeSocketListener()
     }
     
+    var unreadCovnersations: [Conversation] {
+        guard let currentUserId = Authentication.shared.currentUser?.id else {
+            return []
+        }
+        
+        return conversations.filter { conversation in
+            if let user = conversation.participants.first(where: { $0.user.id == currentUserId }) {
+                return conversation.lastMessageIndex > (user.read?.index ?? -1)
+            } else {
+                return false
+            }
+        }
+    }
+    
     func addSocketListener() {
         socketService.addListener(for: .newMessage, id: #file.description) { data, ack in
             guard let result: ConversationMessage = try? APIManager.getData(data) else { return }
@@ -36,10 +49,6 @@ final class ConversationManager: ObservableObject, SocketListener {
             let context = DataStack.shared.viewContext
             context.perform {
                 result.createOrUpdateConversationMessageEntity(context: context, conversation: nil, save: true)
-            }
-            
-            if result.sender.id != Authentication.shared.currentUser?.id {
-                ToastVM.shared.toast(.init(type: .info, title: result.sender.name, message: result.content ?? "New message"))
             }
         }
         

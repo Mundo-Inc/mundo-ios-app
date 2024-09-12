@@ -14,6 +14,7 @@ struct HomeView: View {
     @ObservedObject private var appData = AppData.shared
     @ObservedObject private var notificationsVM = NotificationsVM.shared
     @ObservedObject private var homeActivityInfoVM = HomeActivityInfoVM.shared
+    @ObservedObject private var conversationManager = ConversationManager.shared
     
     var body: some View {
         TabView(selection: $appData.homeActiveTab) {
@@ -124,23 +125,31 @@ struct HomeView: View {
                 
                 NavigationLink(value: AppRoute.inbox) {
                     let unreadNotifications = notificationsVM.unreadCount ?? 0
-                    Image(systemName: unreadNotifications > 0 ? "bell.fill" : "tray.fill")
-                        .animation(.spring, value: unreadNotifications)
-                        .font(.system(size: 20))
+                    let unreadCovnversationsCount = conversationManager.unreadCovnersations.count
+                    
+                    let icon: String = unreadCovnversationsCount > 0 ? "message.badge.filled.fill" : unreadCovnversationsCount > 0 ? "bell.fill" : "message"
+                    
+                    let count: Int = unreadCovnversationsCount > 0 ? unreadCovnversationsCount : unreadCovnversationsCount
+                    
+                    Image(systemName: icon)
+                        .animation(.spring, value: unreadNotifications + unreadCovnversationsCount)
+                        .font(.system(size: 24))
                         .frame(width: 40, height: 40)
                         .background(.ultraThinMaterial, in: Circle())
-                        .overlay(alignment: .topTrailing) {
-                            if unreadNotifications > 0 {
-                                Text(unreadNotifications > 99 ? "99+" : "\(unreadNotifications)")
+                        .overlay {
+                            if count > 99 {
+                                Image(systemName: "flame.fill")
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(Color.orange)
+                                    .transition(AnyTransition.scale.combined(with: .opacity).animation(.spring))
+                            } else if count > 0 {
+                                Text("\(count)")
                                     .cfont(.caption2)
                                     .foregroundStyle(Color.black)
-                                    .frame(height: 16)
-                                    .frame(minWidth: 12)
-                                    .padding(.horizontal, 2)
-                                    .background(Capsule().foregroundStyle(Color.gray))
                                     .transition(AnyTransition.scale.combined(with: .opacity).animation(.spring))
                             }
                         }
+                        .fontWeight(.semibold)
                 }
                 .foregroundStyle(.white)
                 .task {
